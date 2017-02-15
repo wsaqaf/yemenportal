@@ -13,8 +13,6 @@
 
 # Ignore config files
 .env
-/config/database.yml
-/config/secrets.yml
 
 # Ignore code coverage by tests.
 /coverage

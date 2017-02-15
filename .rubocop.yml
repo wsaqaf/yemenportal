@@ -1,0 +1,60 @@
+require: rubocop-rspec
+
+AllCops:
+  Exclude:
+    - "db/**/*"
+    - "bin/*"
+    - "lib/tasks/**/*"
+    - "lib/capistrano/**/*"
+    - "Gemfile"
+    - "config/**/*"
+    - "vendor/**/*"
+    - "app/views/**/*"
+    - "config.ru"
+    - "Rakefile"
+
+Lint/EndAlignment:
+  AlignWith: variable
+
+Lint/Eval:
+  Enabled: true
+  Exclude:
+    - "spec/**/*"
+
+MethodLength:
+  Max: 15
+  Exclude:
+    - "spec/**/*"
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/AbcSize:
+  Max: 20
+
+Style/AlignHash:
+  Enabled: false
+
+Style/AlignParameters:
+  Enabled: false
+
+Style/BracesAroundHashParameters:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/MultilineMethodCallIndentation:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
