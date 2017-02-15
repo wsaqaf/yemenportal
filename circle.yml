@@ -1,0 +1,13 @@
+dependencies:
+  post:
+    - bin/setup
+
+test:
+  post:
+    - bundle exec rubocop
+
+deployment:
+  staging:
+    branch: master
+    commands:
+      - bundle exec cap staging deploy

@@ -11,6 +11,12 @@ def system!(*args)
 end
 
 chdir APP_ROOT do
+
+  ["puma.rb"].each do |config_file|
+    unless File.exist?("config/#{config_file}")
+      system "cp config/examples/#{config_file} config/#{config_file}"
+    end
+  end
   def env_sample_vars
     File.read('.env.sample').each_line.inject({}) do |variables, line|
       variable = line.split('=')[0]

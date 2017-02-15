@@ -1,24 +1,31 @@
-# README
+Yemenportal
+================
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Ruby on Rails
+-------------
 
-Things you may want to cover:
+This application requires:
 
-* Ruby version
+- Ruby 2.2.3
+- Rails 5.0.1
 
-* System dependencies
+Getting Started
+---------------
 
-* Configuration
+Documentation and Support
+-------------------------
+For documentation API methods we used apipie gem. More information https://github.com/Apipie/apipie-rails
+Issues
+-------------
 
-* Database creation
+Similar Projects
+----------------
 
-* Database initialization
+Contributing
+------------
 
-* How to run the test suite
+Credits
+-------
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+License
+-------
