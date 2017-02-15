@@ -1,0 +1,24 @@
+# Ignore config dirs.
+/.bundle
+/.rspec
+
+# Ignore bundled gems and bower libs
+/vendor/bundle
+/vendor/assets/components
+/node_modules
+
+# Ignore all logfiles and tempfiles.
+/log/*.log
+/tmp
+
+# Ignore config files
+.env
+/config/database.yml
+/config/secrets.yml
+
+# Ignore code coverage by tests.
+/coverage
+
+/db/schema.rb
+
+/config/puma.rb
