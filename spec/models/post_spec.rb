@@ -1,5 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Post, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe Post do
+  %i(title pub_date link).each do |field|
+    it { should validate_presence_of(field) }
+  end
 end

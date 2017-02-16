@@ -1,8 +1,8 @@
 FactoryGirl.define do
   factory :post do
-    description "MyText"
-    pub_date "2017-02-16"
-    link "MyString"
-    title "MyString"
+    sequence(:description) { |n| "Description_#{n}" }
+    sequence(:title) { |n| "Title_#{n}" }
+    sequence(:link) { |n| "Link_#{n}" }
+    pub_date Time.new
   end
 end
