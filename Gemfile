@@ -18,6 +18,7 @@ gem 'simple_form'
 gem 'slim-rails'
 
 gem 'foundation-rails', '~> 6.3'
+gem 'will_paginate-foundation'
 
 group :development do
   gem 'web-console', '>= 3.3.0'
@@ -32,6 +33,7 @@ group :development do
   gem 'capistrano-rbenv'
   gem 'capistrano3-puma'
   gem 'spring-commands-rspec'
+  gem 'annotate'
 end
 
 group :development, :test do
