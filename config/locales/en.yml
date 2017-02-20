@@ -21,3 +21,28 @@
 
 en:
   site_name: "YemenPortal"
+  menu:
+    categories: Categories
+    news:
+      name: News
+      new: Not Published
+      rejected: Rejected
+  category:
+    title: Category
+    base_list:
+      breaking: Breaking
+      local: Local
+      regional: Regional
+      international: International
+      economy: Economy
+      society: Society
+      health: Health
+      sports: Sports
+      reports: Reports
+      entertainment: Entertainment
+      opinion: Opinion
+      general: General
+    buttons:
+      create: Create
+      delete: Delete
+      add_category: Add Category
