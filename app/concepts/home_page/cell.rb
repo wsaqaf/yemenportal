@@ -14,7 +14,6 @@ class HomePage::Cell < Rails::View
   property :title, :link, :pub_date, :property
 
   def table_body
-    concept('home_page/item/cell', collection: model.to_a)
+    concept("home_page/item/cell", collection: model.to_a)
   end
-
 end
