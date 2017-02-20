@@ -1,10 +1,10 @@
 require "rails_helper"
 
 describe HomePageController, type: :request do
-  describe '#index' do
+  describe "#index" do
     let(:category) { create :category }
 
-    context 'without params' do
+    context "without params" do
       let(:do_request) { get "/" }
 
       it "show a main page" do
@@ -13,7 +13,7 @@ describe HomePageController, type: :request do
       end
     end
 
-    context 'with category params' do
+    context "with category params" do
       let(:do_request) { get "/home_page?category=#{category.name}" }
       let(:do_bed_request) { get "/home_page?magic_name" }
 
