@@ -1,8 +1,7 @@
 .columns.large-6.medium-8.small-12.small-centered.category_list
   .row.title
-    = link_to I18n.t('category.buttons.add_category'), new_category_path, class: 'button small float-right'
-    .text-left
-      = I18n.t('category.title')
+    = link_to I18n.t('category.buttons.add_category'), new_category_path, class: 'button small float-left'
+    = I18n.t('category.title')
     hr
 
   = table_body

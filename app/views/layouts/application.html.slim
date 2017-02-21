@@ -1,5 +1,5 @@
 doctype html
-html lang="en"
+html lang="ar" dir="rtl"
   head
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
@@ -12,12 +12,12 @@ html lang="en"
 
   body
     .top-bar
-      .top-bar-title
+      .top-bar-title.float-right
         strong = link_to I18n.t('site_name'), home_page_index_path
       span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
         button.menu-icon.dark data-toggle="" type="button"
       #responsive-menu
-        .top-bar-left
+        .top-bar-right
           ul.dropdown.menu data-dropdown-menu=""
             li
               = link_to I18n.t('menu.categories'), categories_path
