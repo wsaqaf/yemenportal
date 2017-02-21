@@ -1,10 +1,6 @@
 class HomePage::Cell < Application::Cell
   include WillPaginate::ActionView
 
-  def url_for(options)
-    parent_controller.url_for(options)
-  end
-
   def show
     render
   end

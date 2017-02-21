@@ -22,6 +22,7 @@
 en:
   site_name: "YemenPortal"
   menu:
+    sources: Sources
     categories: Categories
     news:
       name: News
@@ -46,3 +47,9 @@ en:
       create: Create
       delete: Delete
       add_category: Add Category
+  source:
+    title: Source
+    buttons:
+      create: Add source
+      delete: Remove
+      add_source: Add Source
