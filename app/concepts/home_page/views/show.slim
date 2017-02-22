@@ -1,0 +1,10 @@
+.top-bar.category_nav
+  .top-bar-left
+    ul.dropdown.menu data-dropdown-menu=""
+      - categories.each do |category|
+        li
+          = link_to category.name, home_page_index_path(category: category.name)
+
+.large-6.medium-8.small-12.small-centered.columns
+  = table_body
+  = will_paginate model, renderer: FoundationPagination::Rails

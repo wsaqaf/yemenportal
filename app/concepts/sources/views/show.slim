@@ -1,0 +1,8 @@
+.columns.large-6.medium-8.small-12.small-centered.category_list
+  .row.title
+    = link_to I18n.t('source.buttons.add_source'), new_source_path, class: 'button small float-left'
+    = I18n.t('source.title')
+    hr
+
+  = table_body
+  = will_paginate model, renderer: FoundationPagination::Rails
