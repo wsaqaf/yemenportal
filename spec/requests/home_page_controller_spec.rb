@@ -9,6 +9,7 @@ describe HomePageController, type: :request do
 
       it "show a main page" do
         do_request
+
         expect(response).to have_http_status(:ok)
       end
     end
@@ -19,11 +20,13 @@ describe HomePageController, type: :request do
 
       it "show posts by category" do
         do_request
+
         expect(response).to have_http_status(:ok)
       end
 
       it "show a main page with incorrect params" do
         do_bed_request
+
         expect(response).to have_http_status(:ok)
       end
     end

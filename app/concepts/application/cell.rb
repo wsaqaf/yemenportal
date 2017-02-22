@@ -26,6 +26,10 @@ class Application::Cell < Rails::View
     will_paginate(model, renderer: BootstrapPagination::Rails)
   end
 
+  def url_for(options)
+    parent_controller.url_for(options)
+  end
+
   def self.option(*array)
     array.each do |option|
       define_method(option) do
