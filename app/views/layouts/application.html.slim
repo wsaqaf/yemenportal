@@ -1,5 +1,5 @@
 doctype html
-html lang="ar" dir="rtl"
+html lang="en"
   head
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
@@ -12,23 +12,9 @@ html lang="ar" dir="rtl"
 
   body
     .top-bar
-      .top-bar-title.float-right
-        strong = link_to I18n.t('site_name'), home_page_index_path
-      span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
-        button.menu-icon.dark data-toggle="" type="button"
-      #responsive-menu
-        .top-bar-right
-          ul.dropdown.menu data-dropdown-menu=""
-            li
-              = link_to I18n.t('menu.sources'), sources_path
-            li
-              = link_to I18n.t('menu.categories'), categories_path
-            li
-              = link_to I18n.t('menu.news.name'), '#'
-              ul.menu.vertical
-                li
-                  = link_to I18n.t('menu.news.new'), '#'
-                li
-                  = link_to I18n.t('menu.news.rejected'), '#'
+      .top-bar-left
+        ul.dropdown.menu data-dropdown-menu=""
+          li.menu-text = I18n.t('site_name')
+
 
     == yield

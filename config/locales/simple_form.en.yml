@@ -10,11 +10,6 @@ en:
       # html: '<abbr title="required">*</abbr>'
     error_notification:
       default_message: "Please review the problems below:"
-    labels:
-      category:
-        name: 'Password'
-      source:
-        link: Source link
     # Examples
     # labels:
     #   defaults:

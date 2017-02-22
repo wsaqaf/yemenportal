@@ -1,6 +1,0 @@
-.columns.large-6.medium-8.small-12.small-centered.category_list
-  = simple_form_for model do |f|
-    = f.input :link
-    .button-group
-      = link_to t(:back), sources_path, class: "button secondary"
-      = f.submit I18n.t('source.buttons.create'), class: "button"

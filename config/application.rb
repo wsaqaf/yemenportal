@@ -20,9 +20,6 @@ module Yemenportal
   class Application < Rails::Application
 
     config.generators do |g|
-      g.stylesheets = false
-      g.javascripts = false
-      g.helper = false
       g.test_framework :rspec,
         fixtures: true,
         view_specs: false,
