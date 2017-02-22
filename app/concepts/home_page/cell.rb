@@ -8,7 +8,7 @@ class HomePage::Cell < Application::Cell
   private
 
   option :categories
-  property :title, :link, :pub_date, :property
+  property :title, :link, :published_at, :property
 
   def table_body
     concept("home_page/item/cell", collection: model.to_a)

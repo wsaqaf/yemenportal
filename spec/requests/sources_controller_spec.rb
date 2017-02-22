@@ -6,6 +6,7 @@ describe SourcesController, type: :request do
 
     it "show a main page" do
       do_request
+
       expect(response).to be_success
     end
   end
@@ -17,6 +18,7 @@ describe SourcesController, type: :request do
     context "seccess reques" do
       it "redirect to sources list" do
         do_request
+
         expect(response.status).to eq 302
         expect(response).to redirect_to(sources_path)
       end
@@ -27,6 +29,7 @@ describe SourcesController, type: :request do
 
       it "redirect to create form" do
         do_request
+
         expect(response.status).to eq 200
         expect(response).not_to redirect_to(sources_path)
       end
@@ -39,6 +42,7 @@ describe SourcesController, type: :request do
 
     it "redirect to sources list" do
       do_request
+
       expect(response.status).to eq 302
       expect(response).to redirect_to(sources_path)
     end
@@ -49,6 +53,7 @@ describe SourcesController, type: :request do
 
     it "redirect to sources list" do
       do_request
+
       expect(response.status).to eq 200
     end
   end
