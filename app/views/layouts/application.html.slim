@@ -20,6 +20,8 @@ html lang="ar" dir="rtl"
         .top-bar-right
           ul.dropdown.menu data-dropdown-menu=""
             li
+              = link_to I18n.t('menu.sources'), sources_path
+            li
               = link_to I18n.t('menu.categories'), categories_path
             li
               = link_to I18n.t('menu.news.name'), '#'
