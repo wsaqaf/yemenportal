@@ -15,5 +15,7 @@ class Post < ApplicationRecord
   has_many :post_category
   has_many :categories, through: :post_category
 
-  validates :title, :pub_date, :link, presence: true
+  validates :title, :published_at, :link, presence: true
+
+  scope :ordered_by_publication_date, -> { order("published_at DESC") }
 end

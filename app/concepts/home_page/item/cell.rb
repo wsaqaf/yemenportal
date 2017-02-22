@@ -3,5 +3,5 @@ class HomePage::Item::Cell < Application::Cell
     render
   end
 
-  property :title, :link, :pub_date, :description
+  property :title, :link, :published_at, :description
 end
