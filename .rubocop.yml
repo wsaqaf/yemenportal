@@ -12,19 +12,9 @@ AllCops:
     - "app/views/**/*"
     - "config.ru"
     - "Rakefile"
-    - "app/channels/application_cable/**"
-    - "spec/spec_helper.rb"
 
-RSpec/MultipleExpectations:
-  Exclude:
-    - "spec/requests/*"
-
-Style/ConditionalAssignment:
-  Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - "spec/**/*"
+Lint/EndAlignment:
+  AlignWith: variable
 
 Lint/Eval:
   Enabled: true
