@@ -17,6 +17,6 @@
 # Ignore code coverage by tests.
 /coverage
 
-#/db/schema.rb
+/db/schema.rb
 
 /config/puma.rb

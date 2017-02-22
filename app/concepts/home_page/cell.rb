@@ -1,9 +1,5 @@
-class HomePage::Cell < Rails::View
+class HomePage::Cell < Application::Cell
   include WillPaginate::ActionView
-
-  def url_for(options)
-    parent_controller.url_for(options)
-  end
 
   def show
     render
@@ -11,7 +7,8 @@ class HomePage::Cell < Rails::View
 
   private
 
-  property :title, :link, :pub_date, :property
+  option :categories
+  property :title, :link, :published_at, :property
 
   def table_body
     concept("home_page/item/cell", collection: model.to_a)

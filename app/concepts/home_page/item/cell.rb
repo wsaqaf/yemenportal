@@ -1,7 +1,7 @@
-class HomePage::Item::Cell < Rails::View
+class HomePage::Item::Cell < Application::Cell
   def show
     render
   end
 
-  property :title, :link, :pub_date, :description
+  property :title, :link, :published_at, :description
 end
