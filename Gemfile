@@ -19,6 +19,8 @@ gem 'slim-rails'
 gem 'foundation-rails', '~> 6.3'
 gem 'will_paginate-foundation'
 gem "seedbank"
+gem "sidekiq"
+gem "whenever", require: false
 
 group :development do
   gem 'web-console', '>= 3.3.0'

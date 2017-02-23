@@ -9,5 +9,7 @@
 #
 
 class Source < ApplicationRecord
+  has_many :posts
+
   validates :link, presence: true
 end
