@@ -12,7 +12,7 @@ describe PostsFetcherJob do
       allow(RSS::Parser).to receive(:parse).and_return(feed)
 
       expect(Post).to receive(:create).with({ description: "description", link: "link",
-        published_at: item.pubDate, title: "title", source: source, category_id: source.category_id })
+        published_at: item.pubDate, title: "title", source: source, categories: [source.category] })
 
       subject.perform(15)
     end
