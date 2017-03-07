@@ -9,6 +9,7 @@
 #
 
 class Category < ApplicationRecord
+  has_many :sources
   has_many :post_category
   has_many :posts, through: :post_category
 

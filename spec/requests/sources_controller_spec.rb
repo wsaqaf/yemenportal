@@ -36,6 +36,47 @@ describe SourcesController, type: :request do
     end
   end
 
+  describe "#edit" do
+    let(:source) { create :source }
+    let(:do_request) { get "/sources/#{source.id}/edit" }
+
+    it "source" do
+      do_request
+
+      expect(response).to be_success
+    end
+  end
+
+  describe "#update" do
+    let(:source) { create :source }
+    let(:do_request) { put "/sources/#{source.id}", params: { source: { link: '1234', category_id: source.category_id }} }
+    let(:do_bed_request) { put "/sources/#{source.id}", params: { source: { link: '', category_id: source.category_id } } }
+
+    it "source params" do
+      do_request
+
+      expect(response).to redirect_to(sources_path)
+    end
+
+    it "source fails" do
+      do_bed_request
+
+      expect(response.status).to eq 200
+      expect(response).not_to redirect_to(sources_path)
+    end
+  end
+
+  describe "#destroy" do
+    let(:source) { create :source }
+    let(:do_request) { delete "/sources/#{source.id}" }
+
+    it "source" do
+      do_request
+
+      expect(response).to redirect_to(sources_path)
+    end
+  end
+
   describe "#destroy" do
     let(:source) { create :source }
     let(:do_request) { delete "/sources/#{source.id}" }
