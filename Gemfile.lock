@@ -359,7 +359,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   seedbank
   shoulda-matchers
-  sidekiq
+  sidekiq (~> 4.2)
   simple_form
   simplecov
   slim-rails

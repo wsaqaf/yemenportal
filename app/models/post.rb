@@ -25,4 +25,5 @@ class Post < ApplicationRecord
   validates :title, :published_at, :link, presence: true
 
   scope :ordered_by_publication_date, -> { order("published_at DESC") }
+  scope :source_posts, ->(source_id) { ordered_by_publication_date.where(source_id: source_id) }
 end
