@@ -19,7 +19,7 @@ class SourcesController < ApplicationController
 
   def new
     source = Source.new
-    render cell: :form, model: source, options: {categories: categories}
+    render cell: :form, model: source, options: { categories: categories }
   end
 
   def destroy
@@ -28,7 +28,7 @@ class SourcesController < ApplicationController
   end
 
   def edit
-    render cell: :form, model: @source, options: {categories: categories}
+    render cell: :form, model: @source, options: { categories: categories }
   end
 
   def update
@@ -37,7 +37,7 @@ class SourcesController < ApplicationController
       @source.save
       redirect_to sources_path
     else
-      render cell: :form, model: @source, options: {categories: categories}
+      render cell: :form, model: @source, options: { categories: categories }
     end
   end
 

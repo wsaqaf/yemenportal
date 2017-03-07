@@ -19,6 +19,9 @@ RSpec/MultipleExpectations:
   Exclude:
     - "spec/requests/*"
 
+RSpec/NamedSubject:
+  Enabled: false
+
 Style/ConditionalAssignment:
   Enabled: false
 

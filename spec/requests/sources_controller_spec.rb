@@ -49,8 +49,12 @@ describe SourcesController, type: :request do
 
   describe "#update" do
     let(:source) { create :source }
-    let(:do_request) { put "/sources/#{source.id}", params: { source: { link: '1234', category_id: source.category_id }} }
-    let(:do_bed_request) { put "/sources/#{source.id}", params: { source: { link: '', category_id: source.category_id } } }
+    let(:do_request) do
+      put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id } }
+    end
+    let(:do_bed_request) do
+      put "/sources/#{source.id}", params: { source: { link: "", category_id: source.category_id } }
+    end
 
     it "source params" do
       do_request

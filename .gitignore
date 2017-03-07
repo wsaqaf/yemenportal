@@ -20,3 +20,4 @@
 /db/schema.rb
 
 /config/puma.rb
+dump.rdb
