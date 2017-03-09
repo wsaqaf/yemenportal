@@ -11,7 +11,7 @@
 #  role       :enum             default("MEMBER"), not null
 #
 
-require 'rails_helper'
+require "rails_helper"
 
 describe User do
   %i(email role).each do |field|
