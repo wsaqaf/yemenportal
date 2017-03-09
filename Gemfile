@@ -19,12 +19,9 @@ gem 'slim-rails'
 gem 'foundation-rails', '~> 6.3'
 gem 'will_paginate-foundation'
 gem "seedbank"
-<<<<<<< Updated upstream
-=======
 gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
 gem "enumerize"
->>>>>>> Stashed changes
 
 group :development do
   gem 'web-console', '>= 3.3.0'
