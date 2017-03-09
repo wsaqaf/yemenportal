@@ -52,7 +52,7 @@ describe SourcesController, type: :request do
     let(:do_request) do
       put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id } }
     end
-    let(:do_bed_request) do
+    let(:do_bad_request) do
       put "/sources/#{source.id}", params: { source: { link: "", category_id: source.category_id } }
     end
 
@@ -63,7 +63,7 @@ describe SourcesController, type: :request do
     end
 
     it "source fails" do
-      do_bed_request
+      do_bad_request
 
       expect(response.status).to eq 200
       expect(response).not_to redirect_to(sources_path)
