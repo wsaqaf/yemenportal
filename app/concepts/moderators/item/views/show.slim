@@ -1,0 +1,6 @@
+.row
+  .column.large-3
+    = full_name
+  .column.large-3
+    = email
+  = link_to t('user.moderator.buttons.remove'), moderator_path(model), method: :delete, class: "button float-left tiny alert"
