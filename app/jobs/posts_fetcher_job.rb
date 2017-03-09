@@ -10,7 +10,7 @@ class PostsFetcherJob < ActiveJob::Base
 
       feed.items.select { |item| posts.empty? || item.pubDate > posts.first }.each do |item|
         Post.create(description: item.description, link: item.link, published_at: item.pubDate, source: source,
-          title: item.title)
+          title: item.title, categories: [source.category])
       end
     end
   end
