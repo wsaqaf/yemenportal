@@ -2,13 +2,13 @@
 #
 # Table name: posts
 #
-#  id          :integer          not null, primary key
-#  description :text
-#  pub_date    :datetime         not null
-#  link        :string           not null
-#  title       :string           not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id           :integer          not null, primary key
+#  description  :text
+#  published_at :datetime         not null
+#  link         :string           not null
+#  title        :string           not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 
 class Post < ApplicationRecord

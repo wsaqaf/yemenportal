@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170221124611) do
+ActiveRecord::Schema.define(version: 20170309122212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,11 +32,11 @@ ActiveRecord::Schema.define(version: 20170221124611) do
 
   create_table "posts", force: :cascade do |t|
     t.text     "description"
-    t.datetime "published_at",    null: false
-    t.string   "link",        null: false
-    t.string   "title",       null: false
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "published_at", null: false
+    t.string   "link",         null: false
+    t.string   "title",        null: false
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
   end
 
   create_table "sources", force: :cascade do |t|
@@ -44,6 +44,9 @@ ActiveRecord::Schema.define(version: 20170221124611) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+# Could not dump table "users" because of following StandardError
+#   Unknown type 'user_role' for column 'role'
 
   add_foreign_key "post_categories", "categories", on_delete: :cascade
   add_foreign_key "post_categories", "posts", on_delete: :cascade
