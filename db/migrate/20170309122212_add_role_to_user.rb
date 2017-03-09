@@ -1,4 +1,4 @@
-class AddRolesToUsers < ActiveRecord::Migration[5.0]
+class AddRoleToUser < ActiveRecord::Migration[5.0]
   def up
     execute <<-SQL
       CREATE TYPE user_role AS ENUM ('ADMIN', 'MODERATOR', 'MEMBER');
