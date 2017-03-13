@@ -19,6 +19,15 @@ RSpec/MultipleExpectations:
   Exclude:
     - "spec/requests/*"
 
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
 Style/ConditionalAssignment:
   Enabled: false
 
