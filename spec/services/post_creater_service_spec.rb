@@ -14,7 +14,7 @@ describe PostCreaterService do
       it "post created with item fields" do
         post = Post.find_by(published_at: item.pubDate)
         expect(post.attributes).to include("description" => item.description, "link" => item.link,
-          "published_at" => item.pubDate, "source_id" => source.id, "title" => item.title)
+          "source_id" => source.id, "title" => item.title)
       end
 
       it "post has category" do
