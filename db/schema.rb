@@ -37,12 +37,17 @@ ActiveRecord::Schema.define(version: 20170309124715) do
     t.string   "title",        null: false
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "source_id"
+    t.index ["published_at"], name: "index_posts_on_published_at", using: :btree
+    t.index ["source_id"], name: "index_posts_on_source_id", using: :btree
   end
 
   create_table "sources", force: :cascade do |t|
-    t.string   "link",       null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "link",        null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "category_id"
+    t.index ["category_id"], name: "index_sources_on_category_id", using: :btree
   end
 
 # Could not dump table "users" because of following StandardError
@@ -50,4 +55,5 @@ ActiveRecord::Schema.define(version: 20170309124715) do
 
   add_foreign_key "post_categories", "categories", on_delete: :cascade
   add_foreign_key "post_categories", "posts", on_delete: :cascade
+  add_foreign_key "sources", "categories"
 end

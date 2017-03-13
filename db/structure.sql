@@ -131,7 +131,8 @@ CREATE TABLE posts (
     link character varying NOT NULL,
     title character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    source_id integer
 );
 
 
@@ -171,7 +172,8 @@ CREATE TABLE sources (
     id integer NOT NULL,
     link character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    category_id integer
 );
 
 
@@ -334,6 +336,27 @@ CREATE INDEX index_post_categories_on_post_id ON post_categories USING btree (po
 
 
 --
+-- Name: index_posts_on_published_at; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_published_at ON posts USING btree (published_at);
+
+
+--
+-- Name: index_posts_on_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
+
+
+--
+-- Name: index_sources_on_category_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sources_on_category_id ON sources USING btree (category_id);
+
+
+--
 -- Name: post_categories fk_rails_1c8744edf5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -350,6 +373,14 @@ ALTER TABLE ONLY post_categories
 
 
 --
+-- Name: sources fk_rails_b8c19b584c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sources
+    ADD CONSTRAINT fk_rails_b8c19b584c FOREIGN KEY (category_id) REFERENCES categories(id);
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -360,6 +391,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170217105346'),
 ('20170218124231'),
 ('20170221124611'),
+('20170222142555'),
+('20170306084300'),
 ('20170309123832'),
 ('20170309124715');
 

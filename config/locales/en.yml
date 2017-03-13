@@ -44,6 +44,8 @@ en:
   source:
     title: Source
     buttons:
+      update: Update
+      edit: Edit
       create: Add source
       delete: Remove
       add_source: Add Source

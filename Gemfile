@@ -20,6 +20,8 @@ gem 'foundation-rails', '~> 6.3'
 gem 'will_paginate-foundation'
 gem "seedbank"
 gem "enumerize"
+gem "sidekiq", '~> 4.2'
+gem "whenever", require: false
 
 group :development do
   gem 'web-console', '>= 3.3.0'
