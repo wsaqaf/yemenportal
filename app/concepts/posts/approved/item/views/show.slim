@@ -1,0 +1,9 @@
+.row.news_block
+  .title
+    = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left tiny alert"
+    = link_to title, link
+  .date
+    = l published_at, format: :created_at
+  .description
+    = description
+hr

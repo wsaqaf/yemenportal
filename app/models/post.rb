@@ -10,6 +10,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  source_id    :integer
+#  state        :string           default("pending"), not null
 #
 # Indexes
 #
@@ -18,6 +19,8 @@
 #
 
 class Post < ApplicationRecord
+  extend Enumerize
+
   has_many :post_category
   has_many :categories, through: :post_category
   belongs_to :source
@@ -26,4 +29,11 @@ class Post < ApplicationRecord
 
   scope :ordered_by_publication_date, -> { order("published_at DESC") }
   scope :source_posts, ->(source_id) { ordered_by_publication_date.where(source_id: source_id) }
+  scope :pending_posts, -> { where(state: :pending).order("published_at DESC") }
+  scope :approved_posts, -> { where(state: :approved).order("published_at DESC") }
+  scope :rejected_posts, -> { where(state: :rejected).order("published_at DESC") }
+
+  scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
+
+  enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 end

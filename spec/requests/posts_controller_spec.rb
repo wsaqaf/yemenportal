@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe HomePageController, type: :request do
+describe PostsController, type: :request do
   describe "#index" do
     let(:category) { create :category }
 
@@ -15,8 +15,8 @@ describe HomePageController, type: :request do
     end
 
     context "with category params" do
-      let(:do_request) { get "/home_page?category=#{category.name}" }
-      let(:do_bed_request) { get "/home_page?magic_name" }
+      let(:do_request) { get "/posts?category=#{category.name}" }
+      let(:do_bed_request) { get "/posts?magic_name" }
 
       it "show posts by category" do
         do_request
@@ -29,6 +29,19 @@ describe HomePageController, type: :request do
 
         expect(response).to have_http_status(:ok)
       end
+    end
+  end
+
+  describe "#update" do
+    let(:post) { create :post }
+    let(:headers) { { "HTTP_REFERER" => "some_place" } }
+    let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "aprouved" } }
+
+    it "show a main page" do
+      do_request
+
+      expect(response).to have_http_status(302)
+      expect(response).to redirect_to("some_place")
     end
   end
 end

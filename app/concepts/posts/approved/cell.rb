@@ -1,9 +1,5 @@
-class HomePage::Cell < Application::Cell
+class Posts::Approved::Cell < Application::Cell
   include WillPaginate::ActionView
-
-  def show
-    render
-  end
 
   private
 
@@ -11,6 +7,6 @@ class HomePage::Cell < Application::Cell
   property :title, :link, :published_at, :property
 
   def table_body
-    concept("home_page/item/cell", collection: model.to_a)
+    concept("posts/approved/item/cell", collection: model.to_a)
   end
 end

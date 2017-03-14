@@ -1,4 +1,7 @@
 en:
+  time:
+    formats:
+      created_at: "%F %H:%M"
   site_name: "YemenPortal"
   common_buttons:
     delete: Delete
@@ -11,8 +14,16 @@ en:
       moderators: Moderators
     news:
       name: News
-      new: Not Published
+      pending: Pending
       rejected: Rejected
+  post:
+    button:
+      show: Show
+      approve: Approve
+      reject: Reject
+      delete: Delete
+    pending:
+      title: Pending Posts
   category:
     title: Category
     base_list:
