@@ -1,6 +1,7 @@
 .news_block {
-  max-height: 7em;
-  overflow-y: auto;
+  max-height: 6.5rem;
+  overflow-y: hidden;
+  overflow-x: scroll;
   margin-top: 0.4em;
   text-align: right;
   .title {
@@ -11,7 +12,6 @@
   }
   .description {
     font-size: 0.85em;
-    background-color: #E4E4D4;
   }
 }
 
