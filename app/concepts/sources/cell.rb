@@ -1,8 +1,4 @@
 class Sources::Cell < Application::Cell
-  def show
-    render
-  end
-
   private
 
   property :link

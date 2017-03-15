@@ -13,22 +13,29 @@ html lang="ar" dir="rtl"
   body
     .top-bar
       .top-bar-title.float-right
-        strong = link_to I18n.t('site_name'), home_page_index_path
+        strong = link_to t('site_name'), home_page_index_path
       span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
         button.menu-icon.dark data-toggle="" type="button"
       #responsive-menu
         .top-bar-right
           ul.dropdown.menu data-dropdown-menu=""
             li
-              = link_to I18n.t('menu.sources'), sources_path
+              = link_to t('menu.sources'), sources_path
             li
-              = link_to I18n.t('menu.categories'), categories_path
+              = link_to t('menu.categories'), categories_path
             li
-              = link_to I18n.t('menu.news.name'), '#'
+              = link_to t('menu.news.name'), '#'
               ul.menu.vertical
                 li
-                  = link_to I18n.t('menu.news.new'), '#'
+                  = link_to t('menu.news.new'), '#'
                 li
-                  = link_to I18n.t('menu.news.rejected'), '#'
+                  = link_to t('menu.news.rejected'), '#'
+            li
+              = link_to t('menu.users.name'), '#'
+              ul.menu.vertical
+                li
+                  = link_to t('menu.users.moderators'), moderators_path
+                li
+                  = link_to t('menu.news.admins'), '#'
 
     == yield
