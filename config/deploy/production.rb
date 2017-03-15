@@ -1,6 +1,7 @@
-server "server_url", user: "user_name", roles: [:app, :web, :db]
+server "inewscloud-vip.positive-dedicated.net", port: 33015, user: "yemenportal",
+  roles: [:app, :web, :db]
 
-set :branch, "prod"
+set :branch, "master"
 
 set :rails_env, 'production'
 
