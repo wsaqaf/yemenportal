@@ -11,5 +11,24 @@
   }
   .description {
     font-size: 0.85em;
+    background-color: #E4E4D4;
   }
 }
+
+.multiselect {
+  .selectize-input {
+    margin-top: 1rem;
+    padding: 0 !important;
+    div.item {
+
+      margin: 0.6rem 0.17rem 0.6rem 0.17rem !important;
+      color: white;
+      border-radius: 4px;
+      background-color: #4B4D4F;
+      .remove{
+        border-color: rgba(0,0,0,0);
+      }
+    }
+  }
+}
+

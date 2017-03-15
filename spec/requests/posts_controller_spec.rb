@@ -34,10 +34,18 @@ describe PostsController, type: :request do
 
   describe "#update" do
     let(:post) { create :post }
+    let(:category) { create :category }
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
     let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "aprouved" } }
+    let(:update_categories) { put "/posts/#{post.id}", params: { category_ids: [category.id] } }
 
-    it "show a main page" do
+    it "change category list" do
+      update_categories
+
+      expect(response).to have_http_status(200)
+    end
+
+    it "change post state" do
       do_request
 
       expect(response).to have_http_status(302)
