@@ -59,6 +59,7 @@ describe SourcesController, type: :request do
     it "source params" do
       do_request
 
+      allow(PostsFetcherJob).to receive(:perform_later)
       expect(response).to redirect_to(sources_path)
     end
 
