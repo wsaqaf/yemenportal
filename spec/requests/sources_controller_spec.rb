@@ -1,4 +1,5 @@
 require "rails_helper"
+include ActiveJob::TestHelper
 
 describe SourcesController, type: :request do
   describe "#new" do
@@ -49,6 +50,7 @@ describe SourcesController, type: :request do
 
   describe "#update" do
     let(:source) { create :source }
+    let(:posts_fetcher_job) { double }
     let(:do_request) do
       put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id } }
     end
@@ -57,9 +59,9 @@ describe SourcesController, type: :request do
     end
 
     it "source params" do
+      stub_const('PostsFetcherJob', posts_fetcher_job)
+      allow(posts_fetcher_job).to receive(:perform_later) { true }
       do_request
-
-      allow(PostsFetcherJob).to receive(:perform_later)
       expect(response).to redirect_to(sources_path)
     end
 

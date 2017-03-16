@@ -7,7 +7,7 @@ describe PostsFetcherJob do
   let(:invalid_source) { build(:source, link: "incorrect_source") }
 
   describe "#perform" do
-    it "create new post" do
+    it "create new post", slow: true do
       allow(Source).to receive(:find).and_return(source)
       allow(RSSParserService).to receive(:fetch_items).and_return([item])
 
