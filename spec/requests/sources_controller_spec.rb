@@ -59,7 +59,7 @@ describe SourcesController, type: :request do
     end
 
     it "source params" do
-      stub_const('PostsFetcherJob', posts_fetcher_job)
+      stub_const("PostsFetcherJob", posts_fetcher_job)
       allow(posts_fetcher_job).to receive(:perform_later) { true }
       do_request
       expect(response).to redirect_to(sources_path)
