@@ -132,7 +132,8 @@ CREATE TABLE posts (
     title character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    source_id integer
+    source_id integer,
+    state character varying DEFAULT 'pending'::character varying NOT NULL
 );
 
 
@@ -173,7 +174,8 @@ CREATE TABLE sources (
     link character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    category_id integer
+    category_id integer,
+    state character varying DEFAULT 'valid'::character varying
 );
 
 
@@ -394,6 +396,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170222142555'),
 ('20170306084300'),
 ('20170309123832'),
-('20170309124715');
+('20170309124715'),
+('20170313100316'),
+('20170316102614');
 
 

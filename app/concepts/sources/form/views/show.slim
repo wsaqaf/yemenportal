@@ -1,4 +1,8 @@
 .columns.large-6.medium-8.small-12.small-centered.category_list
+  - if error_message.present?
+    .alert.callout data-closable=""
+      p = error_message
+
   = simple_form_for model do |f|
     = f.input :link, as: :url
     = f.input :category_id, collection: categories, label_method: :name

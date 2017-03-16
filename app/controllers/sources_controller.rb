@@ -32,9 +32,10 @@ class SourcesController < ApplicationController
   end
 
   def update
-    @source.attributes = source_params
+    @source.attributes = source_params.merge(state: Source.state.valid)
     if @source.valid?
       @source.save
+      PostsFetcherJob.perform_later(@source.id)
       redirect_to sources_path
     else
       render cell: :form, model: @source, options: { categories: categories }

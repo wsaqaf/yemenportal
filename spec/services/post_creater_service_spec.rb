@@ -34,16 +34,12 @@ describe PostCreaterService do
       end
     end
 
-    context "module tests" do
+    describe "(module tests)" do
       let(:post) { build :post }
-      let(:categories_post) { double }
 
-      before do
+      it "post call save action" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
           title: item.title, source: source).and_return(post)
-      end
-
-      it "" do
         allow(post).to receive(:categories=).with([source.category]).and_return(post)
 
         expect(post).to receive(:save)
@@ -52,10 +48,21 @@ describe PostCreaterService do
       end
 
       it "not set category" do
+        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
+          title: item.title, source: source).and_return(post)
         allow(source).to receive(:category).and_return(nil)
         expect(post).not_to receive(:categories=)
 
         described_class.add_post(item, source)
+      end
+
+      %i(link pubDate title).each do |field|
+        it "rais error when #{field} is empty" do
+          allow(item).to receive(field).and_return(nil)
+
+          expect(source).to receive(:update).with(state: Source.state.incorrect_stucture)
+          described_class.add_post(item, source)
+        end
       end
     end
   end

@@ -43,6 +43,10 @@ en:
       admon: Admin
   source:
     title: Source
+    error:
+      invalid_state: Invalid
+      incorrect_path: Current RSS path is incorrect.
+      incorrect_stucture: Posts from this source has icorrect structure.
     buttons:
       update: Update
       edit: Edit
