@@ -34,7 +34,6 @@ group :development do
   gem 'capistrano-rails', '~> 1.1.0'
   gem 'capistrano-rails-console'
   gem 'capistrano-rbenv'
-  gem 'capistrano3-puma'
   gem 'spring-commands-rspec'
   gem 'annotate'
 end
