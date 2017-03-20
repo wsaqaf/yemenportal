@@ -16,7 +16,7 @@ describe PostsController, type: :request do
 
     context "with category params" do
       let(:do_request) { get "/posts?category=#{category.name}" }
-      let(:do_bed_request) { get "/posts?magic_name" }
+      let(:do_bad_request) { get "/posts?magic_name" }
 
       it "show posts by category" do
         do_request
@@ -25,7 +25,7 @@ describe PostsController, type: :request do
       end
 
       it "show a main page with incorrect params" do
-        do_bed_request
+        do_bad_request
 
         expect(response).to have_http_status(:ok)
       end
@@ -37,7 +37,7 @@ describe PostsController, type: :request do
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
     let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "aprouved" } }
 
-    it "show a main page" do
+    it "return 302 state and redirrect to back" do
       do_request
 
       expect(response).to have_http_status(302)

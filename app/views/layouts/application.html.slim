@@ -24,18 +24,18 @@ html lang="ar" dir="rtl"
             li
               = link_to t('menu.categories'), categories_path
             li
-              = link_to t('menu.news.name'), '#'
+              = link_to t('menu.posts.name'), '#'
               ul.menu.vertical
                 li
-                  = link_to t('menu.news.pending'), posts_path(state: 'pending')
+                  = link_to t('menu.posts.pending'), posts_path(state: 'pending')
                 li
-                  = link_to t('menu.news.rejected'), posts_path(state: 'rejected')
+                  = link_to t('menu.posts.rejected'), posts_path(state: 'rejected')
             li
               = link_to t('menu.users.name'), '#'
               ul.menu.vertical
                 li
                   = link_to t('menu.users.moderators'), moderators_path
                 li
-                  = link_to t('menu.news.admins'), '#'
+                  = link_to t('menu.posts.admins'), '#'
 
     == yield
