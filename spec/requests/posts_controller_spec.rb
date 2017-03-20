@@ -16,7 +16,7 @@ describe PostsController, type: :request do
 
     context "with category params" do
       let(:do_request) { get "/posts?category=#{category.name}" }
-      let(:do_bed_request) { get "/posts?magic_name" }
+      let(:do_bad_request) { get "/posts?magic_name" }
 
       it "show posts by category" do
         do_request
@@ -25,7 +25,7 @@ describe PostsController, type: :request do
       end
 
       it "show a main page with incorrect params" do
-        do_bed_request
+        do_bad_request
 
         expect(response).to have_http_status(:ok)
       end
@@ -33,10 +33,10 @@ describe PostsController, type: :request do
   end
 
   describe "#update" do
-    let(:post) { create :post }
-    let(:category) { create :category }
+    let(:post) { create :post, state: "rejected" }
+    let(:category) { create :category}
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
-    let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "aprouved" } }
+    let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "approved" } }
     let(:update_categories) { put "/posts/#{post.id}", params: { category_ids: [category.id] } }
 
     it "change category list" do
@@ -45,8 +45,8 @@ describe PostsController, type: :request do
       expect(response).to have_http_status(200)
     end
 
-    it "change post state" do
-      do_request
+    it "return 302 state and redirrect to back" do
+      expect{ do_request }.to change { Post.approved_posts.count }
 
       expect(response).to have_http_status(302)
       expect(response).to redirect_to("some_place")

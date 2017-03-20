@@ -12,8 +12,8 @@ en:
       name: Users
       admins: Admins
       moderators: Moderators
-    news:
-      name: News
+    posts:
+      name: Posts
       pending: Pending
       rejected: Rejected
   post:

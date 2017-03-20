@@ -1,4 +1,4 @@
-$( document ).ready(function() {
+$( document ).ready(function(){
   $('select.multiselect').selectize({
       plugins: ['remove_button', 'restore_on_backspace'],
       delimiter: ',',
@@ -11,13 +11,14 @@ $( document ).ready(function() {
       }
   });
 
-  $('.post_categories').change(function() {
+  $('.js-post-categories').change(function(){
+    var $this = $(this);
     var params, request;
 
     params = {category_ids: $(this).val()}
 
     request = {
-      url: ("/posts/" + $(this).data().id),
+      url: ("/posts/" + $this.data().id),
       dataType: "script",
       method: "PUT",
       data: params

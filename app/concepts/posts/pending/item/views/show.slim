@@ -10,5 +10,5 @@
     = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left alert"
 .row
   = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
-    class: "multiselect post_categories", multiple: true, data: {id: id}
+    class: "multiselect js-post-categories", multiple: true, data: {id: id}
 hr

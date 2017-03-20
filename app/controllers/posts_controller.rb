@@ -2,8 +2,8 @@ class PostsController < ApplicationController
   before_action :find_post, only: [:update]
 
   def index
-    if Category.find_by(name: params[:category])
-      posts = Category.find_by(name: params[:category]).posts
+    if category
+      posts = category.posts
     else
       posts = Post.all
     end
@@ -26,10 +26,14 @@ class PostsController < ApplicationController
   end
 
   def posts_state
-    @_state = Post.state.values.include?(params[:state]) ? params[:state] : Post.state.approved
+    @_state = Post.available_states.include?(params[:state]) ? params[:state] : Post.state.approved
   end
 
   def find_post
     @post = Post.find(params.fetch(:id))
+  end
+
+  def category
+    @_category = Category.find_by(name: params[:category])
   end
 end
