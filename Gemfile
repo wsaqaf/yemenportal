@@ -22,6 +22,7 @@ gem "seedbank"
 gem "enumerize"
 gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
+gem 'devise'
 
 group :development do
   gem 'web-console', '>= 3.3.0'

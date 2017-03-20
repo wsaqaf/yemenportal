@@ -37,5 +37,14 @@ html lang="ar" dir="rtl"
                   = link_to t('menu.users.moderators'), moderators_path
                 li
                   = link_to t('menu.news.admins'), '#'
-
+        .top-bar-left
+          ul.menu
+            - if current_user
+              li
+                = link_to 'Sign out', destroy_user_session_path, method: :delete if current_user
+            - else
+              li
+                = link_to 'Sign in', new_user_session_path
+              li
+                = link_to 'Sign up', new_user_registration_path
     == yield

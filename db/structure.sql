@@ -132,7 +132,8 @@ CREATE TABLE posts (
     title character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    source_id integer
+    source_id integer,
+    state character varying DEFAULT 'pending'::character varying NOT NULL
 );
 
 
@@ -173,7 +174,8 @@ CREATE TABLE sources (
     link character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    category_id integer
+    category_id integer,
+    state character varying DEFAULT 'valid'::character varying
 );
 
 
@@ -202,12 +204,21 @@ ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
 
 CREATE TABLE users (
     id integer NOT NULL,
-    email character varying,
+    email character varying DEFAULT ''::character varying NOT NULL,
     first_name character varying,
     last_name character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    role user_role DEFAULT 'MEMBER'::user_role NOT NULL
+    role user_role DEFAULT 'MEMBER'::user_role NOT NULL,
+    encrypted_password character varying DEFAULT ''::character varying NOT NULL,
+    reset_password_token character varying,
+    reset_password_sent_at timestamp without time zone,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0 NOT NULL,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip inet,
+    last_sign_in_ip inet
 );
 
 
@@ -357,6 +368,20 @@ CREATE INDEX index_sources_on_category_id ON sources USING btree (category_id);
 
 
 --
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
+-- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
+
+
+--
 -- Name: post_categories fk_rails_1c8744edf5; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -394,6 +419,9 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170222142555'),
 ('20170306084300'),
 ('20170309123832'),
-('20170309124715');
+('20170309124715'),
+('20170313100316'),
+('20170316102614'),
+('20170317114823');
 
 
