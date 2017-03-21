@@ -7,7 +7,6 @@
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #  category_id :integer
-#  state       :string           default("valid")
 #
 # Indexes
 #

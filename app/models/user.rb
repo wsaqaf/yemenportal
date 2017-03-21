@@ -18,6 +18,10 @@
 #  last_sign_in_at        :datetime
 #  current_sign_in_ip     :inet
 #  last_sign_in_ip        :inet
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#  unconfirmed_email      :string
 #
 # Indexes
 #
@@ -27,9 +31,9 @@
 
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable, :rememberable,
+  # :confirmable, :lockable, :timeoutable and :omniauthable, :rememberable
   devise :database_authenticatable, :registerable,
-         :recoverable, :trackable, :validatable
+         :recoverable, :trackable, :validatable, :rememberable
   extend Enumerize
   validates :email, :role, presence: true
   validates :email, uniqueness: true

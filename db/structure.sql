@@ -174,8 +174,7 @@ CREATE TABLE sources (
     link character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    category_id integer,
-    state character varying DEFAULT 'valid'::character varying
+    category_id integer
 );
 
 
@@ -218,8 +217,19 @@ CREATE TABLE users (
     current_sign_in_at timestamp without time zone,
     last_sign_in_at timestamp without time zone,
     current_sign_in_ip inet,
-    last_sign_in_ip inet
+    last_sign_in_ip inet,
+    confirmation_token character varying,
+    confirmed_at timestamp without time zone,
+    confirmation_sent_at timestamp without time zone,
+    unconfirmed_email character varying
 );
+
+
+--
+-- Name: COLUMN users.role; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN users.role IS 'User role (Available: ADMIN, MODERATOR, MEMBER)';
 
 
 --
@@ -421,7 +431,6 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170309123832'),
 ('20170309124715'),
 ('20170313100316'),
-('20170316102614'),
 ('20170317114823');
 
 
