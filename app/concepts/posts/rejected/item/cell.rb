@@ -3,5 +3,5 @@ class Posts::Rejected::Item::Cell < Application::Cell
     render
   end
 
-  property :title, :link, :published_at, :description, :id
+  property :title, :link, :published_at, :description, :id, :category_ids
 end

@@ -14,11 +14,16 @@ class PostsController < ApplicationController
   end
 
   def update
-    @post.update(state: params.fetch(:state))
-    redirect_to :back
+    @post.update(posts_params)
+
+    posts_params[:state].present? ? redirect_to(:back) : render(nothing: true)
   end
 
   private
+
+  def posts_params
+    params.permit(:state, category_ids: [])
+  end
 
   def posts_state
     @_state = Post.available_states.include?(params[:state]) ? params[:state] : Post.state.approved
