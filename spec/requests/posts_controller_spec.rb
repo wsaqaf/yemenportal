@@ -33,9 +33,9 @@ describe PostsController, type: :request do
   end
 
   describe "#update" do
-    let(:post) { create :post, state: "rejected" }
     let(:category) { create :category}
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
+    let(:post) { create :post, state: 'pending' }
     let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "approved" } }
     let(:update_categories) { put "/posts/#{post.id}", params: { category_ids: [category.id] } }
 
@@ -48,6 +48,7 @@ describe PostsController, type: :request do
     it "return 302 state and redirrect to back" do
       expect{ do_request }.to change { Post.approved_posts.count }
 
+      expect(Post.find(post.id).state).to eql('approved')
       expect(response).to have_http_status(302)
       expect(response).to redirect_to("some_place")
     end

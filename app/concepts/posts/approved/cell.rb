@@ -7,6 +7,6 @@ class Posts::Approved::Cell < Application::Cell
   property :title, :link, :published_at, :property
 
   def table_body
-    concept("posts/approved/item/cell", collection: model.to_a)
+    concept("posts/approved/item/cell", collection: model)
   end
 end

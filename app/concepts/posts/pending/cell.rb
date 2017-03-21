@@ -7,6 +7,6 @@ class Posts::Pending::Cell < Application::Cell
   property :title, :link, :published_at, :property
 
   def table_body
-    concept("posts/pending/item/cell", collection: model.to_a)
+    concept("posts/pending/item/cell", collection: model)
   end
 end

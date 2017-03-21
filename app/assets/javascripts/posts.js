@@ -1,4 +1,4 @@
-$( document ).ready(function(){
+$(document).ready(function(){
   $('select.multiselect').selectize({
       plugins: ['remove_button', 'restore_on_backspace'],
       delimiter: ',',
@@ -15,7 +15,7 @@ $( document ).ready(function(){
     var $this = $(this);
     var params, request;
 
-    params = {category_ids: $(this).val()}
+    params = {category_ids: $this.val()}
 
     request = {
       url: ("/posts/" + $this.data().id),
