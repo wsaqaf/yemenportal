@@ -33,7 +33,7 @@ describe PostsController, type: :request do
   end
 
   describe "#update" do
-    let(:category) { create :category }
+    let(:post) { create :post, state: "pending" }
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
     let(:post) { create :post, state: "pending" }
     let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "approved" } }
