@@ -22,6 +22,7 @@ gem "seedbank"
 gem "enumerize"
 gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
+gem "selectize-rails"
 
 group :development do
   gem 'web-console', '>= 3.3.0'
@@ -34,7 +35,6 @@ group :development do
   gem 'capistrano-rails', '~> 1.1.0'
   gem 'capistrano-rails-console'
   gem 'capistrano-rbenv'
-  gem 'capistrano3-puma'
   gem 'spring-commands-rspec'
   gem 'annotate'
 end

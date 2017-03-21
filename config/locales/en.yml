@@ -1,4 +1,8 @@
 en:
+  time:
+    formats:
+      created_at: "%F %H:%M"
+      logs_date: "%d%b %H:%M"
   site_name: "YemenPortal"
   common_buttons:
     delete: Delete
@@ -9,10 +13,18 @@ en:
       name: Users
       admins: Admins
       moderators: Moderators
-    news:
-      name: News
-      new: Not Published
+    posts:
+      name: Posts
+      pending: Pending
       rejected: Rejected
+  post:
+    button:
+      show: Show
+      approve: Approve
+      reject: Reject
+      delete: Delete
+    pending:
+      title: Pending Posts
   category:
     title: Category
     base_list:
@@ -43,6 +55,9 @@ en:
       admon: Admin
   source:
     title: Source
+    logs:
+      seccess: "Successfully fetched %{post_count} post."
+      failure: Something went wrong during fetching posts.
     error:
       invalid_state: Invalid
       incorrect_path: Current RSS path is incorrect.

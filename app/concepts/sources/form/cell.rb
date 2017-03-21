@@ -1,6 +1,6 @@
 class Sources::Form::Cell < Application::Cell
   property :link, :state
-  option :categories
+  option :categories, :logs
 
   private
 
@@ -10,5 +10,17 @@ class Sources::Form::Cell < Application::Cell
 
   def error_message
     t("source.error.#{state}") unless state.valid?
+  end
+
+  def source_logs
+    logs || []
+  end
+
+  def log_meassage(log)
+    if log.state.valid?
+      "#{l log.created_at, format: :logs_date} - #{t('source.logs.seccess', post_count: log.posts_count)}"
+    else
+      "#{l log.created_at, format: :logs_date} - #{t('source.logs.failure')}"
+    end
   end
 end

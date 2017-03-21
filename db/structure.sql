@@ -166,6 +166,39 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: source_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE source_logs (
+    id integer NOT NULL,
+    state character varying,
+    source_id integer NOT NULL,
+    posts_count integer DEFAULT 0,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: source_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE source_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: source_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE source_logs_id_seq OWNED BY source_logs.id;
+
+
+--
 -- Name: sources; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -204,12 +237,21 @@ ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
 
 CREATE TABLE users (
     id integer NOT NULL,
-    email character varying,
+    email character varying DEFAULT ''::character varying NOT NULL,
     first_name character varying,
     last_name character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    role user_role DEFAULT 'MEMBER'::user_role NOT NULL
+    role user_role DEFAULT 'MEMBER'::user_role NOT NULL,
+    encrypted_password character varying DEFAULT ''::character varying NOT NULL,
+    reset_password_token character varying,
+    reset_password_sent_at timestamp without time zone,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0 NOT NULL,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip inet,
+    last_sign_in_ip inet
 );
 
 
@@ -251,6 +293,13 @@ ALTER TABLE ONLY post_categories ALTER COLUMN id SET DEFAULT nextval('post_categ
 --
 
 ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+
+
+--
+-- Name: source_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs ALTER COLUMN id SET DEFAULT nextval('source_logs_id_seq'::regclass);
 
 
 --
@@ -308,6 +357,14 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
+-- Name: source_logs source_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs
+    ADD CONSTRAINT source_logs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sources sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -352,10 +409,31 @@ CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
 
 
 --
+-- Name: index_source_logs_on_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_source_logs_on_source_id ON source_logs USING btree (source_id);
+
+
+--
 -- Name: index_sources_on_category_id; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_sources_on_category_id ON sources USING btree (category_id);
+
+
+--
+-- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
+
+
+--
+-- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (reset_password_token);
 
 
 --
@@ -372,6 +450,14 @@ ALTER TABLE ONLY post_categories
 
 ALTER TABLE ONLY post_categories
     ADD CONSTRAINT fk_rails_419dd5143d FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE;
+
+
+--
+-- Name: source_logs fk_rails_8679f875d2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs
+    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id);
 
 
 --
@@ -398,6 +484,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170309123832'),
 ('20170309124715'),
 ('20170313100316'),
-('20170316102614');
+('20170316102614'),
+('20170317114823'),
+('20170321103023');
 
 

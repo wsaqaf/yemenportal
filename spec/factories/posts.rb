@@ -23,6 +23,8 @@ FactoryGirl.define do
     sequence(:description) { |n| "Description_#{n}" }
     sequence(:title) { |n| "Title_#{n}" }
     sequence(:link) { |n| "Link_#{n}" }
+    state "pending"
+    association :source
     published_at Time.new
   end
 end

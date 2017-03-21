@@ -17,6 +17,7 @@
 class Source < ApplicationRecord
   extend Enumerize
   has_many :posts
+  has_many :source_logs
   belongs_to :category, optional: true
 
   validates :link, presence: true

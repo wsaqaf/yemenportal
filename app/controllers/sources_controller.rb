@@ -28,7 +28,8 @@ class SourcesController < ApplicationController
   end
 
   def edit
-    render cell: :form, model: @source, options: { categories: categories }
+    logs = @source.source_logs.ordered
+    render cell: :form, model: @source, options: { categories: categories, logs: logs }
   end
 
   def update

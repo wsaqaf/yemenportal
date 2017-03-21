@@ -9,3 +9,8 @@
     .button-group
       = link_to t(:back), sources_path, class: "button secondary"
       = f.submit submit_button, class: "button"
+
+  .logs
+    - source_logs.each do |log|
+      .callout.secondary
+        p = log_meassage(log)
