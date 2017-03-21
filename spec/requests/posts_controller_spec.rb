@@ -33,13 +33,14 @@ describe PostsController, type: :request do
   end
 
   describe "#update" do
-    let(:post) { create :post }
+    let(:post) { create :post, state: 'pending' }
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
-    let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "aprouved" } }
+    let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "approved" } }
 
     it "return 302 state and redirrect to back" do
       do_request
 
+      expect(Post.find(post.id).state).to eql('approved')
       expect(response).to have_http_status(302)
       expect(response).to redirect_to("some_place")
     end
