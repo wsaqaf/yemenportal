@@ -10,6 +10,7 @@
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  source_id    :integer
+#  state        :string           default("pending"), not null
 #
 # Indexes
 #
