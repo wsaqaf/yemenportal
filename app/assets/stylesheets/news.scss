@@ -1,6 +1,7 @@
 .news_block {
-  max-height: 7em;
-  overflow-y: auto;
+  max-height: 6.5rem;
+  overflow-y: hidden;
+  overflow-x: scroll;
   margin-top: 0.4em;
   text-align: right;
   .title {
@@ -13,3 +14,21 @@
     font-size: 0.85em;
   }
 }
+
+.multiselect {
+  .selectize-input {
+    margin-top: 1rem;
+    padding: 0 !important;
+    div.item {
+
+      margin: 0.6rem 0.17rem 0.6rem 0.17rem !important;
+      color: white;
+      border-radius: 4px;
+      background-color: #4B4D4F;
+      .remove{
+        border-color: rgba(0,0,0,0);
+      }
+    }
+  }
+}
+

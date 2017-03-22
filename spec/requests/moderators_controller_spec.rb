@@ -4,12 +4,14 @@ describe ModeratorsController, type: :request do
   let(:user) { create(:user, role: "moderator") }
 
   describe "#destroy" do
-    let(:do_request) { delete "/moderators/#{user.id}", { "HTTP_REFERER" => "http://www.somewhere.net" } }
+    let(:user) { create(:user, role: "moderator") }
+    let(:do_request) { delete "/moderators/#{user.id}", headers: { "HTTP_REFERER" => "some_path" } }
 
-    xit "change moderator role" do
+    it "change moderator role" do
+      sign_in user
       do_request
 
-      expect(response).to redirect_to(:back)
+      expect(response).to redirect_to("some_path")
     end
   end
 
