@@ -26,11 +26,12 @@
 #
 
 class User < ApplicationRecord
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable, :rememberable,
-  devise :database_authenticatable, :registerable,
-         :recoverable, :trackable, :validatable
   extend Enumerize
+
+  # :confirmable, :lockable, :timeoutable and :omniauthable, :rememberable,
+  devise :database_authenticatable, :registerable, :recoverable, :trackable,
+          :validatable, :omniauthable, omniauth_providers: [:facebook, :twitter]
+
   validates :email, :role, presence: true
   validates :email, uniqueness: true
 
@@ -38,4 +39,16 @@ class User < ApplicationRecord
     i18n_scope: "user.roles"
 
   scope :moderators, -> { where(role: "MODERATOR") }
+
+  def self.from_omniauth(auth)
+    identity = Identity.find_by(provider: auth.provider, uid: auth.uid)
+
+    if identity.nil?
+      email = auth.info.email || "#{auth.info.nickname}_#{auth.provider}@yemenportal.com"
+      user = User.create_with(password: Devise.friendly_token[0, 20]).find_or_create_by(email: email)
+      identity = Identity.create(uid: auth.uid, provider: auth.provider, user: user)
+    end
+
+    identity.user
+  end
 end

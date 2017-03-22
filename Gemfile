@@ -22,7 +22,11 @@ gem "seedbank"
 gem "enumerize"
 gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
+
 gem 'devise'
+gem 'omniauth'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
 
 group :development do
   gem 'web-console', '>= 3.3.0'
