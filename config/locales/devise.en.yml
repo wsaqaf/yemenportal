@@ -7,6 +7,11 @@ en:
     sign_out: Sign out
     forgot_password: Forgot your password?
     confirmations:
+      confirm_mail: |
+        <p>Welcome %{email}!</p>
+        <p>You can confirm your account email through the link below:</p>
+      confirm: Confirm my account
+      not_send_confirmation: Didn't receive confirmation instructions?
       confirmed: "Your email address has been successfully confirmed."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
