@@ -41,7 +41,7 @@ html lang="ar" dir="rtl"
           ul.menu
             - if current_user
               li
-                = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete if current_user
+                = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete
             - else
               li
                 = link_to t('devise.log_in'), new_user_session_path
