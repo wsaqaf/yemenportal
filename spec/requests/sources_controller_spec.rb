@@ -16,7 +16,7 @@ describe SourcesController, type: :request do
     let(:params) { { source: { link: "www.as@mail.com" } } }
     let(:do_request) { post "/sources", params: params }
 
-    context "seccess reques" do
+    context "success reques" do
       it "redirect to sources list" do
         do_request
 

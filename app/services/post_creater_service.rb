@@ -3,6 +3,6 @@ class PostCreaterService
     post = Post.new(description: item.description, link: item.link, published_at: item.pubDate, source: source,
       title: item.title)
     post.categories = [source.category] if source.category.present?
-    source.update(state: Source.state.incorrect_stucture) unless post.save
+    source.update(state: Source.state.not_full_info) unless post.save
   end
 end

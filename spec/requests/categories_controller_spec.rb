@@ -15,7 +15,7 @@ describe CategoriesController, type: :request do
     let(:params) { { category: { name: "name" } } }
     let(:do_request) { post "/categories", params: params }
 
-    context "seccess reques" do
+    context "success reques" do
       it "redirect to categories list" do
         do_request
 

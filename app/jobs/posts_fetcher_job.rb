@@ -8,9 +8,12 @@ class PostsFetcherJob < ActiveJob::Base
       items = RSSParserService.fetch_items(open(source.link), source_id)
       items.each { |item| PostCreaterService.add_post(item, source) }
       SourceLog.create(source: source, posts_count: items.length) if source.state.valid?
-    rescue Errno::ENOENT, RSS::NotWellFormedError
+    rescue Errno::ENOENT
       SourceLog.create(source: source, state: :invalid)
       source.update(state: Source.state.incorrect_path)
+    rescue RSS::NotWellFormedError
+      SourceLog.create(source: source, state: :invalid)
+      source.update(state: Source.state.incorrect_stucture)
     end
   end
 end

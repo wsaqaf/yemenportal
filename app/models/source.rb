@@ -21,5 +21,5 @@ class Source < ApplicationRecord
   belongs_to :category, optional: true
 
   validates :link, presence: true
-  enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture], default: :valid
+  enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info], default: :valid
 end

@@ -18,5 +18,5 @@ require "rails_helper"
 
 describe Source do
   it { is_expected.to validate_presence_of(:link) }
-  it { is_expected.to enumerize(:state).in(:valid, :incorrect_path, :incorrect_stucture) }
+  it { is_expected.to enumerize(:state).in(:valid, :incorrect_path, :incorrect_stucture, :not_full_info) }
 end

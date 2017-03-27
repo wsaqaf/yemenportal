@@ -60,7 +60,7 @@ describe PostCreaterService do
         it "rais error when #{field} is empty" do
           allow(item).to receive(field).and_return(nil)
 
-          expect(source).to receive(:update).with(state: Source.state.incorrect_stucture)
+          expect(source).to receive(:update).with(state: Source.state.not_full_info)
           described_class.add_post(item, source)
         end
       end

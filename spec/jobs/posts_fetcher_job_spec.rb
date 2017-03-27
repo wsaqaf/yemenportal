@@ -17,20 +17,18 @@ describe PostsFetcherJob do
     end
 
     context "raise error" do
-      before do
-        allow(Source).to receive(:find).and_return(invalid_source)
-      end
-
       it "for nonexistent path(integration)" do
+        allow(Source).to receive(:find).and_return(invalid_source)
         expect(invalid_source).to receive(:update).with(state: Source.state.incorrect_path)
 
         subject.perform(15)
       end
 
       it "for non rss file" do
+        allow(Source).to receive(:find).and_return(source)
         allow(RSSParserService).to receive(:fetch_items).and_raise(RSS::NotWellFormedError)
 
-        expect(invalid_source).to receive(:update).with(state: Source.state.incorrect_path)
+        expect(source).to receive(:update).with(state: Source.state.incorrect_stucture)
 
         subject.perform(15)
       end
