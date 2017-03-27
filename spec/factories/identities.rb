@@ -3,7 +3,7 @@
 # Table name: identities
 #
 #  id         :integer          not null, primary key
-#  user_id    :integer
+#  user_id    :integer          not null
 #  provider   :string
 #  uid        :string
 #  created_at :datetime         not null

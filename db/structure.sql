@@ -94,7 +94,7 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 
 CREATE TABLE identities (
     id integer NOT NULL,
-    user_id integer,
+    user_id integer NOT NULL,
     provider character varying,
     uid character varying,
     created_at timestamp without time zone NOT NULL,
@@ -463,7 +463,7 @@ ALTER TABLE ONLY post_categories
 --
 
 ALTER TABLE ONLY identities
-    ADD CONSTRAINT fk_rails_5373344100 FOREIGN KEY (user_id) REFERENCES users(id);
+    ADD CONSTRAINT fk_rails_5373344100 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
