@@ -26,6 +26,10 @@
 #  invited_by_type        :string
 #  invited_by_id          :integer
 #  invitations_count      :integer          default("0")
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#  unconfirmed_email      :string
 #
 # Indexes
 #
@@ -40,8 +44,8 @@ class User < ApplicationRecord
   extend Enumerize
 
   # :confirmable, :lockable, :timeoutable and :omniauthable, :rememberable,
-  devise :invitable, :database_authenticatable, :registerable, :recoverable, :trackable,
-          :validatable, :omniauthable, omniauth_providers: [:facebook, :twitter]
+  devise :database_authenticatable, :registerable, :recoverable, :trackable, :confirmable, :invitable,
+         :validatable, :omniauthable, omniauth_providers: [:facebook, :twitter]
 
   validates :email, :role, presence: true
   validates :email, uniqueness: true
@@ -56,10 +60,18 @@ class User < ApplicationRecord
 
     if identity.nil?
       email = auth.info.email || "#{auth.info.nickname}_#{auth.provider}@yemenportal.com"
-      user = User.create_with(password: Devise.friendly_token[0, 20]).find_or_create_by(email: email)
-      identity = Identity.create(uid: auth.uid, provider: auth.provider, user: user)
+      identity = Identity.create(uid: auth.uid, provider: auth.provider, user: User.user_for_auth(email))
     end
 
     identity.user
+  end
+
+  def self.user_for_auth(email)
+    user = User.find_by(email: email) || User.new(email: email, password: Devise.friendly_token[0, 20])
+    unless user.persisted?
+      user.skip_confirmation!
+      user.save
+    end
+    user
   end
 end

@@ -26,6 +26,10 @@
 #  invited_by_type        :string
 #  invited_by_id          :integer
 #  invitations_count      :integer          default("0")
+#  confirmation_token     :string
+#  confirmed_at           :datetime
+#  confirmation_sent_at   :datetime
+#  unconfirmed_email      :string
 #
 # Indexes
 #
@@ -51,8 +55,15 @@ describe User do
     context "New identity object" do
       let(:identity) { build(:identity) }
 
+      it "find user" do
+        allow(described_class).to receive(:new).and_return(user)
+        allow(user).to receive(:persisted?).and_return(false)
+        expect(Identity).to receive(:create).with(provider: "twitter", uid: "some_uid", user: user).and_return(identity)
+        described_class.from_omniauth(auth)
+      end
+
       it "create user" do
-        allow(described_class).to receive(:create).with(email: info.email).and_return(user)
+        allow(described_class).to receive(:new).and_return(user)
         expect(Identity).to receive(:create).with(provider: "twitter", uid: "some_uid", user: user).and_return(identity)
         described_class.from_omniauth(auth)
       end
