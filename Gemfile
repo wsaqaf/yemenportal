@@ -17,6 +17,7 @@ gem 'simple_form'
 gem 'slim-rails'
 
 gem 'foundation-rails', '~> 6.3'
+gem 'foundation-icons-sass-rails'
 gem 'will_paginate-foundation'
 gem "seedbank"
 gem "enumerize"

@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :moderators, only: [:index, :destroy]
 
   resources :posts, only: [:index, :show, :update]
+  resource :votes, only: [:update]
 
   require 'sidekiq/web'
   Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
