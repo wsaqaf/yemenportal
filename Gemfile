@@ -24,6 +24,7 @@ gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
 
 gem 'devise'
+gem 'devise_invitable'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
