@@ -25,7 +25,7 @@ describe PostsController, type: :request do
         expect(response).to have_http_status(:ok)
       end
 
-      it "show posts by category" do
+      it "show posts by category for authorization" do
         sign_in user
         do_request
 
