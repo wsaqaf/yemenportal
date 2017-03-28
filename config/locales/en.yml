@@ -2,6 +2,7 @@ en:
   time:
     formats:
       created_at: "%F %H:%M"
+  site_title: يمن بورتال نت YemenPortal.net
   site_name: "YemenPortal"
   common_buttons:
     delete: Delete
