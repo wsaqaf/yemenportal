@@ -1,4 +1,5 @@
 class SourcesController < ApplicationController
+  before_action :authenticate_user!
   before_action :find_source, only: [:edit, :update]
 
   def index
