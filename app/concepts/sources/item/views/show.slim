@@ -1,4 +1,7 @@
 .row
   = link
-  = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button float-left tiny alert"
-  = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button float-left tiny"
+  - unless state.valid?
+    span.label.warning = t("source.error.invalid")
+  .button-group.tiny.float-left
+    = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+    = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"

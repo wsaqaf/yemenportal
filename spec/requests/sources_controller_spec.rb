@@ -1,4 +1,5 @@
 require "rails_helper"
+include ActiveJob::TestHelper
 
 describe SourcesController, type: :request do
   let(:user) { build :user }
@@ -18,7 +19,7 @@ describe SourcesController, type: :request do
     let(:params) { { source: { link: "www.as@mail.com" } } }
     let(:do_request) { post "/sources", params: params }
 
-    context "seccess reques" do
+    context "success reques" do
       it "redirect to sources list" do
         sign_in user
         do_request
@@ -55,6 +56,7 @@ describe SourcesController, type: :request do
 
   describe "#update" do
     let(:source) { create :source }
+    let(:posts_fetcher_job) { double }
     let(:do_request) do
       put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id } }
     end
@@ -64,8 +66,10 @@ describe SourcesController, type: :request do
 
     it "source params" do
       sign_in user
-      do_request
+      stub_const("PostsFetcherJob", posts_fetcher_job)
+      allow(posts_fetcher_job).to receive(:perform_later) { true }
 
+      do_request
       expect(response).to redirect_to(sources_path)
     end
 
