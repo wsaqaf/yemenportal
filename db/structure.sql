@@ -89,6 +89,39 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 
 
 --
+-- Name: identities; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE identities (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    provider character varying,
+    uid character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: identities_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE identities_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: identities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
+
+
+--
 -- Name: post_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -221,7 +254,15 @@ CREATE TABLE users (
     confirmation_token character varying,
     confirmed_at timestamp without time zone,
     confirmation_sent_at timestamp without time zone,
-    unconfirmed_email character varying
+    unconfirmed_email character varying,
+    invitation_token character varying,
+    invitation_created_at timestamp without time zone,
+    invitation_sent_at timestamp without time zone,
+    invitation_accepted_at timestamp without time zone,
+    invitation_limit integer,
+    invited_by_type character varying,
+    invited_by_id integer,
+    invitations_count integer DEFAULT 0
 );
 
 
@@ -256,6 +297,13 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 --
 
 ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_seq'::regclass);
+
+
+--
+-- Name: identities id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_seq'::regclass);
 
 
 --
@@ -303,6 +351,14 @@ ALTER TABLE ONLY categories
 
 
 --
+-- Name: identities identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT identities_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: post_categories post_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -340,6 +396,13 @@ ALTER TABLE ONLY sources
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_identities_on_user_id ON identities USING btree (user_id);
 
 
 --
@@ -385,6 +448,27 @@ CREATE UNIQUE INDEX index_users_on_email ON users USING btree (email);
 
 
 --
+-- Name: index_users_on_invitation_token; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_users_on_invitation_token ON users USING btree (invitation_token);
+
+
+--
+-- Name: index_users_on_invitations_count; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_invitations_count ON users USING btree (invitations_count);
+
+
+--
+-- Name: index_users_on_invited_by_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_users_on_invited_by_id ON users USING btree (invited_by_id);
+
+
+--
 -- Name: index_users_on_reset_password_token; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -405,6 +489,14 @@ ALTER TABLE ONLY post_categories
 
 ALTER TABLE ONLY post_categories
     ADD CONSTRAINT fk_rails_419dd5143d FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE;
+
+
+--
+-- Name: identities fk_rails_5373344100; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY identities
+    ADD CONSTRAINT fk_rails_5373344100 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -431,6 +523,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170309123832'),
 ('20170309124715'),
 ('20170313100316'),
-('20170317114823');
+('20170317114823'),
+('20170320143121'),
+('20170322163950');
 
 

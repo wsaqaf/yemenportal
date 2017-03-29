@@ -4,6 +4,7 @@ en:
   devise:
     log_in: Log in
     sign_up: Sign up
+    sign_in_with: Sign in with %{provider}
     sign_out: Sign out
     forgot_password: Forgot your password?
     confirmations:
