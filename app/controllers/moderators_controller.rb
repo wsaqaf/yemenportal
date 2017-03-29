@@ -1,4 +1,5 @@
 class ModeratorsController < ApplicationController
+  before_action :authenticate_user!
   before_action :find_user, only: [:destroy]
 
   def index

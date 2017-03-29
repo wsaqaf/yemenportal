@@ -1,10 +1,13 @@
 require "rails_helper"
 
 describe CategoriesController, type: :request do
+  let(:user) { build :user }
+
   describe "#new" do
     let(:do_request) { get "/categories/new" }
 
     it "show a main page" do
+      sign_in user
       do_request
 
       expect(response).to be_success
@@ -12,11 +15,12 @@ describe CategoriesController, type: :request do
   end
 
   describe "#create" do
-    let(:params) { { category: { name: "name" } } }
+    let(:params) { { category: { name: "name", password: "12345678" } } }
     let(:do_request) { post "/categories", params: params }
 
     context "success reques" do
       it "redirect to categories list" do
+        sign_in user
         do_request
 
         expect(response.status).to eq 302
@@ -28,6 +32,7 @@ describe CategoriesController, type: :request do
       let(:params) { { category: { name: nil } } }
 
       it "redirect to create form" do
+        sign_in user
         do_request
 
         expect(response.status).to eq 200
@@ -41,6 +46,7 @@ describe CategoriesController, type: :request do
     let(:do_request) { delete "/categories/#{category.id}" }
 
     it "redirect to categories list" do
+      sign_in user
       do_request
 
       expect(response.status).to eq 302
@@ -52,6 +58,7 @@ describe CategoriesController, type: :request do
     let(:do_request) { get "/categories" }
 
     it "redirect to categories list" do
+      sign_in user
       do_request
 
       expect(response.status).to eq 200

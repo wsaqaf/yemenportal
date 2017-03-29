@@ -2,10 +2,13 @@ require "rails_helper"
 include ActiveJob::TestHelper
 
 describe SourcesController, type: :request do
+  let(:user) { build :user }
+
   describe "#new" do
     let(:do_request) { get "/sources/new" }
 
     it "show a main page" do
+      sign_in user
       do_request
 
       expect(response).to be_success
@@ -18,6 +21,7 @@ describe SourcesController, type: :request do
 
     context "success reques" do
       it "redirect to sources list" do
+        sign_in user
         do_request
 
         expect(response.status).to eq 302
@@ -29,6 +33,7 @@ describe SourcesController, type: :request do
       let(:params) { { source: { link: nil } } }
 
       it "redirect to create form" do
+        sign_in user
         do_request
 
         expect(response.status).to eq 200
@@ -42,6 +47,7 @@ describe SourcesController, type: :request do
     let(:do_request) { get "/sources/#{source.id}/edit" }
 
     it "source" do
+      sign_in user
       do_request
 
       expect(response).to be_success
@@ -59,13 +65,16 @@ describe SourcesController, type: :request do
     end
 
     it "source params" do
+      sign_in user
       stub_const("PostsFetcherJob", posts_fetcher_job)
       allow(posts_fetcher_job).to receive(:perform_later) { true }
+
       do_request
       expect(response).to redirect_to(sources_path)
     end
 
     it "source fails" do
+      sign_in user
       do_bad_request
 
       expect(response.status).to eq 200
@@ -78,6 +87,7 @@ describe SourcesController, type: :request do
     let(:do_request) { delete "/sources/#{source.id}" }
 
     it "source" do
+      sign_in user
       do_request
 
       expect(response).to redirect_to(sources_path)
@@ -89,6 +99,7 @@ describe SourcesController, type: :request do
     let(:do_request) { delete "/sources/#{source.id}" }
 
     it "redirect to sources list" do
+      sign_in user
       do_request
 
       expect(response.status).to eq 302
@@ -100,6 +111,7 @@ describe SourcesController, type: :request do
     let(:do_request) { get "/sources" }
 
     it "redirect to sources list" do
+      sign_in user
       do_request
 
       expect(response.status).to eq 200
