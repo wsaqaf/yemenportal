@@ -36,6 +36,13 @@ html lang="ar" dir="rtl"
                 li
                   = link_to t('menu.users.moderators'), moderators_path
                 li
-                  = link_to t('menu.posts.admins'), '#'
-
+                  = link_to t('menu.news.admins'), '#'
+        .top-bar-left
+          ul.menu
+            - if current_user
+              li
+                = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete
+            - else
+              li
+                = link_to t('devise.log_in'), new_user_session_path
     == yield

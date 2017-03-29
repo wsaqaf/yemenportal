@@ -17,7 +17,7 @@ AllCops:
 
 RSpec/MultipleExpectations:
   Exclude:
-    - "spec/requests/*"
+    - "spec/requests/**/*"
 
 RSpec/NamedSubject:
   Enabled: false
