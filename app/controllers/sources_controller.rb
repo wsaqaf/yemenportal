@@ -33,9 +33,8 @@ class SourcesController < ApplicationController
   end
 
   def update
-    @source.attributes = source_params.merge(state: Source.state.valid)
-    if @source.valid?
-      @source.save
+    @source.attributes = source_params
+    if @source.save
       PostsFetcherJob.perform_later(@source.id)
       redirect_to sources_path
     else
