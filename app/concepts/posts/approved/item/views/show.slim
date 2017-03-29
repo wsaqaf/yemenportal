@@ -1,13 +1,16 @@
-.row.news_block
-  .title
-    = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left tiny alert"
-    = link_to title, link
-  .date
-    = l published_at, format: :created_at
-  .description
-    = description
-.row
-  = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
-    class: "multiselect js-post-categories", multiple: true, data: {id: id}
-
-hr
+li.news_block.accordion-item data-accordion-item=""
+  a.accordion-title
+    .title
+      = title
+    .preview
+      = preview
+  .accordion-content data-tab-content=''
+    .button-group.tiny
+      = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button alert"
+      = link_to t('post.button.read_source'), link, class: "button"
+    = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
+      class: "multiselect js-post-categories", multiple: true, data: {id: id}
+    .date
+      = l published_at, format: :created_at
+    .description
+      = description
