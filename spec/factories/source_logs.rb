@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: logs
+# Table name: source_logs
 #
 #  id          :integer          not null, primary key
 #  state       :string
@@ -11,7 +11,7 @@
 #
 # Indexes
 #
-#  index_logs_on_source_id  (source_id)
+#  index_source_logs_on_source_id  (source_id)
 #
 
 FactoryGirl.define do

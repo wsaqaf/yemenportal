@@ -1,6 +1,6 @@
 class Sources::Form::Cell < Application::Cell
   property :link, :state
-  option :categories, :logs
+  option :categories, :logs, :whitelisted
 
   private
 
