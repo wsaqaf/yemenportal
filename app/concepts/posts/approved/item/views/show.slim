@@ -2,6 +2,8 @@ li.news_block.accordion-item data-accordion-item=""
   a.accordion-title
     .title
       = title
+    - category_names.each do |name|
+      span.label.secondary = name
     .preview
       = preview
   .accordion-content data-tab-content=''
