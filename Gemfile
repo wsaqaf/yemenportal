@@ -23,7 +23,12 @@ gem "seedbank"
 gem "enumerize"
 gem "sidekiq", '~> 4.2'
 gem "whenever", require: false
-gem "devise"
+
+gem 'devise'
+gem 'devise_invitable'
+gem 'omniauth'
+gem 'omniauth-twitter'
+gem 'omniauth-facebook'
 gem "selectize-rails"
 
 group :development do

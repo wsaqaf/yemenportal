@@ -1,5 +1,7 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks", invitations: 'users/invitations' }
   root to: 'posts#index'
 
   resources :categories, only: [:index, :new, :create, :destroy]
@@ -9,7 +11,8 @@ Rails.application.routes.draw do
   resources :posts, only: [:index, :show, :update]
   resource :votes, only: [:update]
 
-  require 'sidekiq/web'
-  Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
-  mount Sidekiq::Web, at: '/sidekiq'
+  authenticated :user, ->(user) { user.role.admin? } do
+    Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
+    mount Sidekiq::Web, at: '/sidekiq'
+  end
 end

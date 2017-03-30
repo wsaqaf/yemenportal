@@ -199,6 +199,39 @@ CREATE TABLE schema_migrations (
 
 
 --
+-- Name: source_logs; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE source_logs (
+    id integer NOT NULL,
+    state character varying,
+    source_id integer NOT NULL,
+    posts_count integer DEFAULT 0,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: source_logs_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE source_logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: source_logs_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE source_logs_id_seq OWNED BY source_logs.id;
+
+
+--
 -- Name: sources; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -207,7 +240,9 @@ CREATE TABLE sources (
     link character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    category_id integer
+    category_id integer,
+    state character varying DEFAULT 'valid'::character varying,
+    whitelisted boolean DEFAULT false
 );
 
 
@@ -354,6 +389,13 @@ ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regcl
 
 
 --
+-- Name: source_logs id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs ALTER COLUMN id SET DEFAULT nextval('source_logs_id_seq'::regclass);
+
+
+--
 -- Name: sources id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -423,6 +465,14 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
+-- Name: source_logs source_logs_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs
+    ADD CONSTRAINT source_logs_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: sources sources_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -479,6 +529,13 @@ CREATE INDEX index_posts_on_published_at ON posts USING btree (published_at);
 --
 
 CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
+
+
+--
+-- Name: index_source_logs_on_source_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_source_logs_on_source_id ON source_logs USING btree (source_id);
 
 
 --
@@ -562,6 +619,14 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: source_logs fk_rails_8679f875d2; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY source_logs
+    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id);
+
+
+--
 -- Name: votes fk_rails_9801d647c1; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -601,9 +666,12 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170309123832'),
 ('20170309124715'),
 ('20170313100316'),
+('20170316102614'),
 ('20170317114823'),
 ('20170320143121'),
+('20170321103023'),
 ('20170322163950'),
-('20170323124714');
+('20170323124714'),
+('20170330093400');
 
 
