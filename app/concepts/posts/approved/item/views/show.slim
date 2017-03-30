@@ -7,6 +7,15 @@
   .description
     = description
 .row
+  .button-group.small
+    - if user_vote || user.nil?
+      = disabled_button('like')
+      = disabled_button('dislike')
+    - else
+      = active_button('like')
+      = active_button('dislike')
+
+.row
   = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
     class: "multiselect js-post-categories", multiple: true, data: {id: id}
 

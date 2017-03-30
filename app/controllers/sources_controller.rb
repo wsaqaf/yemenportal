@@ -29,13 +29,14 @@ class SourcesController < ApplicationController
   end
 
   def edit
-    render cell: :form, model: @source, options: { categories: categories }
+    logs = @source.source_logs.ordered
+    render cell: :form, model: @source, options: { categories: categories, logs: logs }
   end
 
   def update
     @source.attributes = source_params
-    if @source.valid?
-      @source.save
+    if @source.save
+      PostsFetcherJob.perform_later(@source.id)
       redirect_to sources_path
     else
       render cell: :form, model: @source, options: { categories: categories }
