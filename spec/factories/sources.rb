@@ -8,6 +8,7 @@
 #  updated_at  :datetime         not null
 #  category_id :integer
 #  state       :string           default("valid")
+#  whitelisted :boolean          default("false")
 #
 # Indexes
 #
