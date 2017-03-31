@@ -1,7 +1,7 @@
 .columns.large-6.medium-8.small-12.small-centered.category_list
   .row.title
     = t('post.pending.title')
-    hr
 
-  = table_body
+  ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
+    = table_body
   = will_paginate model, renderer: FoundationPagination::Rails

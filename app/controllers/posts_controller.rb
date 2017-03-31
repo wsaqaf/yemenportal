@@ -8,7 +8,7 @@ class PostsController < ApplicationController
       posts = Post.all
     end
 
-    posts = posts.posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
+    posts = posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
 
     render cell: true, model: posts, options: { categories: Category.all, state: posts_state }
   end

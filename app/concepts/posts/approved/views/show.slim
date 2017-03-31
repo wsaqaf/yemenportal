@@ -6,5 +6,6 @@
           = link_to category.name, posts_path(category: category.name)
 
 .large-6.medium-8.small-12.small-centered.columns
-  = table_body
+  ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
+    = table_body
   = will_paginate model, renderer: FoundationPagination::Rails
