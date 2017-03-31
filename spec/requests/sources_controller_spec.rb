@@ -58,7 +58,8 @@ describe SourcesController, type: :request do
     let(:source) { create :source }
     let(:posts_fetcher_job) { double }
     let(:do_request) do
-      put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id } }
+      put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id,
+        whitelisted: "true" } }
     end
     let(:do_bad_request) do
       put "/sources/#{source.id}", params: { source: { link: "", category_id: source.category_id } }

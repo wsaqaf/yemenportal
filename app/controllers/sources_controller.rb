@@ -54,6 +54,6 @@ class SourcesController < ApplicationController
   end
 
   def source_params
-    @_source_params ||= params.require(:source).permit(:link, :category_id)
+    @_source_params ||= params.require(:source).permit(:link, :category_id, :whitelisted)
   end
 end

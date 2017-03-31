@@ -16,6 +16,7 @@ en:
       category:
         name: 'Password'
       source:
+        whitelisted: Whitelisted
         link: Source link
     # Examples
     # labels:

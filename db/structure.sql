@@ -241,7 +241,8 @@ CREATE TABLE sources (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     category_id integer,
-    state character varying DEFAULT 'valid'::character varying
+    state character varying DEFAULT 'valid'::character varying,
+    whitelisted boolean DEFAULT false
 );
 
 
@@ -298,6 +299,13 @@ CREATE TABLE users (
     invited_by_id integer,
     invitations_count integer DEFAULT 0
 );
+
+
+--
+-- Name: COLUMN users.role; Type: COMMENT; Schema: public; Owner: -
+--
+
+COMMENT ON COLUMN users.role IS 'User role (Available: ADMIN, MODERATOR, MEMBER)';
 
 
 --
@@ -584,6 +592,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170317114823'),
 ('20170320143121'),
 ('20170321103023'),
-('20170322163950');
+('20170322163950'),
+('20170330093400');
 
 
