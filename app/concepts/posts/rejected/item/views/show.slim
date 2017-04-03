@@ -1,13 +1,18 @@
-.row.news_block
-  .columns.small-8
+ li.news_block.accordion-item data-accordion-item=""
+  a.accordion-title
     .title
-      = link_to title, link
+      = title
+    - category_names.each do |name|
+      span.label.secondary = name
+    .preview
+      = preview
+  .accordion-content data-tab-content=''
+    .button-group.tiny
+      = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
+      = link_to t('post.button.read_source'), link, class: "button"
+    = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
+      class: "multiselect js-post-categories", multiple: true, data: {id: id}
     .date
       = l published_at, format: :created_at
-  .columns.small-4.tiny.button-group
-    = link_to t('post.button.show'), '#', class: "button float-left"
-    = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
-.row
-  = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
-    class: "multiselect js-post-categories", multiple: true, data: {id: id}
-hr
+    .description
+      = description

@@ -1,4 +1,4 @@
-class Posts::Approved::Item::Cell < Application::Cell
+class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   option :user_votes, :user
   property :title, :link, :published_at, :description, :id, :category_ids, :votes
 

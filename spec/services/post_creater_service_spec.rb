@@ -36,6 +36,7 @@ describe PostCreaterService do
 
     describe "(module tests)" do
       let(:post) { build :post }
+      let(:whitelisted_source) { create(:source, whitelisted: true) }
 
       it "post call save action" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
@@ -45,6 +46,14 @@ describe PostCreaterService do
         expect(post).to receive(:save)
 
         described_class.add_post(item, source)
+      end
+
+      it "post with approve state" do
+        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
+          title: item.title, source: whitelisted_source).and_return(post)
+
+        described_class.add_post(item, whitelisted_source)
+        expect(post.state).to eql("approved")
       end
 
       it "not set category" do

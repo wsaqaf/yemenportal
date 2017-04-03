@@ -26,6 +26,7 @@ en:
       show: Show
       approve: Approve
       reject: Reject
+      read_source: Read source
       delete: Delete
     pending:
       title: Pending Posts
