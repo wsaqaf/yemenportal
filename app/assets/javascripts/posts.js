@@ -74,4 +74,14 @@ $(document).ready(function(){
 
     true;
   }
+
+  $('.js-publication-time').each(function() {
+    var $this = $(this);
+    var day_ago = moment().subtract(1,'days');
+    var publiction_time = moment($this.text(), "DD-MM-YYYY hh:mm");
+
+    if (publiction_time.isAfter(day_ago)) {
+      $this.text(publiction_time.fromNow());
+    }
+  });
 });

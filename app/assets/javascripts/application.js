@@ -14,6 +14,7 @@
 //= require jquery_ujs
 //= require foundation
 //= require selectize
+//= require moment
 //= require_tree .
 
 $(function(){ $(document).foundation(); });
