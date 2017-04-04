@@ -212,6 +212,8 @@ GEM
       pry (>= 0.9.10)
     public_suffix (2.0.5)
     puma (3.7.0)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (2.0.1)
     rack-protection (1.5.3)
       rack
@@ -398,6 +400,7 @@ DEPENDENCIES
   pry-byebug
   pry-rails
   puma (~> 3.0)
+  pundit
   rails (~> 5.0.1)
   rails-views
   rspec-rails
@@ -423,4 +426,4 @@ DEPENDENCIES
   will_paginate-foundation
 
 BUNDLED WITH
-   1.14.4
+   1.14.6
