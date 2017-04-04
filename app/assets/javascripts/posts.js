@@ -12,6 +12,8 @@ document.addEventListener("turbolinks:load", function() {
   });
 
   $('.js-post-categories').change(function(){
+    var $this = $(this);
+
     $.ajax({
       url: ("/posts/" + $this.data().id),
       dataType: "script",
