@@ -252,6 +252,8 @@ GEM
     redis (3.3.3)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
+    rollbar (2.14.1)
+      multi_json
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -400,6 +402,7 @@ DEPENDENCIES
   puma (~> 3.0)
   rails (~> 5.0.1)
   rails-views
+  rollbar
   rspec-rails
   rubocop
   rubocop-rspec
@@ -423,4 +426,4 @@ DEPENDENCIES
   will_paginate-foundation
 
 BUNDLED WITH
-   1.14.4
+   1.14.6
