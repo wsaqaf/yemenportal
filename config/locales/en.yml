@@ -60,6 +60,13 @@ en:
       admon: Admin
   source:
     title: Source
+    fields:
+      note: Note
+      admin_email:  Admin Email
+      admin_name: Admin Name
+      brief_info: Brief Info
+      website: WEB site
+      link: RSS path
     logs:
       success: "Successfully fetched %{post_count} post."
       failure: Something went wrong during fetching posts.

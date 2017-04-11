@@ -4,7 +4,7 @@ describe PostsFetcherJob do
   subject { described_class.new }
   let(:item) { double(description: "description", link: "link", pubDate: Time.new, title: "title") }
   let(:source) { build(:source, link: "http://www.ruby-lang.org/en/feeds/news.rss") }
-  let(:invalid_source) { build(:source, link: "incorrect_source") }
+  let(:invalid_source) { build(:source, link: "http://www.ruby-lang.org") }
 
   describe "#perform" do
     it "create new post", slow: true do
@@ -19,6 +19,7 @@ describe PostsFetcherJob do
     context "raise error" do
       it "for nonexistent path(integration)" do
         allow(Source).to receive(:find).and_return(invalid_source)
+        allow(RSSParserService).to receive(:fetch_items).and_raise(Errno::ENOENT)
         expect(invalid_source).to receive(:update).with(state: Source.state.incorrect_path)
 
         subject.perform(15)

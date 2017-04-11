@@ -16,7 +16,7 @@ describe SourcesController, type: :request do
   end
 
   describe "#create" do
-    let(:params) { { source: { link: "www.as@mail.com" } } }
+    let(:params) { { source: { link: "http://asmail.com", name: "some_name" } } }
     let(:do_request) { post "/sources", params: params }
 
     context "success reques" do
@@ -58,7 +58,7 @@ describe SourcesController, type: :request do
     let(:source) { create :source }
     let(:posts_fetcher_job) { double }
     let(:do_request) do
-      put "/sources/#{source.id}", params: { source: { link: "1234", category_id: source.category_id,
+      put "/sources/#{source.id}", params: { source: { link: "http://ddd1234.com", category_id: source.category_id,
         whitelisted: "true" } }
     end
     let(:do_bad_request) do

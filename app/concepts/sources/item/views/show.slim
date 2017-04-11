@@ -1,7 +1,44 @@
 .row
-  = link
-  - unless state.valid?
-    span.label.warning = t("source.error.invalid")
-  .button-group.tiny.float-left
-    = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
-    = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"
+  .columns.sources
+    = hidden_field_tag id
+    .row
+      .medium-3.columns
+        h4 = name
+      .medium-9.float-left.columns
+        - unless state.valid?
+          span.label.warning = t("source.error.invalid")
+        .button-group.tiny.float-left
+          = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+          = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.link')
+      .medium-9.small-9.columns
+        input name=('link') value = link
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.website')
+      .medium-9.small-9.columns
+        input name=('website') value = website
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.brief_info')
+      .medium-9.small-9.columns
+        input id='aaa' name=('brief_info') value = brief_info
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.admin_name')
+      .medium-9.small-9.columns
+        input name=('admin_name') value = admin_name
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.admin_email')
+      .medium-9.small-9.columns
+        input name=('admin_email') value = admin_email
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = t('source.field.note')
+      .medium-9.small-9.columns
+        .textarea name=('note') contentEditable="true" = note
+
+  hr

@@ -1,0 +1,19 @@
+.sources {
+  input{
+    overflow-x: visible;
+    overflow-y: visible;
+    border: 0;
+    width: 100%;
+    cursor: default;
+    &:focus{
+      cursor: text;
+    }
+  }
+  .textarea {
+     display:inline-block;
+     border: none;
+     &:focus{
+       border: 1px;
+     }
+  }
+}

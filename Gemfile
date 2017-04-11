@@ -30,6 +30,9 @@ gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem "selectize-rails"
 
+gem 'validate_url'
+gem 'email_validator'
+
 group :development do
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
