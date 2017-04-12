@@ -1,4 +1,10 @@
 .sources {
+  .source_name {
+    input{
+      font-size: 2rem;
+      overflow-x: visible;
+    }
+  }
   input{
     overflow-x: visible;
     overflow-y: visible;

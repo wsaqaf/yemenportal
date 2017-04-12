@@ -2,9 +2,9 @@
   .columns.sources
     = hidden_field_tag id
     .row
-      .medium-3.columns
-        h4 = name
-      .medium-9.float-left.columns
+      .medium-8.columns.source_name
+        input name=('name') value = name
+      .medium-4.float-left.columns
         - unless state.valid?
           span.label.warning = t("source.error.invalid")
         .button-group.tiny.float-left
