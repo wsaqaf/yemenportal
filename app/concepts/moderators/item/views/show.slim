@@ -1,6 +1,11 @@
 .row
-  .column.large-3
-    = full_name
-  .column.large-3
+  .column.large-4
     = email
-  = link_to t('user.moderator.buttons.remove'), moderator_path(model), method: :delete, class: "button float-left tiny alert"
+  .column.large-4.status
+    = t("user.status.#{status}")
+  .column.large-4
+    .button-group.tiny.float-left
+      = link_to t('user.moderator.buttons.resend_invite'), moderator_invites_path(model), method: :post,
+        class: "button" unless invite_accepted?
+      = link_to t('user.moderator.buttons.remove'), moderator_path(model), method: :delete, class: "button alert"
+

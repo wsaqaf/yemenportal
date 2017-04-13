@@ -50,9 +50,13 @@ en:
       delete: Delete
       add_category: Add Category
   user:
+    status:
+      moderator: Modeartor
+      invited_moderator: Invited to be moderator
     moderator:
       title: Modeartors
       buttons:
+        resend_invite: Resend invite
         remove: Remove
         add_moderator: Invite new moderator
     roles:
