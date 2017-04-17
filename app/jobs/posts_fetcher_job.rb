@@ -5,8 +5,7 @@ class PostsFetcherJob < ActiveJob::Base
   def perform(source_id)
     source = Source.find(source_id)
     begin
-      items = RSSParserService.fetch_items(open(source.link), source_id)
-      items.each { |item| PostCreaterService.add_post(item, source) }
+      items = fetch_items(source)
     rescue Errno::ENOENT
       SourceLog.create(source: source, state: :invalid)
       source.update(state: Source.state.incorrect_path)
@@ -17,5 +16,17 @@ class PostsFetcherJob < ActiveJob::Base
       source.update(state: Source.state.valid)
       SourceLog.create(source: source, posts_count: items.length)
     end
+  end
+
+  private
+
+  def fetch_items(source)
+    items = []
+    if source.source_type.rss?
+      items = RSSParserService.fetch_items(open(source.link), source.id)
+    elsif source.source_type.facebook?
+      items = RSSParserService.fetch_facebook_items(source)
+    end
+    items.each { |item| PostCreaterService.add_post(item, source) }
   end
 end

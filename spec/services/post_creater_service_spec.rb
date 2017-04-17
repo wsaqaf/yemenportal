@@ -2,9 +2,11 @@ require "rails_helper"
 
 describe PostCreaterService do
   let(:source) { create(:source) }
+  let(:facebbok_source) { create(:source, source_type: :facebook) }
 
   describe "#add_post" do
     let(:item) { double(description: "description", link: "link", pubDate: Time.new, title: "title") }
+    let(:fb_item) { { "message" => "description\n Go", "link" => "link", "created_time" => Time.new } }
 
     context "source has category", slow: true do
       before do
@@ -37,6 +39,16 @@ describe PostCreaterService do
     describe "(module tests)" do
       let(:post) { build :post }
       let(:whitelisted_source) { create(:source, whitelisted: true) }
+
+      it "facebook post call save action" do
+        allow(Post).to receive(:new).with(description: "description\n Go", link: "link",
+          published_at: fb_item["created_time"], title: "description", source: facebbok_source).and_return(post)
+        allow(post).to receive(:categories=).with([facebbok_source.category]).and_return(post)
+
+        expect(post).to receive(:save)
+
+        described_class.add_post(fb_item, facebbok_source)
+      end
 
       it "post call save action" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
