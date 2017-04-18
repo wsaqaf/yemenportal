@@ -17,8 +17,8 @@
 
 FactoryGirl.define do
   factory :vote do
-    user ""
-    post ""
+    association :user
+    association :post
     positive false
   end
 end
