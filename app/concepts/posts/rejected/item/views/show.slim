@@ -14,5 +14,13 @@
       class: "multiselect js-post-categories", multiple: true, data: {id: id}
     .date
       = l published_at, format: :created_at
-    .description
-      = description
+    - if photo_url.present?
+      .row
+        .columns.large-4.medium-4
+          img.thumbnail src="#{photo_url}"
+        .columns.large-8.medium-8
+          .description
+            = description
+    - else
+      .description
+        = description

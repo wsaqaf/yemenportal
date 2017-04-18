@@ -5,8 +5,14 @@ describe PostCreaterService do
   let(:facebbok_source) { create(:source, source_type: :facebook) }
 
   describe "#add_post" do
-    let(:item) { double(description: "description", link: "link", pubDate: Time.new, title: "title") }
-    let(:fb_item) { { "message" => "description\n Go", "link" => "link", "created_time" => Time.new } }
+    let(:item) do
+      double(description: "<img src='some_path'/>description", link: "link",
+      pubDate: Time.new, title: "title")
+    end
+    let(:fb_item) do
+      { "message" => "description\n Go", "link" => "link",
+      "created_time" => Time.new, "picture" => "some_img" }
+    end
 
     context "source has category", slow: true do
       before do
@@ -41,7 +47,7 @@ describe PostCreaterService do
       let(:whitelisted_source) { create(:source, whitelisted: true) }
 
       it "facebook post call save action" do
-        allow(Post).to receive(:new).with(description: "description\n Go", link: "link",
+        allow(Post).to receive(:new).with(description: "description\n Go", link: "link", photo_url: "some_img",
           published_at: fb_item["created_time"], title: "description", source: facebbok_source).and_return(post)
         allow(post).to receive(:categories=).with([facebbok_source.category]).and_return(post)
 
@@ -52,7 +58,7 @@ describe PostCreaterService do
 
       it "post call save action" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          title: item.title, source: source).and_return(post)
+          source: source, title: item.title, photo_url: "some_path").and_return(post)
         allow(post).to receive(:categories=).with([source.category]).and_return(post)
 
         expect(post).to receive(:save)
@@ -62,7 +68,7 @@ describe PostCreaterService do
 
       it "post with approve state" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          title: item.title, source: whitelisted_source).and_return(post)
+          title: item.title, source: whitelisted_source, photo_url: "some_path").and_return(post)
 
         described_class.add_post(item, whitelisted_source)
         expect(post.state).to eql("approved")
@@ -70,7 +76,7 @@ describe PostCreaterService do
 
       it "not set category" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          title: item.title, source: source).and_return(post)
+          title: item.title, source: source, photo_url: "some_path").and_return(post)
         allow(source).to receive(:category).and_return(nil)
         expect(post).not_to receive(:categories=)
 

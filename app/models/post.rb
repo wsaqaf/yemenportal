@@ -11,6 +11,7 @@
 #  updated_at   :datetime         not null
 #  source_id    :integer
 #  state        :string           default("pending"), not null
+#  photo_url    :string
 #
 # Indexes
 #
