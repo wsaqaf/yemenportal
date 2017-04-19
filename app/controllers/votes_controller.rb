@@ -1,6 +1,6 @@
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  UPVOTE = "like".freeze
+  UPVOTE = "upvote".freeze
 
   def update
     post = Post.find(params.fetch(:post_id))

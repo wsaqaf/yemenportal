@@ -19,5 +19,8 @@ class Vote < ApplicationRecord
   belongs_to :post
   belongs_to :user
 
+  scope :votes_posts, ->(posts_ids) { where(post_id: posts_ids) }
+  scope :count_by_type, ->(positive) { where(positive: positive).count }
+
   validates_uniqueness_of :post_id, scope: :user_id
 end

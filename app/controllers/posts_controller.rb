@@ -25,7 +25,7 @@ class PostsController < ApplicationController
   def user_voted(posts)
     posts_ids = posts.ids
     if current_user
-      current_user.votes.select { |vote| posts_ids.include?(vote.post_id) }
+      current_user.votes.votes_posts(posts_ids)
     else
       []
     end

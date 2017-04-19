@@ -1,4 +1,6 @@
 class Posts::Approved::Item::Cell < Posts::PostItem::Cell
+  IMAGE_NAME = { "upvote" => "fi-like", "downvote" => "fi-dislike" }.freeze
+  UPVOTE = "upvote".freeze
   option :user_votes, :user
   property :title, :link, :published_at, :description, :id, :category_ids, :votes
 
@@ -19,16 +21,15 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   end
 
   def button_text(type)
-    "#{vote_count(type)} <i class=fi-#{type}></i>"
+    "#{vote_count(type)} <i class=#{IMAGE_NAME[type]}></i>"
   end
 
   def vote_count(type)
-    positive = (type == "like")
-    votes.select { |vote| vote.positive == positive }.count
+    votes.count_by_type(type == UPVOTE)
   end
 
   def button_style(type)
-    if type == "like" && user
+    if type == UPVOTE && user
       return "success" if user_vote.positive
     elsif user
       return "alert" unless user_vote.positive
