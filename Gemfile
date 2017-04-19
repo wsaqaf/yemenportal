@@ -30,6 +30,7 @@ gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem "selectize-rails"
+gem 'momentjs-rails'
 
 group :development do
   gem 'web-console', '>= 3.3.0'
