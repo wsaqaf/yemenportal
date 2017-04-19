@@ -15,6 +15,7 @@
 //= require foundation
 //= require selectize
 //= require moment
+//= require moment/ar-sa.js
 //= require_tree .
 
 $(function(){ $(document).foundation(); });

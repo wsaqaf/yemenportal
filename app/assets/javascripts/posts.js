@@ -83,6 +83,8 @@ $(document).ready(function(){
 
     if (publiction_time.isAfter(day_ago)) {
       $this.text(publiction_time.fromNow());
+    } else {
+      $this.text(publiction_time.format('lll'));
     }
   });
 });
