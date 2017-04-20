@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :moderators, only: [:index, :destroy]
 
   resources :posts, only: [:index, :show, :update]
+  resources :users, only: [:update, :edit]
 
   authenticated :user, ->(user) { user.role.admin? } do
     Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
