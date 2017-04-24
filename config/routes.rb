@@ -10,6 +10,11 @@ Rails.application.routes.draw do
 
   resources :posts, only: [:index, :show, :update]
 
+  namespace :sources do
+    resources :approve, only: [:update]
+    resources :suggest, only: [:create, :new]
+  end
+
   resources :source, only: [] do
     resource :source_updater, only: [:update]
   end

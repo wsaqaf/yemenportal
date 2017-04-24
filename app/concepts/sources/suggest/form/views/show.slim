@@ -1,0 +1,22 @@
+.columns.large-6.medium-8.small-12.small-centered.category_list
+  - if error_message.present?
+    .alert.callout data-closable=""
+      p = error_message
+
+  = simple_form_for model, url: sources_suggest_index_path, method: :post do |f|
+    = f.input :name
+    = f.input :link, as: :url
+    = f.input :category_id, collection: categories, label_method: :name
+    = f.input :website
+    = f.input :brief_info, as: :text
+    = f.input :admin_email, as: :email
+    = f.input :admin_name
+    = f.input :note, as: :text
+    .button-group
+      = link_to t(:back), sources_path, class: "button secondary"
+      = f.submit submit_button, class: "button"
+
+  .logs
+    - source_logs.each do |log|
+      .callout.secondary
+        p = log_meassage(log)

@@ -11,7 +11,11 @@ en:
   common_buttons:
     delete: Delete
   menu:
-    sources: Sources
+    sources:
+      name: Sources
+      approved: Approved
+      suggested: Suggestions
+      suggest_source: Suggest source
     categories: Categories
     users:
       name: Users
@@ -76,6 +80,7 @@ en:
       incorrect_stucture: Posts from this source has icorrect structure.
       not_full_info: Source posts don't has some necessary field.
     buttons:
+      approve: Approve
       update: Update
       edit: Edit
       create: Add source

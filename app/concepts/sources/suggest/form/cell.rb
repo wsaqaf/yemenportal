@@ -1,15 +1,11 @@
-class Sources::Form::Cell < Application::Cell
-  property :link, :state, :approve_state
+class Sources::Suggest::Form::Cell < Application::Cell
+  property :link, :state
   option :categories, :logs, :whitelisted, :name, :website, :brief_info, :admin_email, :admin_name, :note
 
   private
 
   def submit_button
-    if model.persisted?
-      approve_state.approved? ? t("source.buttons.update") : "Approve"
-    else
-      t("source.buttons.create")
-    end
+    model.persisted? ? t("source.buttons.update") : t("source.buttons.create")
   end
 
   def error_message

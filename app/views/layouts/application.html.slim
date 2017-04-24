@@ -20,7 +20,14 @@ html dir="rtl" lang="ar"
         .top-bar-right
           ul.dropdown.menu data-dropdown-menu=""
             li
-              = link_to t('menu.sources'), sources_path
+              = link_to t('menu.sources.name'), '#'
+              ul.menu.vertical
+                li
+                  = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
+                li
+                  = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
+                li
+                  = link_to t('menu.sources.suggest_source'), new_sources_suggest_path
             li
               = link_to t('menu.categories'), categories_path
             li
