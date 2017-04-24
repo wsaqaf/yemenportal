@@ -109,7 +109,7 @@ describe SourcesController, type: :request do
   end
 
   describe "#index" do
-    let(:do_request) { get "/sources", params: {approve_state: 'approved'} }
+    let(:do_request) { get "/sources", params: { approve_state: "approved" } }
 
     it "redirect to sources list" do
       sign_in user

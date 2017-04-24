@@ -10,7 +10,7 @@ class Sources::Cell < Application::Cell
 
   def title
     if approve_state == Source.approve_state.approved
-      t("source.title")
+      t("source.title.approved")
     else
       t("source.title.suggested")
     end

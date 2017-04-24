@@ -6,14 +6,14 @@ describe Sources::ApproveController, type: :request do
   describe "#update" do
     let(:source) { create :source }
     let(:posts_fetcher_job) { double }
-    let(:do_request) { put "/sources/approve/#{source.id}", headers: { "HTTP_REFERER" => "some_path" }}
+    let(:do_request) { put "/sources/approve/#{source.id}", headers: { "HTTP_REFERER" => "some_path" } }
 
     it "source approve type" do
       sign_in user
       do_request
 
       expect(response.status).to eq 302
-      expect(response).to redirect_to('some_path')
+      expect(response).to redirect_to("some_path")
     end
   end
 end

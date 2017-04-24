@@ -63,7 +63,9 @@ en:
       moderator: Moderator
       admon: Admin
   source:
-    title: Source
+    title:
+      approved: Sources
+      suggested: Suggested
     fields:
       note: Note
       admin_email:  Admin Email

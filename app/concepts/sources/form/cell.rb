@@ -1,6 +1,6 @@
 class Sources::Form::Cell < Application::Cell
-  property :link, :state, :approve_state
-  option :categories, :logs, :whitelisted, :name, :website, :brief_info, :admin_email, :admin_name, :note
+  property :link, :state, :approve_state, :whitelisted, :name, :website, :brief_info, :admin_email, :admin_name, :note
+  option :categories, :logs
 
   private
 
