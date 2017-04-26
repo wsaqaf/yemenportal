@@ -137,6 +137,9 @@ GEM
     faraday (0.11.0)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.17)
+    foundation-icons-sass-rails (3.0.0)
+      railties (>= 3.1.1)
+      sass-rails (>= 3.1.1)
     foundation-rails (6.3.0.0)
       railties (>= 3.1.0)
       sass (>= 3.3.0, < 3.5)
@@ -172,6 +175,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
     minitest (5.10.1)
+    momentjs-rails (2.17.1)
+      railties (>= 3.1)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
@@ -218,6 +223,8 @@ GEM
       pry (>= 0.9.10)
     public_suffix (2.0.5)
     puma (3.7.0)
+    pundit (1.1.0)
+      activesupport (>= 3.0.0)
     rack (2.0.1)
     rack-protection (1.5.3)
       rack
@@ -397,11 +404,13 @@ DEPENDENCIES
   enumerize
   factory_girl_rails
   faker
+  foundation-icons-sass-rails
   foundation-rails (~> 6.3)
   jbuilder (~> 2.5)
   jquery-rails
   koala
   listen (~> 3.0.5)
+  momentjs-rails
   omniauth
   omniauth-facebook
   omniauth-twitter
@@ -409,6 +418,7 @@ DEPENDENCIES
   pry-byebug
   pry-rails
   puma (~> 3.0)
+  pundit
   rails (~> 5.0.1)
   rails-views
   rspec-rails

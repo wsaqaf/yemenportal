@@ -4,7 +4,7 @@ en:
     next_label: "Next"
   time:
     formats:
-      created_at: "%F %H:%M"
+      created_at: "%d-%m-%Y %H:%M"
       logs_date: "%d%b %H:%M"
   site_title: يمن بورتال نت YemenPortal.net
   site_name: "YemenPortal"
@@ -30,6 +30,8 @@ en:
       delete: Delete
     pending:
       title: Pending Posts
+    rejected:
+      title: Rejected Posts
   category:
     title: Category
     base_list:

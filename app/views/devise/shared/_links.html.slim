@@ -1,5 +1,16 @@
 - if controller_name != 'sessions'
   = link_to t('devise.log_in'), new_session_path(resource_name)
+- if devise_mapping.omniauthable?
+  = link_to omniauth_authorize_path(resource_name, :facebook) do
+    | <span data-tooltip aria-haspopup="true" class="has-tip" data-disable-hover="false" tabindex="2"
+      title="#{t('devise.sign_in_with', provider: 'Facebook')}">
+        <i class="fi-social-facebook"></i>
+      </span>
+  = link_to omniauth_authorize_path(resource_name, :twitter) do
+    | <span data-tooltip aria-haspopup="true" class="has-tip top" data-disable-hover="false" tabindex="2"
+      title="#{t('devise.sign_in_with', provider: "Twitter")}">
+        <i class="fi-social-twitter"></i>
+      </span>
   br
 - if devise_mapping.registerable? && controller_name != 'registrations'
   = link_to t('devise.sign_up'), new_registration_path(resource_name)
@@ -13,7 +24,3 @@
 / - if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks'
 /   = link_to "Didn't receive unlock instructions?", new_unlock_path(resource_name)
 /   br
-- if devise_mapping.omniauthable?
-  - resource_class.omniauth_providers.each do |provider|
-    = link_to t('devise.sign_in_with', provider: OmniAuth::Utils.camelize(provider)), omniauth_authorize_path(resource_name, provider)
-    br

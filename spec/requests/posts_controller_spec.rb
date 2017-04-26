@@ -15,10 +15,18 @@ describe PostsController, type: :request do
     end
 
     context "with category params" do
+      let(:user) { build :user }
       let(:do_request) { get "/posts?category=#{category.name}" }
       let(:do_bad_request) { get "/posts?magic_name" }
 
       it "show posts by category" do
+        do_request
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it "show posts by category for authorization" do
+        sign_in user
         do_request
 
         expect(response).to have_http_status(:ok)
