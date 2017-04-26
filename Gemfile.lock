@@ -158,6 +158,10 @@ GEM
       thor (>= 0.14, < 2.0)
     json (2.0.3)
     jwt (1.5.6)
+    koala (3.0.0)
+      addressable
+      faraday
+      json (>= 1.8)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -404,6 +408,7 @@ DEPENDENCIES
   foundation-rails (~> 6.3)
   jbuilder (~> 2.5)
   jquery-rails
+  koala
   listen (~> 3.0.5)
   momentjs-rails
   omniauth

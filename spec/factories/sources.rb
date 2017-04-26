@@ -15,6 +15,7 @@
 #  admin_email :string
 #  admin_name  :string
 #  note        :string
+#  source_type :string
 #
 # Indexes
 #

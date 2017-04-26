@@ -16,7 +16,11 @@ class SourceUpdatersController < ApplicationController
   end
 
   def source_params
-    @_source_params ||= params.permit(:link, :category_id, :whitelisted, :name, :website,
+    @_source_params ||= begin
+      source_params = params.permit(:link, :name, :website,
       :brief_info, :admin_email, :admin_name, :note)
+      source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
+      source_params
+    end
   end
 end
