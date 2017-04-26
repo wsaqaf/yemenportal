@@ -242,16 +242,7 @@ CREATE TABLE sources (
     updated_at timestamp without time zone NOT NULL,
     category_id integer,
     state character varying DEFAULT 'valid'::character varying,
-    whitelisted boolean DEFAULT false,
-    name character varying DEFAULT ''::character varying NOT NULL,
-    website character varying,
-    brief_info character varying,
-    admin_email character varying,
-    admin_name character varying,
-    note character varying,
-    approve_state character varying,
-    suggested_time timestamp without time zone,
-    user_id integer
+    whitelisted boolean DEFAULT false
 );
 
 
@@ -555,13 +546,6 @@ CREATE INDEX index_sources_on_category_id ON sources USING btree (category_id);
 
 
 --
--- Name: index_sources_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_sources_on_user_id ON sources USING btree (user_id);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -608,14 +592,6 @@ CREATE INDEX index_votes_on_post_id ON votes USING btree (post_id);
 --
 
 CREATE INDEX index_votes_on_user_id ON votes USING btree (user_id);
-
-
---
--- Name: sources fk_rails_06e2fcb9c8; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY sources
-    ADD CONSTRAINT fk_rails_06e2fcb9c8 FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -696,8 +672,6 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170321103023'),
 ('20170322163950'),
 ('20170323124714'),
-('20170330093400'),
-('20170405155243'),
-('20170420185236');
+('20170330093400');
 
 
