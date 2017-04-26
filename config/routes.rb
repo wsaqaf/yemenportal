@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :moderators, only: [:index, :destroy]
 
   resources :posts, only: [:index, :show, :update]
+  resource :votes, only: [:update]
 
   resources :source, only: [] do
     resource :source_updater, only: [:update]
