@@ -2,7 +2,7 @@ require "rails_helper"
 include ActiveJob::TestHelper
 
 describe SourcesController, type: :request do
-  let(:user) { build :user }
+  let(:user) { build :user, role: :admin }
 
   describe "#new" do
     let(:do_request) { get "/sources/new" }

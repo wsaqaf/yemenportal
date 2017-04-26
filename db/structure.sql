@@ -166,7 +166,8 @@ CREATE TABLE posts (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     source_id integer,
-    state character varying DEFAULT 'pending'::character varying NOT NULL
+    state character varying DEFAULT 'pending'::character varying NOT NULL,
+    photo_url character varying
 );
 
 
@@ -249,6 +250,7 @@ CREATE TABLE sources (
     admin_email character varying,
     admin_name character varying,
     note character varying,
+    source_type character varying,
     approve_state character varying,
     suggested_time timestamp without time zone,
     user_id integer
@@ -337,6 +339,39 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
+-- Name: votes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE votes (
+    id integer NOT NULL,
+    user_id integer NOT NULL,
+    post_id integer NOT NULL,
+    positive boolean,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: votes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE votes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: votes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE votes_id_seq OWNED BY votes.id;
+
+
+--
 -- Name: categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -383,6 +418,13 @@ ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::r
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: votes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes ALTER COLUMN id SET DEFAULT nextval('votes_id_seq'::regclass);
 
 
 --
@@ -455,6 +497,14 @@ ALTER TABLE ONLY sources
 
 ALTER TABLE ONLY users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: votes votes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes
+    ADD CONSTRAINT votes_pkey PRIMARY KEY (id);
 
 
 --
@@ -549,6 +599,20 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
+-- Name: index_votes_on_post_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_votes_on_post_id ON votes USING btree (post_id);
+
+
+--
+-- Name: index_votes_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_votes_on_user_id ON votes USING btree (user_id);
+
+
+--
 -- Name: sources fk_rails_06e2fcb9c8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -589,11 +653,27 @@ ALTER TABLE ONLY source_logs
 
 
 --
+-- Name: votes fk_rails_9801d647c1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes
+    ADD CONSTRAINT fk_rails_9801d647c1 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: sources fk_rails_b8c19b584c; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY sources
     ADD CONSTRAINT fk_rails_b8c19b584c FOREIGN KEY (category_id) REFERENCES categories(id);
+
+
+--
+-- Name: votes fk_rails_c9b3bef597; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes
+    ADD CONSTRAINT fk_rails_c9b3bef597 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -617,8 +697,11 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170320143121'),
 ('20170321103023'),
 ('20170322163950'),
+('20170323124714'),
 ('20170330093400'),
 ('20170405155243'),
+('20170414114607'),
+('20170417143915'),
 ('20170420185236');
 
 

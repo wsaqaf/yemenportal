@@ -1,6 +1,6 @@
 class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
-  before_action :authenticate_user!
+  before_action :authenticate_user!, :check_permissions
   before_action :find_source, only: [:edit, :update]
 
   def index
@@ -45,6 +45,10 @@ class SourcesController < ApplicationController
   end
 
   private
+
+  def check_permissions
+    authorize User, :admin?
+  end
 
   def categories
     Category.all
