@@ -17,6 +17,7 @@ gem 'simple_form'
 gem 'slim-rails'
 
 gem 'foundation-rails', '~> 6.3'
+gem 'foundation-icons-sass-rails'
 gem 'will_paginate-foundation'
 gem "seedbank"
 gem "enumerize"
@@ -29,6 +30,8 @@ gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem "selectize-rails"
+gem 'momentjs-rails'
+gem "pundit"
 
 group :development do
   gem 'web-console', '>= 3.3.0'

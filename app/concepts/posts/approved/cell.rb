@@ -3,10 +3,10 @@ class Posts::Approved::Cell < Application::Cell
 
   private
 
-  option :categories
+  option :categories, :user_votes, :user
   property :title, :link, :published_at, :property
 
   def table_body
-    concept("posts/approved/item/cell", collection: model)
+    concept("posts/approved/item/cell", collection: model, user_votes: user_votes, user: user)
   end
 end
