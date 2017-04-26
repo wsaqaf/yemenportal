@@ -4,13 +4,12 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update]
 
   def index
-    sources = Source.paginate(page: params[:page], per_page: 20)
-    render cell: true, model: sources
+    sources = Source.where(approve_state: params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
+    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
   end
 
   def create
-    source_params[:website] = update_website
-    source = Source.new(source_params)
+    source = Source.new(source_create_params)
 
     if source.valid?
       source.save
@@ -59,12 +58,20 @@ class SourcesController < ApplicationController
     @source = Source.find(params.fetch(:id))
   end
 
-  def source_params
-    @_source_params ||= params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
-      :brief_info, :admin_email, :admin_name, :note)
+  def source_create_params
+    if !source_params[:website].present? && source_params[:link]
+      source_params[:website] = source_params[:link].match(WEBSITE_REGEXP).to_s
+    end
+    source_params[:approve_state] = Source.approve_state.approved
+    source_params
   end
 
-  def update_website
-    source_params[:link].match(WEBSITE_REGEXP).to_s if !source_params[:website].present? && source_params[:link]
+  def source_params
+    @_source_params ||= begin
+      source_params = params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
+        :brief_info, :admin_email, :admin_name, :note)
+      source_params[:approve_state] = Source.approve_state.approved
+      source_params
+    end
   end
 end
