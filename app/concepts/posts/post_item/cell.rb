@@ -8,9 +8,4 @@ class Posts::PostItem::Cell < Application::Cell
   def category_names
     categories.map(&:name)
   end
-
-  def post_info
-    time = l published_at, format: :created_at
-    "#{time} #{source.name}"
-  end
 end

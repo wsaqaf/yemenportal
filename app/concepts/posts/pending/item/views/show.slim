@@ -2,8 +2,9 @@ li.news_block.accordion-item data-accordion-item=""
   a.accordion-title
     .title
       = title
-    .date
-      = post_info
+    time.js-publication-time
+      = l published_at, format: :created_at
+    br
     - category_names.each do |name|
       span.label.secondary = name
   .accordion-content.columns.large-12 data-tab-content=''
