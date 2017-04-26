@@ -2,18 +2,17 @@ li.news_block.accordion-item data-accordion-item=""
   a.accordion-title
     .title
       = title
+    .date
+      = post_info
     - category_names.each do |name|
       span.label.secondary = name
-    .preview
-      = preview
-  .accordion-content data-tab-content=''
+  .accordion-content.columns.large-12 data-tab-content=''
     .button-group.tiny
       = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
       = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left alert"
       = link_to t('post.button.read_source'), link, class: "button"
     = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
       class: "multiselect js-post-categories", multiple: true, data: {id: id}
-    .date
-      = l published_at, format: :created_at
     .description
       = description
+  hr
