@@ -1,5 +1,5 @@
 class ModeratorsController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, :check_permission
   before_action :find_user, only: [:destroy]
 
   def index
@@ -13,6 +13,10 @@ class ModeratorsController < ApplicationController
   end
 
   private
+
+  def check_permission
+    authorize User, :admin?
+  end
 
   def find_user
     @user = User.find(params.fetch(:id))
