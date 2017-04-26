@@ -25,4 +25,51 @@ document.addEventListener("turbolinks:load", function() {
 
     return true;
   })
+
+  $('.js-upvote').click(function(e){
+    e.preventDefault();
+    var $upvote_button = $(this);
+
+    doRequest($upvote_button)
+    changeButtons('upvote', 'downvote', 'success', $upvote_button);
+  })
+
+
+  $('.js-downvote').click(function(e){
+    e.preventDefault();
+    var $downvote_button = $(this);
+
+    doRequest($downvote_button)
+    changeButtons('downvote', 'upvote', 'alert', $downvote_button);
+  })
+
+
+  doRequest = function($button) {
+    request = {
+      url: ($button.data().path),
+      dataType: "json",
+      method: "PUT",
+      data: []
+    };
+
+    $.ajax(request);
+
+    true;
+  }
+
+  changeButtons = function(clik, unclik, button_style, $button) {
+    var button_value;
+    var icon_name = {upvote: 'fi-like', downvote: 'fi-dislike'};
+    var $second_button = $button.siblings('a.js-' + unclik)
+
+    button_value = parseInt($button.text())
+    $button.after("<button type='button' class='button " + button_style + "'>" + (button_value +1) + " <i class=" + icon_name[clik] + "></i></button>")
+    $button.remove()
+
+    second_button_value = $second_button.text()
+    $second_button.after("<button type='button' class='button secondary'>" + second_button_value + "<i class=" + icon_name[unclik] + "></i></button>")
+    $second_button.remove()
+
+    true;
+  }
 });
