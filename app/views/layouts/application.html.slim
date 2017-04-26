@@ -1,5 +1,5 @@
 doctype html
-html
+html dir="rtl" lang="ar"
   head
     meta charset="utf-8"
     meta name="viewport" content="width=device-width, initial-scale=1.0"
@@ -17,26 +17,28 @@ html
       span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
         button.menu-icon.dark data-toggle="" type="button"
       #responsive-menu
-        .top-bar-right
-          ul.dropdown.menu data-dropdown-menu=""
-            li
-              = link_to t('menu.sources'), sources_path
-            li
-              = link_to t('menu.categories'), categories_path
-            li
-              = link_to t('menu.posts.name'), '#'
-              ul.menu.vertical
+        - if policy(User).moderator?
+          .top-bar-right
+            ul.dropdown.menu data-dropdown-menu=""
+              - if policy(User).admin?
                 li
-                  = link_to t('menu.posts.pending'), posts_path(state: 'pending')
+                  = link_to t('menu.sources'), sources_path
                 li
-                  = link_to t('menu.posts.rejected'), posts_path(state: 'rejected')
-            li
-              = link_to t('menu.users.name'), '#'
-              ul.menu.vertical
+                  = link_to t('menu.categories'), categories_path
                 li
-                  = link_to t('menu.users.moderators'), moderators_path
-                li
-                  = link_to t('menu.news.admins'), '#'
+                  = link_to t('menu.users.name'), '#'
+                  ul.menu.vertical
+                    li
+                      = link_to t('menu.users.moderators'), moderators_path
+                    li
+                      = link_to t('menu.news.admins'), '#'
+              li
+                = link_to t('menu.posts.name'), '#'
+                ul.menu.vertical
+                  li
+                    = link_to t('menu.posts.pending'), posts_path(state: 'pending')
+                  li
+                    = link_to t('menu.posts.rejected'), posts_path(state: 'rejected')
         .top-bar-left
           ul.menu
             - if current_user

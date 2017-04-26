@@ -1,32 +1,29 @@
-$(document).ready(function(){
+document.addEventListener("turbolinks:load", function() {
   $('select.multiselect').selectize({
-      plugins: ['remove_button', 'restore_on_backspace'],
-      delimiter: ',',
-      persist: false,
-      create: function(input) {
-          return {
-              value: input,
-              text: input
-          }
+    plugins: ['remove_button', 'restore_on_backspace'],
+    delimiter: ',',
+    persist: false,
+    create: function(input) {
+      return {
+        value: input,
+        text: input
       }
+    }
   });
 
   $('.js-post-categories').change(function(){
     var $this = $(this);
-    var params, request;
 
-    params = {category_ids: $this.val()}
-
-    request = {
+    $.ajax({
       url: ("/posts/" + $this.data().id),
       dataType: "script",
       method: "PUT",
-      data: params
-    };
+      data: {
+        category_ids: $this.val()
+      }
+    });
 
-    $.ajax(request);
-
-    true;
+    return true;
   })
 
   $('.js-upvote').click(function(e){

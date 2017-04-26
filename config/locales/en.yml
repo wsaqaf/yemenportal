@@ -30,6 +30,8 @@ en:
       delete: Delete
     pending:
       title: Pending Posts
+    rejected:
+      title: Rejected Posts
   category:
     title: Category
     base_list:
