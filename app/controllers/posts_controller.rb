@@ -3,14 +3,15 @@ class PostsController < ApplicationController
 
   def index
     if category
-      posts = category.posts
+      posts = category.posts.includes(:votes)
     else
-      posts = Post.all
+      posts = Post.includes(:votes)
     end
 
     posts = posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
 
-    render cell: true, model: posts, options: { categories: Category.all, state: posts_state }
+    render cell: true, model: posts, options: { categories: Category.all, state: posts_state, votes: user_voted(posts),
+      user: current_user }
   end
 
   def update
@@ -20,6 +21,15 @@ class PostsController < ApplicationController
   end
 
   private
+
+  def user_voted(posts)
+    posts_ids = posts.ids
+    if current_user
+      current_user.votes.votes_posts(posts_ids)
+    else
+      []
+    end
+  end
 
   def posts_params
     params.permit(:state, category_ids: [])
