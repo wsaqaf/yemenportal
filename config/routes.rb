@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   resources :posts, only: [:index, :show, :update]
   resource :votes, only: [:update]
 
-  resources :source, only: [] do
-    resource :source_updater, only: [:update]
+  namespace :api do
+    resources :sources, only: [:update]
   end
 
   authenticated :user, ->(user) { user.role.admin? } do

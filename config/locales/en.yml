@@ -69,6 +69,7 @@ en:
       brief_info: Brief Info
       website: WEB site
       link: RSS path
+      name: Name
     logs:
       success: "Successfully fetched %{post_count} post."
       failure: Something went wrong during fetching posts.

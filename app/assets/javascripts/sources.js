@@ -1,5 +1,5 @@
 document.addEventListener("turbolinks:load", function() {
-  $( ".sources .textarea" ).each(function() {
+  $('.sources .textarea').each(function() {
     var $this = $(this);
     $this[0].defaultValue = $this.text();
   });
@@ -24,13 +24,27 @@ document.addEventListener("turbolinks:load", function() {
   doRequest = function($this, new_value, name) {
     var post_id = $this.closest('.sources').find('input:hidden')[0].id;
 
+    alert("/api/sources/" + post_id)
     $.ajax({
-      url: ("/source/" + post_id + "/source_updater"),
+      url: ("/api/sources/" + post_id),
       dataType: "script",
       method: "PUT",
       data: { [name] : new_value}
-    }).fail(function() {
+    }).fail(function(xhr) {
+      var errors = $.parseJSON(xhr.responseText).errors
+      console.log($this.prop("defaultValue"))
+      if ($this.next('small').length != 0) {
+        $this.next('small').remove();
+      }
+
+      if (errors[name] != undefined) {
+        $this.after("<small class='error'>" + errors[name] + "</small>");
+      }
       $this.val($this.prop("defaultValue"));
+    }).done(function() {
+      if ($this.next('small').length != 0) {
+        $this.next('small').remove();
+      }
     });
 
     true;

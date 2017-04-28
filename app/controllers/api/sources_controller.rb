@@ -1,4 +1,4 @@
-class SourceUpdatersController < ApplicationController
+class Api::SourcesController < ApplicationController
   before_action :authenticate_user!
   before_action :find_source
 
@@ -6,13 +6,13 @@ class SourceUpdatersController < ApplicationController
 
   def update
     @source.attributes = source_params
-    head :bad_request unless @source.save
+    render json: { errors: @source.errors }, status: :bad_request unless @source.save
   end
 
   private
 
   def find_source
-    @source = Source.find(params.fetch(:source_id))
+    @source = Source.find(params.fetch(:id))
   end
 
   def source_params
