@@ -30,6 +30,7 @@ gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem "selectize-rails"
+gem 'rollbar'
 gem 'momentjs-rails'
 gem "pundit"
 
