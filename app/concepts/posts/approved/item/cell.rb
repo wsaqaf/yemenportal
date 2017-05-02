@@ -1,5 +1,6 @@
 class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   IMAGE_NAME = { "upvote" => "fi-like", "downvote" => "fi-dislike" }.freeze
+  BUTTON_STYLE = { "upvote" => "success", "downvote" => "alert" }.freeze
   UPVOTE = "upvote".freeze
   option :user_votes, :user
   property :title, :link, :published_at, :description, :id, :category_ids, :votes
@@ -8,6 +9,10 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
 
   def user_vote
     user_votes.detect { |vote| vote.post_id == id }
+  end
+
+  def vote_info(type)
+    "<button type='button' class='button #{BUTTON_STYLE[type]}'>#{button_text(type)}</button>"
   end
 
   def disabled_button(type)

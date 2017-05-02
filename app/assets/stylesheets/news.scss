@@ -1,5 +1,19 @@
 .accordion{
   padding-top: 0.3rem;
+  :last-child:not(.is-active) > .accordion-title {
+    border: 0;
+  }
+  a.accordion-title{
+    border: 0;
+    padding: 0.5rem;
+  }
+  .accordion-content {
+    border: 0;
+  }
+  .vote_info button {
+    margin-bottom: 0.01rem;
+    padding: 0.5rem 0.7rem 0.5rem 0.7rem;
+  }
 }
 
 .news_block {
@@ -10,6 +24,8 @@
       margin: 0.1rem;
     }
     .title {
+      font-weight: bold;
+      color: black;
       font-size: 1.2rem;
     }
     .preview {
@@ -19,6 +35,7 @@
     }
   }
   time {
+    color: gray;
     font-size: 0.75rem;
   }
   .description {
