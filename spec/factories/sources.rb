@@ -15,7 +15,8 @@
 #  admin_email    :string
 #  admin_name     :string
 #  note           :string
-#  approve_state  :string
+#  source_type    :string
+#  approve_state  :string           default("suggested")
 #  suggested_time :datetime
 #  user_id        :integer
 #

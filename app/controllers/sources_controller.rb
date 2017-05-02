@@ -1,5 +1,6 @@
 class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
+
   before_action :authenticate_user!, :check_permissions
   before_action :find_source, only: [:edit, :update]
 
@@ -9,9 +10,9 @@ class SourcesController < ApplicationController
   end
 
   def create
-    source = Source.new(source_create_params)
+    source = SourceForm.new(Source.new)
 
-    if source.valid?
+    if source.validate(source_params)
       source.save
       redirect_to sources_path
     else
@@ -20,7 +21,7 @@ class SourcesController < ApplicationController
   end
 
   def new
-    source = Source.new
+    source = SourceForm.new(Source.new)
     render cell: :form, model: source, options: { categories: categories }
   end
 
@@ -38,7 +39,7 @@ class SourcesController < ApplicationController
     @source.attributes = source_params
     if @source.save
       PostsFetcherJob.perform_later(@source.id)
-      redirect_to sources_path
+      redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
       render cell: :form, model: @source, options: { categories: categories }
     end
@@ -58,18 +59,11 @@ class SourcesController < ApplicationController
     @source = Source.find(params.fetch(:id))
   end
 
-  def source_create_params
-    if !source_params[:website].present? && source_params[:link]
-      source_params[:website] = source_params[:link].match(WEBSITE_REGEXP).to_s
-    end
-    source_params[:approve_state] = Source.approve_state.approved
-    source_params
-  end
-
   def source_params
     @_source_params ||= begin
       source_params = params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
-        :brief_info, :admin_email, :admin_name, :note)
+      :brief_info, :admin_email, :admin_name, :note)
+      source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params[:approve_state] = Source.approve_state.approved
       source_params
     end

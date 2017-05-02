@@ -15,7 +15,8 @@
 #  admin_email    :string
 #  admin_name     :string
 #  note           :string
-#  approve_state  :string
+#  source_type    :string
+#  approve_state  :string           default("suggested")
 #  suggested_time :datetime
 #  user_id        :integer
 #
@@ -27,6 +28,8 @@
 
 class Source < ApplicationRecord
   extend Enumerize
+  FACEBOOK_REGEXP = %r{(?<=www\.facebook\.com\/)[^\/]+}
+
   has_many :posts
   has_many :source_logs
   belongs_to :category, optional: true
@@ -34,10 +37,18 @@ class Source < ApplicationRecord
   validates :link, :name, presence: true
   validates :admin_email, email: true, if: :test
   validates :website, :link, url: true
+
   enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info], default: :valid
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
+  enumerize :source_type, in: [:rss, :facebook], default: :rss
+
+  scope :suggested, -> { where(approve_state: [:suggested, nil])}
 
   def test
     admin_email.present?
+  end
+
+  def facebook_page
+    link.match(FACEBOOK_REGEXP).to_s if source_type.facebook?
   end
 end

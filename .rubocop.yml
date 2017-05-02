@@ -31,6 +31,10 @@ RSpec/VerifiedDoubles:
 Style/ConditionalAssignment:
   Enabled: false
 
+Style/Lambda:
+  Exclude:
+    - "app/forms/**/*"
+
 Metrics/BlockLength:
   Exclude:
     - "spec/**/*"

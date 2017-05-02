@@ -2,11 +2,12 @@ li.news_block.accordion-item data-accordion-item=""
   a.accordion-title
     .title
       = title
+    time.js-publication-time
+      = l published_at, format: :created_at
+    br
     - category_names.each do |name|
       span.label.secondary = name
-    .preview
-      = preview
-  .accordion-content data-tab-content=''
+  .accordion-content.columns.large-12 data-tab-content=''
     .button-group.tiny
       = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
       = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left alert"
@@ -15,5 +16,13 @@ li.news_block.accordion-item data-accordion-item=""
       class: "multiselect js-post-categories", multiple: true, data: {id: id}
     time.js-publication-time
       = l published_at, format: :created_at
-    .description
-      = description
+    - if photo_url.present?
+      .row
+        .columns.large-4.medium-4
+          img.thumbnail src="#{photo_url}"
+        .columns.large-8.medium-8
+          .description
+            = strip_tags description
+    - else
+      .description
+        = description

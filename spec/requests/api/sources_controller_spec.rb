@@ -1,16 +1,16 @@
 require "rails_helper"
 
-describe SourceUpdatersController, type: :request do
+describe Api::SourcesController, type: :request do
   let(:user) { build :user }
 
   describe "#update" do
     let(:source) { create :source }
     let(:posts_fetcher_job) { double }
     let(:do_request) do
-      put "/source/#{source.id}/source_updater", params: { link: "http://ddd1234.com" }
+      put "/api/sources/#{source.id}", params: { link: "http://ddd1234.com" }
     end
     let(:do_bad_request) do
-      put "/source/#{source.id}/source_updater", params: { link: "" }
+      put "/api/sources/#{source.id}", params: { link: "" }
     end
 
     it "source params" do

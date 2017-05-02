@@ -1,4 +1,7 @@
 .sources {
+  .error {
+    color: red;
+  }
   .source_name {
     input{
       font-size: 2rem;
@@ -21,5 +24,10 @@
      &:focus{
        border: 1px;
      }
+  }
+  .textarea:empty:before{
+    content: attr(placeholder);
+    color: #cacaca;
+    display: block;
   }
 }

@@ -17,6 +17,7 @@ en:
       suggested: Suggestions
       suggest_source: Suggest source
     categories: Categories
+    edit_profile: Edit profile
     users:
       name: Users
       admins: Admins
@@ -56,14 +57,20 @@ en:
       delete: Delete
       add_category: Add Category
   user:
+    status:
+      moderator: Modeartor
+      invited_moderator: Invited to be moderator
     moderator:
       title: Modeartors
       buttons:
+        resend_invite: Resend invite
         remove: Remove
         add_moderator: Invite new moderator
     roles:
       moderator: Moderator
       admon: Admin
+    buttons:
+      update: Update
   source:
     title:
       approved: Sources
@@ -75,6 +82,7 @@ en:
       brief_info: Brief Info
       website: WEB site
       link: RSS path
+      name: Name
     logs:
       success: "Successfully fetched %{post_count} post."
       failure: Something went wrong during fetching posts.

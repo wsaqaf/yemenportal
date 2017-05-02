@@ -16,7 +16,7 @@ describe SourcesController, type: :request do
   end
 
   describe "#create" do
-    let(:params) { { source: { link: "http://asmail.com", name: "some_name" } } }
+    let(:params) { { source: { link: "http://asmail.com", website: "http://asmail.com", name: "some_name" } } }
     let(:do_request) { post "/sources", params: params }
 
     context "success reques" do
@@ -71,7 +71,7 @@ describe SourcesController, type: :request do
       allow(posts_fetcher_job).to receive(:perform_later) { true }
 
       do_request
-      expect(response).to redirect_to(sources_path)
+      expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
     end
 
     it "source fails" do
