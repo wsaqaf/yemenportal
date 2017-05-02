@@ -1,4 +1,5 @@
 class SourceForm < Reform::Form
+  extend Enumerize
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
 
   property :name
@@ -16,12 +17,14 @@ class SourceForm < Reform::Form
   property :whitelisted
   property :category_id
   property :state
+  property :approve_state
+  property :source_type
+  property :user
 
   validates :link, :name, presence: true
-  validates :admin_email, email: true, if: :test
+  validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
 
-  def test
-    admin_email.present?
-  end
+  enumerize :approve_state, in: [:approved, :suggested], default: :suggested
+  enumerize :source_type, in: [:rss, :facebook], default: :rss
 end

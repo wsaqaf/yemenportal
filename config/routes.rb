@@ -19,6 +19,11 @@ Rails.application.routes.draw do
   resources :users, only: [:update, :edit]
   resource :votes, only: [:update]
 
+  namespace :sources do
+    resources :approve, only: [:update]
+    resources :suggest, only: [:create, :new]
+  end
+
   namespace :api do
     resources :sources, only: [:update]
   end

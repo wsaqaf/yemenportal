@@ -250,7 +250,9 @@ CREATE TABLE sources (
     admin_email character varying,
     admin_name character varying,
     note character varying,
-    source_type character varying
+    source_type character varying,
+    approve_state character varying DEFAULT 'suggested'::character varying,
+    user_id integer
 );
 
 
@@ -554,6 +556,13 @@ CREATE INDEX index_sources_on_category_id ON sources USING btree (category_id);
 
 
 --
+-- Name: index_sources_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_sources_on_user_id ON sources USING btree (user_id);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -600,6 +609,14 @@ CREATE INDEX index_votes_on_post_id ON votes USING btree (post_id);
 --
 
 CREATE INDEX index_votes_on_user_id ON votes USING btree (user_id);
+
+
+--
+-- Name: sources fk_rails_06e2fcb9c8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY sources
+    ADD CONSTRAINT fk_rails_06e2fcb9c8 FOREIGN KEY (user_id) REFERENCES users(id);
 
 
 --
@@ -683,6 +700,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170330093400'),
 ('20170405155243'),
 ('20170414114607'),
-('20170417143915');
+('20170417143915'),
+('20170420185236');
 
 

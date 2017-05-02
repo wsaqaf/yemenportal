@@ -25,7 +25,7 @@ describe SourcesController, type: :request do
         do_request
 
         expect(response.status).to eq 302
-        expect(response).to redirect_to(sources_path)
+        expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
       end
     end
 
@@ -71,7 +71,7 @@ describe SourcesController, type: :request do
       allow(posts_fetcher_job).to receive(:perform_later) { true }
 
       do_request
-      expect(response).to redirect_to(sources_path)
+      expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
     end
 
     it "source fails" do
@@ -109,7 +109,7 @@ describe SourcesController, type: :request do
   end
 
   describe "#index" do
-    let(:do_request) { get "/sources" }
+    let(:do_request) { get "/sources", params: { approve_state: "approved" } }
 
     it "redirect to sources list" do
       sign_in user

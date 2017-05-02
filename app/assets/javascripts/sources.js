@@ -24,7 +24,6 @@ document.addEventListener("turbolinks:load", function() {
   doRequest = function($this, new_value, name) {
     var post_id = $this.closest('.sources').find('input:hidden')[0].id;
 
-    alert("/api/sources/" + post_id)
     $.ajax({
       url: ("/api/sources/" + post_id),
       dataType: "script",

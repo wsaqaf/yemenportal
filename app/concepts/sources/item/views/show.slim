@@ -4,12 +4,17 @@
     .row
       .medium-8.columns.source_name
         input name=('name') placeholder=field_name("name") value = name
+        = " #{field_name("added_by")} #{user.email} "
+        time.js-publication-time
+          = l created_at, format: :created_at
       .medium-4.float-left.columns
         - unless state.valid?
           span.label.warning = t("source.error.invalid")
         .button-group.tiny.float-left
-          = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
-          = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"
+          = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+          = link_to t('source.buttons.edit'), edit_source_path(model), class: "button"
+          - if approve_state.suggested?
+            = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button"
     .row
       .medium-3.small-3.columns
         label.float-left.inline = field_name("link")
