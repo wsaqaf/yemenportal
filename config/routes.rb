@@ -9,6 +9,12 @@ Rails.application.routes.draw do
   resources :sources
   resources :moderators, only: [:index, :destroy]
 
+  resources :moderators, only: [] do
+    scope module: :moderators do
+      resources :invites, only: [:create]
+    end
+  end
+
   resources :posts, only: [:index, :show, :update]
   resource :votes, only: [:update]
 
