@@ -34,6 +34,10 @@ gem 'rollbar'
 gem 'momentjs-rails'
 gem "pundit"
 
+gem 'validate_url'
+gem 'email_validator'
+gem 'reform-rails'
+
 group :development do
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'

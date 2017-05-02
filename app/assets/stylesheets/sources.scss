@@ -1,0 +1,33 @@
+.sources {
+  .error {
+    color: red;
+  }
+  .source_name {
+    input{
+      font-size: 2rem;
+      overflow-x: visible;
+    }
+  }
+  input{
+    overflow-x: visible;
+    overflow-y: visible;
+    border: 0;
+    width: 100%;
+    cursor: default;
+    &:focus{
+      cursor: text;
+    }
+  }
+  .textarea {
+     display:inline-block;
+     border: none;
+     &:focus{
+       border: 1px;
+     }
+  }
+  .textarea:empty:before{
+    content: attr(placeholder);
+    color: #cacaca;
+    display: block;
+  }
+}

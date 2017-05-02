@@ -49,6 +49,7 @@ class User < ApplicationRecord
 
   validates :email, :role, presence: true
   validates :email, uniqueness: true
+  validates :email, email: true
 
   has_many :votes
   has_many :posts, through: :votes

@@ -12,6 +12,10 @@ Rails.application.routes.draw do
   resources :posts, only: [:index, :show, :update]
   resource :votes, only: [:update]
 
+  namespace :api do
+    resources :sources, only: [:update]
+  end
+
   authenticated :user, ->(user) { user.role.admin? } do
     Sidekiq::Web.set :session_secret, Rails.application.secrets[:secret_key_base]
     mount Sidekiq::Web, at: '/sidekiq'
