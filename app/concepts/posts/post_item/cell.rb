@@ -1,7 +1,7 @@
 class Posts::PostItem::Cell < Application::Cell
   PREVIEW_SIZE = 180
 
-  property :title, :link, :published_at, :description, :id, :category_ids, :categories
+  property :title, :link, :published_at, :description, :id, :category_ids, :categories, :photo_url
 
   private
 

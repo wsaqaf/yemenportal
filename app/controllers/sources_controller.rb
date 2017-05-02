@@ -10,7 +10,7 @@ class SourcesController < ApplicationController
   end
 
   def create
-    source_params[:website] = update_website
+    update_website_field
     source = Source.new(source_params)
 
     if source.valid?
@@ -69,7 +69,9 @@ class SourcesController < ApplicationController
     end
   end
 
-  def update_website
-    source_params[:link].match(WEBSITE_REGEXP).to_s if !source_params[:website].present? && source_params[:link]
+  def update_website_field
+    if !source_params[:website].present? && source_params[:link]
+      source_params[:website] = source_params[:link].match(WEBSITE_REGEXP).to_s
+    end
   end
 end

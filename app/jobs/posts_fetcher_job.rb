@@ -9,7 +9,7 @@ class PostsFetcherJob < ActiveJob::Base
     rescue Errno::ENOENT
       SourceLog.create(source: source, state: :invalid)
       source.update(state: Source.state.incorrect_path)
-    rescue RSS::NotWellFormedError
+    rescue RSS::NotWellFormedError, RSS::NotAvailableValueError
       SourceLog.create(source: source, state: :invalid)
       source.update(state: Source.state.incorrect_stucture)
     else
