@@ -43,6 +43,8 @@ html dir="rtl" lang="ar"
           ul.menu
             - if current_user
               li
+                = link_to t('user.edit_profile'), edit_user_path(current_user)
+              li
                 = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete
             - else
               li

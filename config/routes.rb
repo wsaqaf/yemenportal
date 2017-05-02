@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: [:index, :show, :update]
+  resources :users, only: [:update, :edit]
   resource :votes, only: [:update]
 
   namespace :api do

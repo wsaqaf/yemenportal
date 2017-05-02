@@ -13,6 +13,7 @@ en:
   menu:
     sources: Sources
     categories: Categories
+    edit_profile: Edit profile
     users:
       name: Users
       admins: Admins
@@ -64,6 +65,8 @@ en:
     roles:
       moderator: Moderator
       admon: Admin
+    buttons:
+      update: Update
   source:
     title: Source
     fields:
