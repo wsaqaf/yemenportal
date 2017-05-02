@@ -10,10 +10,9 @@ class SourcesController < ApplicationController
   end
 
   def create
-    update_website_field
-    source = Source.new(source_params)
+    source = SourceForm.new(Source.new)
 
-    if source.valid?
+    if source.validate(source_params)
       source.save
       redirect_to sources_path
     else
@@ -22,7 +21,7 @@ class SourcesController < ApplicationController
   end
 
   def new
-    source = Source.new
+    source = SourceForm.new(Source.new)
     render cell: :form, model: source, options: { categories: categories }
   end
 
@@ -66,12 +65,6 @@ class SourcesController < ApplicationController
       :brief_info, :admin_email, :admin_name, :note)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params
-    end
-  end
-
-  def update_website_field
-    if !source_params[:website].present? && source_params[:link]
-      source_params[:website] = source_params[:link].match(WEBSITE_REGEXP).to_s
     end
   end
 end

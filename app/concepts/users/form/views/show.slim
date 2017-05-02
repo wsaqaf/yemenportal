@@ -1,0 +1,7 @@
+.columns.large-6.medium-8.small-6.small-centered
+  = simple_form_for model do |f|
+    = f.input :first_name, required: true
+    = f.input :last_name, required: true
+    = f.input :email
+    .button-group
+      = f.submit t("user.buttons.update"), class: "button"

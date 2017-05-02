@@ -16,7 +16,7 @@ describe SourcesController, type: :request do
   end
 
   describe "#create" do
-    let(:params) { { source: { link: "http://asmail.com", name: "some_name" } } }
+    let(:params) { { source: { link: "http://asmail.com", website: "http://asmail.com", name: "some_name" } } }
     let(:do_request) { post "/sources", params: params }
 
     context "success reques" do

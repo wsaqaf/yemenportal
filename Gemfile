@@ -30,11 +30,13 @@ gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
 gem "selectize-rails"
+gem 'rollbar'
 gem 'momentjs-rails'
 gem "pundit"
 
 gem 'validate_url'
 gem 'email_validator'
+gem 'reform-rails'
 
 gem "koala"
 

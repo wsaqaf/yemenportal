@@ -43,8 +43,21 @@ html dir="rtl" lang="ar"
           ul.menu
             - if current_user
               li
+                = link_to t('user.edit_profile'), edit_user_path(current_user)
+              li
                 = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete
             - else
               li
                 = link_to t('devise.log_in'), new_user_session_path
     == yield
+
+    javascript:
+      var _rollbarConfig = {
+        accessToken: "#{ENV['ROLLBAR_CLIENT_TOKEN']}",
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+        payload: {
+          environment: "#{Rails.env.to_json}",
+          person: "#{current_user ? current_user.email : 'guest'}"
+        }
+      };
