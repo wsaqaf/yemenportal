@@ -1,5 +1,6 @@
 class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
+
   before_action :authenticate_user!, :check_permissions
   before_action :find_source, only: [:edit, :update]
 
@@ -59,7 +60,11 @@ class SourcesController < ApplicationController
   end
 
   def source_params
-    @_source_params ||= params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
+    @_source_params ||= begin
+      source_params = params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
       :brief_info, :admin_email, :admin_name, :note)
+      source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
+      source_params
+    end
   end
 end

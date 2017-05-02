@@ -12,4 +12,12 @@ class RSSParserService
     posts = Post.source_posts(source_id)
     feed.items.select { |item| posts.empty? || item.pubDate > posts.first.published_at }
   end
+
+  def self.fetch_facebook_items(source)
+    connection = Koala::Facebook::API.new
+    posts = Post.source_posts(source.id)
+
+    items = connection.get_connection(source.facebook_page, "posts")
+    items.select { |item| posts.empty? || item["created_time"].to_time > posts.first.published_at }
+  end
 end

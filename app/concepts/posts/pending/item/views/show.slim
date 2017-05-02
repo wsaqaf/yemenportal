@@ -15,5 +15,13 @@ li.news_block.accordion-item data-accordion-item=""
       class: "multiselect js-post-categories", multiple: true, data: {id: id}
     time.js-publication-time
       = l published_at, format: :created_at
-    .description
-      = description
+    - if photo_url.present?
+      .row
+        .columns.large-4.medium-4
+          img.thumbnail src="#{photo_url}"
+        .columns.large-8.medium-8
+          .description
+            = strip_tags description
+    - else
+      .description
+        = description
