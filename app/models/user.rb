@@ -48,7 +48,9 @@ class User < ApplicationRecord
          :validatable, :omniauthable, omniauth_providers: [:facebook, :twitter]
 
   validates :email, :role, presence: true
+  validates :first_name, :last_name, presence: true, if: "persisted?"
   validates :email, uniqueness: true
+  validates :email, email: true
 
   has_many :votes
   has_many :posts, through: :votes

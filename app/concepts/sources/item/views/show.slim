@@ -1,7 +1,43 @@
 .row
-  = link
-  - unless state.valid?
-    span.label.warning = t("source.error.invalid")
-  .button-group.tiny.float-left
-    = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
-    = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"
+  .columns.sources
+    = hidden_field_tag id
+    .row
+      .medium-8.columns.source_name
+        input name=('name') placeholder=field_name("name") value = name
+      .medium-4.float-left.columns
+        - unless state.valid?
+          span.label.warning = t("source.error.invalid")
+        .button-group.tiny.float-left
+          = link_to I18n.t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+          = link_to I18n.t('source.buttons.edit'), edit_source_path(model), class: "button"
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("link")
+      .medium-9.small-9.columns
+        input name=('link') placeholder=field_name("link") value = link
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("website")
+      .medium-9.small-9.columns
+        input name=('website') placeholder=field_name("website") value = website
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("brief_info")
+      .medium-9.small-9.columns
+        input name=('brief_info') placeholder=field_name("brief_info") value = brief_info
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("admin_name")
+      .medium-9.small-9.columns
+        input name=('admin_name') placeholder=field_name("admin_name") value = admin_name
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("admin_email")
+      .medium-9.small-9.columns
+        input name=('admin_email') placeholder=field_name("admin_email") value = admin_email
+    .row
+      .medium-3.small-3.columns
+        label.float-left.inline = field_name("note")
+      .medium-9.small-9.columns
+        .textarea name=('note') placeholder=t('source.fields.note') contentEditable="true" = note
+  hr

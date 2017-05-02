@@ -9,6 +9,13 @@
 #  category_id :integer
 #  state       :string           default("valid")
 #  whitelisted :boolean          default("false")
+#  name        :string           default(""), not null
+#  website     :string
+#  brief_info  :string
+#  admin_email :string
+#  admin_name  :string
+#  note        :string
+#  source_type :string
 #
 # Indexes
 #
@@ -17,8 +24,10 @@
 
 FactoryGirl.define do
   factory :source do
-    sequence(:link) { |n| "www.source_#{n}@gar.com" }
+    sequence(:link) { |n| "http://source_#{n}@gar.com" }
     association :category
+    sequence(:name) { |n| "name_#{n}" }
+    sequence(:website) { |n| "http://source_#{n}.ru" }
     whitelisted false
   end
 end

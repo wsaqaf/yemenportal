@@ -166,7 +166,8 @@ CREATE TABLE posts (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     source_id integer,
-    state character varying DEFAULT 'pending'::character varying NOT NULL
+    state character varying DEFAULT 'pending'::character varying NOT NULL,
+    photo_url character varying
 );
 
 
@@ -242,7 +243,14 @@ CREATE TABLE sources (
     updated_at timestamp without time zone NOT NULL,
     category_id integer,
     state character varying DEFAULT 'valid'::character varying,
-    whitelisted boolean DEFAULT false
+    whitelisted boolean DEFAULT false,
+    name character varying DEFAULT ''::character varying NOT NULL,
+    website character varying,
+    brief_info character varying,
+    admin_email character varying,
+    admin_name character varying,
+    note character varying,
+    source_type character varying
 );
 
 
@@ -672,6 +680,9 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170321103023'),
 ('20170322163950'),
 ('20170323124714'),
-('20170330093400');
+('20170330093400'),
+('20170405155243'),
+('20170414114607'),
+('20170417143915');
 
 

@@ -103,6 +103,7 @@ GEM
       safe_yaml (~> 1.0.0)
     database_cleaner (1.5.3)
     debug_inspector (0.0.2)
+    declarative (0.0.9)
     declarative-builder (0.1.0)
       declarative-option (< 0.2.0)
     declarative-option (0.1.0)
@@ -116,11 +117,19 @@ GEM
       actionmailer (>= 4.1.0)
       devise (>= 4.0.0)
     diff-lcs (1.3)
+    disposable (0.4.2)
+      declarative (>= 0.0.9, < 1.0.0)
+      declarative-builder (< 0.2.0)
+      declarative-option (< 0.2.0)
+      representable (>= 2.4.0, <= 3.1.0)
+      uber (< 0.2.0)
     docile (1.1.5)
     dotenv (2.2.0)
     dotenv-rails (2.2.0)
       dotenv (= 2.2.0)
       railties (>= 3.2, < 5.1)
+    email_validator (1.6.0)
+      activemodel
     enumerize (2.0.1)
       activesupport (>= 3.2)
     erubis (2.7.0)
@@ -156,6 +165,10 @@ GEM
       thor (>= 0.14, < 2.0)
     json (2.0.3)
     jwt (1.5.6)
+    koala (3.0.0)
+      addressable
+      faraday
+      json (>= 1.8)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -257,8 +270,20 @@ GEM
     rb-inotify (0.9.8)
       ffi (>= 0.5.0)
     redis (3.3.3)
+    reform (2.2.4)
+      disposable (>= 0.4.1)
+      representable (>= 2.4.0, < 3.1.0)
+    reform-rails (0.1.7)
+      activemodel (>= 3.2)
+      reform (>= 2.2.0)
+    representable (3.0.4)
+      declarative (< 0.1.0)
+      declarative-option (< 0.2.0)
+      uber (< 0.2.0)
     responders (2.3.0)
       railties (>= 4.2.0, < 5.1)
+    rollbar (2.14.1)
+      multi_json
     rspec-core (3.5.4)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -354,6 +379,9 @@ GEM
     uglifier (3.0.4)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.1.3)
+    validate_url (1.0.2)
+      activemodel (>= 3.0.0)
+      addressable
     warden (1.2.7)
       rack (>= 1.0)
     web-console (3.4.0)
@@ -391,6 +419,7 @@ DEPENDENCIES
   devise
   devise_invitable
   dotenv-rails
+  email_validator
   enumerize
   factory_girl_rails
   faker
@@ -398,6 +427,7 @@ DEPENDENCIES
   foundation-rails (~> 6.3)
   jbuilder (~> 2.5)
   jquery-rails
+  koala
   listen (~> 3.0.5)
   momentjs-rails
   omniauth
@@ -410,6 +440,8 @@ DEPENDENCIES
   pundit
   rails (~> 5.0.1)
   rails-views
+  reform-rails
+  rollbar
   rspec-rails
   rubocop
   rubocop-rspec
@@ -427,6 +459,7 @@ DEPENDENCIES
   turbolinks (~> 5)
   tzinfo-data
   uglifier (>= 1.3.0)
+  validate_url
   web-console (>= 3.3.0)
   webmock
   whenever
