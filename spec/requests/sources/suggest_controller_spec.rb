@@ -15,7 +15,7 @@ describe Sources::SuggestController, type: :request do
   end
 
   describe "#create" do
-    let(:params) { { source: { link: "http://asmail.com", name: "some_name" } } }
+    let(:params) { { source: { link: "http://asmail.com", name: "some_name", website: "http://asmail.com" } } }
     let(:do_request) { post "/sources/suggest", params: params }
 
     context "success reques" do

@@ -25,7 +25,7 @@ describe SourcesController, type: :request do
         do_request
 
         expect(response.status).to eq 302
-        expect(response).to redirect_to(sources_path)
+        expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
       end
     end
 

@@ -6,7 +6,7 @@ class Sources::Form::Cell < Application::Cell
 
   def submit_button
     if model.persisted?
-      approve_state.approved? ? t("source.buttons.update") : "Approve"
+      approve_state.approved? ? t("source.buttons.update") : t("source.buttons.approve")
     else
       t("source.buttons.create")
     end

@@ -3,9 +3,9 @@ class Sources::SuggestController < ApplicationController
   before_action :authenticate_user!
 
   def create
-    source = Source.new(source_params)
+    source = SourceForm.new(Source.new)
 
-    if source.valid?
+    if source.validate(source_params)
       source.save
       redirect_to root_path
     else
@@ -29,9 +29,7 @@ class Sources::SuggestController < ApplicationController
       source_params = params.require(:source).permit(:link, :category_id, :name, :website,
       :brief_info, :admin_email, :admin_name, :note)
       source_params[:approve_state] = Source.approve_state.suggested
-      if !source_params[:website].present? && source_params[:link]
-        source_params[:website] = source_params[:link].match(WEBSITE_REGEXP).to_s
-      end
+      source_params[:user] = current_user
       source_params
     end
   end

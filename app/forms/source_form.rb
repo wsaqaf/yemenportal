@@ -19,15 +19,12 @@ class SourceForm < Reform::Form
   property :state
   property :approve_state
   property :source_type
+  property :user
 
   validates :link, :name, presence: true
-  validates :admin_email, email: true, if: :test
+  validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
 
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss
-
-  def test
-    admin_email.present?
-  end
 end

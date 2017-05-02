@@ -14,7 +14,7 @@ class SourcesController < ApplicationController
 
     if source.validate(source_params)
       source.save
-      redirect_to sources_path
+      redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
       render cell: :form, model: source
     end
@@ -65,6 +65,7 @@ class SourcesController < ApplicationController
       :brief_info, :admin_email, :admin_name, :note)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params[:approve_state] = Source.approve_state.approved
+      source_params[:user] = current_user
       source_params
     end
   end

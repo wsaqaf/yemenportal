@@ -1,7 +1,6 @@
 class AddApproveStateToSource < ActiveRecord::Migration[5.0]
   def up
     add_column :sources, :approve_state, :string, default: 'suggested'
-    add_column :sources, :suggested_time, :datetime
     add_reference :sources, :user, foreign_key: true
 
     Source.all.each do |source|
@@ -11,7 +10,6 @@ class AddApproveStateToSource < ActiveRecord::Migration[5.0]
 
   def down
     remove_column :sources, :approve_state
-    remove_column :sources, :suggested_time
     remove_reference :sources, :user, foreign_key: true
   end
 end

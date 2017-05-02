@@ -76,6 +76,7 @@ en:
       approved: Sources
       suggested: Suggested
     fields:
+      added_by: added by
       note: Note
       admin_email:  Admin Email
       admin_name: Admin Name
