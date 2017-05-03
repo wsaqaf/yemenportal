@@ -23,12 +23,14 @@ document.addEventListener("turbolinks:load", function() {
 
   doRequest = function($this, new_value, name) {
     var post_id = $this.closest('.sources').find('input:hidden')[0].id;
+    var post_data = {}
+    post_data[name] = new_value
 
     $.ajax({
       url: ("/api/sources/" + post_id),
       dataType: "script",
       method: "PUT",
-      data: { [name] : new_value}
+      data: post_data
     }).fail(function(xhr) {
       var errors = $.parseJSON(xhr.responseText).errors
       console.log($this.prop("defaultValue"))
