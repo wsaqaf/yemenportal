@@ -27,6 +27,9 @@ en:
       pending: Pending
       rejected: Rejected
   post:
+    fields:
+      source_name: Source name
+      link: Source link
     button:
       show: Show
       approve: Approve

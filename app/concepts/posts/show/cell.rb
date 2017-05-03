@@ -4,7 +4,7 @@ class Posts::Show::Cell < Application::Cell
   property :title, :link, :published_at, :description, :id, :category_ids, :categories, :source, :photo_url, :state
 
   def field_name(field)
-    t("source.fields.#{field}")
+    t("post.fields.#{field}")
   end
 
   def category_names

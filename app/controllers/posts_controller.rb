@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+  before_action :authenticate_user!, :check_permissions, only: [:update]
   before_action :find_post, only: [:update, :show]
 
   def show
@@ -59,5 +60,9 @@ class PostsController < ApplicationController
 
   def category
     @_category = Category.find_by(name: params[:category])
+  end
+
+  def check_permissions
+    authorize User, :moderator?
   end
 end
