@@ -1,0 +1,37 @@
+.columns.large-6.medium-8.small-12.small-centered.category_list
+  .row
+    .medium-8.columns.source_name
+      .title
+        = title
+      time.js-publication-time
+        = l published_at, format: :created_at
+      br
+      - category_names.each do |name|
+        span.label.secondary = name
+    .medium-4.float-left.columns
+      .button-group.tiny
+        = link_to t('post.button.back'), :back, class: "button float-left"
+        - if state.pending?
+          = link_to t('post.button.approve'), post_path(model, state: :approved, redirrect_path: path), method: :put, class: "button float-left success"
+          = link_to t('post.button.reject'), post_path(model, state: :rejected, redirrect_path: path), method: :put, class: "button float-left alert"
+  br
+  - if photo_url.present?
+    .row
+      .columns.large-4.medium-4
+        img.thumbnail src="#{photo_url}"
+      .columns.large-8.medium-8
+        .description
+          = strip_tags description
+  - else
+    .description
+      = description
+  .row
+    .medium-3.small-3.columns
+      label.float-left.inline = field_name("source_name")
+    .medium-9.small-9.columns
+      = source.name
+  .row
+    .medium-3.small-3.columns
+      label.float-left.inline = field_name("link")
+    .medium-9.small-9.columns
+      = link_to link

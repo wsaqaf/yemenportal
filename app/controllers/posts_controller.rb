@@ -1,5 +1,9 @@
 class PostsController < ApplicationController
-  before_action :find_post, only: [:update]
+  before_action :find_post, only: [:update, :show]
+
+  def show
+    render cell: :show, model: @post
+  end
 
   def index
     if category
@@ -17,10 +21,20 @@ class PostsController < ApplicationController
   def update
     @post.update(posts_params)
 
-    posts_params[:state].present? ? redirect_to(:back) : render(nothing: true)
+    if params[:redirrect_path].present?
+      redirect_to(params[:redirrect_path])
+    elsif posts_params[:state].present?
+      redirect_to(:back)
+    else
+      render(nothing: true)
+    end
   end
 
   private
+
+  def back_url
+    request.referer || root_path
+  end
 
   def user_voted(posts)
     posts_ids = posts.ids

@@ -40,6 +40,18 @@ describe PostsController, type: :request do
     end
   end
 
+  describe "#show" do
+    let(:headers) { { "HTTP_REFERER" => "some_place" } }
+    let(:post) { create :post, state: "pending" }
+    let(:do_request) { get "/posts/#{post.id}" }
+
+    it "post infor" do
+      do_request
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "#update" do
     let(:category) { create :category }
     let(:post) { create :post, state: "pending" }
