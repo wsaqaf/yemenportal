@@ -30,7 +30,7 @@ document.addEventListener("turbolinks:load", function() {
     e.preventDefault();
     var $upvote_button = $(this);
 
-    doRequest($upvote_button)
+    makeRequest($upvote_button)
     changeButtons('upvote', 'downvote', 'success', $upvote_button);
   })
 
@@ -39,12 +39,12 @@ document.addEventListener("turbolinks:load", function() {
     e.preventDefault();
     var $downvote_button = $(this);
 
-    doRequest($downvote_button)
+    makeRequest($downvote_button)
     changeButtons('downvote', 'upvote', 'alert', $downvote_button);
   })
 
 
-  doRequest = function($button) {
+  var makeRequest = function($button) {
     request = {
       url: ($button.data().path),
       dataType: "json",

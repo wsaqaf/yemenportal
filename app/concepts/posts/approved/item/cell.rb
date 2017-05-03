@@ -12,7 +12,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   end
 
   def vote_info(type)
-    "<button type='button' class='button #{BUTTON_STYLE[type]}'>#{button_text(type)}</button>"
+    "<button type='button' class='button float-left #{BUTTON_STYLE[type]}'>#{button_text(type)}</button>"
   end
 
   def disabled_button(type)
