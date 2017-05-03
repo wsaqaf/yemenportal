@@ -12,7 +12,7 @@ class SourcesController < ApplicationController
   def create
     source = SourceForm.new(Source.new)
 
-    if source.validate(source_params)
+    if source.validate(source_params.merge(user: current_user))
       source.save
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
@@ -27,7 +27,7 @@ class SourcesController < ApplicationController
 
   def destroy
     Source.destroy(params[:id])
-    redirect_to sources_path
+    redirect_to sources_path(approve_state: Source.approve_state.approved)
   end
 
   def edit
@@ -65,7 +65,6 @@ class SourcesController < ApplicationController
       :brief_info, :admin_email, :admin_name, :note)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params[:approve_state] = Source.approve_state.approved
-      source_params[:user] = current_user
       source_params
     end
   end

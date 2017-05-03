@@ -4,7 +4,7 @@
     .row
       .medium-8.columns.source_name
         input name=('name') placeholder=field_name("name") value = name
-        = " #{field_name("added_by")} #{user.email} "
+        = " #{} #{author} "
         time.js-publication-time
           = l created_at, format: :created_at
       .medium-4.float-left.columns

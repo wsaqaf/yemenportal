@@ -5,4 +5,8 @@ class Sources::Item::Cell < Application::Cell
   def field_name(field)
     t("source.fields.#{field}")
   end
+
+  def author
+    user ? " #{field_name('added_by')} #{user.email}" : ""
+  end
 end
