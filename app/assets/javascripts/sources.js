@@ -31,7 +31,6 @@ document.addEventListener("turbolinks:load", function() {
       data: { [name] : new_value}
     }).fail(function(xhr) {
       var errors = $.parseJSON(xhr.responseText).errors
-      console.log($this.prop("defaultValue"))
       if ($this.next('small').length != 0) {
         $this.next('small').remove();
       }

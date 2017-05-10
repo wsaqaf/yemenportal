@@ -1,9 +1,11 @@
 class PostsController < ApplicationController
-  before_action :authenticate_user!, :check_permissions, only: [:update]
+  before_action :authenticate_user!, :check_permissions, only: [:update, :show]
   before_action :find_post, only: [:update, :show]
 
   def show
-    render cell: :show, model: @post
+    comments = @post.comments
+
+    render cell: :show, model: @post, options: { comments: comments.ordered_by_date, user_id: current_user.id }
   end
 
   def index

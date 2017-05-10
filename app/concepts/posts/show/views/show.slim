@@ -35,3 +35,14 @@
       label.float-left.inline = field_name("link")
     .medium-9.small-9.columns
       = link_to link
+
+  #comments-list
+    .row
+      = render_comments
+  #comment_form
+    .row
+      = form_for([model, comments.build]) do |f|
+        .field
+          = f.text_area :body
+        .actions
+          = f.submit 'Apply', class: "button", id: 'apply_button', data: {path: post_comments_path(model)}

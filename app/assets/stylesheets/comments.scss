@@ -1,0 +1,16 @@
+.comment {
+  border-top: 1px solid gray;
+  border-radius: 5px;
+  .comment_header {
+    display: inline-block;
+    font-size: 0.7rem;
+    time {
+      padding-right: 0.3rem;
+    }
+  }
+}
+#comment-list {
+  .error {
+    color: red;
+  }
+}

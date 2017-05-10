@@ -1,6 +1,5 @@
 class Posts::Show::Cell < Application::Cell
-  private
-
+  option :comments, :user_id
   property :title, :link, :published_at, :description, :id, :category_ids, :categories, :source, :photo_url, :state
 
   def field_name(field)
@@ -13,5 +12,9 @@ class Posts::Show::Cell < Application::Cell
 
   def path
     posts_path(state: "pending")
+  end
+
+  def render_comments
+    concept("posts/comments/cell", collection: comments.to_a, user_id: user_id, destroy_path: nil)
   end
 end

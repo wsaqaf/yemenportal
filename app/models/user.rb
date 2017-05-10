@@ -54,6 +54,7 @@ class User < ApplicationRecord
 
   has_many :votes
   has_many :posts, through: :votes
+  has_many :comments
 
   enumerize :role, in: %w(ADMIN MODERATOR MEMBER).map { |role| [role.downcase, role] }.to_h,
     i18n_scope: "user.roles"
@@ -78,5 +79,13 @@ class User < ApplicationRecord
       user.save
     end
     user
+  end
+
+  def full_name
+    if first_name && last_name
+      "#{first_name} #{last_name}"
+    else
+      email
+    end
   end
 end

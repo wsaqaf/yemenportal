@@ -41,11 +41,13 @@ describe PostsController, type: :request do
   end
 
   describe "#show" do
+    let(:user) { build :user, role: :moderator }
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
     let(:post) { create :post, state: "pending" }
     let(:do_request) { get "/posts/#{post.id}" }
 
     it "post infor" do
+      sign_in user
       do_request
 
       expect(response).to have_http_status(:ok)
