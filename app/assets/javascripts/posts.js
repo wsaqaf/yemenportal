@@ -26,6 +26,12 @@ document.addEventListener("turbolinks:load", function() {
     return true;
   })
 
+
+  $('.info_button').click(function(e){
+    var post_id = $(this).data().id;
+    $('.accordion').foundation('down', $('#'+ post_id))
+  })
+
   $('.js-upvote').click(function(e){
     e.preventDefault();
     var $upvote_button = $(this);
@@ -84,4 +90,7 @@ document.addEventListener("turbolinks:load", function() {
       $this.text(publiction_time.format('lll'));
     }
   });
+
+
+  $('.accordion').foundation('down', $('#31'))
 });

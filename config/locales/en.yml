@@ -60,6 +60,7 @@ en:
       delete: Delete
       add_category: Add Category
   user:
+    should_login: Please, login in system.
     status:
       moderator: Modeartor
       invited_moderator: Invited to be moderator
