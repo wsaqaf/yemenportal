@@ -1,5 +1,12 @@
 class PostsController < ApplicationController
-  before_action :find_post, only: [:update]
+  before_action :authenticate_user!, :check_permissions, only: [:update, :show]
+  before_action :find_post, only: [:update, :show]
+
+  def show
+    comments = @post.comments
+
+    render cell: :show, model: @post, options: { comments: comments.ordered_by_date, user_id: current_user.id }
+  end
 
   def index
     if category
@@ -17,10 +24,20 @@ class PostsController < ApplicationController
   def update
     @post.update(posts_params)
 
-    posts_params[:state].present? ? redirect_to(:back) : render(nothing: true)
+    if params[:redirrect_path].present?
+      redirect_to(params[:redirrect_path])
+    elsif posts_params[:state].present?
+      redirect_to(:back)
+    else
+      render(nothing: true)
+    end
   end
 
   private
+
+  def back_url
+    request.referer || root_path
+  end
 
   def user_voted(posts)
     posts_ids = posts.ids
@@ -45,5 +62,9 @@ class PostsController < ApplicationController
 
   def category
     @_category = Category.find_by(name: params[:category])
+  end
+
+  def check_permissions
+    authorize User, :moderator?
   end
 end

@@ -40,7 +40,22 @@ describe PostsController, type: :request do
     end
   end
 
+  describe "#show" do
+    let(:user) { build :user, role: :moderator }
+    let(:headers) { { "HTTP_REFERER" => "some_place" } }
+    let(:post) { create :post, state: "pending" }
+    let(:do_request) { get "/posts/#{post.id}" }
+
+    it "post infor" do
+      sign_in user
+      do_request
+
+      expect(response).to have_http_status(:ok)
+    end
+  end
+
   describe "#update" do
+    let(:user) { build :user, role: :moderator }
     let(:category) { create :category }
     let(:post) { create :post, state: "pending" }
     let(:headers) { { "HTTP_REFERER" => "some_place" } }
@@ -49,12 +64,14 @@ describe PostsController, type: :request do
     let(:update_categories) { put "/posts/#{post.id}", params: { category_ids: [category.id] } }
 
     it "change category list" do
+      sign_in user
       update_categories
 
       expect(response).to have_http_status(200)
     end
 
     it "return 302 state and redirrect to back" do
+      sign_in user
       expect { do_request }.to change { Post.approved_posts.count }
 
       expect(Post.find(post.id).state).to eql("approved")

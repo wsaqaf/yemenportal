@@ -23,7 +23,7 @@ html dir="rtl" lang="ar"
               li
                 = link_to t('menu.sources.name'), '#'
                 ul.menu.vertical
-                  - if policy(User).admin?
+                  - if policy(User).moderator?
                     li
                       = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
                     li
