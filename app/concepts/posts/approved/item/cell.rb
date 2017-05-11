@@ -11,7 +11,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
 
   def tooltip_wraper(button)
     unless user
-      tolltip_title = t('user.should_login')
+      tolltip_title = t("user.should_login")
       tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip top' title='#{tolltip_title}'>"
       button = tooltip + button + "</span>"
     end
