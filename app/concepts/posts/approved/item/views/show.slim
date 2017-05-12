@@ -34,7 +34,7 @@ li.news_block.accordion-item data-accordion-item=""
         = description
     .row
       .button-group.small
-        - if user_vote || user.nil?
+        - if user.nil?
           = disabled_button('upvote')
           = disabled_button('downvote')
         - else

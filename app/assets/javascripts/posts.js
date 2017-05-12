@@ -1,4 +1,8 @@
 document.addEventListener("turbolinks:load", function() {
+  var opposite_name = {upvote: 'downvote', downvote: 'upvote'};
+  var button_class = {upvote: 'success', downvote: 'alert'};
+  var icon_name = {upvote: 'fi-like', downvote: 'fi-dislike'};
+
   $('select.multiselect').selectize({
     plugins: ['remove_button', 'restore_on_backspace'],
     delimiter: ',',
@@ -37,20 +41,18 @@ document.addEventListener("turbolinks:load", function() {
     var $upvote_button = $(this);
 
     makeRequest($upvote_button)
-    changeButtons('upvote', 'downvote', 'success', $upvote_button);
   })
-
 
   $('.js-downvote').click(function(e){
     e.preventDefault();
     var $downvote_button = $(this);
 
     makeRequest($downvote_button)
-    changeButtons('downvote', 'upvote', 'alert', $downvote_button);
   })
 
-
   var makeRequest = function($button) {
+    var a;
+
     request = {
       url: ($button.data().path),
       dataType: "json",
@@ -58,26 +60,37 @@ document.addEventListener("turbolinks:load", function() {
       data: []
     };
 
-    $.ajax(request);
+    $.ajax(request).done(function(res) {
+      changeButtons(res['result'], $button)
+    });
+
+    return true;
+  }
+
+
+  changeButtons = function(old_state, $button) {
+    var type = $button.data().type;
+    var $second_button = $button.siblings('a.js-' + opposite_name[type])
+
+    if (old_state == 'new') {
+      changeButtonStyle($button, type, 'secondary', button_class[type], 1)
+    } else if (old_state == type) {
+      changeButtonStyle($button, type, button_class[type], 'secondary', -1)
+    } else {
+      changeButtonStyle($button, type, 'secondary', button_class[type], 1)
+      changeButtonStyle($second_button, opposite_name[type], button_class[opposite_name[type]], 'secondary', -1)
+    }
 
     true;
   }
 
-  changeButtons = function(clik, unclik, button_style, $button) {
-    var button_value;
-    var icon_name = {upvote: 'fi-like', downvote: 'fi-dislike'};
-    var $second_button = $button.siblings('a.js-' + unclik)
-
+  changeButtonStyle = function($button, type, remove_class, add_class, value) {
     button_value = parseInt($button.text())
-    $button.after("<button type='button' class='button " + button_style + "'>" + (button_value +1) + " <i class=" + icon_name[clik] + "></i></button>")
-    $button.remove()
-
-    second_button_value = $second_button.text()
-    $second_button.after("<button type='button' class='button secondary'>" + second_button_value + "<i class=" + icon_name[unclik] + "></i></button>")
-    $second_button.remove()
-
-    true;
+    $button.removeClass(remove_class)
+    $button.addClass(add_class)
+    $button.html((button_value + value) + " <i class=" + icon_name[type] + "></i>")
   }
+
 
   $('.js-publication-time').each(function() {
     var $this = $(this);
@@ -90,7 +103,4 @@ document.addEventListener("turbolinks:load", function() {
       $this.text(publiction_time.format('lll'));
     }
   });
-
-
-  $('.accordion').foundation('down', $('#31'))
 });

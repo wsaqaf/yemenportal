@@ -34,7 +34,8 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   end
 
   def active_button(type)
-    link_to nil, class: "button secondary js-#{type}", data: { path: votes_path(type: type, post_id: id) } do
+    link_to nil, class: "button #{button_style(type)} js-#{type}",
+      data: { type: type, path: votes_path(type: type, post_id: id) } do
       button_text(type)
     end
   end
@@ -48,10 +49,10 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   end
 
   def button_style(type)
-    if type == UPVOTE && user
-      return "success" if user_vote.positive
-    elsif user
-      return "alert" unless user_vote.positive
+    if type == UPVOTE && user_vote.present?
+      return "success" if user_vote.try(:positive)
+    elsif user_vote.present?
+      return "alert" unless user_vote.try(:positive)
     end
     "secondary"
   end
