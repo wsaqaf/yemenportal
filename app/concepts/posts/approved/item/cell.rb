@@ -2,17 +2,31 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   IMAGE_NAME = { "upvote" => "fi-like", "downvote" => "fi-dislike" }.freeze
   BUTTON_STYLE = { "upvote" => "success", "downvote" => "alert" }.freeze
   UPVOTE = "upvote".freeze
+  VOTE_ACCORDION_OPEN = "info_button".freeze
+
   option :user_votes, :user
   property :title, :link, :published_at, :description, :id, :category_ids, :votes
 
   private
+
+  def tooltip_wraper(button)
+    unless user
+      tolltip_title = t("user.should_login")
+      tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip top' title='#{tolltip_title}'>"
+      button = tooltip + button + "</span>"
+    end
+    button
+  end
 
   def user_vote
     user_votes.detect { |vote| vote.post_id == id }
   end
 
   def vote_info(type)
-    "<button type='button' class='button float-left #{BUTTON_STYLE[type]}'>#{button_text(type)}</button>"
+    btn_class = user ? VOTE_ACCORDION_OPEN : ""
+    button = "<button type='button' class='button #{btn_class} float-left #{BUTTON_STYLE[type]}'
+      data-id=#{id}>#{button_text(type)}</button>"
+    tooltip_wraper(button)
   end
 
   def disabled_button(type)
