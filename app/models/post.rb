@@ -12,6 +12,7 @@
 #  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
+#  keywords     :string           default("{}"), is an Array
 #
 # Indexes
 #
@@ -21,6 +22,9 @@
 
 class Post < ApplicationRecord
   extend Enumerize
+
+  has_many :post_associations, foreign_key: :main_post_id
+  has_many :posts, through: :post_associations, source: :dependent_post
 
   has_many :post_category
   has_many :categories, through: :post_category

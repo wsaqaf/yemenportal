@@ -12,6 +12,7 @@
 #  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
+#  keywords     :string           default("{}"), is an Array
 #
 # Indexes
 #

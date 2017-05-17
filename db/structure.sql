@@ -95,7 +95,7 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 CREATE TABLE comments (
     id integer NOT NULL,
     user_id integer,
-    body text NOT NULL,
+    body text,
     post_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -155,6 +155,38 @@ ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 
 --
+-- Name: post_associations; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE post_associations (
+    id integer NOT NULL,
+    main_post_id integer,
+    dependent_post_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: post_associations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE post_associations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: post_associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE post_associations_id_seq OWNED BY post_associations.id;
+
+
+--
 -- Name: post_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -200,7 +232,8 @@ CREATE TABLE posts (
     updated_at timestamp without time zone NOT NULL,
     source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
-    photo_url character varying
+    photo_url character varying,
+    keywords character varying[] DEFAULT '{}'::character varying[]
 );
 
 
@@ -239,10 +272,10 @@ CREATE TABLE schema_migrations (
 CREATE TABLE source_logs (
     id integer NOT NULL,
     state character varying,
-    source_id integer NOT NULL,
     posts_count integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    source_id integer NOT NULL
 );
 
 
@@ -284,8 +317,7 @@ CREATE TABLE sources (
     admin_name character varying,
     note character varying,
     source_type character varying,
-    approve_state character varying,
-    suggested_time timestamp without time zone,
+    approve_state character varying DEFAULT 'suggested'::character varying,
     user_id integer
 );
 
@@ -307,6 +339,37 @@ CREATE SEQUENCE sources_id_seq
 --
 
 ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
+
+
+--
+-- Name: stop_words; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE stop_words (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stop_words_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stop_words_id_seq OWNED BY stop_words.id;
 
 
 --
@@ -426,6 +489,13 @@ ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_s
 
 
 --
+-- Name: post_associations id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_associations ALTER COLUMN id SET DEFAULT nextval('post_associations_id_seq'::regclass);
+
+
+--
 -- Name: post_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -451,6 +521,13 @@ ALTER TABLE ONLY source_logs ALTER COLUMN id SET DEFAULT nextval('source_logs_id
 --
 
 ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::regclass);
+
+
+--
+-- Name: stop_words id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words ALTER COLUMN id SET DEFAULT nextval('stop_words_id_seq'::regclass);
 
 
 --
@@ -500,6 +577,14 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: post_associations post_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_associations
+    ADD CONSTRAINT post_associations_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: post_categories post_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -537,6 +622,14 @@ ALTER TABLE ONLY source_logs
 
 ALTER TABLE ONLY sources
     ADD CONSTRAINT sources_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stop_words stop_words_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words
+    ADD CONSTRAINT stop_words_pkey PRIMARY KEY (id);
 
 
 --
@@ -727,7 +820,7 @@ ALTER TABLE ONLY identities
 --
 
 ALTER TABLE ONLY source_logs
-    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id);
+    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
 
 
 --
@@ -781,6 +874,10 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170414114607'),
 ('20170417143915'),
 ('20170420185236'),
-('20170504143546');
+('20170504143546'),
+('20170515140007'),
+('20170516171151'),
+('20170516204912'),
+('20170517154551');
 
 
