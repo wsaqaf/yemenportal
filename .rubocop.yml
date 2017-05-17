@@ -54,6 +54,8 @@ Metrics/LineLength:
 
 Metrics/AbcSize:
   Max: 20
+  Exclude:
+    - "app/services/post_creater_service.rb"
 
 Style/AlignHash:
   Enabled: false
