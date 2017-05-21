@@ -95,7 +95,7 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 CREATE TABLE comments (
     id integer NOT NULL,
     user_id integer,
-    body text,
+    body text NOT NULL,
     post_id integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
@@ -317,7 +317,8 @@ CREATE TABLE sources (
     admin_name character varying,
     note character varying,
     source_type character varying,
-    approve_state character varying DEFAULT 'suggested'::character varying,
+    approve_state character varying,
+    suggested_time timestamp without time zone,
     user_id integer
 );
 

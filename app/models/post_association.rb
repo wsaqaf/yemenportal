@@ -10,6 +10,6 @@
 #
 
 class PostAssociation < ApplicationRecord
-  belongs_to :main_post, class_name: "Post"
+  belongs_to :main_post, class_name: "Post", optional: true
   belongs_to :dependent_post, class_name: "Post"
 end

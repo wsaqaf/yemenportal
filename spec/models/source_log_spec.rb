@@ -16,6 +16,6 @@
 
 require "rails_helper"
 
-RSpec.describe SourceLog, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe SourceLog do
+  it { is_expected.to belong_to(:source) }
 end

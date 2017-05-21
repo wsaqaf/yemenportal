@@ -1,5 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PostAssociation, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+describe PostAssociation do
+  it { is_expected.to belong_to(:dependent_post).class_name("Post") }
+  it { is_expected.to belong_to(:main_post).class_name("Post") }
 end

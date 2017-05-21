@@ -27,6 +27,7 @@ class PostsFetcherJob < ActiveJob::Base
     elsif source.source_type.facebook?
       items = RSSParserService.fetch_facebook_items(source)
     end
-    items.each { |item| PostCreaterService.add_post(item, source) }
+    create_service = PostCreaterService.new
+    items.each { |item| create_service.add_post(item, source) }
   end
 end

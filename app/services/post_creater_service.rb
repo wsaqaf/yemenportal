@@ -2,14 +2,14 @@ class PostCreaterService
   IMG_TAG_REGEXP = %r{<img[^>]+\/>}
   URL_REGEXP = /(?<=src=(\"|\'))[^\"\']+/
 
-  def self.add_post(item, source)
+  def add_post(item, source)
     post = Post.new(post_params(item, source))
     post.state = :approved if source.whitelisted
     post.categories = [source.category] if source.category.present?
     source.update(state: Source.state.not_full_info) unless post.save
   end
 
-  def self.post_params(item, source)
+  def post_params(item, source)
     if source.source_type.rss?
       photo_tag = item.description.slice!(IMG_TAG_REGEXP)
       photo_url = photo_tag.present? ? photo_tag.slice(URL_REGEXP) : nil
@@ -22,7 +22,7 @@ class PostCreaterService
     end
   end
 
-  def self.additional_fields(description = "")
+  def additional_fields(description = "")
     service = KeywordsService.new(description: description)
     { keywords: service.keywords, posts: service.dependent_post }
   end

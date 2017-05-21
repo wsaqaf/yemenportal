@@ -22,6 +22,9 @@ RSpec/MultipleExpectations:
 RSpec/NamedSubject:
   Enabled: false
 
+RSpec/SubjectStub:
+  Enabled: false
+
 RSpec/MessageSpies:
   Enabled: false
 
@@ -48,6 +51,9 @@ MethodLength:
   Max: 15
   Exclude:
     - "spec/**/*"
+
+ExampleLength:
+  Max: 6
 
 Metrics/LineLength:
   Max: 120

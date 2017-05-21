@@ -5,7 +5,7 @@ describe RSSParserService do
     let(:source) { create(:source) }
 
     it "rss perser job" do
-      expect(PostsFetcherJob).to receive(:perform_later).with(source.id)
+      expect(PostsFetcherJob).to receive(:perform_now).with(source.id)
 
       described_class.call
     end
