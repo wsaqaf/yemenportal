@@ -21,6 +21,7 @@
 #
 
 class Post < ApplicationRecord
+  SAME_POST_COUNT = 3
   extend Enumerize
 
   has_many :post_associations, foreign_key: :main_post_id
@@ -47,5 +48,11 @@ class Post < ApplicationRecord
 
   def self.available_states
     state.values
+  end
+
+  def same_posts
+    first_path = posts.approved_posts
+    second_path = Post.joins(:post_associations).where("post_associations.dependent_post_id = #{id}").approved_posts
+    (first_path + second_path).sample(SAME_POST_COUNT)
   end
 end

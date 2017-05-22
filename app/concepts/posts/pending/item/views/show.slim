@@ -25,4 +25,9 @@ li.news_block.accordion-item data-accordion-item=""
     - else
       .description
         = description
+    - if same_posts.present?
+      = t('post.same_posts')
+      - same_posts.each do |post|
+        br
+        = link_to post.title, post.link
   hr

@@ -3,7 +3,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   BUTTON_STYLE = { "upvote" => "success", "downvote" => "alert" }.freeze
   UPVOTE = "upvote".freeze
   option :user_votes, :user
-  property :title, :link, :published_at, :description, :id, :category_ids, :votes
+  property :title, :link, :published_at, :description, :id, :category_ids, :votes, :same_posts
 
   private
 
