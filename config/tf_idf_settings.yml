@@ -12,3 +12,4 @@ test:
   hours_period: 3
   min_percent: 0.8
 production:
+  *default
