@@ -30,8 +30,9 @@ class KeywordsService
   end
 
   def tf_idf
-    list_posts = Post.last(config["post_count"]).map { |post| TfIdfSimilarity::Document.new(post.description) }
-    current_model = TfIdfSimilarity::Document.new(description.gsub(/\W+/, " "))
+    list_posts = Post.last(config["post_count"]).map do |post|
+      TfIdfSimilarity::Document.new(ActionView::Base.full_sanitizer.sanitize(post.description))
+    end
     list_posts << current_model
 
     model = TfIdfSimilarity::TfIdfModel.new(list_posts)
@@ -42,6 +43,10 @@ class KeywordsService
     end
 
     term_hash
+  end
+
+  def current_model
+    @_current =  TfIdfSimilarity::Document.new(ActionView::Base.full_sanitizer.sanitize(description))
   end
 
   def stop_words

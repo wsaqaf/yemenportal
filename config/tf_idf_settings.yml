@@ -12,4 +12,7 @@ test:
   hours_period: 3
   min_percent: 0.8
 production:
-  *default
+  post_count: 300
+  min_weight: 3.0
+  hours_period: 3
+  min_percent: 0.8
