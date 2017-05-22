@@ -40,7 +40,7 @@ en:
       title: Pending Posts
     rejected:
       title: Rejected Posts
-    same_posts: 'Same posts:'
+    same_posts: 'Same news:'
   category:
     title: Category
     base_list:
