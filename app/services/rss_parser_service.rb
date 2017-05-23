@@ -2,7 +2,7 @@ require "rss"
 
 class RSSParserService
   def self.call
-    Source.find_each do |source|
+    Source.approved.find_each do |source|
       PostsFetcherJob.perform_now(source.id)
     end
   end

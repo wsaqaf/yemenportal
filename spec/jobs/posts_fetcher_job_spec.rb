@@ -38,6 +38,14 @@ describe PostsFetcherJob do
         subject.perform(15)
       end
 
+      it "for others new errors" do
+        allow(Source).to receive(:find).and_return(invalid_source)
+        allow(RSSParserService).to receive(:fetch_items).and_raise(Errno::ECONNREFUSED)
+        expect(invalid_source).to receive(:update).with(state: Source.state.other)
+
+        subject.perform(15)
+      end
+
       it "for non rss file" do
         allow(Source).to receive(:find).and_return(source)
         allow(RSSParserService).to receive(:fetch_items).and_raise(RSS::NotWellFormedError)

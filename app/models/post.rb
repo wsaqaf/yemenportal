@@ -35,6 +35,7 @@ class Post < ApplicationRecord
   belongs_to :source
 
   validates :title, :published_at, :link, presence: true
+  validates :link, uniqueness: true
 
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :source_posts, ->(source_id) { ordered_by_date.where(source_id: source_id) }
