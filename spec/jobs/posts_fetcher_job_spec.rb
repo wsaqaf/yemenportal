@@ -1,12 +1,13 @@
 require "rails_helper"
 
 describe PostsFetcherJob do
-  subject { described_class.new }
+  subject(:facebook_subject) { described_class.new(facebbok_source) }
+  subject { described_class.new(source) }
   let(:item) { double(description: "description", link: "link", pubDate: Time.new, title: "title") }
   let(:source) { build(:source, link: "http://www.ruby-lang.org/en/feeds/news.rss") }
   let(:facebbok_source) { build(:source, link: "https://www.facebook.com/facebook", source_type: :facebook) }
   let(:invalid_source) { build(:source, link: "http://www.ruby-lang.org") }
-  let(:create_service) { double }
+  let(:create_service) { double(added_posts: []) }
 
   describe "#perform" do
     it "create new rss post", slow: true do
@@ -14,7 +15,7 @@ describe PostsFetcherJob do
       allow(RSSParserService).to receive(:fetch_items).and_return([item])
       allow(PostCreaterService).to receive(:new).and_return(create_service)
 
-      expect(create_service).to receive(:add_post).with(item, source)
+      expect(create_service).to receive(:add_post).with(item)
 
       subject.perform(15)
     end
@@ -24,9 +25,9 @@ describe PostsFetcherJob do
       allow(RSSParserService).to receive(:fetch_facebook_items).and_return([item])
       allow(PostCreaterService).to receive(:new).and_return(create_service)
 
-      expect(create_service).to receive(:add_post).with(item, facebbok_source)
+      expect(create_service).to receive(:add_post).with(item)
 
-      subject.perform(15)
+      facebook_subject.perform(15)
     end
 
     context "raise error" do

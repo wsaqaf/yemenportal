@@ -1,15 +1,24 @@
 class PostCreaterService
   IMG_TAG_REGEXP = %r{<img[^>]+\/>}
   URL_REGEXP = /(?<=src=(\"|\'))[^\"\']+/
+  attr_accessor :added_posts
+  attr_reader :source
 
-  def add_post(item, source)
-    post = Post.new(post_params(item, source))
-    post.state = :approved if source.whitelisted
-    post.categories = [source.category] if source.category.present?
-    source.update(state: Source.state.not_full_info) unless post.save
+  def initialize(source)
+    @added_posts = []
+    @source = source
   end
 
-  def post_params(item, source)
+  def add_post(item)
+    post = Post.new(post_params(item))
+    post.state = :approved if source.whitelisted
+    post.categories = [source.category] if source.category.present?
+    post.save ? @added_posts << post : source.update(state: Source.state.not_full_info)
+  end
+
+  private
+
+  def post_params(item)
     if source.source_type.rss?
       photo_tag = item.description.slice!(IMG_TAG_REGEXP)
       photo_url = photo_tag.present? ? photo_tag.slice(URL_REGEXP) : nil
