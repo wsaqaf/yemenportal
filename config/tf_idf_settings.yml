@@ -1,18 +1,13 @@
 default: &default
-  post_count: 1000
+  post_count: 300
   min_weight: 4.0
-  hours_period: 3
+  hours_period: 6
   min_percent: 0.8
+  matrix_border: 0.4
 
 development:
   *default
 test:
-  post_count: 1000
-  min_weight: 2.0
-  hours_period: 3
-  min_percent: 0.8
+  *default
 production:
-  post_count: 300
-  min_weight: 3.0
-  hours_period: 3
-  min_percent: 0.8
+  *default
