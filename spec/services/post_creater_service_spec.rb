@@ -46,9 +46,9 @@ describe PostCreaterService do
     end
 
     describe "(module tests)" do
+      subject(:whitelisted_subject) { described_class.new(whitelisted_source) }
       let(:post) { build :post }
       let(:whitelisted_source) { create(:source, whitelisted: true) }
-      subject(:whitelisted_subject) { described_class.new(whitelisted_source) }
 
       it "facebook post call save action" do
         allow(Post).to receive(:new).with(description: "description\n Go", link: "link", photo_url: "some_img",
