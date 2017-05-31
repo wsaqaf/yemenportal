@@ -44,7 +44,8 @@ class PostsController < ApplicationController
 
   def topics
     if posts_state == Post.state.approved
-      Topic.includes(:posts).where(id: Post.approved_posts.where.not(topic_id: nil).pluck(:topic_id))
+      ids = Post.approved_posts.where.not(topic_id: nil).pluck(:topic_id)
+      Topic.includes(:posts).where(id: ids.detect { |id| ids.count(id) > 1 })
         .paginate(page: params[:page], per_page: 10)
     else
       []
