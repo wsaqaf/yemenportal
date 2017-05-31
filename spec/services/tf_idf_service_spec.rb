@@ -1,34 +1,34 @@
 require "rails_helper"
 
 describe TfIdfService do
-  subject { described_class.new(description: "some text one, text. Text, text") }
+  subject(:service_1) { described_class.new(description: "one two, xt") }
+  subject(:service_2) { described_class.new(description: "opa tata a") }
 
-  let(:post) { build :post, created_at: Time.now, keywords: %w(one two), description: "one two" }
-  let(:post_2) { build :post, created_at: (Time.now - 2.hours), keywords: ["opa"], description: "opa" }
+  let(:post) { build :post, id: 1, topic: nil, created_at: Time.now, description: "one two" }
+  let(:saved_topic) { build :topic }
+  let(:post_2) { build :post, id: 2, topic: saved_topic, created_at: (Time.now - 2.hours), description: "opa tata" }
   let(:posts) { [post, post_2] }
 
-  describe "#dependent_post_ids" do
-    it "find dependent posta" do
+  describe "#post_topic" do
+    let(:topic) { double :topic }
+
+    it "create post topic" do
+      allow(Post).to receive(:where).and_return(posts)
+      allow(Topic).to receive(:create).with(posts: [post]).and_return(topic)
+
+      expect(service_1.post_topic).to eql(topic)
+    end
+
+    it "find post topic" do
       allow(Post).to receive(:where).and_return(posts)
 
-      expect(subject.dependent_post_ids).to eql([])
+      expect(service_2.post_topic).to eql(post_2.topic)
+    end
+
+    it "return nil if dont find matcers" do
+      allow(Post).to receive(:where).and_return([])
+
+      expect(service_2.post_topic).to be(nil)
     end
   end
-
-  # describe "#dependent_post" do
-  #   it "find dependent posta" do
-  #     allow(Post).to receive(:where).and_return(posts)
-  #     allow(subject).to receive(:keywords).and_return(%w(one two three))
-
-  #     expect(subject.dependent_post).to eql([post])
-  #   end
-  # end
-
-  # describe "#keywords" do
-  #   it "find dependent posta" do
-  #     allow(Post).to receive(:last).and_return(posts)
-
-  #     expect(subject.keywords).to eql(["text"])
-  #   end
-  # end
 end

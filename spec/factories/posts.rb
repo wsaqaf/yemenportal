@@ -12,12 +12,13 @@
 #  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
-#  keywords     :string           default("{}"), is an Array
+#  topic_id     :integer
 #
 # Indexes
 #
 #  index_posts_on_published_at  (published_at)
 #  index_posts_on_source_id     (source_id)
+#  index_posts_on_topic_id      (topic_id)
 #
 
 FactoryGirl.define do
@@ -27,6 +28,7 @@ FactoryGirl.define do
     sequence(:link) { |n| "Link_#{n}" }
     state "pending"
     association :source
+    association :topic
     published_at Time.new
   end
 end

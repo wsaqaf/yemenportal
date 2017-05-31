@@ -1,9 +1,6 @@
 default: &default
-  post_count: 300
-  min_weight: 4.0
+  min_percent: 0.60
   hours_period: 6
-  min_percent: 0.8
-  matrix_border: 0.4
 
 development:
   *default

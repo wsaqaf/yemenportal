@@ -34,9 +34,4 @@ li.news_block.accordion-item data-accordion-item=""
         - else
           = active_button('upvote')
           = active_button('downvote')
-    - if same_posts.present?
-      = t('post.same_posts')
-      - same_posts.each do |post|
-        br
-        = link_to post.title, post.link
   hr

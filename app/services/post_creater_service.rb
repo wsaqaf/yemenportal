@@ -33,6 +33,6 @@ class PostCreaterService
 
   def additional_fields(description = "")
     service = TfIdfService.new(description: description)
-    { posts: Post.where(id: service.dependent_post_ids) }
+    { topic: service.post_topic }
   end
 end

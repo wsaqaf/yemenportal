@@ -12,20 +12,17 @@
 #  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
-#  keywords     :string           default("{}"), is an Array
+#  topic_id     :integer
 #
 # Indexes
 #
 #  index_posts_on_published_at  (published_at)
 #  index_posts_on_source_id     (source_id)
+#  index_posts_on_topic_id      (topic_id)
 #
 
 class Post < ApplicationRecord
-  SAME_POST_COUNT = 3
   extend Enumerize
-
-  has_many :post_associations, foreign_key: :main_post_id
-  has_many :posts, through: :post_associations, source: :dependent_post
 
   has_many :post_category
   has_many :categories, through: :post_category
@@ -33,6 +30,7 @@ class Post < ApplicationRecord
   has_many :users, through: :votes
   has_many :comments
   belongs_to :source
+  belongs_to :topic, optional: true
 
   validates :title, :published_at, :link, presence: true
   validates :link, uniqueness: true
@@ -52,8 +50,6 @@ class Post < ApplicationRecord
   end
 
   def same_posts
-    first_path = posts.approved_posts
-    second_path = Post.joins(:post_associations).where("post_associations.dependent_post_id = #{id}").approved_posts
-    (first_path + second_path).sample(SAME_POST_COUNT)
+    (topic.posts.ordered_by_date - [self]) if topic
   end
 end

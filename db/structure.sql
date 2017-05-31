@@ -155,38 +155,6 @@ ALTER SEQUENCE identities_id_seq OWNED BY identities.id;
 
 
 --
--- Name: post_associations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE post_associations (
-    id integer NOT NULL,
-    main_post_id integer,
-    dependent_post_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: post_associations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE post_associations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: post_associations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE post_associations_id_seq OWNED BY post_associations.id;
-
-
---
 -- Name: post_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -233,7 +201,7 @@ CREATE TABLE posts (
     source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
     photo_url character varying,
-    keywords character varying[] DEFAULT '{}'::character varying[]
+    topic_id integer
 );
 
 
@@ -374,6 +342,36 @@ ALTER SEQUENCE stop_words_id_seq OWNED BY stop_words.id;
 
 
 --
+-- Name: topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE topics (
+    id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE topics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE topics_id_seq OWNED BY topics.id;
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -490,13 +488,6 @@ ALTER TABLE ONLY identities ALTER COLUMN id SET DEFAULT nextval('identities_id_s
 
 
 --
--- Name: post_associations id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_associations ALTER COLUMN id SET DEFAULT nextval('post_associations_id_seq'::regclass);
-
-
---
 -- Name: post_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -529,6 +520,13 @@ ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::r
 --
 
 ALTER TABLE ONLY stop_words ALTER COLUMN id SET DEFAULT nextval('stop_words_id_seq'::regclass);
+
+
+--
+-- Name: topics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics ALTER COLUMN id SET DEFAULT nextval('topics_id_seq'::regclass);
 
 
 --
@@ -578,14 +576,6 @@ ALTER TABLE ONLY identities
 
 
 --
--- Name: post_associations post_associations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_associations
-    ADD CONSTRAINT post_associations_pkey PRIMARY KEY (id);
-
-
---
 -- Name: post_categories post_categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -631,6 +621,14 @@ ALTER TABLE ONLY sources
 
 ALTER TABLE ONLY stop_words
     ADD CONSTRAINT stop_words_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topics topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics
+    ADD CONSTRAINT topics_pkey PRIMARY KEY (id);
 
 
 --
@@ -696,6 +694,13 @@ CREATE INDEX index_posts_on_published_at ON posts USING btree (published_at);
 --
 
 CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
+
+
+--
+-- Name: index_posts_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
 
 
 --
@@ -817,6 +822,14 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: posts fk_rails_70d0b6486a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts
+    ADD CONSTRAINT fk_rails_70d0b6486a FOREIGN KEY (topic_id) REFERENCES topics(id);
+
+
+--
 -- Name: source_logs fk_rails_8679f875d2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -879,6 +892,8 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170515140007'),
 ('20170516171151'),
 ('20170516204912'),
-('20170517154551');
+('20170517154551'),
+('20170525163542'),
+('20170525164114');
 
 
