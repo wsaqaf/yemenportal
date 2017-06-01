@@ -32,7 +32,10 @@ class PostCreaterService
   end
 
   def additional_fields(description = "")
-    service = TfIdfService.new(description: description)
-    { topic: service.post_topic }
+    sanitize_description = ActionView::Base.full_sanitizer.sanitize(description)
+    stemmed_text = sanitize_description.split.map { |word| ArStemmer.stem(word) }.join(" ")
+    service = TfIdfService.new(description: stemmed_text)
+
+    { topic: service.post_topic, stemmed_text: stemmed_text }
   end
 end

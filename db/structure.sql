@@ -201,7 +201,8 @@ CREATE TABLE posts (
     source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
     photo_url character varying,
-    topic_id integer
+    topic_id integer,
+    stemmed_text text DEFAULT ''::text
 );
 
 
@@ -894,6 +895,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170516204912'),
 ('20170517154551'),
 ('20170525163542'),
-('20170525164114');
+('20170525164114'),
+('20170531155752');
 
 
