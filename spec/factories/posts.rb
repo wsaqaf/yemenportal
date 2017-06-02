@@ -13,6 +13,7 @@
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
+#  stemmed_text :text             default("")
 #
 # Indexes
 #

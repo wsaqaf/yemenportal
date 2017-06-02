@@ -5,14 +5,14 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update]
 
   def index
-    sources = Source.where(approve_state: params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
+    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
     render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
   end
 
   def create
     source = SourceForm.new(Source.new)
 
-    if source.validate(source_params.merge(user: current_user))
+    if source.validate(source_params)
       source.save
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
