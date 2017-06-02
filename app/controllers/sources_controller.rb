@@ -12,7 +12,7 @@ class SourcesController < ApplicationController
   def create
     source = SourceForm.new(Source.new)
 
-    if source.validate(source_params)
+    if source.validate(source_params.merge(user: current_user))
       source.save
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
