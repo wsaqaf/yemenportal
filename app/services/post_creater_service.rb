@@ -13,6 +13,7 @@ class PostCreaterService
     post = Post.new(post_params(item))
     post.state = :approved if source.whitelisted
     post.categories = [source.category] if source.category.present?
+    post.topic = TfIdfService.new(description: post.stemmed_text).post_topic if post.valid?
     post.save ? @added_posts << post : source.update(state: Source.state.not_full_info)
   end
 
@@ -23,19 +24,16 @@ class PostCreaterService
       photo_tag = item.description.slice!(IMG_TAG_REGEXP)
       photo_url = photo_tag.present? ? photo_tag.slice(URL_REGEXP) : nil
       { description: item.description, link: item.link, published_at: item.pubDate, source: source,
-        title: item.title, photo_url: photo_url }.merge(additional_fields(item.description))
+        title: item.title, photo_url: photo_url, stemmed_text: stemmed_text(item.description) }
     elsif source.source_type.facebook?
       message = item["message"] || item["name"]
       { description: message, link: item["link"], published_at: item["created_time"], source: source,
-      title: message.match(/[^\n\.]+/).to_s, photo_url: item["picture"] }.merge(additional_fields(message))
+      title: message.match(/[^\n\.]+/).to_s, photo_url: item["picture"], stemmed_text: stemmed_text(message) }
     end
   end
 
-  def additional_fields(description = "")
+  def stemmed_text(description = "")
     sanitize_description = ActionView::Base.full_sanitizer.sanitize(description)
-    stemmed_text = sanitize_description.split.map { |word| ArStemmer.stem(word) }.join(" ")
-    service = TfIdfService.new(description: stemmed_text)
-
-    { topic: service.post_topic, stemmed_text: stemmed_text }
+    sanitize_description.split.map { |word| ArStemmer.stem(word) }.join(" ")
   end
 end

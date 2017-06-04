@@ -55,7 +55,7 @@ describe PostCreaterService do
       it "facebook post call save action" do
         allow(Post).to receive(:new).with(description: "description\n Go", link: "link", photo_url: "some_img",
           published_at: fb_item["created_time"], title: "description", source: fb_source,
-          topic: nil, stemmed_text: "description Go").and_return(post)
+          stemmed_text: "description Go").and_return(post)
         allow(post).to receive(:categories=).with([fb_source.category]).and_return(post)
 
         expect(post).to receive(:save)
@@ -65,7 +65,7 @@ describe PostCreaterService do
 
       it "post call save action" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          source: source, title: item.title, photo_url: "some_path", topic: nil, stemmed_text: "description")
+          source: source, title: item.title, photo_url: "some_path", stemmed_text: "description")
           .and_return(post)
         allow(post).to receive(:categories=).with([source.category]).and_return(post)
 
@@ -76,17 +76,16 @@ describe PostCreaterService do
 
       it "post with approve state" do
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          title: item.title, source: whitelisted_source, photo_url: "some_path", stemmed_text: "description",
-          topic: nil).and_return(post)
+          title: item.title, source: whitelisted_source, photo_url: "some_path", stemmed_text: "description")
+          .and_return(post)
 
         whitelisted_subject.add_post(item)
         expect(post.state).to eql("approved")
       end
 
       it "not set category" do
-        allow(TfIdfService).to receive(:new).and_return(tf_idf)
         allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
-          title: item.title, source: source, photo_url: "some_path", topic: topic, stemmed_text: "description")
+          title: item.title, source: source, photo_url: "some_path", stemmed_text: "description")
           .and_return(post)
         allow(source).to receive(:category).and_return(nil)
         expect(post).not_to receive(:categories=)
