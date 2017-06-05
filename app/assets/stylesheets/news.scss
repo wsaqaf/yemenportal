@@ -58,6 +58,26 @@
       word-wrap: break-word;
     }
   }
+  a.secondary {
+    .fi-like {
+      color: gray;
+      font-size: 1.5em;
+    }
+    .fi-dislike {
+      color: gray;
+      font-size: 1.5em;
+    }
+  }
+  a:not(.secondary) {
+    .fi-like {
+      color: orange;
+      font-size: 1.5em;
+    }
+    .fi-dislike {
+      color: blue;
+      font-size: 1.5em;
+    }
+  }
 }
 
 .multiselect {

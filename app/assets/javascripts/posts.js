@@ -32,27 +32,25 @@ document.addEventListener("turbolinks:load", function() {
 
 
   $('.info_button').click(function(e){
-    var post_id = $(this).data().id;
-    $('.accordion').foundation('down', $('#'+ post_id))
+    var postId = $(this).data().id;
+    $('.accordion').foundation('down', $('#'+ postId))
   })
 
   $('.js-upvote').click(function(e){
     e.preventDefault();
-    var $upvote_button = $(this);
+    var $upvoteButton = $(this);
 
-    makeRequest($upvote_button)
+    makeRequest($upvoteButton)
   })
 
   $('.js-downvote').click(function(e){
     e.preventDefault();
-    var $downvote_button = $(this);
+    var $downvoteButton = $(this);
 
-    makeRequest($downvote_button)
+    makeRequest($downvoteButton)
   })
 
   var makeRequest = function($button) {
-    var a;
-
     request = {
       url: ($button.data().path),
       dataType: "json",
@@ -70,25 +68,31 @@ document.addEventListener("turbolinks:load", function() {
 
   changeButtons = function(old_state, $button) {
     var type = $button.data().type;
-    var $second_button = $button.siblings('a.js-' + opposite_name[type])
+    var $second_button = $button.parents('.vote_info').find('a.js-' + opposite_name[type])
+
+    if (type == 'downvote') {
+      count_offset = -1
+    } else {
+      count_offset = 1
+    }
 
     if (old_state == 'new') {
-      changeButtonStyle($button, type, 'secondary', button_class[type], 1)
+      changeButtonStyle($button, type, 'secondary', button_class[type], 1 * count_offset)
     } else if (old_state == type) {
-      changeButtonStyle($button, type, button_class[type], 'secondary', -1)
+      changeButtonStyle($button, type, button_class[type], 'secondary', -1 * count_offset)
     } else {
-      changeButtonStyle($button, type, 'secondary', button_class[type], 1)
-      changeButtonStyle($second_button, opposite_name[type], button_class[opposite_name[type]], 'secondary', -1)
+      changeButtonStyle($button, type, 'secondary', button_class[type], 2 * count_offset)
+      changeButtonStyle($second_button, opposite_name[type], button_class[opposite_name[type]], 'secondary', 0)
     }
 
     true;
   }
 
   changeButtonStyle = function($button, type, remove_class, add_class, value) {
-    button_value = parseInt($button.text())
-    $button.removeClass(remove_class)
-    $button.addClass(add_class)
-    $button.html((button_value + value) + " <i class=" + icon_name[type] + "></i>")
+    $counter = $button.parent().siblings('.vote_count')
+    button_value = parseInt($counter.text())
+    $button.removeClass(remove_class).addClass(add_class)
+    $counter.html((button_value + value))
   }
 
 
