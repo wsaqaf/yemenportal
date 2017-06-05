@@ -1,7 +1,6 @@
 document.addEventListener("turbolinks:load", function() {
-  var opposite_name = {upvote: 'downvote', downvote: 'upvote'};
-  var button_class = {upvote: 'success', downvote: 'alert'};
-  var icon_name = {upvote: 'fi-like', downvote: 'fi-dislike'};
+  var oppositeName = {upvote: 'downvote', downvote: 'upvote'};
+  var buttonClass = {upvote: 'success', downvote: 'alert'};
 
   $('select.multiselect').selectize({
     plugins: ['remove_button', 'restore_on_backspace'],
@@ -68,7 +67,7 @@ document.addEventListener("turbolinks:load", function() {
 
   changeButtons = function(old_state, $button) {
     var type = $button.data().type;
-    var $second_button = $button.parents('.vote_info').find('a.js-' + opposite_name[type])
+    var $second_button = $button.parents('.vote_info').find('a.js-' + oppositeName[type])
 
     if (type == 'downvote') {
       count_offset = -1
@@ -77,12 +76,12 @@ document.addEventListener("turbolinks:load", function() {
     }
 
     if (old_state == 'new') {
-      changeButtonStyle($button, type, 'secondary', button_class[type], 1 * count_offset)
+      changeButtonStyle($button, type, 'secondary', buttonClass[type], 1 * count_offset)
     } else if (old_state == type) {
-      changeButtonStyle($button, type, button_class[type], 'secondary', -1 * count_offset)
+      changeButtonStyle($button, type, buttonClass[type], 'secondary', -1 * count_offset)
     } else {
-      changeButtonStyle($button, type, 'secondary', button_class[type], 2 * count_offset)
-      changeButtonStyle($second_button, opposite_name[type], button_class[opposite_name[type]], 'secondary', 0)
+      changeButtonStyle($button, type, 'secondary', buttonClass[type], 2 * count_offset)
+      changeButtonStyle($second_button, oppositeName[type], buttonClass[oppositeName[type]], 'secondary', 0)
     }
 
     true;
