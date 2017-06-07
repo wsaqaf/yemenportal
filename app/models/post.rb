@@ -9,14 +9,17 @@
 #  title        :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
+#  topic_id     :integer
+#  stemmed_text :text             default("")
+#  source_id    :integer          not null
 #
 # Indexes
 #
 #  index_posts_on_published_at  (published_at)
 #  index_posts_on_source_id     (source_id)
+#  index_posts_on_topic_id      (topic_id)
 #
 
 class Post < ApplicationRecord
@@ -27,6 +30,10 @@ class Post < ApplicationRecord
   has_many :votes
   has_many :users, through: :votes
   has_many :comments
+
+  has_many :post_tags
+  has_many :users, through: :post_tags
+
   belongs_to :source
 
   validates :title, :published_at, :link, presence: true

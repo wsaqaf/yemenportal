@@ -56,6 +56,9 @@ class User < ApplicationRecord
   has_many :posts, through: :votes
   has_many :comments
 
+  has_many :post_tags
+  has_many :posts, through: :post_tags
+
   enumerize :role, in: %w(ADMIN MODERATOR MEMBER).map { |role| [role.downcase, role] }.to_h,
     i18n_scope: "user.roles"
 
