@@ -26,7 +26,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
     if user.nil?
       tooltip_wraper("<a class='secondary'>#{button_text(type)}</a>")
     else
-      link_to nil, class: "#{button_style(type)} js-#{type}",
+      link_to nil, class: "js-#{type}-button",
         data: { type: type, path: votes_path(type: type, post_id: id) } do
         button_text(type)
       end
@@ -42,12 +42,11 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
     vote_array.count(true) - vote_array.count(false)
   end
 
-  def button_style(type)
-    if type == UPVOTE && user_vote.present?
-      return "success" if user_vote.try(:positive)
-    elsif user_vote.present?
-      return "alert" unless user_vote.try(:positive)
+  def button_style
+    if user_vote.present? && user_vote.try(:positive)
+      "upvoted"
+    elsif user_vote.present? && !user_vote.try(:positive)
+      "downvoted"
     end
-    "secondary"
   end
 end

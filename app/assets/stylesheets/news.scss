@@ -58,7 +58,8 @@
       word-wrap: break-word;
     }
   }
-  a.secondary {
+
+  .js-votable{
     .fi-like {
       color: gray;
       font-size: 1.5em;
@@ -67,15 +68,21 @@
       color: gray;
       font-size: 1.5em;
     }
-  }
-  a:not(.secondary) {
-    .fi-like {
-      color: orange;
-      font-size: 1.5em;
+    &.upvoted {
+      .fi-like {
+        color: orange;
+      }
+      .fi-dislike {
+        color: gray;
+      }
     }
-    .fi-dislike {
-      color: blue;
-      font-size: 1.5em;
+    &.downvoted {
+      .fi-like {
+        color: gray;
+      }
+      .fi-dislike {
+        color: blue;
+      }
     }
   }
 }

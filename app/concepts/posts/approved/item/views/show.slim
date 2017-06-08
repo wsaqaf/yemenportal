@@ -13,7 +13,7 @@ li.news_block.accordion-item data-accordion-item=""
         br
         - category_names.each do |name|
           span.label.secondary = name
-  .columns.large-2.medium-2.small-2.vote_info
+  .columns.large-2.medium-2.small-2.vote_info.js-votable  class="#{button_style}"
     .row
       = vote_button('upvote')
     .row.vote_count
