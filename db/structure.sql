@@ -187,6 +187,39 @@ ALTER SEQUENCE post_categories_id_seq OWNED BY post_categories.id;
 
 
 --
+-- Name: post_tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE post_tags (
+    id integer NOT NULL,
+    name character varying,
+    user_id integer,
+    post_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: post_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE post_tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: post_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE post_tags_id_seq OWNED BY post_tags.id;
+
+
+--
 -- Name: posts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -198,9 +231,11 @@ CREATE TABLE posts (
     title character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
-    photo_url character varying
+    photo_url character varying,
+    topic_id integer,
+    stemmed_text text DEFAULT ''::text,
+    source_id integer NOT NULL
 );
 
 
@@ -239,10 +274,10 @@ CREATE TABLE schema_migrations (
 CREATE TABLE source_logs (
     id integer NOT NULL,
     state character varying,
-    source_id integer NOT NULL,
     posts_count integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    source_id integer NOT NULL
 );
 
 
@@ -286,7 +321,8 @@ CREATE TABLE sources (
     source_type character varying,
     approve_state character varying,
     suggested_time timestamp without time zone,
-    user_id integer
+    user_id integer,
+    iframe_flag boolean DEFAULT true
 );
 
 
@@ -307,6 +343,98 @@ CREATE SEQUENCE sources_id_seq
 --
 
 ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
+
+
+--
+-- Name: stop_words; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE stop_words (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stop_words_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stop_words_id_seq OWNED BY stop_words.id;
+
+
+--
+-- Name: tags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE tags (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE tags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
+
+
+--
+-- Name: topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE topics (
+    id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE topics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE topics_id_seq OWNED BY topics.id;
 
 
 --
@@ -433,6 +561,13 @@ ALTER TABLE ONLY post_categories ALTER COLUMN id SET DEFAULT nextval('post_categ
 
 
 --
+-- Name: post_tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_tags ALTER COLUMN id SET DEFAULT nextval('post_tags_id_seq'::regclass);
+
+
+--
 -- Name: posts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -451,6 +586,27 @@ ALTER TABLE ONLY source_logs ALTER COLUMN id SET DEFAULT nextval('source_logs_id
 --
 
 ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::regclass);
+
+
+--
+-- Name: stop_words id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words ALTER COLUMN id SET DEFAULT nextval('stop_words_id_seq'::regclass);
+
+
+--
+-- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
+
+
+--
+-- Name: topics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics ALTER COLUMN id SET DEFAULT nextval('topics_id_seq'::regclass);
 
 
 --
@@ -508,6 +664,14 @@ ALTER TABLE ONLY post_categories
 
 
 --
+-- Name: post_tags post_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_tags
+    ADD CONSTRAINT post_tags_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -537,6 +701,30 @@ ALTER TABLE ONLY source_logs
 
 ALTER TABLE ONLY sources
     ADD CONSTRAINT sources_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: stop_words stop_words_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words
+    ADD CONSTRAINT stop_words_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY tags
+    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topics topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics
+    ADD CONSTRAINT topics_pkey PRIMARY KEY (id);
 
 
 --
@@ -591,6 +779,20 @@ CREATE INDEX index_post_categories_on_post_id ON post_categories USING btree (po
 
 
 --
+-- Name: index_post_tags_on_post_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_tags_on_post_id ON post_tags USING btree (post_id);
+
+
+--
+-- Name: index_post_tags_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_tags_on_user_id ON post_tags USING btree (user_id);
+
+
+--
 -- Name: index_posts_on_published_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -602,6 +804,13 @@ CREATE INDEX index_posts_on_published_at ON posts USING btree (published_at);
 --
 
 CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
+
+
+--
+-- Name: index_posts_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
 
 
 --
@@ -723,11 +932,27 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: post_tags fk_rails_6dddf1dc62; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_tags
+    ADD CONSTRAINT fk_rails_6dddf1dc62 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: posts fk_rails_70d0b6486a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts
+    ADD CONSTRAINT fk_rails_70d0b6486a FOREIGN KEY (topic_id) REFERENCES topics(id);
+
+
+--
 -- Name: source_logs fk_rails_8679f875d2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY source_logs
-    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id);
+    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
 
 
 --
@@ -752,6 +977,22 @@ ALTER TABLE ONLY sources
 
 ALTER TABLE ONLY votes
     ADD CONSTRAINT fk_rails_c9b3bef597 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: posts fk_rails_d500d7f301; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts
+    ADD CONSTRAINT fk_rails_d500d7f301 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: post_tags fk_rails_fdf74b486b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_tags
+    ADD CONSTRAINT fk_rails_fdf74b486b FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -781,6 +1022,17 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170414114607'),
 ('20170417143915'),
 ('20170420185236'),
-('20170504143546');
+('20170504143546'),
+('20170515140007'),
+('20170516171151'),
+('20170516204912'),
+('20170517154551'),
+('20170525163542'),
+('20170525164114'),
+('20170531155752'),
+('20170601110350'),
+('20170605180442'),
+('20170605181632'),
+('20170609161819');
 
 

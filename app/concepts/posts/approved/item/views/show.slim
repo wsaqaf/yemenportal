@@ -19,7 +19,7 @@ li.news_block.accordion-item data-accordion-item=""
   .accordion-content.columns.large-12 data-tab-content='' id=id
     .button-group.tiny
       = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button alert"
-      = link_to t('post.button.read_source'), link, class: "button"
+      = link_to t('post.button.read_source'), read_post_link, class: "button"
     = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
       class: "multiselect js-post-categories", multiple: true, data: {id: id}
     - if photo_url.present?
