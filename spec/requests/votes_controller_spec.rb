@@ -6,7 +6,7 @@ describe VotesController, type: :request do
 
   describe "#update" do
     context "vote dont exist" do
-      let(:do_request) { put "/votes", params: { post_id: post.id, type: VotesController::UPVOTE } }
+      let(:do_request) { put "/votes", params: { post_id: post.id, type: VoteService::UPVOTE } }
 
       it "redirect to sources list" do
         expect(Vote).to receive(:create)
@@ -19,7 +19,7 @@ describe VotesController, type: :request do
     end
 
     context "vote exist and yser upvote" do
-      let(:do_request) { put "/votes", params: { post_id: post.id, type: VotesController::UPVOTE } }
+      let(:do_request) { put "/votes", params: { post_id: post.id, type: VoteService::UPVOTE } }
       let(:vote) { build(:vote, user: user, post: post, positive: false) }
 
       it "redirect to sources list" do

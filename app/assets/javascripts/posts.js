@@ -16,6 +16,8 @@ class VotesController {
   }
 }
 
+// const upvote = 'upvote', dou = 2;
+
 class Votable {
   static from(element) {
     return new this($(element).parents('.js-votable'));
@@ -71,13 +73,20 @@ class Votable {
     });
   }
 
+  get _upvoteClass(){
+    return 'upvoted'
+  }
+
+  get _downvoteClass(){
+    return 'downvoted'
+  }
 
   _isDownvoted() {
-    return this.element.hasClass('downvoted');
+    return this.element.hasClass(this._downvoteClass);
   }
 
   _isUpvoted() {
-    return this.element.hasClass('upvoted');
+    return this.element.hasClass(this._upvoteClass);
   }
 
   _downvoteButton() {
@@ -101,24 +110,23 @@ class Votable {
   }
 
   _markUpvoted() {
-    this.element.removeClass('downvoted').addClass('upvoted');
+    this.element.removeClass(this._downvoteClass).addClass(this._upvoteClass);
   }
 
   _markDownvoted() {
-    this.element.removeClass('upvoted').addClass('downvoted');
+    this.element.removeClass(this._upvoteClass).addClass(this._downvoteClass);
   }
 
   _markNotUpvoted() {
-    this.element.removeClass('downvoted')
-    this.element.removeClass('upvoted')
+    this.element.removeClass(this._upvoteClass + ' ' + this._downvoteClass)
   }
 }
 
 new VotesController(document).setup();
 
 document.addEventListener("turbolinks:load", function() {
-  var oppositeName = {upvote: 'downvote', downvote: 'upvote'};
-  var buttonClass = {upvote: 'success', downvote: 'alert'};
+  // var oppositeName = {upvote: 'downvote', downvote: 'upvote'};
+  // var buttonClass = {upvote: 'success', downvote: 'alert'};
 
   $('select.multiselect').selectize({
     plugins: ['remove_button', 'restore_on_backspace'],
