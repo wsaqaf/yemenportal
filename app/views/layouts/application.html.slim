@@ -61,13 +61,4 @@ html dir="rtl" lang="ar"
                 = link_to t('devise.log_in'), new_user_session_path
     == yield
 
-    javascript:
-      var _rollbarConfig = {
-        accessToken: "#{ENV['ROLLBAR_CLIENT_TOKEN']}",
-        captureUncaught: true,
-        captureUnhandledRejections: true,
-        payload: {
-          environment: "#{Rails.env.to_json}",
-          person: "#{current_user ? current_user.email : 'guest'}"
-        }
-      };
+    = render partial: 'layouts/rollbar'
