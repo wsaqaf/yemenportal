@@ -23,7 +23,7 @@ class PostsFetcherJob < ActiveJob::Base
   def fetch_items(source)
     items = []
     if source.source_type.rss?
-      items = RSSParserService.fetch_items(open(source.link), source.id)
+      items = RSSParserService.fetch_items(source)
     elsif source.source_type.facebook?
       items = RSSParserService.fetch_facebook_items(source)
     end

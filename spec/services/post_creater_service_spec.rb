@@ -6,8 +6,8 @@ describe PostCreaterService do
 
   describe "#add_post" do
     let(:item) do
-      double(description: "<img src='some_path'/>description", link: "link",
-      pubDate: Time.new, title: "title")
+      double(summary: "<img src='some_path'/>description", url: "link",
+      published: Time.new, title: "title")
     end
     let(:fb_item) do
       { "message" => "description\n Go", "link" => "link",
@@ -20,13 +20,13 @@ describe PostCreaterService do
       end
 
       it "post created with item fields" do
-        post = Post.find_by(published_at: item.pubDate)
-        expect(post.attributes).to include("description" => item.description, "link" => item.link,
+        post = Post.find_by(published_at: item.published)
+        expect(post.attributes).to include("description" => item.summary, "link" => item.url,
           "source_id" => source.id, "title" => item.title)
       end
 
       it "post has category" do
-        post = Post.find_by(published_at: item.pubDate)
+        post = Post.find_by(published_at: item.published)
         expect(post.categories).to include(source.category)
       end
     end
@@ -37,7 +37,7 @@ describe PostCreaterService do
 
         described_class.add_post(item, source)
 
-        post = Post.find_by(published_at: item.pubDate)
+        post = Post.find_by(published_at: item.published)
         expect(post.categories.to_a).to eql([])
       end
     end
@@ -57,7 +57,7 @@ describe PostCreaterService do
       end
 
       it "post call save action" do
-        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
+        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.published,
           source: source, title: item.title, photo_url: "some_path").and_return(post)
         allow(post).to receive(:categories=).with([source.category]).and_return(post)
 
@@ -67,7 +67,7 @@ describe PostCreaterService do
       end
 
       it "post with approve state" do
-        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
+        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.published,
           title: item.title, source: whitelisted_source, photo_url: "some_path").and_return(post)
 
         described_class.add_post(item, whitelisted_source)
@@ -75,7 +75,7 @@ describe PostCreaterService do
       end
 
       it "not set category" do
-        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.pubDate,
+        allow(Post).to receive(:new).with(description: "description", link: "link", published_at: item.published,
           title: item.title, source: source, photo_url: "some_path").and_return(post)
         allow(source).to receive(:category).and_return(nil)
         expect(post).not_to receive(:categories=)
@@ -83,7 +83,7 @@ describe PostCreaterService do
         described_class.add_post(item, source)
       end
 
-      %i(link pubDate title).each do |field|
+      %i(url published title).each do |field|
         it "rais error when #{field} is empty" do
           allow(item).to receive(field).and_return(nil)
 
