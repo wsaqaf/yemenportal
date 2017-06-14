@@ -1,0 +1,19 @@
+.large-6.medium-8.small-12.small-centered.columns.news_block
+  .title
+    = title
+  time.js-publication-time
+    = l published_at, format: :created_at
+  - if photo_url.present?
+    .row
+      .columns.large-4.medium-4
+        img.thumbnail src="#{photo_url}"
+      .columns.large-8.medium-8
+        .description
+          = description
+  - else
+    .description
+      = description
+  .fb-comments data-href=request.original_url data-numposts="5" data-width="600"
+  = link_to t('post.button.back'), :back, class: "button float-left"
+  = link_to t('post.button.read_source'), link, class: "button"
+

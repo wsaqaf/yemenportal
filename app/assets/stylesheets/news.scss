@@ -29,14 +29,14 @@
 .news_block {
   word-wrap: break-word;
   text-align: right;
+  .title {
+    font-weight: bold;
+    color: black;
+    font-size: 1.2rem;
+  }
   .accordion-title {
     span {
       margin: 0.1rem;
-    }
-    .title {
-      font-weight: bold;
-      color: black;
-      font-size: 1.2rem;
     }
     .preview {
       padding-top: 0.2rem;

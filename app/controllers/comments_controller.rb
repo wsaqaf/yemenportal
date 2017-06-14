@@ -1,7 +1,11 @@
 class CommentsController < ApplicationController
   before_action :authenticate_user!
-  before_action :find_post, only: [:create]
+  before_action :find_post, only: [:create, :index]
   respond_to :js, only: [:crate, :destroy]
+
+  def index
+    render cell: true, model: @post
+  end
 
   def create
     comment = Comment.new(comment_params)
@@ -19,6 +23,10 @@ class CommentsController < ApplicationController
   end
 
   private
+
+  def back_url
+    request.referer || root_path
+  end
 
   def comment_params
     @_comment_patams = params.require(:comment).permit(:body).merge(post: @post, user: current_user)

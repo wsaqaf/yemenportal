@@ -5,6 +5,19 @@ describe CommentsController, type: :request do
   let(:post_obj) { create :post }
   let(:comment) { create :comment, user: user, post: post_obj }
 
+  describe "#index" do
+    let(:do_request) { get "/post/#{post_obj.id}/comments" }
+
+    context "success reques" do
+      it "return ceccess state" do
+        sign_in user
+        do_request
+
+        expect(response.status).to eq 200
+      end
+    end
+  end
+
   describe "#create" do
     let(:params) { { comment: { body: "my comment" } } }
     let(:do_request) { post "/post/#{post_obj.id}/comments", params: params }
