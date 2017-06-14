@@ -58,6 +58,36 @@
       word-wrap: break-word;
     }
   }
+
+  .js-votable{
+    .fi-like {
+      color: gray;
+      font-size: 1.5em;
+    }
+    .fi-dislike {
+      color: gray;
+      font-size: 1.5em;
+    }
+    &.upvoted {
+      .fi-like {
+        color: orange;
+      }
+      .fi-dislike {
+        color: gray;
+      }
+    }
+    &.downvoted {
+      .fi-like {
+        color: gray;
+      }
+      .fi-dislike {
+        color: blue;
+      }
+    }
+    .js-vote-count{
+      direction: ltr;
+    }
+  }
 }
 
 .multiselect {
