@@ -285,9 +285,9 @@ CREATE TABLE sources (
     admin_name character varying,
     note character varying,
     source_type character varying,
-    approve_state character varying,
-    suggested_time timestamp without time zone,
-    user_id integer
+    approve_state character varying DEFAULT 'suggested'::character varying,
+    user_id integer,
+    iframe_flag boolean DEFAULT true
 );
 
 
@@ -894,6 +894,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170516204912'),
 ('20170517154551'),
 ('20170525163542'),
-('20170525164114');
+('20170525164114'),
+('20170609161819');
 
 

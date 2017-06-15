@@ -9,8 +9,4 @@ class Posts::Approved::Cell < Application::Cell
   def post_body
     concept("posts/approved/item/cell", collection: model, user_votes: user_votes, user: user)
   end
-
-  def topic_body
-    concept("topics/item/cell", collection: topics)
-  end
 end
