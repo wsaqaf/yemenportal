@@ -3,7 +3,7 @@ class Posts::Approved::Cell < Application::Cell
 
   private
 
-  option :categories, :user_votes, :user, :topics
+  option :categories, :user_votes, :user
   property :title, :link, :published_at, :property
 
   def post_body

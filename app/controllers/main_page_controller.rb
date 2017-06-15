@@ -32,11 +32,7 @@ class MainPageController < ApplicationController
 
   def user_voted(posts)
     posts_ids = posts.map(&:id)
-    if current_user
-      current_user.votes.votes_posts(posts_ids)
-    else
-      []
-    end
+    current_user ? current_user.votes.votes_posts(posts_ids) : []
   end
 
   def category
