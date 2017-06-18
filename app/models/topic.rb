@@ -10,4 +10,8 @@
 class Topic < ApplicationRecord
   belongs_to :main_post, class_name: "Post", optional: true
   has_many :posts
+
+  def self.approved_topic
+    Topic.includes(:posts)
+  end
 end

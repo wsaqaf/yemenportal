@@ -22,19 +22,15 @@ class TfIdfService
     current_index = model.document_index(current_model)
     tf_idf_posts.inject({}) do |result, (id, post)|
       percent = matrix[current_index, model.document_index(post)]
-      result = { id: id, percent: percent } if new_greater?(result[:percent], percent)
+      result = { id: id, percent: percent } if percent > config["min_percent"] && percent > (result[:percent] || 0)
       result
     end
   end
 
-  def new_greater?(new_diff, curent_max)
-    curent_max > config["min_percent"] && curent_max > (new_diff || 0)
-  end
-
   def find_topic(id)
-    post = posts.find { |element| element.id == id }
-    topic = post.topic
-    topic ? topic : Topic.create(posts: [post])
+    main_post = posts.find { |post| post.id == id }
+    topic = main_post.topic
+    topic ? topic : Topic.create(posts: [main_post])
   end
 
   def tf_idf_posts
@@ -44,7 +40,7 @@ class TfIdfService
   end
 
   def posts
-    @_posts = Post.where(created_at: config["hours_period"].hours.ago..Time.current)
+    @_posts = Post.where(created_at: config["hours_period"].weeks.ago..Time.current)
   end
 
   def current_model

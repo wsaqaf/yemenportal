@@ -59,6 +59,13 @@ html dir="rtl" lang="ar"
             - else
               li
                 = link_to t('devise.log_in'), new_user_session_path
+
+            li.search_form
+              = simple_form_for :search_form,  url: search_index_path, method: :get do |f|
+                .float-left
+                  = f.input :search_text, label: false
+                = f.button :submit, t('menu.search'), class: "btn"
+
     == yield
 
     javascript:

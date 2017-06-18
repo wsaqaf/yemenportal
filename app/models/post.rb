@@ -22,6 +22,7 @@
 #
 
 class Post < ApplicationRecord
+  include PgSearch
   extend Enumerize
 
   has_many :post_category
@@ -42,6 +43,7 @@ class Post < ApplicationRecord
   scope :rejected_posts, -> { where(state: :rejected).ordered_by_date }
 
   scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
+  pg_search_scope :fulltext_search, against: [:description, :title]
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 

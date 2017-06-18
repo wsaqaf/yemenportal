@@ -1,0 +1,6 @@
+.row.search
+  .large-6.medium-8.small-centered.small-12.columns
+    .row.title
+      = t('post.search.title', request_text: request_text)
+    ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
+      = post_body
