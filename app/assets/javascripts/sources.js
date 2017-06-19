@@ -4,6 +4,22 @@ document.addEventListener("turbolinks:load", function() {
     $this[0].defaultValue = $this.text();
   });
 
+  $('.js-delete-source').click(function(){
+    var $button = $(this)[0];
+
+    var request = {
+      url: $button.href,
+      dataType: "script",
+      method: "DELETE"
+    }
+    $.ajax(request).done(function() {
+      $button.closest('.sources').remove()
+    });
+
+    return false
+  })
+
+
   $('.sources input').focusout(function(){
     var $this = $(this);
     var new_value = $this.val();

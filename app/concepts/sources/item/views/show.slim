@@ -1,5 +1,5 @@
-.row
-  .columns.sources
+.row.sources
+  .columns
     = hidden_field_tag id
     .row
       .medium-8.columns.source_name
@@ -11,7 +11,7 @@
         - unless state.valid?
           span.label.warning = t("source.error.invalid")
         .button-group.tiny.float-left
-          = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+          a.js-delete-source.button.secondary href = delete_path = t('source.buttons.delete')
           = link_to t('source.buttons.edit'), edit_source_path(model), class: "button"
           - if approve_state.suggested?
             = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button"
