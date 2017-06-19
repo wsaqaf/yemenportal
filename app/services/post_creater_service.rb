@@ -13,7 +13,11 @@ class PostCreaterService
     post = Post.new(post_params(item))
     post.state = :approved if source.whitelisted
     post.categories = [source.category] if source.category.present?
-    post.save ? @added_posts << post : source.update(state: Source.state.not_full_info)
+    if post.save
+      @added_posts << post
+    else
+      source.update(state: Source.state.not_full_info)
+    end
   end
 
   private
