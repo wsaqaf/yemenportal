@@ -27,8 +27,6 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    # Source.destroy(params[:id])
-    # redirect_to sources_path(approve_state: Source.approve_state.approved)
     head status: :ok if @source.destroy
   end
 
