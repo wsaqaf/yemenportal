@@ -12,18 +12,28 @@ class TfIdfService
     model = TfIdfSimilarity::TfIdfModel.new([current_model] + tf_idf_posts.values)
     matrix = model.similarity_matrix
 
-    post_data = main_post(model, matrix)
-    find_topic(post_data[:id]) if post_data[:id]
+    post_data_id = main_post(model, matrix)
+    find_topic(post_data_id) if post_data_id
   end
 
   private
 
   def main_post(model, matrix)
+    similar_model = max_similaty(model, matrix)
+
+    if similar_model && similar_model[:value] > @config["min_percent"]
+      greater_model = model.documents[similar_model[:id]]
+      tf_idf_posts.detect { |(_id, post_model)| post_model == greater_model }[0]
+    end
+  end
+
+  def max_similaty(model, matrix)
     current_index = model.document_index(current_model)
-    tf_idf_posts.inject({}) do |result, (id, post)|
-      percent = matrix[current_index, model.document_index(post)]
-      result = { id: id, percent: percent } if percent > config["min_percent"] && percent > (result[:percent] || 0)
-      result
+
+    row = matrix.row(current_index)
+    if row.count > 1
+      result = row.each_with_index.max { |(value, index)| value if index != current_index }
+      { value: result[0], id: result[1] }
     end
   end
 

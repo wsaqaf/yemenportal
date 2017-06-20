@@ -98,7 +98,7 @@ GEM
       slim (~> 3.0)
     chronic (0.10.2)
     coderay (1.1.1)
-    concurrent-ruby (1.0.4)
+    concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
@@ -233,7 +233,7 @@ GEM
     puma (3.7.0)
     pundit (1.1.0)
       activesupport (>= 3.0.0)
-    rack (2.0.1)
+    rack (2.0.3)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -414,6 +414,7 @@ PLATFORMS
 DEPENDENCIES
   annotate
   ar-stemmer
+  babel-transpiler
   better_errors
   capistrano (~> 3.6.0)
   capistrano-rails (~> 1.1.0)

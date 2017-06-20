@@ -286,8 +286,7 @@ CREATE TABLE sources (
     admin_name character varying,
     note character varying,
     source_type character varying,
-    approve_state character varying,
-    suggested_time timestamp without time zone,
+    approve_state character varying DEFAULT 'suggested'::character varying,
     user_id integer
 );
 
