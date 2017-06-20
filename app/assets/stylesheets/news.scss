@@ -26,7 +26,19 @@
   }
 }
 
-.news_block {
+.topic_block {
+  .source_name {
+    color: gray;
+    font-size: 0.75rem;
+  }
+  .description {
+    font-size: 0.85rem;
+    max-height: 5rem;
+    overflow-y: hidden;
+  }
+}
+
+.topic_block, .news_block {
   word-wrap: break-word;
   text-align: right;
   .accordion-title {

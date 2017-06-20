@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
   resources :moderators, only: [:index, :destroy]
+  resources :topics, only: [:show]
 
   resources :moderators, only: [] do
     scope module: :moderators do

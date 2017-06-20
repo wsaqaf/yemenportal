@@ -5,7 +5,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   VOTE_ACCORDION_OPEN = "info_button".freeze
 
   option :user_votes, :user
-  property :title, :link, :published_at, :description, :id, :category_ids, :votes
+  property :title, :link, :published_at, :description, :id, :category_ids, :votes, :same_posts
 
   private
 

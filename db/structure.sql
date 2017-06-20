@@ -200,7 +200,8 @@ CREATE TABLE posts (
     updated_at timestamp without time zone NOT NULL,
     source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
-    photo_url character varying
+    photo_url character varying,
+    topic_id integer
 );
 
 
@@ -239,10 +240,10 @@ CREATE TABLE schema_migrations (
 CREATE TABLE source_logs (
     id integer NOT NULL,
     state character varying,
-    source_id integer NOT NULL,
     posts_count integer DEFAULT 0,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    source_id integer NOT NULL
 );
 
 
@@ -307,6 +308,67 @@ CREATE SEQUENCE sources_id_seq
 --
 
 ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
+
+
+--
+-- Name: stop_words; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE stop_words (
+    id integer NOT NULL,
+    name character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE stop_words_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: stop_words_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE stop_words_id_seq OWNED BY stop_words.id;
+
+
+--
+-- Name: topics; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE topics (
+    id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE topics_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: topics_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE topics_id_seq OWNED BY topics.id;
 
 
 --
@@ -454,6 +516,20 @@ ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::r
 
 
 --
+-- Name: stop_words id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words ALTER COLUMN id SET DEFAULT nextval('stop_words_id_seq'::regclass);
+
+
+--
+-- Name: topics id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics ALTER COLUMN id SET DEFAULT nextval('topics_id_seq'::regclass);
+
+
+--
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -540,6 +616,22 @@ ALTER TABLE ONLY sources
 
 
 --
+-- Name: stop_words stop_words_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY stop_words
+    ADD CONSTRAINT stop_words_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: topics topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics
+    ADD CONSTRAINT topics_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -602,6 +694,13 @@ CREATE INDEX index_posts_on_published_at ON posts USING btree (published_at);
 --
 
 CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
+
+
+--
+-- Name: index_posts_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
 
 
 --
@@ -723,11 +822,19 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: posts fk_rails_70d0b6486a; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts
+    ADD CONSTRAINT fk_rails_70d0b6486a FOREIGN KEY (topic_id) REFERENCES topics(id);
+
+
+--
 -- Name: source_logs fk_rails_8679f875d2; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY source_logs
-    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id);
+    ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
 
 
 --
@@ -781,6 +888,12 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170414114607'),
 ('20170417143915'),
 ('20170420185236'),
-('20170504143546');
+('20170504143546'),
+('20170515140007'),
+('20170516171151'),
+('20170516204912'),
+('20170517154551'),
+('20170525163542'),
+('20170525164114');
 
 
