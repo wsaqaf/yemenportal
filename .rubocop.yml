@@ -22,6 +22,9 @@ RSpec/MultipleExpectations:
 RSpec/NamedSubject:
   Enabled: false
 
+RSpec/SubjectStub:
+  Enabled: false
+
 RSpec/MessageSpies:
   Enabled: false
 
@@ -49,11 +52,16 @@ MethodLength:
   Exclude:
     - "spec/**/*"
 
+ExampleLength:
+  Max: 6
+
 Metrics/LineLength:
   Max: 120
 
 Metrics/AbcSize:
   Max: 20
+  Exclude:
+    - "app/services/post_creater_service.rb"
 
 Style/AlignHash:
   Enabled: false

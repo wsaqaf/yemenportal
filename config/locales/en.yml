@@ -40,6 +40,7 @@ en:
       title: Pending Posts
     rejected:
       title: Rejected Posts
+    same_posts: 'Same news:'
   category:
     select_category: Select Category
     title: Category
@@ -96,7 +97,8 @@ en:
       invalid_state: Invalid
       incorrect_path: Current RSS path is incorrect.
       incorrect_stucture: Posts from this source has icorrect structure.
-      not_full_info: Source posts don't has some necessary field.
+      other: Something went wrong
+      not_full_info: Source posts don't has some necessary field or link was duplicated.
     buttons:
       approve: Approve
       update: Update

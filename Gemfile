@@ -39,6 +39,9 @@ gem 'email_validator'
 gem 'reform-rails'
 
 gem "koala"
+gem 'babel-transpiler'
+
+gem "tf-idf-similarity"
 
 group :development do
   gem 'web-console', '>= 3.3.0'

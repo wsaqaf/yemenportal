@@ -35,8 +35,10 @@ class Post < ApplicationRecord
   has_many :users, through: :post_tags
 
   belongs_to :source
+  belongs_to :topic, optional: true
 
   validates :title, :published_at, :link, presence: true
+  validates :link, uniqueness: true
 
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :source_posts, ->(source_id) { ordered_by_date.where(source_id: source_id) }
@@ -50,5 +52,9 @@ class Post < ApplicationRecord
 
   def self.available_states
     state.values
+  end
+
+  def same_posts
+    (topic.posts.ordered_by_date - [self]) if topic
   end
 end

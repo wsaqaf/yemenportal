@@ -2,10 +2,11 @@ require "rails_helper"
 
 describe RSSParserService do
   describe "#call" do
-    let(:source) { create(:source) }
+    let(:source) { create(:source, approve_state: :approved) }
+    let(:source_1) { create(:source, approve_state: :suggested) }
 
     it "rss perser job" do
-      expect(PostsFetcherJob).to receive(:perform_later).with(source.id)
+      expect(PostsFetcherJob).to receive(:perform_now).with(source.id)
 
       described_class.call
     end

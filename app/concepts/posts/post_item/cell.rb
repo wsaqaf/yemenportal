@@ -2,7 +2,8 @@ class Posts::PostItem::Cell < Application::Cell
   PREVIEW_SIZE = 180
 
   option :user
-  property :title, :link, :published_at, :description, :id, :category_ids, :categories, :source, :photo_url, :post_tags
+  property :title, :link, :published_at, :description, :id, :category_ids, :categories, :source, :photo_url,
+    :same_posts, :post_tags
 
   private
 
