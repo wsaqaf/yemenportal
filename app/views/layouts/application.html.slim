@@ -11,11 +11,12 @@ html dir="rtl" lang="ar"
     = csrf_meta_tag
 
   body
-    .top-bar
+    .title-bar data-hide-for="medium" data-responsive-toggle="example-menu"
+      button.menu-icon data-toggle="example-menu" type="button"
+      .title-bar-title
+    #example-menu.top-bar
       .top-bar-title.float-right
         strong = link_to t('site_name'), posts_path
-      span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
-        button.menu-icon.dark data-toggle="" type="button"
       #responsive-menu
         - if policy(User).login?
           .top-bar-right
