@@ -4,9 +4,9 @@ describe TfIdfService do
   subject(:service_1) { described_class.new(description: "one two, xt") }
   subject(:service_2) { described_class.new(description: "opa tata a") }
 
-  let(:post) { build :post, id: 1, topic: nil, created_at: Time.now, description: "one two" }
+  let(:post) { build :post, id: 1, topic: nil, created_at: Time.now, stemmed_text: "one two" }
   let(:saved_topic) { build :topic }
-  let(:post_2) { build :post, id: 2, topic: saved_topic, created_at: (Time.now - 2.hours), description: "opa tata" }
+  let(:post_2) { build :post, id: 2, topic: saved_topic, created_at: (Time.now - 2.hours), stemmed_text: "opa tata" }
   let(:posts) { [post, post_2] }
 
   describe "#post_topic" do

@@ -53,7 +53,7 @@ MethodLength:
     - "spec/**/*"
 
 ExampleLength:
-  Max: 6
+  Max: 7
 
 Metrics/LineLength:
   Max: 120
