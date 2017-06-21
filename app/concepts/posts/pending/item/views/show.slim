@@ -1,12 +1,18 @@
 li.news_block.accordion-item data-accordion-item=""
   a.accordion-title
-    .title
-      = title
-    time.js-publication-time
-      = l published_at, format: :created_at
-    br
-    - category_names.each do |name|
-      span.label.secondary = name
+    .media-object.stack-for-large
+      - if photo_url.present?
+        .media-object-section
+          .thumbnail
+            img src=photo_url
+      .media-object-section
+        .title
+          = title
+        time.js-publication-time
+          = l published_at, format: :created_at
+        br
+        - category_names.each do |name|
+          span.label.secondary = name
   .accordion-content data-tab-content=''
     .button-group.tiny
       = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"

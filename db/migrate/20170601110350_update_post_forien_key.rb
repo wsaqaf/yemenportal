@@ -1,5 +1,5 @@
 class UpdatePostForienKey < ActiveRecord::Migration[5.0]
-  def Post
+  class Post < ActiveRecord::Base
   end
 
   def up

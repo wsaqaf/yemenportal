@@ -4,7 +4,7 @@
 //= require foundation
 //= require selectize
 //= require moment
-//= require moment/ar-sa.js
+//= require moment/ar-tn.js
 //= require_tree .
 
 document.addEventListener("turbolinks:load", function() {
