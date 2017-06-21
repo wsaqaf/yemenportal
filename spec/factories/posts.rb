@@ -9,11 +9,11 @@
 #  title        :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
-#  source_id    :integer          not null
 #
 # Indexes
 #
