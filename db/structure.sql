@@ -231,11 +231,11 @@ CREATE TABLE posts (
     title character varying NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    source_id integer,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
     photo_url character varying,
     topic_id integer,
-    stemmed_text text DEFAULT ''::text
+    stemmed_text text DEFAULT ''::text,
+    source_id integer NOT NULL
 );
 
 
@@ -978,6 +978,17 @@ ALTER TABLE ONLY votes
 
 
 --
+<<<<<<< HEAD
+=======
+-- Name: posts fk_rails_d500d7f301; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY posts
+    ADD CONSTRAINT fk_rails_d500d7f301 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
+
+
+--
+>>>>>>> master
 -- Name: post_tags fk_rails_fdf74b486b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1020,6 +1031,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170525163542'),
 ('20170525164114'),
 ('20170531155752'),
+('20170601110350'),
 ('20170605180442'),
 ('20170605181632');
 
