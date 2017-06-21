@@ -1,11 +1,9 @@
 class VotesController < ApplicationController
   before_action :authenticate_user!
-  UPVOTE = "upvote".freeze
+  respond_to :js, only: [:update]
 
   def update
-    post = Post.find(params.fetch(:post_id))
-    unless Vote.find_by(user: current_user, post: post)
-      Vote.create(user: current_user, positive: params[:type] == UPVOTE, post: post)
-    end
+    old_type = VoteService.make_vote(params, current_user)
+    render json: { result: old_type }, status: :ok
   end
 end
