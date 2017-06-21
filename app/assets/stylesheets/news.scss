@@ -21,6 +21,16 @@
     margin-bottom: 0.01rem;
     padding: 0.5rem 0.7rem 0.5rem 0.7rem;
   }
+  .thumbnail {
+    img {
+      max-width: 5rem;
+      max-height: 5rem;
+    }
+  }
+  .has-tip.top {
+    border: 0;
+    margin: 0;
+  }
 }
 
 .topic_block {
@@ -65,6 +75,36 @@
       white-space: pre-wrap;
       word-break: break-all;
       word-wrap: break-word;
+    }
+  }
+
+  .js-votable{
+    .fi-like {
+      color: gray;
+      font-size: 1.5em;
+    }
+    .fi-dislike {
+      color: gray;
+      font-size: 1.5em;
+    }
+    &.upvoted {
+      .fi-like {
+        color: orange;
+      }
+      .fi-dislike {
+        color: gray;
+      }
+    }
+    &.downvoted {
+      .fi-like {
+        color: gray;
+      }
+      .fi-dislike {
+        color: blue;
+      }
+    }
+    .js-vote-count{
+      direction: ltr;
     }
   }
 }

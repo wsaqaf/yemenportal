@@ -13,6 +13,7 @@
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
+#  stemmed_text :text             default("")
 #
 # Indexes
 #
@@ -26,6 +27,7 @@ FactoryGirl.define do
     sequence(:description) { |n| "Description_#{n}" }
     sequence(:title) { |n| "Title_#{n}" }
     sequence(:link) { |n| "Link_#{n}" }
+    sequence(:stemmed_text) { |n| "stemmed_text_#{n}" }
     state "pending"
     association :source
     association :topic
