@@ -5,7 +5,7 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update]
 
   def index
-    sources = Source.where(approve_state: params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
+    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
     render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
   end
 
