@@ -45,7 +45,7 @@ class TfIdfService
 
   def tf_idf_posts
     @_tf_idf_posts ||= posts.reduce({}) do |result, post|
-      result.merge(post.id => TfIdfSimilarity::Document.new(ActionView::Base.full_sanitizer.sanitize(post.description)))
+      result.merge(post.id => TfIdfSimilarity::Document.new(post.stemmed_text))
     end
   end
 
@@ -54,6 +54,6 @@ class TfIdfService
   end
 
   def current_model
-    @_current ||= TfIdfSimilarity::Document.new(ActionView::Base.full_sanitizer.sanitize(description))
+    @_current ||= TfIdfSimilarity::Document.new(description)
   end
 end
