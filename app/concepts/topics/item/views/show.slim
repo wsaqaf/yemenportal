@@ -1,0 +1,30 @@
+li.topic_block.accordion-item data-accordion-item=""
+  a.accordion-title.columns
+    .title
+      = main_post.title
+    = "#{main_post.source.name} -"
+    time.js-publication-time
+
+      = l main_post.published_at, format: :created_at
+  .accordion-content.columns.large-12 data-tab-content=''
+    = link_to t('post.button.read_source'), main_post.link, class: "button tiny"
+    = link_to 'read about this topic', topic_path(model), class: "button tiny"
+    - if main_post.photo_url.present?
+      .row
+        .columns.large-4.medium-4
+          img.thumbnail src="#{main_post.photo_url}"
+        .columns.large-8.medium-8
+          .description
+            = description
+    - else
+      .description
+        = description
+    .row
+    - if same_posts.present?
+      = t('post.same_posts')
+      - same_posts.each do |post|
+        br
+        = link_to post.title, post.link
+        .source_name
+          = post.source.name
+  hr

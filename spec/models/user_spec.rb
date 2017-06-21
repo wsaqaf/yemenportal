@@ -79,4 +79,17 @@ describe User do
       end
     end
   end
+
+  describe "#full_name" do
+    let(:first_user) { build(:user, email: "aa@aa.aa", last_name: nil, first_name: nil) }
+    let(:second_user) { build(:user, last_name: "Mad", first_name: "Max") }
+
+    it "if only email" do
+      expect(first_user.full_name).to eql("aa@aa.aa")
+    end
+
+    it "valid data" do
+      expect(second_user.full_name).to eql("Max Mad")
+    end
+  end
 end

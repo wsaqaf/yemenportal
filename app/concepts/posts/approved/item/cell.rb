@@ -5,7 +5,7 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
   VOTE_ACCORDION_OPEN = "info_button".freeze
 
   option :user_votes, :user
-  property :title, :link, :published_at, :description, :id, :category_ids, :votes
+  property :title, :link, :published_at, :description, :id, :category_ids, :votes, :same_posts
 
   private
 
@@ -22,37 +22,31 @@ class Posts::Approved::Item::Cell < Posts::PostItem::Cell
     user_votes.detect { |vote| vote.post_id == id }
   end
 
-  def vote_info(type)
-    btn_class = user ? VOTE_ACCORDION_OPEN : ""
-    button = "<button type='button' class='button #{btn_class} float-left #{BUTTON_STYLE[type]}'
-      data-id=#{id}>#{button_text(type)}</button>"
-    tooltip_wraper(button)
-  end
-
-  def disabled_button(type)
-    "<button type='button' class='button #{button_style(type)}'>#{button_text(type)}</button>"
-  end
-
-  def active_button(type)
-    link_to nil, class: "button secondary js-#{type}", data: { path: votes_path(type: type, post_id: id) } do
-      button_text(type)
+  def vote_button(type)
+    if user.nil?
+      tooltip_wraper("<a class='secondary'>#{button_text(type)}</a>")
+    else
+      link_to nil, class: "js-#{type}-button",
+        data: { type: type, path: votes_path(type: type, post_id: id) } do
+        button_text(type)
+      end
     end
   end
 
   def button_text(type)
-    "#{vote_count(type)} <i class=#{IMAGE_NAME[type]}></i>"
+    "<i class=#{IMAGE_NAME[type]}></i>"
   end
 
-  def vote_count(type)
-    votes.count_by_type(type == UPVOTE)
+  def vote_count
+    vote_array = votes.map(&:positive)
+    vote_array.count(true) - vote_array.count(false)
   end
 
-  def button_style(type)
-    if type == UPVOTE && user
-      return "success" if user_vote.positive
-    elsif user
-      return "alert" unless user_vote.positive
+  def button_style
+    if user_vote.present? && user_vote.try(:positive)
+      "upvoted"
+    elsif user_vote.present? && !user_vote.try(:positive)
+      "downvoted"
     end
-    "secondary"
   end
 end

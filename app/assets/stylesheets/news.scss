@@ -33,7 +33,19 @@ iframe {
   }
 }
 
-.news_block {
+.topic_block {
+  .source_name {
+    color: gray;
+    font-size: 0.75rem;
+  }
+  .description {
+    font-size: 0.85rem;
+    max-height: 5rem;
+    overflow-y: hidden;
+  }
+}
+
+.topic_block, .news_block {
   word-wrap: break-word;
   text-align: right;
   .accordion-title {
@@ -63,6 +75,36 @@ iframe {
       white-space: pre-wrap;
       word-break: break-all;
       word-wrap: break-word;
+    }
+  }
+
+  .js-votable{
+    .fi-like {
+      color: gray;
+      font-size: 1.5em;
+    }
+    .fi-dislike {
+      color: gray;
+      font-size: 1.5em;
+    }
+    &.upvoted {
+      .fi-like {
+        color: orange;
+      }
+      .fi-dislike {
+        color: gray;
+      }
+    }
+    &.downvoted {
+      .fi-like {
+        color: gray;
+      }
+      .fi-dislike {
+        color: blue;
+      }
+    }
+    .js-vote-count{
+      direction: ltr;
     }
   }
 }
