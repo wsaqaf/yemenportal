@@ -18,6 +18,10 @@ Rails.application.routes.draw do
 
   resources :post, only: [] do
     resources :comments, only: [:create, :destroy]
+
+    scope module: :posts do
+      resource :reader, only: [:show], controller: 'reader'
+    end
   end
 
   resources :posts, only: [:index, :show, :update, :show]

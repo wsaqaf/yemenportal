@@ -18,6 +18,7 @@ en:
       source:
         whitelisted: Whitelisted
         link: Source link
+        iframe_flag: Show in iframe?
     # Examples
     # labels:
     #   defaults:
