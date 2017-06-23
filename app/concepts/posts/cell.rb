@@ -3,10 +3,10 @@ class Posts::Cell < Application::Cell
 
   private
 
-  option :categories, :state, :votes, :user
+  option :categories, :state, :votes, :user, :topics
   property :title, :link, :published_at, :property
 
   def posts_page
-    concept("posts/#{state}/cell", model, categories: categories, user_votes: votes, user: user)
+    concept("posts/#{state}/cell", model, topics: topics, categories: categories, user_votes: votes, user: user)
   end
 end

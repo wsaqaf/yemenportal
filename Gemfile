@@ -39,7 +39,12 @@ gem 'email_validator'
 gem 'reform-rails'
 
 gem "koala"
+gem "feedjira"
+gem "httparty"
 gem 'babel-transpiler'
+
+gem "tf-idf-similarity"
+gem 'ar-stemmer'
 
 group :development do
   gem 'web-console', '>= 3.3.0'

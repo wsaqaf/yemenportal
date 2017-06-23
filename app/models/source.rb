@@ -38,11 +38,13 @@ class Source < ApplicationRecord
   validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
 
-  enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info], default: :valid
+  enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info, :other], default: :valid
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss
 
   scope :suggested, -> { where(approve_state: [:suggested, nil]) }
+  scope :approved, -> { where(approve_state: :approved) }
+  scope :by_state, ->(state) { where(approve_state: state) }
 
   def facebook_page
     link.match(FACEBOOK_REGEXP).to_s if source_type.facebook?

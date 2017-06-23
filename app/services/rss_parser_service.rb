@@ -2,15 +2,16 @@ require "rss"
 
 class RSSParserService
   def self.call
-    Source.find_each do |source|
-      PostsFetcherJob.perform_later(source.id)
+    Source.approved.find_each do |source|
+      PostsFetcherJob.perform_now(source.id)
     end
   end
 
-  def self.fetch_items(rss, source_id)
-    feed = RSS::Parser.parse(rss)
-    posts = Post.source_posts(source_id)
-    feed.items.select { |item| posts.empty? || item.pubDate > posts.first.published_at }
+  def self.fetch_items(source)
+    xml = HTTParty.get(source.link).body
+    entries = Feedjira::Feed.parse(xml).entries
+    posts = Post.source_posts(source.id)
+    entries.select { |item| posts.empty? || item.published > posts.first.published_at }
   end
 
   def self.fetch_facebook_items(source)
