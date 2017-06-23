@@ -1,0 +1,19 @@
+doctype html
+html dir="rtl" lang="ar"
+  head
+    meta charset="utf-8"
+    meta name="viewport" content="width=device-width, initial-scale=1.0"
+
+    title == content_for?(:title) ? yield(:title) : t("site_title")
+
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application", "data-turbolinks-track" => true
+    = csrf_meta_tag
+
+  body
+    .top-bar
+      .top-bar-title.float-left
+        strong = link_to t('site_name'), posts_path
+    == yield
+
+    = render partial: 'layouts/application_js'

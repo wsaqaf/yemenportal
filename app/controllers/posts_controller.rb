@@ -9,16 +9,13 @@ class PostsController < ApplicationController
   end
 
   def index
-    if category
-      posts = category.posts.includes(:votes)
-    else
-      posts = Post.includes(:votes)
-    end
-
-    posts = posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
-
-    render cell: true, model: posts, options: { categories: Category.all, state: posts_state, votes: user_voted(posts),
-      user: current_user }
+    render cell: true, model: posts, options: {
+      categories: Category.all,
+      state: posts_state,
+      votes: user_voted(posts),
+      user: current_user,
+      topics: topics
+    }
   end
 
   def update
@@ -35,6 +32,26 @@ class PostsController < ApplicationController
 
   private
 
+  def posts
+    if category
+      posts = category.posts.includes(:votes)
+    else
+      posts = Post.includes(:votes)
+    end
+
+    posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
+  end
+
+  def topics
+    if posts_state == Post.state.approved
+      ids = Post.approved_posts.where.not(topic_id: nil).pluck(:topic_id)
+      Topic.includes(:posts).where(id: ids.select { |id| ids.count(id) > 1 })
+        .paginate(page: params[:page], per_page: 10)
+    else
+      []
+    end
+  end
+
   def back_url
     request.referer || root_path
   end
@@ -49,7 +66,16 @@ class PostsController < ApplicationController
   end
 
   def posts_params
-    params.permit(:state, category_ids: [])
+    @_posts_params ||= begin
+      posts_params = params.permit(:state, category_ids: [])
+
+      if params[:tags].present?
+        PostTag.where(user: current_user, post: @post).delete_all
+        tags = params[:tags].reject(&:blank?)
+        posts_params[:post_tags] = tags.map { |name| PostTag.new(user: current_user, post: @post, name: name) }
+      end
+      posts_params
+    end
   end
 
   def posts_state

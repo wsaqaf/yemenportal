@@ -1,0 +1,10 @@
+default: &default
+  min_percent: 0.60
+  hours_period: 6
+
+development:
+  *default
+test:
+  *default
+production:
+  *default

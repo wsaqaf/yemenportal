@@ -62,8 +62,20 @@ describe PostsController, type: :request do
     let(:post) { create :post, state: "pending" }
     let(:do_request) { put "/posts/#{post.id}", headers: headers, params: { state: "approved" } }
     let(:update_categories) { put "/posts/#{post.id}", params: { category_ids: [category.id] } }
+    let(:update_with_path) do
+      put "/posts/#{post.id}", params: { redirrect_path: "other_path",
+      category_ids: [category.id] }
+    end
 
     it "change category list" do
+      sign_in user
+      update_with_path
+
+      expect(response).to have_http_status(302)
+      expect(response).to redirect_to("other_path")
+    end
+
+    it "change category list with redirrect path" do
       sign_in user
       update_categories
 

@@ -36,11 +36,14 @@ en:
       reject: Reject
       read_source: Read source
       delete: Delete
+      comments: Comments
     pending:
       title: Pending Posts
     rejected:
       title: Rejected Posts
+    same_posts: 'Same news:'
   category:
+    select_category: Select Category
     title: Category
     base_list:
       breaking: Breaking
@@ -95,7 +98,8 @@ en:
       invalid_state: Invalid
       incorrect_path: Current RSS path is incorrect.
       incorrect_stucture: Posts from this source has icorrect structure.
-      not_full_info: Source posts don't has some necessary field.
+      other: Something went wrong
+      not_full_info: Source posts don't has some necessary field or link was duplicated.
     buttons:
       approve: Approve
       update: Update
@@ -103,3 +107,14 @@ en:
       create: Add source
       delete: Remove
       add_source: Add Source
+  tag:
+    select_tag: Select Tag
+    base_list:
+      misleading_title: Misleading title
+      missing_picture: Missing picture
+      irrelevant_picture: Irrelevant picture
+      plagiarised_copied: Plagiarised/copied
+      wrong_category: Wrong category
+      inappropriate_content: Inappropriate content
+      propaganda_advertising: Propaganda/advertising
+      missing_name:  Missing/ambiguous writer name

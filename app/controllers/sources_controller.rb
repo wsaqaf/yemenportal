@@ -5,7 +5,7 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update]
 
   def index
-    sources = Source.where(approve_state: params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
+    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
     render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
   end
 
@@ -62,7 +62,7 @@ class SourcesController < ApplicationController
   def source_params
     @_source_params ||= begin
       source_params = params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
-      :brief_info, :admin_email, :admin_name, :note)
+      :brief_info, :admin_email, :admin_name, :note, :iframe_flag)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params[:approve_state] = Source.approve_state.approved
       source_params
