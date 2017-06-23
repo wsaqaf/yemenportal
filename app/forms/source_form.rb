@@ -20,6 +20,7 @@ class SourceForm < Reform::Form
   property :approve_state
   property :source_type
   property :user
+  property :iframe_flag
 
   validates :link, :name, presence: true
   validates :admin_email, email: true, if: "admin_email.present?"

@@ -25,10 +25,10 @@ class PostCreaterService
 
   def post_params(item)
     if source.source_type.rss?
-      photo_tag = item.description.slice!(IMG_TAG_REGEXP)
+      photo_tag = item.summary.slice!(IMG_TAG_REGEXP)
       photo_url = photo_tag.present? ? photo_tag.slice(URL_REGEXP) : nil
-      { description: item.description, link: item.link, published_at: item.pubDate, source: source,
-        title: item.title, photo_url: photo_url, stemmed_text: stemmed_text(item.description) }
+      { description: item.summary, link: item.url, published_at: item.published, source: source,
+        title: item.title, photo_url: photo_url, stemmed_text: stemmed_text(item.summary) }
     elsif source.source_type.facebook?
       message = item["message"] || item["name"]
       { description: message, link: item["link"], published_at: item["created_time"], source: source,
