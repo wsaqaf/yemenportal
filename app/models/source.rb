@@ -18,6 +18,7 @@
 #  source_type   :string
 #  approve_state :string           default("suggested")
 #  user_id       :integer
+#  disabled      :boolean          default("false"), not null
 #
 # Indexes
 #
@@ -39,7 +40,7 @@ class Source < ApplicationRecord
   validates :website, :link, url: true
 
   enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info, :other], default: :valid
-  enumerize :approve_state, in: [:approved, :suggested], default: :suggested
+  enumerize :approve_state, in: [:approved, :suggested, :disabled], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss
 
   scope :suggested, -> { where(approve_state: [:suggested, nil]) }

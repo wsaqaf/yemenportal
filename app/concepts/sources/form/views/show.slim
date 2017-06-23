@@ -13,6 +13,7 @@
     = f.input :admin_email, as: :email
     = f.input :admin_name
     = f.input :note, as: :text
+    = f.hidden_field :approve_state, value: Source.approve_state.approved
     .button-group
       = link_to t(:back), sources_path, class: "button secondary"
       = f.submit submit_button, class: "button"

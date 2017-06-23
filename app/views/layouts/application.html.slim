@@ -29,6 +29,8 @@ html dir="rtl" lang="ar"
                   - if policy(User).admin?
                     li
                       = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
+                    li
+                      = link_to t('menu.sources.disabled'), sources_path(approve_state: Source.approve_state.disabled)
                   - if policy(User).member?
                     li
                       = link_to t('menu.sources.suggest_source'), new_sources_suggest_path

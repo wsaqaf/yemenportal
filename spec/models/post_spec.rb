@@ -21,7 +21,19 @@
 require "rails_helper"
 
 describe Post do
+  subject { described_class.new(topic: topic) }
+  let(:topic) { build(:topic, posts: [post]) }
+  let(:post) { build(:post) }
+
   %i(title published_at link).each do |field|
     it { is_expected.to validate_presence_of(field) }
+  end
+
+  describe '#same_posts' do
+    it '' do
+      allow(topic).to receive_message_chain(:posts, :ordered_by_date).and_return([subject, post])
+
+      expect(subject.same_posts).to eql([post])
+    end
   end
 end

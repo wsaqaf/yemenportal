@@ -9,11 +9,11 @@
 #  title        :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
+#  source_id    :integer          not null
 #
 # Indexes
 #
@@ -36,13 +36,14 @@ class Post < ApplicationRecord
   validates :title, :published_at, :link, presence: true
   validates :link, uniqueness: true
 
-  scope :ordered_by_date, -> { order("published_at DESC") }
+  scope :ordered_by_date, -> { enable_posts.order("published_at DESC") }
   scope :source_posts, ->(source_id) { ordered_by_date.where(source_id: source_id) }
-  scope :pending_posts, -> { where(state: :pending).ordered_by_date }
-  scope :approved_posts, -> { where(state: :approved).ordered_by_date }
-  scope :rejected_posts, -> { where(state: :rejected).ordered_by_date }
+  scope :pending_posts, -> { enable_posts.where(state: :pending).ordered_by_date }
+  scope :approved_posts, -> { enable_posts.where(state: :approved).ordered_by_date }
+  scope :rejected_posts, -> { enable_posts.where(state: :rejected).ordered_by_date }
 
-  scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
+  scope :posts_by_state, ->(state) { enable_posts.where(state: state).ordered_by_date }
+  scope :enable_posts, -> { joins(:source).where.not(sources: { approve_state: "disabled" }) }
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 

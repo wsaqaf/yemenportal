@@ -26,6 +26,7 @@ Rails.application.routes.draw do
 
   namespace :sources do
     resources :approve, only: [:update]
+    resources :disable, only: [:update]
     resources :suggest, only: [:create, :new]
   end
 
