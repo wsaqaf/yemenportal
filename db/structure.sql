@@ -320,7 +320,8 @@ CREATE TABLE sources (
     note character varying,
     source_type character varying,
     approve_state character varying DEFAULT 'suggested'::character varying,
-    user_id integer
+    user_id integer,
+    iframe_flag boolean DEFAULT true
 );
 
 
@@ -978,8 +979,6 @@ ALTER TABLE ONLY votes
 
 
 --
-<<<<<<< HEAD
-=======
 -- Name: posts fk_rails_d500d7f301; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -988,7 +987,6 @@ ALTER TABLE ONLY posts
 
 
 --
->>>>>>> master
 -- Name: post_tags fk_rails_fdf74b486b; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -1033,6 +1031,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170531155752'),
 ('20170601110350'),
 ('20170605180442'),
-('20170605181632');
+('20170605181632'),
+('20170609161819');
 
 

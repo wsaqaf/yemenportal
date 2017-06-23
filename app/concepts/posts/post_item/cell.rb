@@ -28,4 +28,8 @@ class Posts::PostItem::Cell < Application::Cell
   def tag_list
     (Tag.all.map(&:name) + user_tags).uniq
   end
+
+  def read_post_link
+    source.iframe_flag ? post_reader_path(post_id: model.id) : link
+  end
 end

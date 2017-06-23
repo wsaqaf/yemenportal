@@ -39,6 +39,8 @@ gem 'email_validator'
 gem 'reform-rails'
 
 gem "koala"
+gem "feedjira"
+gem "httparty"
 gem 'babel-transpiler'
 
 gem "tf-idf-similarity"
