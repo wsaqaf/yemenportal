@@ -18,6 +18,8 @@
 #  source_type   :string
 #  approve_state :string           default("suggested")
 #  user_id       :integer
+#  disabled      :boolean          default("false"), not null
+#  iframe_flag   :boolean          default("true")
 #
 # Indexes
 #

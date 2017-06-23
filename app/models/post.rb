@@ -9,11 +9,11 @@
 #  title        :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
+#  source_id    :integer          not null
 #
 # Indexes
 #
@@ -30,6 +30,10 @@ class Post < ApplicationRecord
   has_many :votes
   has_many :users, through: :votes
   has_many :comments
+
+  has_many :post_tags
+  has_many :users, through: :post_tags
+
   belongs_to :source
   belongs_to :topic, optional: true
 
