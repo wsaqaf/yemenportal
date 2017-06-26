@@ -10,7 +10,6 @@ class PostsController < ApplicationController
 
   def index
     render cell: true, model: posts, options: {
-      categories: Category.all,
       state: posts_state,
       votes: user_voted(posts),
       user: current_user,

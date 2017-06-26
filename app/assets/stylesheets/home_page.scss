@@ -2,21 +2,6 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-.category_nav{
-  background-color: #e6e6e6;
-  padding: 0;
-  overflow-x: auto;
-  a {
-    color: black;
-    font-size: 0.8em;
-  }
-  ul{
-    background-color: #e6e6e6;
-  }
-  li:hover {
-      background-color: yellow;
-  }
-}
 .fi-social-twitter,.fi-social-facebook{
   font-size:45px;
 }
