@@ -48,7 +48,7 @@ class SourcesController < ApplicationController
   private
 
   def check_permissions
-    authorize User, :admin?
+    authorize User, :moderator?
   end
 
   def categories
