@@ -3,6 +3,7 @@ require "rails_helper"
 describe TfIdfService do
   subject(:service_1) { described_class.new(description: "one two, xt") }
   subject(:service_2) { described_class.new(description: "opa tata a") }
+  subject(:service_3) { described_class.new(description: "comon lets go") }
 
   let(:post) { build :post, id: 1, topic: nil, created_at: Time.now, stemmed_text: "one two" }
   let(:saved_topic) { build :topic }
@@ -25,10 +26,16 @@ describe TfIdfService do
       expect(service_2.post_topic).to eql(post_2.topic)
     end
 
-    it "return nil if dont find matcers" do
+    it "return nil if post list empty" do
       allow(Post).to receive(:where).and_return([])
 
       expect(service_2.post_topic).to be(nil)
+    end
+
+    it "return nil if dont find matcers" do
+      allow(Post).to receive(:where).and_return(posts)
+
+      expect(service_3.post_topic).to be(nil)
     end
   end
 end
