@@ -18,7 +18,8 @@ class RSSParserService
     connection = Koala::Facebook::API.new
     posts = Post.source_posts(source.id)
 
-    items = connection.get_connection(source.facebook_page, "posts")
+    items = connection.get_connection(source.facebook_page, "posts", { fields: %w(link message
+                                                                                  name created_time picture) })
     items.select { |item| posts.empty? || item["created_time"].to_time > posts.first.published_at }
   end
 end
