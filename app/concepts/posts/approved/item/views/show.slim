@@ -12,13 +12,13 @@ li.news_block.accordion-item data-accordion-item=""
           = "#{source.name} - "
         time.js-publication-time
           = l published_at, format: :created_at
-        br
-        - category_names.each do |name|
-          span.label.secondary = name
-        br
-        - tags_counter.each do |tag, count|
-          .tag_label
-            span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(t("tag.base_list.#{tag}")) = count
+        .row
+          - category_names.each do |name|
+            span.label.secondary = name
+        .row
+          - tags_counter.each do |tag, count|
+            .tag_label
+              span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(t("tag.base_list.#{tag}")) = count
   .columns.large-2.medium-2.small-2.vote_info.js-votable  class="#{button_style}"
     .row
       = vote_button('upvote')

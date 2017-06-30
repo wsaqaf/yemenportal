@@ -24,12 +24,4 @@ class Posts::PostItem::Cell < Application::Cell
 
     Hash[tags.uniq.map { |tag| [tag, tags.count(tag)] }]
   end
-
-  # def tag_list
-  #   @_tag_list ||= Tag.all
-  # end
-
-  # def user_tags
-  #   post_tags.select { |post| post.user == user }.map(&:name)
-  # end
 end
