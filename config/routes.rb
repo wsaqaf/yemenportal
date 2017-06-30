@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     resources :comments, only: [:create, :destroy, :index]
 
     scope module: :posts do
+      resources :tags, only: [:new, :create, :destroy, :index]
       resource :reader, only: [:show], controller: 'reader'
     end
   end

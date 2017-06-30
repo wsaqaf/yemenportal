@@ -15,9 +15,9 @@ li.news_block.accordion-item data-accordion-item=""
         br
         - category_names.each do |name|
           span.label.secondary = name
-        br
-        - tags_counter.each do |tag, count|
-          span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(count) = tag
+        / br
+        / - tags_counter.each do |tag, count|
+        /   span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(count) = tag
   .accordion-content data-tab-content=''
     .button-group.tiny
       = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
@@ -28,8 +28,8 @@ li.news_block.accordion-item data-accordion-item=""
       class: "strong-multiselect js-post-categories", prompt: t('category.select_category'), multiple: true,
       data: {id: id, type: 'category_ids'}
 
-    = select_tag :tag, options_for_select(tag_list, user_tags), class: "multiselect js-post-categories",
-      prompt: t('tag.select_tag'), multiple: true, data: {id: id, type: 'tags'}
+    / = select_tag :tag, options_for_select(tag_list, user_tags), class: "multiselect js-post-categories",
+    /   prompt: t('tag.select_tag'), multiple: true, data: {id: id, type: 'tags'}
 
 
     - if photo_url.present?
