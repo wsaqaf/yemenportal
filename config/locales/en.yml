@@ -108,8 +108,14 @@ en:
       delete: Remove
       add_source: Add Source
   tag:
+    add_tag: Add Tag
+    tag_list: Tag List
+    error:
+      invalide_name: This tag alredy exist.
     select_tag: Select Tag
+    tag_creator: " Tag was added by %{user_name} "
     base_list:
+      resolved: Resolved
       misleading_title: Misleading title
       missing_picture: Missing picture
       irrelevant_picture: Irrelevant picture

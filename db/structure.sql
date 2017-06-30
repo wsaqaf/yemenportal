@@ -196,7 +196,8 @@ CREATE TABLE post_tags (
     user_id integer,
     post_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    description character varying
 );
 
 
@@ -1032,6 +1033,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170601110350'),
 ('20170605180442'),
 ('20170605181632'),
-('20170609161819');
+('20170609161819'),
+('20170627093620');
 
 

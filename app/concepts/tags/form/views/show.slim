@@ -1,0 +1,6 @@
+.columns.large-6.medium-8.small-12.small-centered.category_list
+  = simple_form_for model do |f|
+    = f.input :description
+    = f.input :name, collection: tags.map{|tag| [t("tag.base_list.#{tag}"), tag]}, required: true
+    .button-group
+      = f.submit t('tag.add_tag'), class: "button"

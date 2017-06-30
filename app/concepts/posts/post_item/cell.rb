@@ -15,21 +15,21 @@ class Posts::PostItem::Cell < Application::Cell
     categories.map(&:name)
   end
 
-  def user_tags
-    post_tags.select { |post| post.user == user }.map(&:name)
+  def read_post_link
+    source.iframe_flag ? post_reader_path(post_id: model.id) : link
   end
 
   def tags_counter
-    tags = moderator? ? post_tags.select { |post| post.user != user }.map(&:name) : post_tags.map(&:name)
+    tags = post_tags.map(&:name)
 
     Hash[tags.uniq.map { |tag| [tag, tags.count(tag)] }]
   end
 
-  def tag_list
-    (Tag.all.map(&:name) + user_tags).uniq
-  end
+  # def tag_list
+  #   @_tag_list ||= Tag.all
+  # end
 
-  def read_post_link
-    source.iframe_flag ? post_reader_path(post_id: model.id) : link
-  end
+  # def user_tags
+  #   post_tags.select { |post| post.user == user }.map(&:name)
+  # end
 end

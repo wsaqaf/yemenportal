@@ -1,0 +1,7 @@
+.columns.large-6.medium-8.small-12.small-centered.tags
+  .row.title
+    = t('tag.tag_list')
+
+  = post_tags_list
+  br
+  = link_to t('tag.add_tag'), new_post_tag_path(post_id: post.id), class: 'button float-left'
