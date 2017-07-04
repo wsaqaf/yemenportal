@@ -1,5 +1,7 @@
 class Posts::TagsController < ApplicationController
   before_action :find_post, only: [:create, :index, :new, :destroy]
+  before_action :authenticate_user!, :check_permissions, only: [:create, :new, :destroy]
+  before_action :check_permissions_for_create, only: [:create, :new]
 
   def index
     render_tags_page
@@ -20,6 +22,7 @@ class Posts::TagsController < ApplicationController
     post_tag = PostTagForm.new(PostTag.new)
 
     if post_tag.validate(post_tag_params)
+      PostTag.where(post: @post, user: current_user).delete_all if post_tag.name == PostTag::RESOLVE_TAG
       post_tag.save
       redirect_to post_tags_path(post_id: @post.id)
     else
@@ -29,8 +32,21 @@ class Posts::TagsController < ApplicationController
 
   private
 
+  def check_permissions_for_create
+    PostTagPolicy.new(current_user, @post).new?
+  end
+
+  def check_permissions
+    authorize User, :moderator?
+  end
+
   def render_tags_page
-    render cell: "tags", model: @post.post_tags, options: { current_user: current_user, post: @post }
+    render cell: "tags", model: @post.post_tags, options: { current_user: current_user, post: @post,
+      resolved: resolved? }
+  end
+
+  def resolved?
+    PostTag.resolve(current_user, @post).present?
   end
 
   def avaliable_tags

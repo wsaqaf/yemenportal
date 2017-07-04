@@ -10,6 +10,6 @@ class PostTagForm < Reform::Form
   end
 
   def tag_list
-    Tag.all.map(&:name) - post.post_tags.map(&:name)
+    Tag.all.map(&:name) - post.post_tags.map(&:name) + [PostTag::RESOLVE_TAG]
   end
 end

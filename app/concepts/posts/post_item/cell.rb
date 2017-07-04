@@ -20,8 +20,12 @@ class Posts::PostItem::Cell < Application::Cell
   end
 
   def tags_counter
-    tags = post_tags.map(&:name)
+    tags = post_tags.map(&:name).reject { |name| name == PostTag::RESOLVE_TAG }
 
     Hash[tags.uniq.map { |tag| [tag, tags.count(tag)] }]
+  end
+
+  def resolve_tag_counter
+    post_tags.map(&:name).count(PostTag::RESOLVE_TAG)
   end
 end

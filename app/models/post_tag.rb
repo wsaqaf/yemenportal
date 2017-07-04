@@ -17,9 +17,12 @@
 #
 
 class PostTag < ApplicationRecord
+  RESOLVE_TAG = "resolve".freeze
   belongs_to :user
   belongs_to :post
 
-  validates_inclusion_of :name, in: Tag.all.map(&:name)
+  validates_inclusion_of :name, in: Tag.all.map(&:name) + [RESOLVE_TAG]
   validates :name, presence: true
+
+  scope :resolve, ->(user, post) { where(user: user, post: post, name: RESOLVE_TAG) }
 end

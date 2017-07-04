@@ -14,6 +14,9 @@ li.news_block.accordion-item data-accordion-item=""
           - category_names.each do |name|
             span.label.secondary = name
         .row
+          .tag_label
+            span.label.success.has-tip.top aria-haspopup="true" data-tooltip="" title=(t("tag.base_list.resolved"))
+              = resolve_tag_counter
           - tags_counter.each do |tag, count|
             .tag_label
               span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(t("tag.base_list.#{tag}")) = count

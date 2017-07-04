@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Posts::TagsController, type: :request do
-  let(:user) { create :user }
+  let(:user) { create :user, role: :moderator }
 
   describe "#index" do
     let(:post) { create :post }
@@ -17,8 +17,10 @@ describe Posts::TagsController, type: :request do
   describe "#new" do
     let(:post) { create :post }
     let(:do_request) { get "/post/#{post.id}/tags/new" }
+    let(:policy) { double }
 
     it "call new action" do
+      sign_in user
       do_request
 
       expect(response).to have_http_status(:ok)
@@ -44,6 +46,7 @@ describe Posts::TagsController, type: :request do
     let(:do_bad_request) { post "/post/#{tag_post.id}/tags", params: { post_tag: { name: "other_name" } } }
 
     before do
+      sign_in user
       Tag.create(name: "tag_name")
     end
 
