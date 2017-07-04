@@ -1,7 +1,7 @@
 class MainPageController < ApplicationController
-  MIN_TOPIC_COUNT = 2
+  MIN_TOPIC_SIZE = 2
 
-  def index
+  def show
     posts_list = posts.limit(15)
     render cell: true, model: posts_list, options: {
       categories: Category.all,
@@ -15,19 +15,11 @@ class MainPageController < ApplicationController
   private
 
   def posts
-    @_posts ||= begin
-      if category
-        category.posts.includes(:votes).includes(:categories).approved_posts
-      else
-        Post.includes(:votes).includes(:categories).approved_posts
-      end
-    end
+    @_posts ||= Post.includes(:votes).includes(:categories).approved_posts
   end
 
   def topics
-    ids = posts.where.not(topic_id: nil).pluck(:topic_id)
-    Topic.includes(:posts).where(id: ids.detect { |id| ids.count(id) >= MIN_TOPIC_COUNT })
-      .paginate(page: params[:page], per_page: 10)
+    Topic.includes(:posts).where("post_counts >= #{MIN_TOPIC_SIZE}").paginate(page: params[:page], per_page: 10)
   end
 
   def user_voted(posts)
