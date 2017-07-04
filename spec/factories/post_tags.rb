@@ -17,8 +17,6 @@
 #
 
 FactoryGirl.define do
-  Tag.create(name: "tag_name")
-
   factory :post_tag do
     association :user
     association :post
