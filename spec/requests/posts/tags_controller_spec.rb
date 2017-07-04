@@ -32,7 +32,7 @@ describe Posts::TagsController, type: :request do
     let(:post_tag) { create :post_tag, user: user, post: post, name: "resolve" }
     let(:do_request) { delete "/post/#{post.id}/tags/#{post_tag.id}" }
 
-    xit "redirect to categories list" do
+    it "redirect to categories list" do
       sign_in user
       do_request
 
