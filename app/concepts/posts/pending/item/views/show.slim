@@ -8,6 +8,8 @@ li.news_block.accordion-item data-accordion-item=""
       .media-object-section
         .title
           = title
+        .source_title
+          = "#{source.name} - "
         time.js-publication-time
           = l published_at, format: :created_at
         br
