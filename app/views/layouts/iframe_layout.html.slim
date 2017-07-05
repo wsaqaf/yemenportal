@@ -14,6 +14,9 @@ html dir="rtl" lang="ar"
     .top-bar
       .top-bar-title.float-left
         strong = link_to t('site_name'), posts_path
+
+        = link_to :back do
+          <i class='fi-arrow-left'></i>
     == yield
 
     = render partial: 'layouts/application_js'

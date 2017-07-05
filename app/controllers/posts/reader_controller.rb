@@ -11,4 +11,8 @@ class Posts::ReaderController < ApplicationController
   def find_post
     @post = Post.find(params.fetch(:post_id))
   end
+
+  def back_url
+    request.referer || root_path
+  end
 end
