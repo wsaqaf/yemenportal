@@ -19,7 +19,7 @@ class MainPageController < ApplicationController
   end
 
   def topics
-    Topic.includes(:posts).where("post_counts >= #{MIN_TOPIC_SIZE}").paginate(page: params[:page], per_page: 10)
+    Topic.includes(:posts).where("topic_size >= ?", MIN_TOPIC_SIZE).paginate(page: params[:page], per_page: 10)
   end
 
   def user_voted(posts)

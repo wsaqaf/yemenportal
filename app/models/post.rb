@@ -31,7 +31,7 @@ class Post < ApplicationRecord
   has_many :users, through: :votes
   has_many :comments
   belongs_to :source
-  belongs_to :topic, optional: true, counter_cache: :post_counts
+  belongs_to :topic, optional: true, counter_cache: :topic_size
 
   validates :title, :published_at, :link, presence: true
   validates :link, uniqueness: true
