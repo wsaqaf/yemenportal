@@ -2,11 +2,8 @@ dependencies:
   post:
     - wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.5.0.tar.gz
     - tar -xvf elasticsearch-5.5.0.tar.gz
-    - elasticsearch-5.5.0/bin/elasticsearch -d
+    - elasticsearch-5.5.0/bin/elasticsearch: {background: true}
     - sleep 10 && wget --waitretry=5 --retry-connrefused -v http://127.0.0.1:9200/
-
-dependencies:
-  post:
     - bin/setup
 
 test:
