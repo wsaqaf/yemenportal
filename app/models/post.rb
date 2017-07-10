@@ -79,14 +79,4 @@ class Post < ApplicationRecord
   end
 end
 
-begin
-  Post.__elasticsearch__.client.indices.delete index: Post.index_name
-rescue
-  nil
-end
-
-Post.__elasticsearch__.client.indices.create(
-  index: Post.index_name,
-  body: { settings: Post.settings.to_hash, mappings: Post.mappings.to_hash }
-)
 Post.import
