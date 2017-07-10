@@ -7,4 +7,4 @@
     ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
       = topic_body
 
-    = will_paginate(topics, params: {controller: "main_page", action: "index"}, renderer: FoundationPagination::Rails)
+    = will_paginate(topics, params: {controller: "main_page", action: "show"}, renderer: FoundationPagination::Rails)
