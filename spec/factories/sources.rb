@@ -32,5 +32,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "name_#{n}" }
     sequence(:website) { |n| "http://source_#{n}.ru" }
     whitelisted false
+    iframe_flag true
   end
 end

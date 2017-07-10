@@ -11,11 +11,13 @@ html dir="rtl" lang="ar"
     = csrf_meta_tag
 
   body
-    .top-bar
+    #fb-root
+    .title-bar data-hide-for="medium" data-responsive-toggle="example-menu"
+      button.menu-icon data-toggle="example-menu" type="button"
+      .title-bar-title
+    #example-menu.top-bar
       .top-bar-title.float-right
-        strong = link_to t('site_name'), root_path
-      span.top-bar-title.float-right data-responsive-toggle="responsive-menu"
-        button.menu-icon.dark data-toggle="" type="button"
+        strong = link_to t('site_name'), posts_path
       #responsive-menu
         - if policy(User).login?
           .top-bar-right
@@ -26,7 +28,6 @@ html dir="rtl" lang="ar"
                   - if policy(User).moderator?
                     li
                       = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
-                  - if policy(User).admin?
                     li
                       = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
                   - if policy(User).member?
@@ -62,13 +63,5 @@ html dir="rtl" lang="ar"
                 = link_to t('devise.log_in'), new_user_session_path
     == yield
 
-    javascript:
-      var _rollbarConfig = {
-        accessToken: "#{ENV['ROLLBAR_CLIENT_TOKEN']}",
-        captureUncaught: true,
-        captureUnhandledRejections: true,
-        payload: {
-          environment: "#{Rails.env.to_json}",
-          person: "#{current_user ? current_user.email : 'guest'}"
-        }
-      };
+    = render partial: 'layouts/application_js'
+

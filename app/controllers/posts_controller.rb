@@ -10,7 +10,6 @@ class PostsController < ApplicationController
 
   def index
     render cell: true, model: posts, options: {
-      categories: Category.all,
       state: posts_state,
       votes: user_voted(posts),
       user: current_user
@@ -57,7 +56,16 @@ class PostsController < ApplicationController
   end
 
   def posts_params
-    params.permit(:state, category_ids: [])
+    @_posts_params ||= begin
+      posts_params = params.permit(:state, category_ids: [])
+
+      if params[:tags].present?
+        PostTag.where(user: current_user, post: @post).delete_all
+        tags = params[:tags].reject(&:blank?)
+        posts_params[:post_tags] = tags.map { |name| PostTag.new(user: current_user, post: @post, name: name) }
+      end
+      posts_params
+    end
   end
 
   def posts_state

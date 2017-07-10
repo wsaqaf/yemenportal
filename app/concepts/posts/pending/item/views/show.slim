@@ -13,14 +13,23 @@ li.news_block.accordion-item data-accordion-item=""
         br
         - category_names.each do |name|
           span.label.secondary = name
+        br
+        - tags_counter.each do |tag, count|
+          span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(count) = tag
   .accordion-content data-tab-content=''
     .button-group.tiny
       = link_to t('post.button.approve'), post_path(model, state: :approved), method: :put, class: "button float-left success"
       = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button float-left alert"
       = link_to t('post.button.review'), post_path(model), class: "button float-left"
-      = link_to t('post.button.read_source'), link, class: "button"
+      = link_to t('post.button.read_source'), read_post_link, class: "button"
     = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
-      class: "multiselect js-post-categories", multiple: true, data: {id: id}
+      class: "strong-multiselect js-post-categories", prompt: t('category.select_category'), multiple: true,
+      data: {id: id, type: 'category_ids'}
+
+    = select_tag :tag, options_for_select(tag_list, user_tags), class: "multiselect js-post-categories",
+      prompt: t('tag.select_tag'), multiple: true, data: {id: id, type: 'tags'}
+
+
     - if photo_url.present?
       .row
         .columns.large-4.medium-4

@@ -9,4 +9,5 @@
 
 document.addEventListener("turbolinks:load", function() {
   $(document).foundation();
+  $(document).foundation('topbar', 'reflow');
 });

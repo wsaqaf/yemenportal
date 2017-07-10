@@ -16,7 +16,7 @@ gem 'rubocop-rspec'
 gem 'simple_form'
 gem 'slim-rails'
 
-gem 'foundation-rails', '~> 6.3'
+gem 'foundation-rails', '~> 6.3.1'
 gem 'foundation-icons-sass-rails'
 gem 'will_paginate-foundation'
 gem "seedbank"
@@ -39,6 +39,8 @@ gem 'email_validator'
 gem 'reform-rails'
 
 gem "koala"
+gem "feedjira"
+gem "httparty"
 gem 'babel-transpiler'
 
 gem "tf-idf-similarity"
