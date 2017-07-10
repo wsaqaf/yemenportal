@@ -79,4 +79,4 @@ class Post < ApplicationRecord
   end
 end
 
-Post.import if Post.all.pesent?
+Post.import if Post.all.present?
