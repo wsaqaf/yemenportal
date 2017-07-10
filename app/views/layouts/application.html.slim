@@ -17,7 +17,7 @@ html dir="rtl" lang="ar"
       .title-bar-title
     #example-menu.top-bar
       .top-bar-title.float-right
-        strong = link_to t('site_name'), posts_path
+        strong = link_to t('site_name'), root_path
       #responsive-menu
         - if policy(User).login?
           .top-bar-right

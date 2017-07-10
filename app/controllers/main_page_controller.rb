@@ -5,7 +5,6 @@ class MainPageController < ApplicationController
     posts_list = posts.limit(15)
     render cell: true, model: posts_list, options: {
       categories: Category.all,
-      state: :approved,
       votes: user_voted(posts_list),
       user: current_user,
       topics: topics
