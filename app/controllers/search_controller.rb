@@ -9,7 +9,7 @@ class SearchController < ApplicationController
   private
 
   def find_posts
-    @posts = Post.approved_posts.fulltext_search(search_params[:search_text])
+    @posts = Post.search(search_params[:search_text])
   end
 
   def user_voted
