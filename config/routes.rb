@@ -24,6 +24,8 @@ Rails.application.routes.draw do
   resources :users, only: [:update, :edit]
   resource :votes, only: [:update]
 
+  resources :search, only: [:index]
+
   namespace :sources do
     resources :approve, only: [:update]
     resources :suggest, only: [:create, :new]

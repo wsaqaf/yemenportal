@@ -38,9 +38,9 @@ class TfIdfService
   end
 
   def find_topic(id)
-    post = posts.find { |element| element.id == id }
-    topic = post.topic
-    topic ? topic : Topic.create(posts: [post])
+    main_post = posts.find { |post| post.id == id }
+    topic = main_post.topic
+    topic ? topic : Topic.create(posts: [main_post])
   end
 
   def tf_idf_posts
@@ -50,7 +50,7 @@ class TfIdfService
   end
 
   def posts
-    @_posts = Post.where(created_at: config["hours_period"].hours.ago..Time.current)
+    @_posts = Post.where(created_at: config["hours_period"].weeks.ago..Time.current)
   end
 
   def current_model

@@ -18,6 +18,7 @@ en:
       suggest_source: Suggest source
     categories: Categories
     edit_profile: Edit profile
+    search: Search
     users:
       name: Users
       admins: Admins
@@ -36,6 +37,9 @@ en:
       reject: Reject
       read_source: Read source
       delete: Delete
+    search:
+      title: "Search result for: %{request_text}"
+      empty_result: Did not match any posts
     pending:
       title: Pending Posts
     rejected:

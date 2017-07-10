@@ -9,11 +9,11 @@
 #  title        :string           not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  source_id    :integer
 #  state        :string           default("pending"), not null
 #  photo_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
+#  source_id    :integer          not null
 #
 # Indexes
 #
@@ -22,8 +22,12 @@
 #  index_posts_on_topic_id      (topic_id)
 #
 
+require "elasticsearch/model"
+
 class Post < ApplicationRecord
   extend Enumerize
+  include Elasticsearch::Model
+  include Elasticsearch::Model::Callbacks
 
   has_many :post_category
   has_many :categories, through: :post_category
@@ -46,6 +50,26 @@ class Post < ApplicationRecord
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 
+  settings index: { number_of_shards: 1 } do
+    mappings dynamic: "false" do
+      indexes :title, analyzer: "arabic"
+      indexes :description, analyzer: "arabic"
+    end
+  end
+
+  def self.search(query)
+    __elasticsearch__.search(
+      {
+        query: {
+          multi_match: {
+            query: query,
+            fields: %w(title description)
+          }
+        }
+      }
+    ).records
+  end
+
   def self.available_states
     state.values
   end
@@ -54,3 +78,15 @@ class Post < ApplicationRecord
     (topic.posts.ordered_by_date - [self]) if topic
   end
 end
+
+begin
+  Post.__elasticsearch__.client.indices.delete index: Post.index_name
+rescue
+  nil
+end
+
+Post.__elasticsearch__.client.indices.create(
+  index: Post.index_name,
+  body: { settings: Post.settings.to_hash, mappings: Post.mappings.to_hash }
+)
+Post.import

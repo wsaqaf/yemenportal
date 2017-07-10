@@ -44,6 +44,9 @@ gem 'babel-transpiler'
 gem "tf-idf-similarity"
 gem 'ar-stemmer'
 
+gem 'elasticsearch-model'
+gem 'elasticsearch-rails'
+
 group :development do
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
