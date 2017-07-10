@@ -12,6 +12,7 @@ class SourceForm < Reform::Form
     website = doc[:website]
     self.website = website.present? ? website : (link && link.match(WEBSITE_REGEXP).to_s)
   end
+  property :logo_url
   property :brief_info
   property :note
   property :whitelisted

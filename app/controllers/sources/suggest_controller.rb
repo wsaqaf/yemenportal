@@ -27,7 +27,7 @@ class Sources::SuggestController < ApplicationController
   def source_params
     @_source_params ||= begin
       source_params = params.require(:source).permit(:link, :category_id, :name, :website,
-      :brief_info, :admin_email, :admin_name, :note)
+        :brief_info, :admin_email, :admin_name, :note, :logo_url)
       source_params[:approve_state] = Source.approve_state.suggested
       source_params[:user] = current_user
       source_params
