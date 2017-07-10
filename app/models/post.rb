@@ -79,4 +79,5 @@ class Post < ApplicationRecord
   end
 end
 
+
 Post.import
