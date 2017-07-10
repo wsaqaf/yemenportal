@@ -53,7 +53,7 @@ class Post < ApplicationRecord
   settings index: { number_of_shards: 1 } do
     mappings dynamic: "false" do
       indexes :title, analyzer: "arabic"
-      indexes :text, analyzer: "arabic"
+      indexes :description, analyzer: "arabic"
     end
   end
 
@@ -79,4 +79,4 @@ class Post < ApplicationRecord
   end
 end
 
-Post.import if Post.all.present?
+Post.import
