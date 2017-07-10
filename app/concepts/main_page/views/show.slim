@@ -1,0 +1,10 @@
+.row
+  .large-4.large-uncentered.medium-4.medium-uncentered.small-12.columns
+    ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
+      = post_body
+    = link_to t('post.button.more'), posts_path, class: 'float-left'
+  .large-8.large-uncentered.medium-8.medium-uncentered.small-12.columns
+    ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
+      = topic_body
+
+    = will_paginate(topics, params: {controller: "main_page", action: "index"}, renderer: FoundationPagination::Rails)

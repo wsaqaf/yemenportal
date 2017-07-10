@@ -12,8 +12,7 @@ class PostsController < ApplicationController
     render cell: true, model: posts, options: {
       state: posts_state,
       votes: user_voted(posts),
-      user: current_user,
-      topics: topics
+      user: current_user
     }
   end
 
@@ -32,22 +31,14 @@ class PostsController < ApplicationController
   private
 
   def posts
-    if category
-      posts = category.posts.includes(:votes)
-    else
-      posts = Post.includes(:votes)
-    end
+    @_posts ||= begin
+      if category
+        posts = category.posts.includes(:votes)
+      else
+        posts = Post.includes(:votes)
+      end
 
-    posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
-  end
-
-  def topics
-    if posts_state == Post.state.approved
-      ids = Post.approved_posts.where.not(topic_id: nil).pluck(:topic_id)
-      Topic.includes(:posts).where(id: ids.select { |id| ids.count(id) > 1 })
-        .paginate(page: params[:page], per_page: 10)
-    else
-      []
+      posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
     end
   end
 

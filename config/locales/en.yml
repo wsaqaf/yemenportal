@@ -36,6 +36,7 @@ en:
       reject: Reject
       read_source: Read source
       delete: Delete
+      more: Read more
       comments: Comments
     pending:
       title: Pending Posts

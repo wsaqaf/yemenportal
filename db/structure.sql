@@ -414,7 +414,8 @@ ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 CREATE TABLE topics (
     id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    topic_size integer
 );
 
 
@@ -1034,6 +1035,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170605180442'),
 ('20170605181632'),
 ('20170609161819'),
+('20170704140350'),
 ('20170710164314');
 
 
