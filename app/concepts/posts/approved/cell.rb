@@ -3,14 +3,10 @@ class Posts::Approved::Cell < Application::Cell
 
   private
 
-  option :categories, :user_votes, :user, :topics
+  option :categories, :user_votes, :user
   property :title, :link, :published_at, :property
 
   def post_body
     concept("posts/approved/item/cell", collection: model, user_votes: user_votes, user: user)
-  end
-
-  def topic_body
-    concept("topics/item/cell", collection: topics)
   end
 end
