@@ -32,12 +32,7 @@ class PostsController < ApplicationController
 
   def posts
     @_posts ||= begin
-      if category
-        posts = category.posts.includes(:votes)
-      else
-        posts = Post.includes(:votes)
-      end
-
+      posts = Post.includes(:votes)
       posts.includes(:categories).posts_by_state(posts_state).paginate(page: params[:page], per_page: 20)
     end
   end
@@ -74,10 +69,6 @@ class PostsController < ApplicationController
 
   def find_post
     @post = Post.find(params.fetch(:id))
-  end
-
-  def category
-    @_category = Category.find_by(name: params[:category])
   end
 
   def check_permissions

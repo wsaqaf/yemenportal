@@ -346,37 +346,6 @@ ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
 
 
 --
--- Name: stop_words; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE stop_words (
-    id integer NOT NULL,
-    name character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: stop_words_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE stop_words_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: stop_words_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE stop_words_id_seq OWNED BY stop_words.id;
-
-
---
 -- Name: tags; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -590,13 +559,6 @@ ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::r
 
 
 --
--- Name: stop_words id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY stop_words ALTER COLUMN id SET DEFAULT nextval('stop_words_id_seq'::regclass);
-
-
---
 -- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -702,14 +664,6 @@ ALTER TABLE ONLY source_logs
 
 ALTER TABLE ONLY sources
     ADD CONSTRAINT sources_pkey PRIMARY KEY (id);
-
-
---
--- Name: stop_words stop_words_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY stop_words
-    ADD CONSTRAINT stop_words_pkey PRIMARY KEY (id);
 
 
 --
@@ -1036,6 +990,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170605181632'),
 ('20170609161819'),
 ('20170704140350'),
-('20170710164314');
+('20170710164314'),
+('20170711113816');
 
 

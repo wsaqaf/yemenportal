@@ -7,11 +7,6 @@ class CreateStopWords < ActiveRecord::Migration[5.0]
       t.string :name
       t.timestamps
     end
-
-    stop_word = Rails.application.config_for(:stop_words)
-    stop_word.each do |word|
-      StopWord.find_or_create_by(name: word)
-    end
   end
 
 
