@@ -23,7 +23,7 @@ class Sources::Cell < Application::Cell
   end
 
   def tooltip_wraper(button)
-    unless current_user
+    unless policy(User).login?
       tolltip_title = t("user.should_login")
       tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip float-left top' \
         title='#{tolltip_title}'>"
