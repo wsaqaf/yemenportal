@@ -7,6 +7,7 @@ class Sources::SuggestController < ApplicationController
 
     if source.validate(source_params)
       source.save
+      flash[:notice] = t("source.notice.success_suggest", source_name: source.name)
       redirect_to root_path
     else
       render cell: :form, model: source

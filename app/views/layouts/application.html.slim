@@ -63,5 +63,13 @@ html dir="rtl" lang="ar"
                 = link_to t('devise.log_in'), new_user_session_path
     == yield
 
+    - if flash[:notice]
+      .notice_messages
+        .success.callout.small data-closable=""
+          .float-left
+            button aria-label=("Dismiss alert") data-close="" type="button"
+              span aria-hidden="true"  &times;
+          = flash[:notice]
+
     = render partial: 'layouts/application_js'
 
