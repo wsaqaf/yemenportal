@@ -1,6 +1,9 @@
-.columns.large-6.medium-8.small-12.small-centered.category_list
+.columns.large-6.medium-8.small-12.small-centered.sources
   .row.title
-    = link_to t('source.buttons.add_source'), new_source_path, class: 'button small float-left'
+    - if policy(User).moderator?
+      = link_to t('source.buttons.add_source'), new_source_path, class: 'button small float-left'
+    - else
+      = suggest_button
     = title
     hr
 

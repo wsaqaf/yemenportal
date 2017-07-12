@@ -1,4 +1,8 @@
 .sources {
+  margin-top: 0.5em;
+  .title {
+    font-size: 1.5em;
+  }
   .error {
     color: red;
   }
@@ -8,6 +12,7 @@
       overflow-x: visible;
     }
   }
+
   input{
     overflow-x: visible;
     overflow-y: visible;
@@ -16,6 +21,9 @@
     cursor: default;
     &:focus{
       cursor: text;
+    }
+    &:disabled {
+      background: #fff;
     }
   }
   .textarea {
@@ -29,5 +37,8 @@
     content: attr(placeholder);
     color: #cacaca;
     display: block;
+  }
+  span.has-tip{
+    border: none;
   }
 }
