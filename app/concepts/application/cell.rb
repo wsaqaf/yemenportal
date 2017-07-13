@@ -13,6 +13,7 @@ class Application::Cell < Rails::View
   include ActionView::RecordIdentifier
   include WillPaginate::ActionView
   include SimpleForm::ActionViewExtensions::FormHelper
+  include Pundit
 
   include ::Cell::Builder
 

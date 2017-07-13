@@ -80,6 +80,8 @@ en:
     buttons:
       update: Update
   source:
+    notice:
+      success_suggest: Thank you for your submission. Source %{source_name} was added successfully. It will be reviewed by moderators. If accepted, it will be approved.
     title:
       approved: Sources
       suggested: Suggested
@@ -119,3 +121,10 @@ en:
       inappropriate_content: Inappropriate content
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
+  activerecord:
+    errors:
+      models:
+        source:
+          attributes:
+            link:
+              taken: This link is already in the system.

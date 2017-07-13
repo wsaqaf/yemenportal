@@ -26,6 +26,7 @@ class SourceForm < Reform::Form
   validates :link, :name, presence: true
   validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
+  validates_uniqueness_of :link
 
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss

@@ -1,12 +1,13 @@
 class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
 
-  before_action :authenticate_user!, :check_permissions
+  before_action :authenticate_user!, :check_permissions, except: [:index]
   before_action :find_source, only: [:edit, :update]
 
   def index
     sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
-    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
+    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state),
+      current_user: current_user }
   end
 
   def create
