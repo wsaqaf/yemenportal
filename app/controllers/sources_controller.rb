@@ -2,7 +2,7 @@ class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
 
   before_action :authenticate_user!, :check_permissions, except: [:index]
-  before_action :find_source, only: [:edit, :update]
+  before_action :find_source, only: [:edit, :update, :destroy]
 
   def index
     sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
@@ -27,7 +27,9 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    Source.destroy(params[:id])
+    topics_ids = @source.posts.map { |post| post.topic.id }
+    @source.destroy
+    topics_ids.each { |id| Topic.reset_counters(id, :posts) }
     redirect_to sources_path(approve_state: Source.approve_state.approved)
   end
 
