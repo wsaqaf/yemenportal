@@ -27,7 +27,7 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    topics_ids = @source.posts.map { |post| post.topic.id }
+    topics_ids = @source.posts.map(&:topic_id).uniq.compact
     @source.destroy
     topics_ids.each { |id| Topic.reset_counters(id, :posts) }
     redirect_to sources_path(approve_state: Source.approve_state.approved)
