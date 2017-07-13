@@ -8,6 +8,12 @@
       overflow-x: visible;
     }
   }
+  .thumbnail {
+    img {
+      max-width: 5rem;
+      max-height: 5rem;
+    }
+  }
   input{
     overflow-x: visible;
     overflow-y: visible;

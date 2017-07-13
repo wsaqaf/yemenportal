@@ -8,13 +8,20 @@
         time.js-publication-time
           = l created_at, format: :created_at
       .medium-4.float-left.columns
-        - unless state.valid?
-          span.label.warning = t("source.error.invalid")
-        .button-group.tiny.float-left
-          = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
-          = link_to t('source.buttons.edit'), edit_source_path(model), class: "button"
-          - if approve_state.suggested?
-            = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button"
+        - if logo_url.present?
+          .row
+            .media-object
+              .media-object-section
+                .thumbnail
+                    img src=logo_url
+        .row
+          - unless state.valid?
+            span.label.warning = t("source.error.invalid")
+          .button-group.tiny.float-left
+            = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
+            = link_to t('source.buttons.edit'), edit_source_path(model), class: "button"
+            - if approve_state.suggested?
+              = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button"
     .row
       .medium-3.small-3.columns
         label.float-left.inline = field_name("link")
