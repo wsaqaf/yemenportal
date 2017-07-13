@@ -8,8 +8,15 @@
         time.js-publication-time
           = l created_at, format: :created_at
       .medium-4.float-left.columns
-        - unless state.valid?
-          span.label.warning = t("source.error.invalid")
+        - if logo_url.present?
+          .row
+            .media-object
+              .media-object-section.float-left
+                .thumbnail
+                    img src=logo_url
+        .row
+          - unless state.valid?
+            span.label.warning = t("source.error.invalid")
         - if policy(User).moderator?
           .button-group.tiny.float-left
             = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
