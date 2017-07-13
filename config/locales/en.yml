@@ -121,3 +121,10 @@ en:
       inappropriate_content: Inappropriate content
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
+  activerecord:
+    errors:
+      models:
+        source:
+          attributes:
+            link:
+              taken: This link is already in the system.
