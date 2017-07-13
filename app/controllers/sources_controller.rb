@@ -1,12 +1,13 @@
 class SourcesController < ApplicationController
   WEBSITE_REGEXP = %r((http|https){1}\:\/\/[^\/]+)
 
-  before_action :authenticate_user!, :check_permissions
-  before_action :find_source, only: [:edit, :update]
+  before_action :authenticate_user!, :check_permissions, except: [:index]
+  before_action :find_source, only: [:edit, :update, :destroy]
 
   def index
     sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
-    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state) }
+    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state),
+      current_user: current_user }
   end
 
   def create
@@ -26,7 +27,9 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    Source.destroy(params[:id])
+    topics_ids = @source.posts.map { |post| post.topic.id }
+    @source.destroy
+    topics_ids.each { |id| Topic.reset_counters(id, :posts) }
     redirect_to sources_path(approve_state: Source.approve_state.approved)
   end
 
@@ -48,7 +51,7 @@ class SourcesController < ApplicationController
   private
 
   def check_permissions
-    authorize User, :admin?
+    authorize User, :moderator?
   end
 
   def categories
@@ -61,8 +64,9 @@ class SourcesController < ApplicationController
 
   def source_params
     @_source_params ||= begin
-      source_params = params.require(:source).permit(:link, :category_id, :whitelisted, :name, :website,
-        :brief_info, :admin_email, :admin_name, :note, :approve_state, :iframe_flag)
+      source_params = params.require(:source).permit(:link, :category_id, :whitelisted,
+        :name, :website, :brief_info, :admin_email, :admin_name, :note, :iframe_flag,
+        :logo_url, :approve_state)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
       source_params
     end

@@ -32,7 +32,7 @@ class TfIdfService
 
     row = matrix.row(current_index)
     if row.count > 1
-      result = row.each_with_index.max { |(value, index)| value if index != current_index }
+      result = row.each_with_index.reject { |(_value, index)| index == current_index }.max { |(value, _index)| value }
       { value: result[0], id: result[1] }
     end
   end

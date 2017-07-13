@@ -3,7 +3,7 @@ class Posts::Pending::Cell < Application::Cell
 
   private
 
-  option :categories, :user
+  option :user
   property :title, :link, :published_at, :property
 
   def table_body

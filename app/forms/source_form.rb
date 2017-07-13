@@ -12,6 +12,7 @@ class SourceForm < Reform::Form
     website = doc[:website]
     self.website = website.present? ? website : (link && link.match(WEBSITE_REGEXP).to_s)
   end
+  property :logo_url
   property :brief_info
   property :note
   property :whitelisted
@@ -25,6 +26,7 @@ class SourceForm < Reform::Form
   validates :link, :name, presence: true
   validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
+  validates_uniqueness_of :link
 
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss

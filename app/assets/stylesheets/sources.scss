@@ -1,4 +1,8 @@
 .sources {
+  margin-top: 0.5em;
+  .title {
+    font-size: 1.5em;
+  }
   .error {
     color: red;
   }
@@ -6,6 +10,15 @@
     input{
       font-size: 2rem;
       overflow-x: visible;
+    }
+  }
+  .media-object-section {
+    padding-bottom: 0.2rem;
+    .thumbnail {
+      img {
+        max-width: 5rem;
+        max-height: 5rem;
+      }
     }
   }
   input{
@@ -16,6 +29,9 @@
     cursor: default;
     &:focus{
       cursor: text;
+    }
+    &:disabled {
+      background: #fff;
     }
   }
   .textarea {
@@ -29,5 +45,8 @@
     content: attr(placeholder);
     color: #cacaca;
     display: block;
+  }
+  span.has-tip{
+    border: none;
   }
 }

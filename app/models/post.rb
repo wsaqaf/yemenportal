@@ -35,7 +35,7 @@ class Post < ApplicationRecord
   has_many :users, through: :post_tags
 
   belongs_to :source
-  belongs_to :topic, optional: true
+  belongs_to :topic, optional: true, counter_cache: :topic_size
 
   validates :title, :published_at, :link, presence: true
   validates :link, uniqueness: true

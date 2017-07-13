@@ -18,8 +18,6 @@
 #  source_type   :string
 #  approve_state :string           default("suggested")
 #  user_id       :integer
-#  disabled      :boolean          default("false"), not null
-#  iframe_flag   :boolean          default("true")
 #
 # Indexes
 #
@@ -39,6 +37,7 @@ class Source < ApplicationRecord
   validates :link, :name, presence: true
   validates :admin_email, email: true, if: "admin_email.present?"
   validates :website, :link, url: true
+  validates :link, uniqueness: true
 
   enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info, :other], default: :valid
   enumerize :approve_state, in: [:approved, :suggested, :disabled], default: :suggested

@@ -17,24 +17,20 @@ html dir="rtl" lang="ar"
       .title-bar-title
     #example-menu.top-bar
       .top-bar-title.float-right
-        strong = link_to t('site_name'), posts_path
+        strong = link_to t('site_name'), root_path
       #responsive-menu
-        - if policy(User).login?
+        - if policy(User).moderator?
           .top-bar-right
             ul.dropdown.menu data-dropdown-menu=""
               li
                 = link_to t('menu.sources.name'), '#'
                 ul.menu.vertical
-                  - if policy(User).moderator?
-                    li
-                      = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
-                    li
-                      = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
-                    li
-                      = link_to t('menu.sources.disabled'), sources_path(approve_state: Source.approve_state.disabled)
-                  - if policy(User).member?
-                    li
-                      = link_to t('menu.sources.suggest_source'), new_sources_suggest_path
+                  li
+                    = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
+                  li
+                    = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
+                  li
+                    = link_to t('menu.sources.disabled'), sources_path(approve_state: Source.approve_state.disabled)
               - if policy(User).admin?
                 li
                   = link_to t('menu.categories'), categories_path
@@ -45,14 +41,18 @@ html dir="rtl" lang="ar"
                       = link_to t('menu.users.moderators'), moderators_path
                     li
                       = link_to t('menu.news.admins'), '#'
-              - if policy(User).moderator?
-                li
-                  = link_to t('menu.posts.name'), '#'
-                  ul.menu.vertical
-                    li
-                      = link_to t('menu.posts.pending'), posts_path(state: 'pending')
-                    li
-                      = link_to t('menu.posts.rejected'), posts_path(state: 'rejected')
+              li
+                = link_to t('menu.posts.name'), '#'
+                ul.menu.vertical
+                  li
+                    = link_to t('menu.posts.pending'), posts_path(state: 'pending')
+                  li
+                    = link_to t('menu.posts.rejected'), posts_path(state: 'rejected')
+        - else
+          .top-bar-right
+            ul.dropdown.menu data-dropdown-menu=""
+              li
+                = link_to t('menu.sources.name'), sources_path(approve_state: Source.approve_state.approved)
         .top-bar-left
           ul.menu
             - if current_user
@@ -64,6 +64,14 @@ html dir="rtl" lang="ar"
               li
                 = link_to t('devise.log_in'), new_user_session_path
     == yield
+
+    - if flash[:notice]
+      .notice_messages
+        .success.callout.small data-closable=""
+          .float-left
+            button aria-label=("Dismiss alert") data-close="" type="button"
+              span aria-hidden="true"  &times;
+          = flash[:notice]
 
     = render partial: 'layouts/application_js'
 
