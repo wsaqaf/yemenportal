@@ -17,7 +17,7 @@ class Sources::Cell < Application::Cell
   end
 
   def suggest_button
-    path = policy(User).login? ? new_sources_suggest_path : '#'
+    path = policy(User).login? ? new_sources_suggest_path : "#"
     button = link_to t("menu.sources.suggest_source"), path, class: "button small float-left"
     button = tooltip_wraper(button) unless policy(User).login?
     button
@@ -25,8 +25,7 @@ class Sources::Cell < Application::Cell
 
   def tooltip_wraper(button)
     tolltip_title = t("user.should_login")
-    tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip top' \
-      title='#{tolltip_title}'>"
-    button = tooltip + button + "</span>"
+    "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip top' \
+      title='#{tolltip_title}'>" + button + "</span>"
   end
 end
