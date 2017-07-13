@@ -9,4 +9,8 @@ class Sources::Item::Cell < Application::Cell
   def author
     user ? " #{field_name('added_by')} #{user.email}" : ""
   end
+
+  def delete_path
+    source_path(model, method: :delete)
+  end
 end
