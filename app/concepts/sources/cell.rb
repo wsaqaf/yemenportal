@@ -17,18 +17,16 @@ class Sources::Cell < Application::Cell
   end
 
   def suggest_button
-    button = link_to t("menu.sources.suggest_source"), new_sources_suggest_path, class: "button small float-left"
+    path = policy(User).login? ? new_sources_suggest_path : '#'
+    button = link_to t("menu.sources.suggest_source"), path, class: "button small float-left"
     button = tooltip_wraper(button) unless policy(User).login?
     button
   end
 
   def tooltip_wraper(button)
-    unless policy(User).login?
-      tolltip_title = t("user.should_login")
-      tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip float-left top' \
-        title='#{tolltip_title}'>"
-      button = tooltip + button + "</span>"
-    end
-    button
+    tolltip_title = t("user.should_login")
+    tooltip = "<span data-tooltip aria-haspopup='true' data-tooltip='' class='has-tip top' \
+      title='#{tolltip_title}'>"
+    button = tooltip + button + "</span>"
   end
 end
