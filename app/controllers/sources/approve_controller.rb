@@ -1,5 +1,5 @@
 class Sources::ApproveController < ApplicationController
-  before_action :authenticate_user!
+  before_action :authenticate_user!, :check_permissions
   before_action :find_source
 
   def update
@@ -11,5 +11,9 @@ class Sources::ApproveController < ApplicationController
 
   def find_source
     @source = Source.find(params.fetch(:id))
+  end
+
+  def check_permissions
+    authorize User, :moderator?
   end
 end
