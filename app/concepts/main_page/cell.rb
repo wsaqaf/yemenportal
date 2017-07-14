@@ -3,7 +3,7 @@ class MainPage::Cell < Application::Cell
 
   private
 
-  option :categories, :votes, :user, :topics
+  option :votes, :user, :topics
   property :title, :link, :published_at, :property
 
   def post_body

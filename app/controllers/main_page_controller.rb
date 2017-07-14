@@ -4,7 +4,6 @@ class MainPageController < ApplicationController
   def show
     posts_list = posts.limit(15)
     render cell: true, model: posts_list, options: {
-      categories: Category.all,
       votes: user_voted(posts_list),
       user: current_user,
       topics: topics
@@ -24,9 +23,5 @@ class MainPageController < ApplicationController
   def user_voted(posts)
     posts_ids = posts.map(&:id)
     current_user ? current_user.votes.votes_posts(posts_ids) : []
-  end
-
-  def category
-    @_category = Category.find_by(name: params[:category])
   end
 end
