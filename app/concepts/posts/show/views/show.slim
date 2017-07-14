@@ -9,11 +9,11 @@
       - category_names.each do |name|
         span.label.secondary = name
     .medium-4.float-left.columns
-      .button-group.tiny
-        = link_to t('post.button.back'), :back, class: "button float-left"
+      .button-group.tiny.float-left
+        = link_to t('post.button.back'), :back, class: "button"
         - if state.pending?
-          = link_to t('post.button.approve'), post_path(model, state: :approved, redirrect_path: path), method: :put, class: "button float-left success"
-          = link_to t('post.button.reject'), post_path(model, state: :rejected, redirrect_path: path), method: :put, class: "button float-left alert"
+          = link_to t('post.button.approve'), post_path(model, state: :approved, redirrect_path: path), method: :put, class: "button success"
+          = link_to t('post.button.reject'), post_path(model, state: :rejected, redirrect_path: path), method: :put, class: "button alert"
   br
   - if photo_url.present?
     .row
@@ -34,7 +34,7 @@
     .medium-3.small-3.columns
       label.float-left.inline = field_name("link")
     .medium-9.small-9.columns
-      = link_to link
+      = link_to link, read_post_link
 
   #comments-list
     .row

@@ -17,4 +17,8 @@ class Posts::Show::Cell < Application::Cell
   def render_comments
     concept("posts/comments/cell", collection: comments.to_a, user_id: user_id, destroy_path: nil)
   end
+
+  def read_post_link
+    source.iframe_flag ? post_reader_path(post_id: id) : link
+  end
 end
