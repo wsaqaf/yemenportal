@@ -18,23 +18,12 @@ describe UsersController, type: :request do
     let(:do_request) do
       put "/users/#{user.id}", params: { user: { first_name: "Max", last_name: "Mad" } }
     end
-    let(:do_bad_request) do
-      put "/users/#{user.id}", params: { user: { first_name: "", last_name: "" } }
-    end
 
     it "user params" do
       sign_in user
 
       do_request
       expect(response).to redirect_to(root_path)
-    end
-
-    it "user fails" do
-      sign_in user
-      do_bad_request
-
-      expect(response.status).to eq 200
-      expect(response).not_to redirect_to(root_path)
     end
   end
 end
