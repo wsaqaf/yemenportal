@@ -2,7 +2,8 @@ li.topic_block.accordion-item data-accordion-item=""
   a.accordion-title.columns
     .title
       = main_post.title
-    = "#{main_post.source.name} -"
+    .source_title
+      = "#{main_post.source.name} - "
     time.js-publication-time
 
       = l main_post.published_at, format: :created_at
