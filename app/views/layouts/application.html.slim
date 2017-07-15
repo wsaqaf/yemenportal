@@ -11,7 +11,7 @@ html dir="rtl" lang="ar"
     = csrf_meta_tag
 
   body
-    #fb-root data={app_id: ENV["FACEBOOK_KEY"], app_locale: ENV["FB_LOCALE"], app_version: ENV["FB_API_V"]}
+    #fb-root data=Rails.application.secrets.facebook.slice("app_id", "api_version", "locale")
     .title-bar data-hide-for="medium" data-responsive-toggle="example-menu"
       button.menu-icon data-toggle="example-menu" type="button"
       .title-bar-title
