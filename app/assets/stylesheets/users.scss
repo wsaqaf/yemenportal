@@ -1,0 +1,44 @@
+.users {
+}
+
+.users__user {
+  margin-bottom: 40px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.user-card {
+}
+
+.user-card__email {
+  display: inline-block;
+  font-size: 1.2em;
+}
+
+.user-card__role {
+  margin-right: 10px;
+  display: inline-block;
+}
+
+.user-card__actions {
+  margin-top: 10px;
+}
+
+.user-card__action {
+  margin-right: 10px;
+  display: inline-block;
+
+  &:first-child {
+    margin-right: 0;
+  }
+}
+
+.user-card__action-btn-wrapper {
+  display: inline;
+}
+
+.user-card__action-btn {
+  margin-bottom: 0;
+}

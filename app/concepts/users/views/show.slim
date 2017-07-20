@@ -1,0 +1,7 @@
+.row
+  .column.small-12.large-2.medium-2 Filter
+
+  .column.small-12.large-10.medium-10
+    .users
+      - users.each do |user|
+        = concept("users/card/cell", user)

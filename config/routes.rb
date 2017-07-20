@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: [:index, :show, :update, :show]
-  resources :users, only: [:update, :edit]
+  resources :users, only: [:index, :update, :edit]
   resource :votes, only: [:update]
 
   namespace :sources do
