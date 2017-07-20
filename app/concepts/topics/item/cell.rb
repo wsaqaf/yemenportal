@@ -4,7 +4,7 @@ class Topics::Item::Cell < Application::Cell
 
   private
 
-  property :posts
+  property :posts, :created_at
 
   def main_post
     posts.ordered_by_date.last
