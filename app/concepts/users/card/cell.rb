@@ -12,8 +12,9 @@ class Users::Card::Cell < Application::Cell
   end
 
   def promotion_to_moderator_button
-    button_to("moderator", "", method: :post, params: {user_id: user.id},
-      form_class: "user-card__action-btn-wrapper", class: "user-card__action-btn button tiny")
+    button_to("moderator", user_moderator_permissions_path(user), method: :post,
+      params: {user_id: user.id}, form_class: "user-card__action-btn-wrapper",
+      class: "user-card__action-btn button tiny")
   end
 
   def promotion_to_admin_button
@@ -23,7 +24,7 @@ class Users::Card::Cell < Application::Cell
 
   def retire_button
     if moderator?
-      button_to("Retire", "", method: :delete,
+      button_to("Retire", user_moderator_permissions_path(user), method: :delete,
         class: "user-card__action-btn button tiny alert")
     elsif admin?
       button_to("Retire", "", method: :delete,

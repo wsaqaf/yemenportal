@@ -1,24 +1,24 @@
 class ApplicationPolicy
-  attr_reader :user, :record
+  attr_reader :current_user, :record
 
-  def initialize(user, record)
-    @user = user
+  def initialize(current_user, record)
+    @current_user = current_user
     @record = record
   end
 
   def login?
-    user
+    current_user
   end
 
   def member?
-    user && user.role.member?
+    current_user && current_user.role.member?
   end
 
   def admin?
-    user && user.role.admin?
+    current_user && current_user.role.admin?
   end
 
   def moderator?
-    user && (user.role.moderator? || user.role.admin?)
+    current_user && (current_user.role.moderator? || current_user.role.admin?)
   end
 end

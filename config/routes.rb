@@ -25,7 +25,11 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: [:index, :show, :update, :show]
-  resources :users, only: [:index, :update, :edit]
+  resources :users, only: [:index, :update, :edit] do
+    scope module: :users do
+      resource :moderator_permissions, only: [:create, :destroy]
+    end
+  end
   resource :votes, only: [:update]
 
   namespace :sources do

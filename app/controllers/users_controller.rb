@@ -2,7 +2,8 @@ class UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    users = User.paginate(page: params[:page])
+    authorize(User)
+    users = User.order(:created_at).paginate(page: params[:page])
     render cell: true, model: users
   end
 
