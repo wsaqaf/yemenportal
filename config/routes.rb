@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do
       resource :moderator_permissions, only: [:create, :destroy]
+      resource :admin_permissions, only: [:create, :destroy]
     end
   end
   resource :votes, only: [:update]
