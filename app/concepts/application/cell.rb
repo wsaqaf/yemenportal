@@ -24,7 +24,7 @@ class Application::Cell < Rails::View
   end
 
   def pagination
-    will_paginate(model, renderer: BootstrapPagination::Rails)
+    will_paginate(model, renderer: FoundationPagination::Rails)
   end
 
   def url_for(options)
