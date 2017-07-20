@@ -62,6 +62,14 @@ class User < ApplicationRecord
 
   scope :moderators, -> { where(role: "MODERATOR") }
 
+  def self.email_like(email)
+    where("email ILIKE ?", "%#{email}%")
+  end
+
+  def self.in_roles(roles)
+    where(role: (roles || role.values).map(&:upcase))
+  end
+
   def self.from_omniauth(auth)
     identity = Identity.find_by(provider: auth.provider, uid: auth.uid)
 

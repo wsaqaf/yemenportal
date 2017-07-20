@@ -3,7 +3,8 @@ class UsersController < ApplicationController
 
   def index
     authorize(User)
-    users = User.order(:created_at).paginate(page: params[:page])
+    users = User.email_like(params[:email]).in_roles(params[:roles])
+      .order(:created_at).paginate(page: params[:page])
     render cell: true, model: users
   end
 

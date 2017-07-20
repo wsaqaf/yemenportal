@@ -1,13 +1,24 @@
 .row
-  h3 Users
+  .column
+    h3 Users
 
 .row
-  .column.small-12.large-2.medium-2 Filter
+  .column.small-12.large-3.medium-3
+    .users-filter
+      = form_tag(users_path, method: :get)
+        label
+          | Email
+          = text_field_tag :email, params[:email], class: "input-group-field"
+        label
+          | Roles
+          = select_tag :roles, options_for_select(User.role.options, params[:roles] || User.role.values), multiple: true, class: "js-users-filter__roles"
 
-  .column.small-12.large-10.medium-10
+        = submit_tag "Apply", class: "button"
+
+  .column.small-12.large-9.medium-9
     .users
       .users__list
         - users.each do |user|
-          .users__user= concept("users/card/cell", user)
+          .users__user= concept("users/card/cell", user).call
 
       .users__pagination= pagination
