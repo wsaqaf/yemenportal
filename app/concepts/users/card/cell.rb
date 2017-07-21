@@ -6,9 +6,20 @@ class Users::Card::Cell < Application::Cell
   end
 
   delegate :member?, :moderator?, :admin?, to: :user_role
+  delegate :invitation_sent_at, :invitation_accepted_at, to: :user
 
   def user_role
     user.role
+  end
+
+  def invited?
+    invitation_accepted_at.blank? && invitation_sent_at.present?
+  end
+
+  def resend_invite_button
+    button_to("Resend", user_invitation_path, method: :post,
+      params: {user: {email: user.email}}, form_class: "user-card__action-btn-wrapper",
+      class: "user-card__invitation-resend button tiny secondary")
   end
 
   def promotion_to_moderator_button

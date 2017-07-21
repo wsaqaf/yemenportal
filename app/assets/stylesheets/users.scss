@@ -1,6 +1,24 @@
 .users {
 }
 
+.users__title-row {
+  margin-bottom: 20px;
+}
+
+.users__title {
+  margin: 5px 0 5px;
+}
+
+.users__invite-button {
+  margin: 5px 0 5px;
+
+  float: right;
+
+  html[dir="rtl"] & {
+    float: left;
+  }
+}
+
 .users__pagination {
   margin-top: 40px;
 }
@@ -23,6 +41,19 @@
 
 .user-card__role {
   margin-right: 10px;
+  display: inline-block;
+}
+
+.user-card__invitation {
+  margin-bottom: 10px;
+}
+
+.user-card__invited-at {
+  display: inline-block;
+}
+
+.user-card__invitation-resend {
+  margin: 0 5px;
   display: inline-block;
 }
 

@@ -30,6 +30,8 @@ html dir="rtl" lang="ar"
                   li
                     = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
               - if policy(User).admin?
+                li = link_to t('menu.users.name'), users_path
+              - if policy(User).admin?
                 li
                   = link_to t('menu.categories'), categories_path
                 li

@@ -7,6 +7,12 @@
       .user-card__role.label.warning Moderator
   - if user.full_name != user.email
     .user-card__fullname= user.full_name
+  - if invited?
+    .user-card__invitation
+      .user-card__invited-at
+        | Invited&nbsp;
+        time.js-publication-time #{invitation_sent_at}
+      = resend_invite_button
   .user-card__actions
     - if member?
       .user-card__action Promote to #{promotion_to_moderator_button} or #{promotion_to_admin_button}
