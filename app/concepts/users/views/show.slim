@@ -1,0 +1,27 @@
+.users
+  .row.users__title-row
+    .column.small-6
+      h3.users__title= st("title")
+    .column.small-6
+      = link_to st("invite_new_user"), new_user_invitation_path, class: "users__invite-button button small"
+
+
+  .row
+    .column.small-12.large-3.medium-3
+      .users-filter
+        = form_tag(users_path, method: :get)
+          label
+            = st("filter.email")
+            = text_field_tag :email, params[:email], class: "input-group-field"
+          label
+            = st("filter.roles")
+            = select_tag :roles, options_for_select(User.role.options, params[:roles] || User.role.values), multiple: true, class: "js-users-filter__roles"
+
+          = submit_tag st("filter.apply"), class: "button"
+
+    .column.small-12.large-9.medium-9
+      .users__list
+        - users.each do |user|
+          .users__user= concept("users/card/cell", user).call
+
+      .users__pagination= pagination

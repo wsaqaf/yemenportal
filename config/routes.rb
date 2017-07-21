@@ -7,14 +7,7 @@ Rails.application.routes.draw do
 
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
-  resources :moderators, only: [:index, :destroy]
   resources :topics, only: [:show]
-
-  resources :moderators, only: [] do
-    scope module: :moderators do
-      resources :invites, only: [:create]
-    end
-  end
 
   resources :post, only: [] do
     resources :comments, only: [:create, :destroy, :index]
@@ -25,7 +18,12 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: [:index, :show, :update, :show]
-  resources :users, only: [:update, :edit]
+  resources :users, only: [:index, :update, :edit] do
+    scope module: :users do
+      resource :moderator_permissions, only: [:create, :destroy]
+      resource :admin_permissions, only: [:create, :destroy]
+    end
+  end
   resource :votes, only: [:update]
 
   namespace :sources do

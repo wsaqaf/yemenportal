@@ -58,9 +58,17 @@ class User < ApplicationRecord
   has_many :posts, through: :post_tags
 
   enumerize :role, in: %w(ADMIN MODERATOR MEMBER).map { |role| [role.downcase, role] }.to_h,
-    i18n_scope: "user.roles"
+    i18n_scope: "user.roles", predicates: true
 
   scope :moderators, -> { where(role: "MODERATOR") }
+
+  def self.email_like(email)
+    where("email ILIKE ?", "%#{email}%")
+  end
+
+  def self.in_roles(roles)
+    where(role: (roles || role.values).map(&:upcase))
+  end
 
   def self.from_omniauth(auth)
     identity = Identity.find_by(provider: auth.provider, uid: auth.uid)

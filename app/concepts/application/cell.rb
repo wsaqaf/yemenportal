@@ -19,18 +19,6 @@ class Application::Cell < Rails::View
 
   include AbstractController::Helpers
 
-  def render_each_and_join(views)
-    views.inject("") { |partials, view| partials << render("partials/#{view}") }
-  end
-
-  def pagination
-    will_paginate(model, renderer: BootstrapPagination::Rails)
-  end
-
-  def url_for(options)
-    parent_controller.url_for(options)
-  end
-
   def self.option(*array)
     array.each do |option|
       define_method(option) do
@@ -38,4 +26,25 @@ class Application::Cell < Rails::View
       end
     end
   end
+
+  private
+
+  def render_each_and_join(views)
+    views.inject("") { |partials, view| partials << render("partials/#{view}") }
+  end
+
+  def pagination
+    will_paginate(model, renderer: FoundationPagination::Rails)
+  end
+
+  def url_for(options)
+    parent_controller.url_for(options)
+  end
+
+  def scoped_translation(key)
+    scope = self.class.name.sub(/::Cell$/, "").underscore.tr("/", ".")
+    I18n.t("#{scope}.#{key}")
+  end
+
+  alias st scoped_translation
 end

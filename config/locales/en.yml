@@ -65,20 +65,28 @@ en:
       add_category: Add Category
   user:
     should_login: Please sign in
-    status:
-      moderator: Modeartor
-      invited_moderator: Invited to be moderator
-    moderator:
-      title: Modeartors
-      buttons:
-        resend_invite: Resend invite
-        remove: Remove
-        add_moderator: Invite new moderator
     roles:
       moderator: Moderator
       admon: Admin
     buttons:
       update: Update
+  users:
+    title: Users
+    invite_new_user: Invite new user
+    filter:
+      email: "Email"
+      roles: "Roles"
+      apply: "Apply"
+    card:
+      resend_invite: "Resend"
+      moderator: "moderator"
+      moderator_role: "Moderator"
+      admin: "admin"
+      admin_role: "Admin"
+      retire_button: "Retire"
+      invited: "Invited"
+      promote_to: "Promote to"
+      or: "or"
   source:
     notice:
       success_suggest: Thank you for your submission. Source %{source_name} was added successfully. It will be reviewed by moderators. If accepted, it will be approved.

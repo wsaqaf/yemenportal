@@ -1,8 +1,0 @@
-.columns.large-6.medium-8.small-12.small-centered.category_list
-  .row.title
-    = link_to t('user.moderator.buttons.add_moderator'), new_user_invitation_path, class: 'button small float-left'
-    = t('user.moderator.title')
-    hr
-
-  = table_body
-  = will_paginate model, renderer: FoundationPagination::Rails
