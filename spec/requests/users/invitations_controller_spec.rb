@@ -13,7 +13,7 @@ describe Users::InvitationsController, type: :request do
       do_request
 
       expect(response.status).to eq 302
-      expect(response).to redirect_to(moderators_path)
+      expect(response).to redirect_to(users_path)
     end
   end
 end
