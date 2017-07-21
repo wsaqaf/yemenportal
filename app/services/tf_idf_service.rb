@@ -1,10 +1,10 @@
 require "matrix"
 
 class TfIdfService
-  attr_reader :description, :config
+  attr_reader :stemmed_text, :config
 
-  def initialize(description:)
-    @description = description
+  def initialize(stemmed_text:)
+    @stemmed_text = stemmed_text
     @config = Rails.application.config_for(:tf_idf_settings)
   end
 
@@ -54,6 +54,6 @@ class TfIdfService
   end
 
   def current_model
-    @_current ||= TfIdfSimilarity::Document.new(description)
+    @_current ||= TfIdfSimilarity::Document.new(stemmed_text)
   end
 end

@@ -1,9 +1,9 @@
 require "rails_helper"
 
 describe TfIdfService do
-  subject(:service_1) { described_class.new(description: "one two, xt") }
-  subject(:service_2) { described_class.new(description: "opa tata a") }
-  subject(:service_3) { described_class.new(description: "comon lets go") }
+  subject(:service_1) { described_class.new(stemmed_text: "one two, xt") }
+  subject(:service_2) { described_class.new(stemmed_text: "opa tata a") }
+  subject(:service_3) { described_class.new(stemmed_text: "comon lets go") }
 
   let(:post) { build :post, id: 1, topic: nil, created_at: Time.now, stemmed_text: "one two" }
   let(:saved_topic) { build :topic }
