@@ -27,8 +27,6 @@ class Application::Cell < Rails::View
     end
   end
 
-  private
-
   def render_each_and_join(views)
     views.inject("") { |partials, view| partials << render("partials/#{view}") }
   end
