@@ -2,22 +2,22 @@
   .user-card__header
     .user-card__email= user.email
     - if admin?
-      .user-card__role.label.success Admin
+      .user-card__role.label.success= st("admin_role")
     - elsif moderator?
-      .user-card__role.label.warning Moderator
+      .user-card__role.label.warning= st("moderator_role")
   - if user.full_name != user.email
     .user-card__fullname= user.full_name
   - if invited?
     .user-card__invitation
       .user-card__invited-at
-        | Invited&nbsp;
+        | #{st("invited")}&nbsp;
         time.js-publication-time #{invitation_sent_at}
       = resend_invite_button
   .user-card__actions
     - if member?
-      .user-card__action Promote to #{promotion_to_moderator_button} or #{promotion_to_admin_button}
+      .user-card__action #{st("promote_to")} #{promotion_to_moderator_button} #{st("or")} #{promotion_to_admin_button}
     - elsif moderator?
       .user-card__action= retire_button
-      .user-card__action Promote to #{promotion_to_admin_button}
+      .user-card__action #{st("promote_to")} #{promotion_to_admin_button}
     - elsif admin?
       .user-card__action= retire_button

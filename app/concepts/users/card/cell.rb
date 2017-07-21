@@ -17,29 +17,29 @@ class Users::Card::Cell < Application::Cell
   end
 
   def resend_invite_button
-    button_to("Resend", user_invitation_path, method: :post,
+    button_to(st("resend_invite"), user_invitation_path, method: :post,
       params: {user: {email: user.email}}, form_class: "user-card__action-btn-wrapper",
       class: "user-card__invitation-resend button tiny secondary")
   end
 
   def promotion_to_moderator_button
-    button_to("moderator", user_moderator_permissions_path(user), method: :post,
+    button_to(st("moderator"), user_moderator_permissions_path(user), method: :post,
       params: {user_id: user.id}, form_class: "user-card__action-btn-wrapper",
       class: "user-card__action-btn button tiny")
   end
 
   def promotion_to_admin_button
-    button_to("admin", user_admin_permissions_path(user), method: :post,
+    button_to(st("admin"), user_admin_permissions_path(user), method: :post,
       params: {user_id: user.id}, form_class: "user-card__action-btn-wrapper",
       class: "user-card__action-btn button tiny")
   end
 
   def retire_button
     if moderator?
-      button_to("Retire", user_moderator_permissions_path(user), method: :delete,
+      button_to(st("retire_button"), user_moderator_permissions_path(user), method: :delete,
         class: "user-card__action-btn button tiny alert")
     elsif admin?
-      button_to("Retire", user_admin_permissions_path(user), method: :delete,
+      button_to(st("retire_button"), user_admin_permissions_path(user), method: :delete,
         class: "user-card__action-btn button tiny alert")
     end
   end

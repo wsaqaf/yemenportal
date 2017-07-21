@@ -19,6 +19,8 @@ class Application::Cell < Rails::View
 
   include AbstractController::Helpers
 
+  private
+
   def render_each_and_join(views)
     views.inject("") { |partials, view| partials << render("partials/#{view}") }
   end
@@ -38,4 +40,11 @@ class Application::Cell < Rails::View
       end
     end
   end
+
+ def scoped_translation(key)
+    scope = self.class.name.sub(/::Cell$/, '').underscore.tr('/', '.')
+    I18n.t("#{scope}.#{key}")
+  end
+
+  alias st scoped_translation
 end
