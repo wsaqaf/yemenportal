@@ -3,7 +3,7 @@ dependencies:
     - bin/setup
 
 test:
-  post:
+  pre:
     - bundle exec rubocop
 
 deployment:
