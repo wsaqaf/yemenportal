@@ -65,15 +65,6 @@ en:
       add_category: Add Category
   user:
     should_login: Please sign in
-    status:
-      moderator: Modeartor
-      invited_moderator: Invited to be moderator
-    moderator:
-      title: Modeartors
-      buttons:
-        resend_invite: Resend invite
-        remove: Remove
-        add_moderator: Invite new moderator
     roles:
       moderator: Moderator
       admon: Admin

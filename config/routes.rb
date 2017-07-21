@@ -7,14 +7,7 @@ Rails.application.routes.draw do
 
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
-  resources :moderators, only: [:index, :destroy]
   resources :topics, only: [:show]
-
-  resources :moderators, only: [] do
-    scope module: :moderators do
-      resources :invites, only: [:create]
-    end
-  end
 
   resources :post, only: [] do
     resources :comments, only: [:create, :destroy, :index]
