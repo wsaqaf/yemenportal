@@ -19,6 +19,14 @@ class Application::Cell < Rails::View
 
   include AbstractController::Helpers
 
+  def self.option(*array)
+    array.each do |option|
+      define_method(option) do
+        options[option]
+      end
+    end
+  end
+
   private
 
   def render_each_and_join(views)
@@ -33,16 +41,8 @@ class Application::Cell < Rails::View
     parent_controller.url_for(options)
   end
 
-  def self.option(*array)
-    array.each do |option|
-      define_method(option) do
-        options[option]
-      end
-    end
-  end
-
- def scoped_translation(key)
-    scope = self.class.name.sub(/::Cell$/, '').underscore.tr('/', '.')
+  def scoped_translation(key)
+    scope = self.class.name.sub(/::Cell$/, "").underscore.tr("/", ".")
     I18n.t("#{scope}.#{key}")
   end
 

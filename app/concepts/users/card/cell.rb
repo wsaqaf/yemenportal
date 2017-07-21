@@ -18,19 +18,19 @@ class Users::Card::Cell < Application::Cell
 
   def resend_invite_button
     button_to(st("resend_invite"), user_invitation_path, method: :post,
-      params: {user: {email: user.email}}, form_class: "user-card__action-btn-wrapper",
+      params: { user: { email: user.email } }, form_class: "user-card__action-btn-wrapper",
       class: "user-card__invitation-resend button tiny secondary")
   end
 
   def promotion_to_moderator_button
     button_to(st("moderator"), user_moderator_permissions_path(user), method: :post,
-      params: {user_id: user.id}, form_class: "user-card__action-btn-wrapper",
+      params: { user_id: user.id }, form_class: "user-card__action-btn-wrapper",
       class: "user-card__action-btn button tiny")
   end
 
   def promotion_to_admin_button
     button_to(st("admin"), user_admin_permissions_path(user), method: :post,
-      params: {user_id: user.id}, form_class: "user-card__action-btn-wrapper",
+      params: { user_id: user.id }, form_class: "user-card__action-btn-wrapper",
       class: "user-card__action-btn button tiny")
   end
 
