@@ -6,7 +6,7 @@ li.topic_block.accordion-item data-accordion-item=""
       = "#{main_post.source.name} - "
     time.js-publication-time
 
-      = l main_post.published_at, format: :created_at
+      = l created_at, format: :created_at
   .accordion-content.columns.large-12 data-tab-content=''
     = link_to t('post.button.read_source'), main_post.link, class: "button tiny"
     = link_to 'read about this topic', topic_path(model), class: "button tiny"

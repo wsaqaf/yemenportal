@@ -1,6 +1,4 @@
 class MainPageController < ApplicationController
-  MIN_TOPIC_SIZE = 2
-
   def show
     posts_list = posts.limit(15)
     render cell: true, model: posts_list, options: {
@@ -17,7 +15,7 @@ class MainPageController < ApplicationController
   end
 
   def topics
-    Topic.includes(:posts).where("topic_size >= ?", MIN_TOPIC_SIZE).paginate(page: params[:page], per_page: 10)
+    Topic.includes(:posts).valid_topics.paginate(page: params[:page], per_page: 10)
   end
 
   def user_voted(posts)
