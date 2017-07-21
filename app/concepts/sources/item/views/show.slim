@@ -4,7 +4,7 @@
     .row
       .medium-8.columns.source_name
         input name=('name') disabled=disabled? placeholder=field_name("name") value = name
-        = " #{} #{author} "
+        = " #{author} " if policy(User).moderator?
         time.js-publication-time
           = l created_at, format: :created_at
       .medium-4.float-left.columns
