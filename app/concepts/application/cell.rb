@@ -39,9 +39,9 @@ class Application::Cell < Rails::View
     parent_controller.url_for(options)
   end
 
-  def scoped_translation(key)
+  def scoped_translation(key, params = {})
     scope = self.class.name.sub(/::Cell$/, "").underscore.tr("/", ".")
-    I18n.t("#{scope}.#{key}")
+    I18n.t("#{scope}.#{key}", params)
   end
 
   alias st scoped_translation

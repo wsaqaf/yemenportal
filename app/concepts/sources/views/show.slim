@@ -8,5 +8,9 @@
     = title
     hr
 
-  = table_body
+  - if model.blank? && params[:page].present?
+    = st("no_source_on_this_page", page: params[:page], first_page_path: sources_path(approve_state: params[:approve_state]))
+  - else
+    = table_body
+
   = will_paginate model, renderer: FoundationPagination::Rails

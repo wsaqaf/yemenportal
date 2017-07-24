@@ -5,7 +5,7 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update, :destroy]
 
   def index
-    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page], per_page: 20)
+    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page])
     render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state),
       current_user: current_user }
   end
@@ -30,7 +30,7 @@ class SourcesController < ApplicationController
     topics_ids = @source.posts.map(&:topic_id).uniq.compact
     @source.destroy
     topics_ids.each { |id| Topic.reset_counters(id, :posts) }
-    redirect_to sources_path(approve_state: Source.approve_state.approved)
+    redirect_back(fallback_location: sources_path(approve_state: @source.state))
   end
 
   def edit
