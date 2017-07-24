@@ -30,7 +30,9 @@ class SourcesController < ApplicationController
     topics_ids = @source.posts.map(&:topic_id).uniq.compact
     @source.destroy
     topics_ids.each { |id| Topic.reset_counters(id, :posts) }
-    redirect_back(fallback_location: sources_path(approve_state: @source.state))
+
+    redirect_back(fallback_location: sources_path(approve_state: @source.state),
+      notice: t(".successfully_destroyed", name: @source.name))
   end
 
   def edit

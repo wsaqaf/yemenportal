@@ -120,6 +120,8 @@ en:
       add_source: Add Source
   sources:
     no_source_on_this_page: There are no sources on page %{page}. Please go to <a href="%{first_page_path}">first page</a>.
+    destroy:
+      successfully_destroyed: Source "%{name}" successfully deleted.
   tag:
     select_tag: Select Tag
     base_list:
