@@ -87,24 +87,12 @@ describe SourcesController, type: :request do
     let(:source) { create :source }
     let(:do_request) { delete "/sources/#{source.id}" }
 
-    it "source" do
-      sign_in user
-      do_request
-
-      expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
-    end
-  end
-
-  describe "#destroy" do
-    let(:source) { create :source }
-    let(:do_request) { delete "/sources/#{source.id}" }
-
     it "redirect to sources list" do
       sign_in user
       do_request
 
       expect(response.status).to eq 302
-      expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
+      expect(response).to redirect_to(sources_path(approve_state: source.approve_state))
     end
   end
 
