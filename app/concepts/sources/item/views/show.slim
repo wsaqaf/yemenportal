@@ -21,8 +21,10 @@
           .button-group.tiny.float-left
             = link_to t('source.buttons.delete'), source_path(model), method: :delete, class: "button secondary"
             = link_to t('source.buttons.edit'), edit_source_path(model), class: "button"
-            - if approve_state.suggested?
-              = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button"
+            - if approve_state.approved?
+              = link_to t('source.buttons.dissable'), sources_disable_path(model), method: :put, class: "button secondary"
+            - else
+              = link_to t('source.buttons.approve'), sources_approve_path(model), method: :put, class: "button success"
     .row
       .medium-3.small-3.columns
         label.float-left.inline = field_name("link")

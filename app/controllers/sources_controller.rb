@@ -68,9 +68,8 @@ class SourcesController < ApplicationController
     @_source_params ||= begin
       source_params = params.require(:source).permit(:link, :category_id, :whitelisted,
         :name, :website, :brief_info, :admin_email, :admin_name, :note, :iframe_flag,
-        :logo_url)
+        :logo_url, :approve_state)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
-      source_params[:approve_state] = Source.approve_state.approved
       source_params
     end
   end

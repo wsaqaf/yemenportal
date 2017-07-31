@@ -42,7 +42,7 @@ class Source < ApplicationRecord
   validates :link, uniqueness: true
 
   enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info, :other], default: :valid
-  enumerize :approve_state, in: [:approved, :suggested], default: :suggested
+  enumerize :approve_state, in: [:approved, :suggested, :disabled], default: :suggested
   enumerize :source_type, in: [:rss, :facebook], default: :rss
 
   scope :suggested, -> { where(approve_state: [:suggested, nil]) }
