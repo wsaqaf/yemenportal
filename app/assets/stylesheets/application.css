@@ -16,3 +16,8 @@
  *= require selectize.default
  *= require foundation_and_overrides
  */
+
+time {
+  color: gray;
+  font-size: 0.75rem;
+}

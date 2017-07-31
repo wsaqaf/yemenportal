@@ -1,0 +1,12 @@
+.tag_line
+  = t("tag.base_list.#{name}")
+  - if current_user == user
+    = link_to 'X', post_tag_path(id: model.id, post_id: post.id), method: :delete, class: 'float-left'
+  .publicate_data
+    = t("tag.tag_creator", user_name: user.full_name)
+    time.js-publication-time
+      = l created_at, format: :created_at
+  - if description
+    = description
+
+hr

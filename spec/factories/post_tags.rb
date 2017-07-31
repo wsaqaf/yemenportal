@@ -2,12 +2,13 @@
 #
 # Table name: post_tags
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  user_id    :integer
-#  post_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  user_id     :integer
+#  post_id     :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  name        :string
+#  description :string
 #
 # Indexes
 #
@@ -17,8 +18,8 @@
 
 FactoryGirl.define do
   factory :post_tag do
-    sequence(:name) { |n| "name_#{n}" }
     association :user
     association :post
+    sequence(:name) { |n| "Name_#{n}" }
   end
 end

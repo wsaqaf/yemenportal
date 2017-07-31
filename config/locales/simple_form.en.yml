@@ -19,6 +19,9 @@ en:
         whitelisted: Whitelisted
         link: Source link
         iframe_flag: Show in iframe?
+      post_tag:
+        name: Tag Name
+        description: Tag Description
     # Examples
     # labels:
     #   defaults:

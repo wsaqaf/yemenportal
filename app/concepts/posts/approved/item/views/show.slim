@@ -12,12 +12,13 @@ li.news_block.accordion-item data-accordion-item=""
           = "#{source.name} - "
         time.js-publication-time
           = l published_at, format: :created_at
-        br
-        - category_names.each do |name|
-          span.label.secondary = name
-        br
-        - tags_counter.each do |tag, count|
-          span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(count) = tag
+        .row
+          - category_names.each do |name|
+            span.label.secondary = name
+        .row
+          - tags_counter.each do |tag, count|
+            .tag_label
+              span.label.has-tip.top aria-haspopup="true" data-tooltip="" title=(t("tag.base_list.#{tag}")) = count
   .columns.large-2.medium-2.small-2.vote_info.js-votable  class="#{button_style}"
     .row
       = vote_button('upvote')
@@ -30,14 +31,11 @@ li.news_block.accordion-item data-accordion-item=""
       = link_to t('post.button.reject'), post_path(model, state: :rejected), method: :put, class: "button alert" if moderator?
       = link_to t('post.button.read_source'), read_post_link, class: "button"
       = link_to t('post.button.comments'), post_comments_path(post_id: id), class: "button"
+      = link_to t('post.button.tags'), post_tags_path(post_id: id), class: "button"
     - if moderator?
       = select_tag :id, options_from_collection_for_select(Category.all, "id", "name", category_ids),
         class: "strong-multiselect js-post-categories", prompt: t('category.select_category'), multiple: true,
         data: {id: id, type: 'category_ids'}
-
-      = select_tag :tag, options_for_select(tag_list, user_tags), class: "multiselect js-post-categories",
-        prompt: t('tag.select_tag'), multiple: true, data: {id: id, type: 'tags'}
-
     - if photo_url.present?
       .row
         .columns.large-4.medium-4
