@@ -41,7 +41,7 @@ document.addEventListener("turbolinks:load", function() {
   $('.js-publication-time').each(function() {
     var $this = $(this);
     var day_ago = moment().subtract(1,'days');
-    var publiction_time = moment($this.text(), "DD-MM-YYYY hh:mm");
+    var publiction_time = moment($this.text());
 
     if (publiction_time.isAfter(day_ago)) {
       $this.text(publiction_time.fromNow());

@@ -1,0 +1,96 @@
+@import 'settings';
+
+.topics {
+}
+
+.topics__topic {
+  margin-bottom: 40px;
+
+  &::last-child {
+    margin-bottom: 0;
+  }
+}
+
+.topic {
+  display: flex;
+}
+
+.topic__vote-buttons {
+  color: $dark-gray;
+
+  html[dir="rtl"] & {
+    margin-left: 1em;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-right: 1em;
+  }
+}
+
+.topic__vote-button {
+  font-size: 1.5em;
+  line-height: 1.5em;
+}
+
+.topic__body {
+  flex-grow: 1;
+}
+
+.topic__title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.topic__subtitle {
+  margin: 5px 0;
+  color: $dark-gray;
+  font-size: 0.9em;
+}
+
+.topic__subtitle-item {
+  display: inline-block;
+  margin: 0 5px;
+
+  &:first-child {
+   html[dir="rtl"] & {
+     margin-right: 0;
+   }
+
+   html:not([dir="rtl"]) & {
+    margin-left: 0;
+   }
+  }
+}
+
+.topic__subtitle-separator {
+  display: inline-block;
+
+  &:after {
+    content: "|";
+    color: $light-gray;
+    font-size: 70%;
+    vertical-align: center;
+  }
+}
+
+.topic__topic-body {
+  margin-bottom: 5px;
+}
+
+.topic__image {
+  max-height: 4em;
+
+  html[dir="rtl"] & {
+    float: right;
+    margin-left: 0.5em;
+  }
+
+  html:not([dir="rtl"]) & {
+    float: left;
+    margin-right: 0.5em;
+  }
+}
+
+.topics-filter {
+  background: #ddd;
+}

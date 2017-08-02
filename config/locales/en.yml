@@ -133,6 +133,8 @@ en:
       inappropriate_content: Inappropriate content
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
+  new_main_page:
+    discuss: "Discuss"
   activerecord:
     errors:
       models:
