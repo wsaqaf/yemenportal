@@ -9,9 +9,21 @@
 #
 
 class Topic < ApplicationRecord
-  MIN_TOPIC_SIZE = 2
   has_many :posts
 
   scope :ordered_by_date, -> { order("created_at DESC") }
-  scope :valid_topics, -> { where("topic_size >= ?", MIN_TOPIC_SIZE).ordered_by_date }
+
+  def initial_post
+    posts.latest
+  end
+
+  delegate :title, :source_name, :category_names, :description, :image_url, to: :initial_post
+
+  def number_of_votes
+    0
+  end
+
+  def related_posts
+    []
+  end
 end

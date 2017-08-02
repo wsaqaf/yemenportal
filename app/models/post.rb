@@ -51,11 +51,27 @@ class Post < ApplicationRecord
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 
+  def self.latest
+    order("created_at ASC").first
+  end
+
   def self.available_states
     state.values
   end
 
   def same_posts
     (topic.posts.ordered_by_date - [self]) if topic
+  end
+
+  def source_name
+    source.name
+  end
+
+  def category_names
+    if categories.present?
+      categories.map(&:name)
+    else
+      []
+    end
   end
 end
