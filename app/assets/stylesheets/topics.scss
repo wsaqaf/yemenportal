@@ -16,7 +16,7 @@
 }
 
 .topic__vote-buttons {
-  color: $dark-gray;
+  color: $medium-gray;
 
   html[dir="rtl"] & {
     margin-left: 1em;
@@ -43,13 +43,12 @@
 
 .topic__subtitle {
   margin: 5px 0;
-  color: $dark-gray;
+  color: $medium-gray;
   font-size: 0.9em;
 }
 
 .topic__subtitle-item {
   display: inline-block;
-  margin: 0 5px;
 
   &:first-child {
    html[dir="rtl"] & {
@@ -64,6 +63,7 @@
 
 .topic__subtitle-separator {
   display: inline-block;
+  margin: 0 5px;
 
   &:after {
     content: "|";
@@ -89,6 +89,32 @@
     float: left;
     margin-right: 0.5em;
   }
+}
+
+.topic__related-topics {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.topic__related-topics-title {
+  color: $dark-gray;
+}
+
+.topic__related {
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.topic__related-subtitle {
+  color: $medium-gray;
+  font-size: 0.8em;
+}
+
+.topic__related-subtitle-item {
+  display: inline-block;
 }
 
 .topics-filter {

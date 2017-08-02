@@ -135,6 +135,7 @@ en:
       missing_name:  Missing/ambiguous writer name
   new_main_page:
     discuss: "Discuss"
+    related_posts: "Related posts"
   activerecord:
     errors:
       models:
