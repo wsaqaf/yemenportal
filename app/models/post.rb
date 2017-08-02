@@ -4,19 +4,20 @@
 #
 #  id           :integer          not null, primary key
 #  description  :text
-#  published_at :datetime         not null
+#  published_at :datetime
 #  link         :string           not null
-#  title        :string           not null
+#  title        :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  state        :string           default("pending"), not null
-#  photo_url    :string
+#  image_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
 #  source_id    :integer          not null
 #
 # Indexes
 #
+#  index_posts_on_link          (link)
 #  index_posts_on_published_at  (published_at)
 #  index_posts_on_source_id     (source_id)
 #  index_posts_on_topic_id      (topic_id)
@@ -37,7 +38,7 @@ class Post < ApplicationRecord
   belongs_to :source
   belongs_to :topic, optional: true, counter_cache: :topic_size
 
-  validates :title, :published_at, :link, presence: true
+  validates :published_at, :link, presence: true
   validates :link, uniqueness: true
 
   scope :ordered_by_date, -> { order("published_at DESC") }

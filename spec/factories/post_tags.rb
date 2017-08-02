@@ -2,12 +2,13 @@
 #
 # Table name: post_tags
 #
-#  id         :integer          not null, primary key
-#  name       :string
-#  user_id    :integer
-#  post_id    :integer
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  name        :string
+#  user_id     :integer
+#  post_id     :integer
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#  description :string
 #
 # Indexes
 #
