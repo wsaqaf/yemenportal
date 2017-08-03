@@ -59,17 +59,14 @@
     margin-left: 0;
    }
   }
-}
 
-.topic__subtitle-separator {
-  display: inline-block;
-  margin: 0 5px;
-
-  &:after {
-    content: "|";
-    color: $light-gray;
-    font-size: 70%;
-    vertical-align: center;
+  &:not(:last-child) {
+    &:after {
+      margin: 0 5px;
+      content: "\00B7";
+      color: $light-gray;
+      vertical-align: center;
+    }
   }
 }
 
@@ -115,6 +112,15 @@
 
 .topic__related-subtitle-item {
   display: inline-block;
+
+  &:not(:last-child) {
+    &:after {
+      margin: 0 5px;
+      content: "\00B7";
+      color: $light-gray;
+      vertical-align: center;
+    }
+  }
 }
 
 .topics__pagination {

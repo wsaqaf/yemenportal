@@ -17,16 +17,15 @@
                     = link_to(topic.title, "", class: "topic__title")
                     .topic__subtitle
                       .topic__subtitle-item= topic.source_name
-                      .topic__subtitle-separator
-                      .topic__subtitle-item= topic.category_names.join(", ")
-                      .topic__subtitle-separator
+                      - if topic.category_names.present?
+                        .topic__subtitle-item= topic.category_names.join(", ")
                       .topic__subtitle-item
-                        time.js-publication-time= topic.created_at
+                        time.js-publication-time= topic.created_at.iso8601
                     - if topic.description.present?
                       .topic__topic-body.clearfix
                         - if topic.image_url.present?
                           = image_tag(topic.image_url, alt: topic.title, class: "topic__image")
-                        .topic__description= topic.description
+                        .topic__description= truncate(topic.description, length: 300, separator: " ")
                     - if topic.related_posts.present?
                       .topic__related-topics
                         .topic__related-topics-title= st("related_posts")
@@ -35,7 +34,6 @@
                             .topic__related-title= link_to(post.title, "")
                             .topic__related-subtitle
                               .topic__related-subtitle-item= post.source_name
-                              .topic__subtitle-separator
                               .topic__related-subtitle-item
                                 time.js-publication-time= post.created_at
 
