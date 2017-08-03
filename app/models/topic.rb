@@ -11,7 +11,7 @@
 class Topic < ApplicationRecord
   has_many :posts
 
-  scope :ordered_by_date, -> { order("created_at DESC") }
+  scope :ordered_by_date, -> { order("updated_at DESC") }
 
   def initial_post
     posts.latest

@@ -30,12 +30,11 @@ class PostsFetcher::ItemSaver
   end
 
   def topic
-    new_topic
-    # topic_with_similar_posts || new_topic
+    topic_with_related_posts || new_topic
   end
 
-  def topic_with_similar_posts
-    SimilarPostsFinder.new(source, item).topic_with_similar_posts_or_nil
+  def topic_with_related_posts
+    RelatedPostsFinder.new(item).topic_with_related_posts_or_nil
   end
 
   def new_topic
