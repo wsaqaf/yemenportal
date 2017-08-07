@@ -6,12 +6,12 @@
           .topics__topics
             - topics.each do |topic|
               .topics__topic
-                .topic
+                .topic.js-votable(data-vote-path=topic_vote_path(topic))
                   .topic__vote-buttons
-                    .topic__vote-button
+                    button.topic__vote-button.js-upvote-button
                       i.fi-like
-                    .topic__vote-result= topic.number_of_votes
-                    .topic__vote-button
+                    .topic__vote-result.js-vote-count= topic.voting_result
+                    button.topic__vote-button.js-downvote-button
                       i.fi-dislike
                   .topic__body
                     = link_to(topic.title, "", class: "topic__title")

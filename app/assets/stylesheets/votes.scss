@@ -1,0 +1,16 @@
+@import 'settings';
+
+.js-votable {
+}
+
+.js-upvoted {
+  .js-upvote-button {
+    color: $black;
+  }
+}
+
+.js-downvoted {
+  .js-downvote-button {
+    color: $black;
+  }
+}

@@ -50,8 +50,7 @@ class User < ApplicationRecord
   validates :email, :role, presence: true
   validates :email, uniqueness: true, email: true
 
-  has_many :votes
-  has_many :posts, through: :votes
+  has_many :votes, dependent: :destroy
   has_many :comments
 
   has_many :post_tags

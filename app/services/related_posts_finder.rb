@@ -11,7 +11,7 @@ class RelatedPostsFinder
     end
   end
 
-  # private
+  private
 
   attr_reader :item
 
