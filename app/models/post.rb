@@ -74,4 +74,8 @@ class Post < ApplicationRecord
       []
     end
   end
+
+  def show_internally?
+    source.show_internally?
+  end
 end

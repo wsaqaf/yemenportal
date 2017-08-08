@@ -16,6 +16,7 @@
 }
 
 .topic__vote-buttons {
+  width: 20px;
   color: $medium-gray;
 
   html[dir="rtl"] & {
@@ -34,8 +35,20 @@
   cursor: pointer;
 }
 
+.topic__vote-result {
+  text-align: center;
+}
+
 .topic__body {
   flex-grow: 1;
+}
+
+.topic__description-text {
+  display: inline;
+}
+
+.topic__link-to-more {
+  display: inline;
 }
 
 .topic__title {

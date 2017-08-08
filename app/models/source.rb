@@ -56,4 +56,14 @@ class Source < ApplicationRecord
   def facebook_link
     facebook_page
   end
+
+  def show_internally?
+    !show_outside?
+  end
+
+  private
+
+  def show_outside?
+    facebook? || !iframe_flag
+  end
 end

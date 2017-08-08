@@ -133,9 +133,11 @@ en:
       inappropriate_content: Inappropriate content
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
-  new_main_page:
-    discuss: "Discuss"
-    related_posts: "Related posts"
+  topics:
+    topic:
+      discuss: "Discuss"
+      related_posts: "Related posts"
+      details: "Details"
   activerecord:
     errors:
       models:
