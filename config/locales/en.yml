@@ -135,9 +135,12 @@ en:
       missing_name:  Missing/ambiguous writer name
   topics:
     topic:
-      discuss: "Discuss"
-      related_posts: "Related posts"
-      details: "Details"
+      discuss: Discuss
+      related_posts: Related posts
+      details: Details
+  posts:
+    show:
+      back: Back
   activerecord:
     errors:
       models:

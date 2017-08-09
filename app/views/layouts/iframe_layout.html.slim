@@ -11,12 +11,8 @@ html dir="rtl" lang="ar"
     = csrf_meta_tag
 
   body
-    .top-bar
-      .top-bar-title.float-left
-        strong = link_to t('site_name'), posts_path
+    #fb-root data=Rails.application.secrets.facebook.slice("app_id", "api_version", "locale")
 
-        = link_to :back do
-          <i class='fi-arrow-left'></i>
     == yield
 
     = render partial: 'layouts/application_js'
