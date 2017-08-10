@@ -5,7 +5,7 @@
         .topics
           .topics__topics
             - topics.each do |topic|
-              .topics__topic= concept('topics/topic/cell', topic).call
+              .topics__topic= concept("topics/topic/cell", topic).call
 
           .topics__pagination= pagination
 

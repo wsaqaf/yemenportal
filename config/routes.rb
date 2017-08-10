@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :topics, only: [:show] do
     scope module: :topics do
       resource :vote, only: [:update, :destroy]
+      resources :comments, only: [:index]
     end
   end
 

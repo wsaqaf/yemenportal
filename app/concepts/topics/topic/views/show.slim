@@ -33,4 +33,4 @@
 
     .topic__footer
       .topic__footer-item
-        = link_to(st("discuss"), "", class: "topic__footer-discuss-link")
+        = link_to(st("discuss"), topic_comments_path(topic), class: "topic__footer-discuss-link")
