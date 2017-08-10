@@ -28,7 +28,7 @@ class RelatedPostsFinder
   end
 
   def similarity
-    @_similarity ||= similarity_matrix[0,1..-1].each_with_index
+    @_similarity ||= similarity_matrix[0, 1..-1].each_with_index
       .reject do |(value, _index)|
         value > duplicate_post_similarity_threshold
       end

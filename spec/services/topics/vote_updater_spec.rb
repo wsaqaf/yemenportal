@@ -5,7 +5,6 @@ describe Topics::VoteUpdater do
   let(:topic) { instance_double(Topic) }
   let(:updater) { Topics::VoteUpdater.new(user, topic) }
 
-
   describe "#upvote" do
     shared_examples "topic result updater" do
       it "updates voting result of the topic" do

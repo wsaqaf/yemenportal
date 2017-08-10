@@ -1,10 +1,13 @@
 .row
-  .large-4.large-uncentered.medium-4.medium-uncentered.small-12.columns
-    ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
-      = post_body
-    = link_to t('post.button.more'), posts_path, class: 'float-left'
-  .large-8.large-uncentered.medium-8.medium-uncentered.small-12.columns
-    ul.accordion data-accordion="" data-multi-expand="true" data-allow-all-closed="true"
-      = topic_body
+  .columns.small-12.medium-12.large-12.large-centered
+    .row
+      .column.small-12.medium-8.large-9
+        .topics
+          .topics__topics
+            - topics.each do |topic|
+              .topics__topic= concept("topics/topic/cell", topic).call
 
-    = will_paginate(topics, params: {controller: "main_page", action: "show"}, renderer: FoundationPagination::Rails)
+          .topics__pagination= pagination
+
+      .column.small-12.medium-4.large-3
+        .topics-filter Filter

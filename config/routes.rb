@@ -3,7 +3,7 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks", invitations: 'users/invitations',
     confirmations: 'users/confirmations' }
-  root to: 'new_main_page#show'
+  root to: 'main_page#show'
 
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources

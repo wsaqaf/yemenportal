@@ -35,7 +35,7 @@ class Topic < ApplicationRecord
   end
 
   def initial_post
-    posts.min_by { |post| post.created_at }
+    posts.min_by(&:created_at)
   end
 
   delegate :title, :source_name, :category_names, :description, :image_url, :link,

@@ -31,6 +31,15 @@ RSpec/MessageSpies:
 RSpec/VerifiedDoubles:
   Enabled: false
 
+RSpec/DescribedClass:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
 Style/ConditionalAssignment:
   Enabled: false
 
@@ -42,7 +51,7 @@ Metrics/BlockLength:
   Exclude:
     - "spec/**/*"
 
-Lint/Eval:
+Security/Eval:
   Enabled: true
   Exclude:
     - "spec/**/*"
@@ -51,9 +60,6 @@ MethodLength:
   Max: 15
   Exclude:
     - "spec/**/*"
-
-ExampleLength:
-  Max: 7
 
 Metrics/LineLength:
   Max: 120
@@ -89,3 +95,12 @@ Style/MultilineMethodCallIndentation:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/AlignArray:
+  Enabled: false
+
+Style/WordArray:
+  Enabled: false

@@ -1,25 +1,20 @@
 class MainPageController < ApplicationController
   def show
-    posts_list = posts.limit(15)
-    render cell: true, model: posts_list, options: {
-      votes: user_voted(posts_list),
-      user: current_user,
-      topics: topics
-    }
+    render cell: true, model: topics_with_voted_attribues
   end
 
   private
 
-  def posts
-    @_posts ||= Post.includes(:votes).includes(:categories).approved_posts
+  def topics_with_voted_attribues
+    if current_user.present?
+      topics.include_voted_by_user(current_user)
+    else
+      topics
+    end
   end
 
   def topics
-    Topic.includes(:posts).valid_topics.paginate(page: params[:page], per_page: 10)
-  end
-
-  def user_voted(posts)
-    posts_ids = posts.map(&:id)
-    current_user ? current_user.votes.votes_posts(posts_ids) : []
+    Topic.ordered_by_date.paginate(page: params[:page])
+      .includes(posts: [:source, :categories])
   end
 end

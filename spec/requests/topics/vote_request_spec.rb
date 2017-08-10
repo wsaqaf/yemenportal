@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Topics voting" do
+describe "Topics voting", type: :request do
   describe "PATCH /topics/:topic_id/vote" do
     context "when type=upvote" do
       it "increases voting result by 1"
