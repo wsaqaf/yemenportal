@@ -32,7 +32,7 @@ class PostsFetcher::FetchedItem
   end
 
   def image_url_extracted_from_description
-    image_html_element.attributes["src"].value
+    image_html_element && image_html_element.attributes["src"].value
   end
 
   def image_html_element
