@@ -32,9 +32,6 @@ class Post < ApplicationRecord
   has_many :users, through: :votes
   has_many :comments
 
-  has_many :post_tags
-  has_many :users, through: :post_tags
-
   belongs_to :source
   belongs_to :topic, counter_cache: :topic_size, touch: true
 
