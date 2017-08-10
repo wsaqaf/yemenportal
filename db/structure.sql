@@ -136,6 +136,37 @@ ALTER SEQUENCE comments_id_seq OWNED BY comments.id;
 
 
 --
+-- Name: flags; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE flags (
+    id integer NOT NULL,
+    name character varying,
+    color character varying,
+    resolve boolean DEFAULT false NOT NULL
+);
+
+
+--
+-- Name: flags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE flags_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: flags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE flags_id_seq OWNED BY flags.id;
+
+
+--
 -- Name: identities; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -237,6 +268,37 @@ CREATE SEQUENCE posts_id_seq
 --
 
 ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
+
+
+--
+-- Name: reviews; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE reviews (
+    id integer NOT NULL,
+    topic_id integer,
+    flag_id integer,
+    moderator_id integer
+);
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE reviews_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE reviews_id_seq OWNED BY reviews.id;
 
 
 --
@@ -468,6 +530,13 @@ ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_id_seq':
 
 
 --
+-- Name: flags id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY flags ALTER COLUMN id SET DEFAULT nextval('flags_id_seq'::regclass);
+
+
+--
 -- Name: identities id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -486,6 +555,13 @@ ALTER TABLE ONLY post_categories ALTER COLUMN id SET DEFAULT nextval('post_categ
 --
 
 ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+
+
+--
+-- Name: reviews id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reviews ALTER COLUMN id SET DEFAULT nextval('reviews_id_seq'::regclass);
 
 
 --
@@ -548,6 +624,14 @@ ALTER TABLE ONLY comments
 
 
 --
+-- Name: flags flags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY flags
+    ADD CONSTRAINT flags_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: identities identities_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -569,6 +653,14 @@ ALTER TABLE ONLY post_categories
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: reviews reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reviews
+    ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
 
 
 --
@@ -680,6 +772,27 @@ CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
 --
 
 CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
+
+
+--
+-- Name: index_reviews_on_flag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_flag_id ON reviews USING btree (flag_id);
+
+
+--
+-- Name: index_reviews_on_moderator_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_moderator_id ON reviews USING btree (moderator_id);
+
+
+--
+-- Name: index_reviews_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_topic_id ON reviews USING btree (topic_id);
 
 
 --
@@ -900,6 +1013,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170711113816'),
 ('20170802153702'),
 ('20170803161107'),
-('20170810153334');
+('20170810153334'),
+('20170810153646');
 
 

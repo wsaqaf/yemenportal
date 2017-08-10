@@ -53,6 +53,8 @@ class User < ApplicationRecord
   has_many :votes, dependent: :destroy
   has_many :comments
 
+  has_many :reviews, inverse_of: :moderator
+
   enumerize :role, in: %w(ADMIN MODERATOR MEMBER).map { |role| [role.downcase, role] }.to_h,
     i18n_scope: "user.roles", predicates: true
 
