@@ -1,0 +1,18 @@
+@import "settings";
+
+.alerts {
+  width: 100%;
+  position: fixed;
+  top: 20px;
+}
+
+.alerts__close-button {
+  float: left;
+  font-size: 1.4em;
+  font-weight: 200;
+  color: $dark-gray;
+}
+
+.alerts__queue {
+  display: none;
+}

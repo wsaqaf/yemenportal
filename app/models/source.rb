@@ -43,7 +43,7 @@ class Source < ApplicationRecord
 
   enumerize :state, in: [:valid, :incorrect_path, :incorrect_stucture, :not_full_info, :other], default: :valid
   enumerize :approve_state, in: [:approved, :suggested], default: :suggested
-  enumerize :source_type, in: [:rss, :facebook], default: :rss
+  enumerize :source_type, in: [:rss, :facebook], default: :rss, predicates: true
 
   scope :suggested, -> { where(approve_state: [:suggested, nil]) }
   scope :approved, -> { where(approve_state: :approved) }
@@ -51,5 +51,19 @@ class Source < ApplicationRecord
 
   def facebook_page
     link.match(FACEBOOK_REGEXP).to_s if source_type.facebook?
+  end
+
+  def facebook_link
+    facebook_page
+  end
+
+  def show_internally?
+    !show_outside?
+  end
+
+  private
+
+  def show_outside?
+    facebook? || !iframe_flag
   end
 end

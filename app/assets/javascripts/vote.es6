@@ -26,57 +26,123 @@ class Votable {
   }
 
   upvote() {
-    this._makeVoteRequest(this._upvoteButton())
-    .then(() => {
-      if (this._isDownvoted()) {
-        this._increaseBy(2);
-        this._markUpvoted();
-      } else if (this._isUpvoted()) {
+    if (this._isUpvoted()) {
+      this._makeDeleteVoteRequest().then(() => {
         this._increaseBy(-1);
         this._markNotVoted();
-      } else {
+      });
+    } else if (this._isDownvoted()) {
+      this._makeUpvoteRequest().then(() => {
+        this._increaseBy(2);
+        this._markUpvoted();
+      });
+    } else {
+      this._makeUpvoteRequest().then(() => {
         this._increaseBy(1);
         this._markUpvoted();
-      }
-    });
+      });
+    }
   }
 
   downvote() {
-    this._makeVoteRequest(this._downvoteButton())
-    .then(() => {
-      if (this._isUpvoted()) {
-        this._increaseBy(-2);
-        this._markDownvoted();
-      } else if (this._isDownvoted()) {
+    if (this._isDownvoted()) {
+      this._makeDeleteVoteRequest().then(() => {
         this._increaseBy(1);
         this._markNotVoted();
-      } else {
+      });
+    } else if (this._isUpvoted()) {
+      this._makeDownvoteRequest().then(() => {
+        this._increaseBy(-2);
+        this._markDownvoted();
+      });
+    } else {
+      this._makeDownvoteRequest().then(() => {
         this._increaseBy(-1);
         this._markDownvoted();
-      }
+      });
+    }
+  }
+
+  _makeUpvoteRequest() {
+    this._disableVotingButtons();
+    return new Promise((resolve, reject) => {
+      $.ajax(this._upvoteRequest())
+        .always(() => {
+          this._enableVotingButtons();
+        })
+        .done((data) => {
+          resolve(data);
+        })
+        .fail((error) => {
+          new Alert({text: error.responseJSON.error}).show();
+        });
     });
   }
 
-  _makeVoteRequest($button){
-    var request = {
-      url: ($button.data().path),
-      dataType: "json",
-      method: "PUT",
-      data: []
+  _upvoteRequest() {
+    return {
+      url: this._votePath(),
+      dataType: 'json',
+      method: 'PATCH',
+      data: {type: 'upvote'},
     };
+  }
+
+  _makeDownvoteRequest() {
+    this._disableVotingButtons();
     return new Promise((resolve, reject) => {
-      $.ajax(request).done((data) => {
+      $.ajax(this._downvoteRequest())
+        .always(() => {
+          this._enableVotingButtons();
+        })
+        .done((data) => {
+          resolve(data);
+        })
+        .fail((error) => {
+          new Alert({text: error.responseJSON.error}).show();
+        });
+    });
+  }
+
+  _downvoteRequest() {
+    return {
+      url: this._votePath(),
+      dataType: 'json',
+      method: 'PATCH',
+      data: {type: 'downvote'},
+    };
+  }
+
+  _makeDeleteVoteRequest() {
+    this._disableVotingButtons();
+    return new Promise((resolve, reject) => {
+      $.ajax(this._deleteVoteRequest()).done((data) => {
+        this._enableVotingButtons();
         resolve(data);
       });
     });
   }
 
-  get _upvoteClass(){
-    return 'upvoted'
+  _deleteVoteRequest() {
+    return {
+      url: this._votePath(),
+      dataType: 'json',
+      method: 'DELETE',
+    };
   }
 
-  get _downvoteClass(){
-    return 'downvoted'
+  _votePath() {
+    return this.element.data().votePath;
+  }
+
+  _disableVotingButtons() {
+    this._upvoteButton().attr('disabled', 'disabled');
+    this._downvoteButton().attr('disabled', 'disabled');
+  }
+
+  _enableVotingButtons() {
+    this._upvoteButton().removeAttr('disabled');
+    this._downvoteButton().removeAttr('disabled');
   }
 
   _isDownvoted() {
@@ -88,11 +154,17 @@ class Votable {
   }
 
   _downvoteButton() {
-    return this.element.find('.js-downvote-button');
+    if (!this.__downvoteButton) {
+      this.__downvoteButton = this.element.find('.js-downvote-button');
+    }
+    return this.__downvoteButton;
   }
 
   _upvoteButton() {
-    return this.element.find('.js-upvote-button');
+    if (!this.__upvoteButton) {
+      this.__upvoteButton = this.element.find('.js-upvote-button');
+    }
+    return this.__upvoteButton;
   }
 
   _increaseBy(number) {
@@ -113,6 +185,14 @@ class Votable {
 
   _markDownvoted() {
     this.element.removeClass(this._upvoteClass).addClass(this._downvoteClass);
+  }
+
+  get _upvoteClass(){
+    return 'js-upvoted';
+  }
+
+  get _downvoteClass(){
+    return 'js-downvoted';
   }
 
   _markNotVoted() {

@@ -7,24 +7,22 @@ Rails.application.routes.draw do
 
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
-  resources :topics, only: [:show]
 
-  resources :post, only: [] do
-    resources :comments, only: [:create, :destroy, :index]
-
-    scope module: :posts do
-      resource :reader, only: [:show], controller: 'reader'
+  resources :topics, only: [:show] do
+    scope module: :topics do
+      resource :vote, only: [:update, :destroy]
+      resources :comments, only: [:index]
     end
   end
 
-  resources :posts, only: [:index, :show, :update, :show]
+  resources :posts, only: [:show]
+
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do
       resource :moderator_permissions, only: [:create, :destroy]
       resource :admin_permissions, only: [:create, :destroy]
     end
   end
-  resource :votes, only: [:update]
 
   namespace :sources do
     resources :approve, only: [:update]

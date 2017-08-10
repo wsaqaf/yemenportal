@@ -1,48 +1,11 @@
-.columns.large-6.medium-8.small-12.small-centered.category_list
-  .row
-    .medium-8.columns.source_name
-      .title
-        = title
-      time.js-publication-time
-        = l published_at, format: :created_at
-      br
-      - category_names.each do |name|
-        span.label.secondary = name
-    .medium-4.float-left.columns
-      .button-group.tiny.float-left
-        = link_to t('post.button.back'), :back, class: "button"
-        - if state.pending?
-          = link_to t('post.button.approve'), post_path(model, state: :approved, redirrect_path: path), method: :put, class: "button success"
-          = link_to t('post.button.reject'), post_path(model, state: :rejected, redirrect_path: path), method: :put, class: "button alert"
-  br
-  - if photo_url.present?
+.post-page
+  .post-page__header
     .row
-      .columns.large-4.medium-4
-        img.thumbnail src="#{photo_url}"
-      .columns.large-8.medium-8
-        .description
-          = strip_tags description
-  - else
-    .description
-      = description
-  .row
-    .medium-3.small-3.columns
-      label.float-left.inline = field_name("source_name")
-    .medium-9.small-9.columns
-      = source.name
-  .row
-    .medium-3.small-3.columns
-      label.float-left.inline = field_name("link")
-    .medium-9.small-9.columns
-      = link_to link, read_post_link
+      .post-page__back-button.column.small-2.medium-2.large-2
+        = link_to("⟶ #{st("back")}", root_path, class: "button hollow float-right")
+      .post-page__topic-card.column.small-9.medium-8.large-8
+        = cell("topics/topic/cell", topic)
+      .post-page__close-button.column.small-1.medium-2.large-2
+        = link_to("&times;", post_link, class: "button hollow float-left")
 
-  #comments-list
-    .row
-      = render_comments
-  #comment_form
-    .row
-      = form_for([model, comments.build]) do |f|
-        .field
-          = f.text_area :body
-        .actions
-          = f.submit 'Apply', class: "button", id: 'apply_button', data: {path: post_comments_path(model)}
+  iframe.js-full-size-iframe.post-page__iframe src=post_link

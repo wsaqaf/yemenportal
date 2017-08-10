@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.6.1
--- Dumped by pg_dump version 9.6.1
+-- Dumped from database version 9.6.3
+-- Dumped by pg_dump version 9.6.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -26,6 +26,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 --
 
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
 
 
 SET search_path = public, pg_catalog;
@@ -196,7 +210,8 @@ CREATE TABLE post_tags (
     user_id integer,
     post_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    description character varying
 );
 
 
@@ -226,13 +241,13 @@ ALTER SEQUENCE post_tags_id_seq OWNED BY post_tags.id;
 CREATE TABLE posts (
     id integer NOT NULL,
     description text,
-    published_at timestamp without time zone NOT NULL,
+    published_at timestamp without time zone,
     link character varying NOT NULL,
-    title character varying NOT NULL,
+    title character varying,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     state character varying DEFAULT 'pending'::character varying NOT NULL,
-    photo_url character varying,
+    image_url character varying,
     topic_id integer,
     stemmed_text text DEFAULT ''::text,
     source_id integer NOT NULL
@@ -384,7 +399,8 @@ CREATE TABLE topics (
     id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    topic_size integer
+    topic_size integer,
+    voting_result integer DEFAULT 0
 );
 
 
@@ -476,8 +492,8 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 CREATE TABLE votes (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    post_id integer NOT NULL,
-    positive boolean,
+    topic_id integer NOT NULL,
+    value integer,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -748,6 +764,13 @@ CREATE INDEX index_post_tags_on_user_id ON post_tags USING btree (user_id);
 
 
 --
+-- Name: index_posts_on_link; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_link ON posts USING btree (link);
+
+
+--
 -- Name: index_posts_on_published_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -790,6 +813,13 @@ CREATE INDEX index_sources_on_user_id ON sources USING btree (user_id);
 
 
 --
+-- Name: index_topics_on_voting_result; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topics_on_voting_result ON topics USING btree (voting_result);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -825,10 +855,10 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
--- Name: index_votes_on_post_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_votes_on_topic_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_votes_on_post_id ON votes USING btree (post_id);
+CREATE INDEX index_votes_on_topic_id ON votes USING btree (topic_id);
 
 
 --
@@ -879,6 +909,14 @@ ALTER TABLE ONLY post_categories
 
 
 --
+-- Name: votes fk_rails_4d0d93784c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes
+    ADD CONSTRAINT fk_rails_4d0d93784c FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE;
+
+
+--
 -- Name: identities fk_rails_5373344100; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -908,14 +946,6 @@ ALTER TABLE ONLY posts
 
 ALTER TABLE ONLY source_logs
     ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
-
-
---
--- Name: votes fk_rails_9801d647c1; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY votes
-    ADD CONSTRAINT fk_rails_9801d647c1 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -989,8 +1019,11 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170605180442'),
 ('20170605181632'),
 ('20170609161819'),
+('20170627093620'),
 ('20170704140350'),
 ('20170710164314'),
-('20170711113816');
+('20170711113816'),
+('20170802153702'),
+('20170803161107');
 
 

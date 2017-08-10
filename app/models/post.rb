@@ -4,19 +4,20 @@
 #
 #  id           :integer          not null, primary key
 #  description  :text
-#  published_at :datetime         not null
+#  published_at :datetime
 #  link         :string           not null
-#  title        :string           not null
+#  title        :string
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  state        :string           default("pending"), not null
-#  photo_url    :string
+#  image_url    :string
 #  topic_id     :integer
 #  stemmed_text :text             default("")
 #  source_id    :integer          not null
 #
 # Indexes
 #
+#  index_posts_on_link          (link)
 #  index_posts_on_published_at  (published_at)
 #  index_posts_on_source_id     (source_id)
 #  index_posts_on_topic_id      (topic_id)
@@ -35,9 +36,9 @@ class Post < ApplicationRecord
   has_many :users, through: :post_tags
 
   belongs_to :source
-  belongs_to :topic, optional: true, counter_cache: :topic_size
+  belongs_to :topic, counter_cache: :topic_size, touch: true
 
-  validates :title, :published_at, :link, presence: true
+  validates :published_at, :link, presence: true
   validates :link, uniqueness: true
 
   scope :ordered_by_date, -> { order("published_at DESC") }
@@ -50,11 +51,31 @@ class Post < ApplicationRecord
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 
+  def self.latest
+    order("created_at ASC").first
+  end
+
   def self.available_states
     state.values
   end
 
   def same_posts
     (topic.posts.ordered_by_date - [self]) if topic
+  end
+
+  def source_name
+    source.name
+  end
+
+  def category_names
+    if categories.present?
+      categories.map(&:name)
+    else
+      []
+    end
+  end
+
+  def show_internally?
+    source.show_internally?
   end
 end
