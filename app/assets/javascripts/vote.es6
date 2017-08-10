@@ -66,10 +66,16 @@ class Votable {
   _makeUpvoteRequest() {
     this._disableVotingButtons();
     return new Promise((resolve, reject) => {
-      $.ajax(this._upvoteRequest()).done((data) => {
-        this._enableVotingButtons();
-        resolve(data);
-      });
+      $.ajax(this._upvoteRequest())
+        .always(() => {
+          this._enableVotingButtons();
+        })
+        .done((data) => {
+          resolve(data);
+        })
+        .fail((error) => {
+          new Alert({text: error.responseJSON.error}).show();
+        });
     });
   }
 
@@ -85,10 +91,16 @@ class Votable {
   _makeDownvoteRequest() {
     this._disableVotingButtons();
     return new Promise((resolve, reject) => {
-      $.ajax(this._downvoteRequest()).done((data) => {
-        this._enableVotingButtons();
-        resolve(data);
-      });
+      $.ajax(this._downvoteRequest())
+        .always(() => {
+          this._enableVotingButtons();
+        })
+        .done((data) => {
+          resolve(data);
+        })
+        .fail((error) => {
+          new Alert({text: error.responseJSON.error}).show();
+        });
     });
   }
 
