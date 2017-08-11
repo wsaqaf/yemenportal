@@ -17,9 +17,9 @@ class Flag < ApplicationRecord
   end
 
   def self.include_topic_reviewed_by_user(topic, user)
-    joins("LEFT JOIN reviews ON reviews.flag_id = flags.id
-      AND reviews.topic_id = #{topic.id} AND reviews.moderator_id = #{user.id}")
-      .group(:id).select("flags.*, (COUNT(reviews.*) > 0) AS topic_reviewed_by_user")
+    joins("LEFT JOIN reviews AS reviews_by_user ON reviews_by_user.flag_id = flags.id
+      AND reviews_by_user.topic_id = #{topic.id} AND reviews_by_user.moderator_id = #{user.id}")
+      .group(:id).select("flags.*, (COUNT(reviews_by_user.*) > 0) AS topic_reviewed_by_user")
   end
 
   def number_of_reviews_for_topic
