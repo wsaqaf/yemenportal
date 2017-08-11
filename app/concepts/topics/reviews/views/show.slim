@@ -5,7 +5,5 @@
         = concept("topics/topic/cell", topic).call
       .topic-reviews__flags
         - flags.each do |flag|
-          .topic-reviews__flag style="background-color: ##{flag.color}"
-            .topic-reviews__flag-name = flag.name
-            .topic-reviews__flag-count = flag.number_of_reviews_for_topic
-            = flag.topic_reviewed_by_user?
+          .topic-reviews__flag
+            = concept("topics/flag/cell", flag).call

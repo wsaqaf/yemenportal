@@ -7,7 +7,7 @@ class Topics::ReviewsPage
   end
 
   def flags
-    Flag.all
+    ::Flag.all
       .include_number_of_reviews_for_topic(topic)
       .include_topic_reviewed_by_user(topic, user)
   end
