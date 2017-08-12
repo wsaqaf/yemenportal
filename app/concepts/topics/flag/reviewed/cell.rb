@@ -5,9 +5,9 @@ class Topics::Flag::Reviewed::Cell < Topics::Flag::Cell
     "topic-flag--flagged"
   end
 
-  def button(&block)
+  def button
     button_to(topic_review_path(topic, flag.review), button_options) do
-      block.call
+      yield
     end
   end
 

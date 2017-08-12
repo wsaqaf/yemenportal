@@ -1,6 +1,6 @@
 require "rails_helper"
 
-describe "Topic Reviews" do
+describe "Topic Reviews", type: :request do
   let(:topic) { create(:topic) }
 
   describe "POST /topics/:topic_id/reviews" do

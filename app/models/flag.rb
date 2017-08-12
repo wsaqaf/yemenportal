@@ -19,8 +19,4 @@ class Flag < ApplicationRecord
   def number_of_reviews_for_topic
     attributes["number_of_reviews_for_topic"] || 0
   end
-
-  def topic_reviewed_by_user?
-    attributes["topic_reviewed_by_user"] || false
-  end
 end

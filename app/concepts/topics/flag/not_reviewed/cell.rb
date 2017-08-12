@@ -5,13 +5,13 @@ class Topics::Flag::NotReviewed::Cell < Topics::Flag::Cell
     "topic-flag--unflagged"
   end
 
-  def button(&block)
+  def button
     button_to(topic_reviews_path(topic), button_options) do
-      block.call
+      yield
     end
   end
 
   def button_options
-    super.merge({ method: :post, params: {flag_id: flag.id} })
+    super.merge({ method: :post, params: { flag_id: flag.id } })
   end
 end

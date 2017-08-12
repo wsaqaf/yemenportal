@@ -20,10 +20,19 @@
     }
   }
 
+  &--zero {
+    opacity: 0.4;
+  }
+
   button {
     padding: 8px;
     color: #fff;
     cursor: pointer;
+  }
+
+  .topic-flag__element {
+    padding: 8px;
+    color: #fff;
   }
 }
 

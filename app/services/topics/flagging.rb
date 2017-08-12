@@ -8,11 +8,10 @@ class Topics::Flagging
   def create_review
     if flag.resolve?
       delete_all_other_reviews
-      create_review_instance
     else
       delete_review_with_resolve_flag
-      create_review_instance
     end
+    create_review_instance
   end
 
   private

@@ -14,12 +14,13 @@ describe Topics::ReviewsPage do
   describe "#flags" do
     it "fetches appropriate list of flags" do
       flag_class = class_double(Flag).as_stubbed_const
+      review_class = class_double(Review).as_stubbed_const
       allow(flag_class).to receive(:all).and_return(flag_class)
-      allow(flag_class).to receive(:include_number_of_reviews_for_topic).and_return(flag_class)
-      allow(flag_class).to receive(:include_topic_reviewed_by_user).and_return(flag_class)
+      allow(flag_class).to receive(:include_number_of_reviews_for_topic).and_return([double])
+      allow(review_class).to receive(:where).and_return([double(flag: double)])
 
       expect(flag_class).to receive(:include_number_of_reviews_for_topic).with(topic)
-      expect(flag_class).to receive(:include_topic_reviewed_by_user).with(topic, user)
+      expect(review_class).to receive(:where).with(moderator: user, topic: topic)
 
       reviews_page.flags
     end

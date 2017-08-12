@@ -1,6 +1,8 @@
 class Topics::Flag::Cell < Application::Cell
   builds do |flag, _options|
-    if flag.reviewed?
+    if flag.read_only?
+      Topics::Flag::ReadOnly::Cell
+    elsif flag.reviewed?
       Topics::Flag::Reviewed::Cell
     else
       Topics::Flag::NotReviewed::Cell
