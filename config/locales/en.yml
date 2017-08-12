@@ -139,6 +139,10 @@ en:
       review: Review
       related_posts: Related posts
       details: Details
+    reviews:
+      create:
+        successfully_created: Flag was successfully added
+        not_created: Something went wrong. Flag wasn't added.
   posts:
     show:
       back: Back

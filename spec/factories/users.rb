@@ -47,5 +47,9 @@ FactoryGirl.define do
     sequence(:last_name) { |n| "last_name_#{n}" }
     password "12345678"
     confirmed_at Time.now
+
+    factory :user_moderator do
+      role "moderator"
+    end
   end
 end
