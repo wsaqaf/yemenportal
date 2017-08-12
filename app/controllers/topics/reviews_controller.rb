@@ -15,6 +15,10 @@ class Topics::ReviewsController < ApplicationController
   end
 
   def destroy
+    authorize review, :destroy?
+    if review.destroy
+      redirect_to(topic_reviews_path(topic), notice: t(".successfully_destroyed"))
+    end
   end
 
   private
@@ -33,5 +37,9 @@ class Topics::ReviewsController < ApplicationController
 
   def flag
     Flag.find(params[:flag_id])
+  end
+
+  def review
+    Review.find(params[:id])
   end
 end

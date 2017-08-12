@@ -141,8 +141,10 @@ en:
       details: Details
     reviews:
       create:
-        successfully_created: Flag was successfully added
+        successfully_created: Flag was successfully added.
         not_created: Something went wrong. Flag wasn't added.
+      destroy:
+        successfully_destroyed: Flag was successfully deleted.
   posts:
     show:
       back: Back
