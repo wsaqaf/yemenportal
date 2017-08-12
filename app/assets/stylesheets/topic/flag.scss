@@ -1,8 +1,4 @@
 .topic-flag {
-  padding: 8px;
-  color: #fff;
-  cursor: pointer;
-
   html[dir="rtl"] & {
     margin-left: 8px;
   }
@@ -22,6 +18,12 @@
     &:hover {
       opacity: 0.8;
     }
+  }
+
+  button {
+    padding: 8px;
+    color: #fff;
+    cursor: pointer;
   }
 }
 

@@ -6,4 +6,4 @@
       .topic-reviews__flags
         - flags.each do |flag|
           .topic-reviews__flag
-            = concept("topics/flag/cell", flag).call
+            = concept("topics/flag/cell", flag, topic: topic).call
