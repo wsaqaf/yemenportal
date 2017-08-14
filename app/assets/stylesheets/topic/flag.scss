@@ -1,0 +1,53 @@
+.topic-flag {
+  html[dir="rtl"] & {
+    margin-left: 8px;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-right: 8px;
+  }
+
+  &--unflagged {
+    opacity: 0.4;
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &--flagged {
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  &--zero {
+    opacity: 0.4;
+  }
+
+  button {
+    padding: 8px;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .topic-flag__element {
+    padding: 8px;
+    color: #fff;
+  }
+}
+
+.topic-flag__name {
+  display: inline-block;
+}
+
+.topic-flag__count {
+  display: inline-block;
+
+  html[dir="rtl"] & {
+    margin-right: 8px;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-left: 8px;
+  }
+}

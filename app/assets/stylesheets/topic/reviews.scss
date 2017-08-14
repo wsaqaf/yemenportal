@@ -1,0 +1,36 @@
+.topic-reviews {
+}
+
+.topic-reviews__header {
+  margin-bottom: 20px;
+}
+
+.topic-reviews__flag {
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+
+.topic-reviews__comments {
+  margin-top: 20px;
+}
+
+.topic-reviews__comment {
+  margin-bottom: 15px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.topic-reviews__new-comment {
+  margin-top: 20px;
+
+  textarea {
+    margin-bottom: 10px;
+  }
+}
+
+.topic-reviews__warning {
+  font-size: 1.2em;
+}

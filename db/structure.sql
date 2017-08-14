@@ -28,20 +28,6 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
---
--- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
---
-
-CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
-
-
---
--- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
---
-
-COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
-
-
 SET search_path = public, pg_catalog;
 
 --
@@ -103,24 +89,22 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 
 
 --
--- Name: comments; Type: TABLE; Schema: public; Owner: -
+-- Name: flags; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE comments (
+CREATE TABLE flags (
     id integer NOT NULL,
-    user_id integer,
-    body text NOT NULL,
-    post_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    name character varying,
+    color character varying,
+    resolve boolean DEFAULT false NOT NULL
 );
 
 
 --
--- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: flags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE comments_id_seq
+CREATE SEQUENCE flags_id_seq
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -129,10 +113,10 @@ CREATE SEQUENCE comments_id_seq
 
 
 --
--- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: flags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE comments_id_seq OWNED BY comments.id;
+ALTER SEQUENCE flags_id_seq OWNED BY flags.id;
 
 
 --
@@ -201,40 +185,6 @@ ALTER SEQUENCE post_categories_id_seq OWNED BY post_categories.id;
 
 
 --
--- Name: post_tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE post_tags (
-    id integer NOT NULL,
-    name character varying,
-    user_id integer,
-    post_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    description character varying
-);
-
-
---
--- Name: post_tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE post_tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: post_tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE post_tags_id_seq OWNED BY post_tags.id;
-
-
---
 -- Name: posts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -271,6 +221,70 @@ CREATE SEQUENCE posts_id_seq
 --
 
 ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
+
+
+--
+-- Name: review_comments; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE review_comments (
+    id integer NOT NULL,
+    author_id integer,
+    topic_id integer,
+    body text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: review_comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE review_comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: review_comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE review_comments_id_seq OWNED BY review_comments.id;
+
+
+--
+-- Name: reviews; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE reviews (
+    id integer NOT NULL,
+    topic_id integer,
+    flag_id integer,
+    moderator_id integer
+);
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE reviews_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: reviews_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE reviews_id_seq OWNED BY reviews.id;
 
 
 --
@@ -358,37 +372,6 @@ CREATE SEQUENCE sources_id_seq
 --
 
 ALTER SEQUENCE sources_id_seq OWNED BY sources.id;
-
-
---
--- Name: tags; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE tags (
-    id integer NOT NULL,
-    name character varying,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: tags_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE tags_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: tags_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE tags_id_seq OWNED BY tags.id;
 
 
 --
@@ -526,10 +509,10 @@ ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_s
 
 
 --
--- Name: comments id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: flags id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_id_seq'::regclass);
+ALTER TABLE ONLY flags ALTER COLUMN id SET DEFAULT nextval('flags_id_seq'::regclass);
 
 
 --
@@ -547,17 +530,24 @@ ALTER TABLE ONLY post_categories ALTER COLUMN id SET DEFAULT nextval('post_categ
 
 
 --
--- Name: post_tags id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_tags ALTER COLUMN id SET DEFAULT nextval('post_tags_id_seq'::regclass);
-
-
---
 -- Name: posts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY posts ALTER COLUMN id SET DEFAULT nextval('posts_id_seq'::regclass);
+
+
+--
+-- Name: review_comments id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY review_comments ALTER COLUMN id SET DEFAULT nextval('review_comments_id_seq'::regclass);
+
+
+--
+-- Name: reviews id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reviews ALTER COLUMN id SET DEFAULT nextval('reviews_id_seq'::regclass);
 
 
 --
@@ -572,13 +562,6 @@ ALTER TABLE ONLY source_logs ALTER COLUMN id SET DEFAULT nextval('source_logs_id
 --
 
 ALTER TABLE ONLY sources ALTER COLUMN id SET DEFAULT nextval('sources_id_seq'::regclass);
-
-
---
--- Name: tags id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY tags ALTER COLUMN id SET DEFAULT nextval('tags_id_seq'::regclass);
 
 
 --
@@ -619,11 +602,11 @@ ALTER TABLE ONLY categories
 
 
 --
--- Name: comments comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: flags flags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY comments
-    ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY flags
+    ADD CONSTRAINT flags_pkey PRIMARY KEY (id);
 
 
 --
@@ -643,19 +626,27 @@ ALTER TABLE ONLY post_categories
 
 
 --
--- Name: post_tags post_tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_tags
-    ADD CONSTRAINT post_tags_pkey PRIMARY KEY (id);
-
-
---
 -- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY posts
     ADD CONSTRAINT posts_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: review_comments review_comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY review_comments
+    ADD CONSTRAINT review_comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: reviews reviews_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reviews
+    ADD CONSTRAINT reviews_pkey PRIMARY KEY (id);
 
 
 --
@@ -683,14 +674,6 @@ ALTER TABLE ONLY sources
 
 
 --
--- Name: tags tags_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY tags
-    ADD CONSTRAINT tags_pkey PRIMARY KEY (id);
-
-
---
 -- Name: topics topics_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -715,20 +698,6 @@ ALTER TABLE ONLY votes
 
 
 --
--- Name: index_comments_on_post_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_comments_on_post_id ON comments USING btree (post_id);
-
-
---
--- Name: index_comments_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_comments_on_user_id ON comments USING btree (user_id);
-
-
---
 -- Name: index_identities_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -747,20 +716,6 @@ CREATE INDEX index_post_categories_on_category_id ON post_categories USING btree
 --
 
 CREATE INDEX index_post_categories_on_post_id ON post_categories USING btree (post_id);
-
-
---
--- Name: index_post_tags_on_post_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_post_tags_on_post_id ON post_tags USING btree (post_id);
-
-
---
--- Name: index_post_tags_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_post_tags_on_user_id ON post_tags USING btree (user_id);
 
 
 --
@@ -789,6 +744,41 @@ CREATE INDEX index_posts_on_source_id ON posts USING btree (source_id);
 --
 
 CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
+
+
+--
+-- Name: index_review_comments_on_author_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_review_comments_on_author_id ON review_comments USING btree (author_id);
+
+
+--
+-- Name: index_review_comments_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_review_comments_on_topic_id ON review_comments USING btree (topic_id);
+
+
+--
+-- Name: index_reviews_on_flag_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_flag_id ON reviews USING btree (flag_id);
+
+
+--
+-- Name: index_reviews_on_moderator_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_moderator_id ON reviews USING btree (moderator_id);
+
+
+--
+-- Name: index_reviews_on_topic_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_reviews_on_topic_id ON reviews USING btree (topic_id);
 
 
 --
@@ -869,14 +859,6 @@ CREATE INDEX index_votes_on_user_id ON votes USING btree (user_id);
 
 
 --
--- Name: comments fk_rails_03de2dc08c; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY comments
-    ADD CONSTRAINT fk_rails_03de2dc08c FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-
---
 -- Name: sources fk_rails_06e2fcb9c8; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -890,14 +872,6 @@ ALTER TABLE ONLY sources
 
 ALTER TABLE ONLY post_categories
     ADD CONSTRAINT fk_rails_1c8744edf5 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
-
-
---
--- Name: comments fk_rails_2fd19c0db7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY comments
-    ADD CONSTRAINT fk_rails_2fd19c0db7 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -922,14 +896,6 @@ ALTER TABLE ONLY votes
 
 ALTER TABLE ONLY identities
     ADD CONSTRAINT fk_rails_5373344100 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
-
-
---
--- Name: post_tags fk_rails_6dddf1dc62; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_tags
-    ADD CONSTRAINT fk_rails_6dddf1dc62 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
 
 
 --
@@ -973,14 +939,6 @@ ALTER TABLE ONLY posts
 
 
 --
--- Name: post_tags fk_rails_fdf74b486b; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY post_tags
-    ADD CONSTRAINT fk_rails_fdf74b486b FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
-
-
---
 -- PostgreSQL database dump complete
 --
 
@@ -1019,11 +977,13 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170605180442'),
 ('20170605181632'),
 ('20170609161819'),
-('20170627093620'),
 ('20170704140350'),
 ('20170710164314'),
 ('20170711113816'),
 ('20170802153702'),
-('20170803161107');
+('20170803161107'),
+('20170810153334'),
+('20170810153646'),
+('20170814104111');
 
 

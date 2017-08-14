@@ -1,0 +1,28 @@
+@import "settings";
+
+.topic-review-comment {
+}
+
+.topic-review-comment__author {
+  display: inline-block;
+  font-weight: 500;
+}
+
+.topic-review-comment__subheader {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: $medium-gray;
+  font-size: 0.9em;
+
+  html[dir="rtl"] & {
+    margin-right: 1em;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-left: 1em;
+  }
+}
+
+.topic-review-comment__delete {
+  margin-top: 5px;
+}

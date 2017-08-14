@@ -34,3 +34,5 @@
     .topic__footer
       .topic__footer-item
         = link_to(st("discuss"), topic_comments_path(topic), class: "topic__footer-discuss-link")
+      .topic__footer-item
+        = link_to(st("review"), topic_reviews_path(topic), class: "topic__footer-discuss-link")

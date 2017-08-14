@@ -136,8 +136,24 @@ en:
   topics:
     topic:
       discuss: Discuss
+      review: Review
       related_posts: Related posts
       details: Details
+    reviews:
+      create:
+        successfully_created: Flag was successfully added.
+        not_created: Something went wrong. Flag wasn't added.
+      destroy:
+        successfully_destroyed: Flag was successfully deleted.
+      comment: "Send Comment"
+      only_moderators_can_review_topics: Only moderators can review topics.
+    review_comments:
+      create:
+        successfully_created: Comment was successfully added.
+        not_created: Something went wrong. Comment wasn't added.
+      destroy:
+        successfully_destroyed: Comment was successfully deleted.
+        not_destroyed: Something went wrong. Can't delete comment.
   posts:
     show:
       back: Back

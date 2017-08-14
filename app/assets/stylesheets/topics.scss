@@ -138,6 +138,22 @@
   }
 }
 
+.topic__footer-item {
+  display: inline-block;
+
+  html[dir="rtl"] & {
+    margin-left: 0.5em;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-right: 0.5em;
+  }
+
+  &:last-child {
+    margin: 0;
+  }
+}
+
 .topics__pagination {
   text-align: center;
 }

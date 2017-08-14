@@ -14,6 +14,7 @@ class Application::Cell < Rails::View
   include WillPaginate::ActionView
   include SimpleForm::ActionViewExtensions::FormHelper
   include Pundit
+  include Devise::Controllers::Helpers
 
   include ::Cell::Builder
 
