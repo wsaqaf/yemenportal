@@ -4,12 +4,16 @@ class ReviewCommentPolicy < ApplicationPolicy
   end
 
   def destroy?
-    (moderator? || admin?) && (review_comment.author == current_user)
+    (moderator? && author?) || admin?
   end
 
   private
 
   def review_comment
     record
+  end
+
+  def author?
+    review_comment.author == current_user
   end
 end

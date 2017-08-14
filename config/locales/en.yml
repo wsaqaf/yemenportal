@@ -146,6 +146,7 @@ en:
       destroy:
         successfully_destroyed: Flag was successfully deleted.
       comment: "Send Comment"
+      only_moderators_can_review_topics: Only moderators can review topics.
     review_comments:
       create:
         successfully_created: Comment was successfully added.

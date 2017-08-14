@@ -18,3 +18,5 @@
               = f.input :body, label: false
               .button-group
                 = f.submit st('.comment'), class: "button"
+        - else
+          .topic-reviews__warning= st(".only_moderators_can_review_topics")
