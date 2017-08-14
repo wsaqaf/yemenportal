@@ -5,7 +5,7 @@ class PostProxy
   end
 
   def iframe_url
-    response['location']
+    response["location"]
   end
 
   private
@@ -16,7 +16,7 @@ class PostProxy
     @_response ||= Net::HTTP.post_form(proxy_url, url: post_link, proxy_secret: proxy_secret)
   rescue
     {
-      'location' => post_link
+      "location" => post_link
     }
   end
 
