@@ -104,3 +104,26 @@ Style/AlignArray:
 
 Style/WordArray:
   Enabled: false
+
+Lint/EndAlignment:
+  Enabled: false
+
+Style/ElseAlignment:
+  Exclude:
+    # This cop doesn't work well with if with memoization:
+    # @_memo = if smth?
+    #   do_somethign
+    # else
+    #   do_something_else
+    # end
+    - app/controllers/topics/review_comments_controller.rb
+
+Style/IndentationWidth:
+  Exclude:
+    # This cop doesn't work well with if with memoization:
+    # @_memo = if smth?
+    #   do_somethign
+    # else
+    #   do_something_else
+    # end
+    - app/controllers/topics/review_comments_controller.rb

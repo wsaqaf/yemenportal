@@ -10,13 +10,11 @@
       .topic-reviews__comments
         - comments.each do |comment|
           .topic-reviews__comment
-            .topic-review-comment
-              .topic-review-comment__author= comment.author.full_name
-              .topic-review-comment__body= comment.body
-              .topic-review-comment__delete= button_to "Delete", topic_review_comment_path(topic, comment), method: :delete
+            = concept("topics/reviews/comment/cell", comment, topic: topic).call
 
-        .topic-reviews__new-comment
-          = simple_form_for [topic, new_review_comment] do |f|
-            = f.input :body, label: false
-            .button-group
-              = f.submit st('.comment'), class: "button"
+        - if can_current_user_create_comment?
+          .topic-reviews__new-comment
+            = simple_form_for [topic, new_review_comment] do |f|
+              = f.input :body, label: false
+              .button-group
+                = f.submit st('.comment'), class: "button"

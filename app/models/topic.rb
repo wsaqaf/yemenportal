@@ -17,7 +17,7 @@ class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :reviews, dependent: :destroy
-  has_many :review_comments, dependent: :destroy
+  has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
 
   scope :ordered_by_date, -> { order("created_at DESC") }
 
