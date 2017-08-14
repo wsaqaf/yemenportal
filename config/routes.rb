@@ -17,11 +17,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :posts, only: [:show] do
-    scope module: :posts do
-      resource :content, only: [:show]
-    end
-  end
+  resources :posts, only: [:show]
 
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do
