@@ -51,8 +51,7 @@ class User < ApplicationRecord
   validates :email, uniqueness: true, email: true
 
   has_many :votes, dependent: :destroy
-  has_many :comments
-
+  has_many :review_comments, inverse_of: :author, dependent: :destroy
   has_many :reviews, inverse_of: :moderator
 
   enumerize :role, in: %w(ADMIN MODERATOR MEMBER).map { |role| [role.downcase, role] }.to_h,

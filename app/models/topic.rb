@@ -17,6 +17,7 @@ class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :reviews, dependent: :destroy
+  has_many :review_comments, dependent: :destroy
 
   scope :ordered_by_date, -> { order("created_at DESC") }
 
@@ -25,6 +26,10 @@ class Topic < ApplicationRecord
       .group(:id).select("topics.*,
         (COUNT(votes.*) > 0 AND SUM(votes.value) > 0) AS upvoted_by_user,
         (COUNT(votes.*) > 0 AND SUM(votes.value) < 0) AS downvoted_by_user")
+  end
+
+  def self.include_review_comments
+    includes(review_comments: [:author])
   end
 
   def upvoted_by_user?

@@ -12,12 +12,20 @@ class Topics::ReviewsPage
     end
   end
 
+  def comments
+    topic.review_comments
+  end
+
+  def new_review_comment
+    comments.new
+  end
+
   private
 
   attr_reader :user
 
   def all_flags
-    ::Flag.all.include_number_of_reviews_for_topic(topic)
+    @_all_flags ||= ::Flag.all.include_number_of_reviews_for_topic(topic)
   end
 
   def reviews

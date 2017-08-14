@@ -145,6 +145,14 @@ en:
         not_created: Something went wrong. Flag wasn't added.
       destroy:
         successfully_destroyed: Flag was successfully deleted.
+      comment: "Send Comment"
+    review_comments:
+      create:
+        successfully_created: Comment was successfully added.
+        not_created: Something went wrong. Comment wasn't added.
+      destroy:
+        successfully_destroyed: Comment was successfully deleted.
+        not_destroyed: Something went wrong. Can't delete comment.
   posts:
     show:
       back: Back

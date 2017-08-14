@@ -28,9 +28,6 @@ class Post < ApplicationRecord
 
   has_many :post_category
   has_many :categories, through: :post_category
-  has_many :votes
-  has_many :users, through: :votes
-  has_many :comments
 
   belongs_to :source
   belongs_to :topic, counter_cache: :topic_size, touch: true

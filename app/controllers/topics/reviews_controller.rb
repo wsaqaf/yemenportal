@@ -28,7 +28,7 @@ class Topics::ReviewsController < ApplicationController
   end
 
   def topic
-    ::Topic.find(params[:topic_id])
+    ::Topic.include_review_comments.find(params[:topic_id])
   end
 
   def flagging
