@@ -34,6 +34,9 @@ Rails.application.routes.draw do
   resources :feedbacks, only: [:create]
   get "contact_us", to: "feedbacks#new", as: :new_feedback
 
+  get "terms_of_use", to: "static_pages#terms_of_use"
+  get "about_us", to: "static_pages#about_us"
+
   namespace :api do
     resources :sources, only: [:update]
   end
