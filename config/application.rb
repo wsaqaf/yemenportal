@@ -33,7 +33,7 @@ module Yemenportal
       g.fixture_replacement :factory_girl, dir: "spec/factories"
     end
 
-    config.i18n.default_locale = :en
+    config.i18n.default_locale = :ar
     config.active_record.schema_format = :sql
     config.active_job.queue_adapter = :sidekiq
 
