@@ -31,6 +31,9 @@ Rails.application.routes.draw do
     resources :suggest, only: [:create, :new]
   end
 
+  resources :feedbacks, only: [:create]
+  get "contact_us", to: "feedbacks#new", as: :new_feedback
+
   namespace :api do
     resources :sources, only: [:update]
   end

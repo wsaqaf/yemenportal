@@ -1,2 +1,5 @@
 ar:
   site_name: "YemenPortal"
+  feedbacks:
+    new:
+      submit: عرض

@@ -157,6 +157,9 @@ en:
   posts:
     show:
       back: Back
+  feedbacks:
+    new:
+      submit: Submit
   activerecord:
     errors:
       models:

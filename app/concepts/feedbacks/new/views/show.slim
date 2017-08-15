@@ -1,0 +1,11 @@
+.row
+  .columens.mobile-12.medium-10.medium-centered
+    h1 إتصل بنا
+    p للتواصل معنا نرجو تعبئة الاستمارة أدناه.
+
+    = simple_form_for feedback do |f|
+      = f.input :name
+      = f.input :email
+      = f.input :reason
+      = f.input :body, as: :text, input_html: { rows: 5 }
+      = f.submit st(".submit"), class: "button"
