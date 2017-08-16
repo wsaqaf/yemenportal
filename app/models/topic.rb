@@ -20,6 +20,8 @@ class Topic < ApplicationRecord
   has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
 
   scope :ordered_by_date, -> { order("created_at DESC") }
+  scope :ordered_by_voting_result, -> { order("voting_result DESC") }
+  scope :ordered_by_size, -> { order("topic_size DESC") }
 
   def self.include_voted_by_user(user)
     joins("LEFT JOIN votes ON votes.topic_id = topics.id AND votes.user_id = #{user.id}")

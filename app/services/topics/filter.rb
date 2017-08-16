@@ -49,6 +49,13 @@ class Topics::Filter
   end
 
   def sorting_filter
-    -> (topics) { topics.ordered_by_date }
+    case params.set.to_sym
+    when :new
+      -> (topics) { topics.ordered_by_date }
+    when :highly_voted
+      -> (topics) { topics.ordered_by_voting_result.ordered_by_date }
+    when :most_covered
+      -> (topics) { topics.ordered_by_size.ordered_by_voting_result }
+    end
   end
 end

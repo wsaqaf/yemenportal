@@ -11,7 +11,7 @@ class Topics::Filter::Params
 
   attr_reader :page, :q
 
-  enumerize :set, in: [:new, :highly_voted, :most_viewed, :most_covered], default: :most_covered
+  enumerize :set, in: [:new, :highly_voted, :most_covered], default: :most_covered
 
   enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :weekly,
     predicates: true
