@@ -2,7 +2,7 @@
   .columns.small-12.medium-12.large-12.large-centered
     .topics
       .topics__spotlight.row
-        .column
+        .column.small-12
           = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
             .topics-spotlight__query
               = text_field_tag :q, filter_params.q, disabled: true, placeholder: st(".coming_soon")

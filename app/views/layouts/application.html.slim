@@ -12,43 +12,24 @@ html dir="rtl" lang="ar"
 
   body
     #fb-root data=Rails.application.secrets.facebook.slice("app_id", "api_version", "locale")
-    .title-bar data-hide-for="medium" data-responsive-toggle="example-menu"
-      button.menu-icon data-toggle="example-menu" type="button"
-      .title-bar-title
-    #example-menu.top-bar
-      .top-bar-title.float-right
-        strong = link_to t('site_name'), root_path
-      #responsive-menu
-        - if policy(User).moderator?
-          .top-bar-right
-            ul.dropdown.menu data-dropdown-menu=""
-              li
-                = link_to t('menu.sources.name'), '#'
-                ul.menu.vertical
-                  li
-                    = link_to t('menu.sources.approved'), sources_path(approve_state: Source.approve_state.approved)
-                  li
-                    = link_to t('menu.sources.suggested'), sources_path(approve_state: Source.approve_state.suggested)
-              - if policy(User).admin?
-                li
-                  = link_to t('menu.categories'), categories_path
-              - if policy(User).admin?
-                li = link_to t('menu.users.name'), users_path
+
+    .top-navigation
+      ul.top-navigation__menu.top-navigation__items
+        li.top-navigation__title= link_to t("site_name"), root_path
+        li= link_to t("menu.sources.name"), sources_path
+        - if user_signed_in? && current_user.admin?
+          li= link_to t("menu.categories"), categories_path
+          li= link_to t("menu.users.name"), users_path
+        - if !user_signed_in? || current_user.member?
+          li= link_to t(".contact_us"), new_feedback_path
+
+      ul.top-navigation__actions.top-navigation__items
+        - if user_signed_in?
+          li= link_to t("menu.edit_profile"), edit_user_path(current_user)
+          li= link_to t("devise.sign_out"), destroy_user_session_path, method: :delete
         - else
-          .top-bar-right
-            ul.dropdown.menu data-dropdown-menu=""
-              li
-                = link_to t('menu.sources.name'), sources_path(approve_state: Source.approve_state.approved)
-        .top-bar-left
-          ul.menu
-            - if current_user
-              li
-                = link_to t('menu.edit_profile'), edit_user_path(current_user)
-              li
-                = link_to t('devise.sign_out'), destroy_user_session_path, method: :delete
-            - else
-              li
-                = link_to t('devise.log_in'), new_user_session_path
+          li= link_to t("devise.log_in"), new_user_session_path
+
     == yield
 
     .footer
