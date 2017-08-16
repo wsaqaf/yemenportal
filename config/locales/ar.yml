@@ -25,3 +25,13 @@ ar:
         note_about_news_or_source: ملاحظة حول خبر أو مصدر ما
         general_proposal: اقتراح عام أو شكوى
         other: غير ذلك
+    topics/filter/params:
+      set:
+        new: جديد
+        highly_voted: صوت بشدة
+        most_covered: معظمها مغطى
+      time:
+        daily: يوم
+        weekly: أسبوع
+        monthly: شهر
+        all_time: كل الوقت
