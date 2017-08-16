@@ -48,6 +48,8 @@ GEM
     ar-stemmer (0.4.1)
     arel (7.1.4)
     ast (2.3.0)
+    autoprefixer-rails (7.1.2.6)
+      execjs
     babel-source (5.8.35)
     babel-transpiler (0.7.0)
       babel-source (>= 4.0, < 6)
@@ -425,6 +427,7 @@ PLATFORMS
 DEPENDENCIES
   annotate
   ar-stemmer
+  autoprefixer-rails
   babel-transpiler
   better_errors
   capistrano (~> 3.6.0)

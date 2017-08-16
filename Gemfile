@@ -12,6 +12,7 @@ gem 'foundation-rails', '~> 6.3.1'
 gem 'foundation-icons-sass-rails'
 gem "selectize-rails"
 gem 'momentjs-rails'
+gem "autoprefixer-rails"
 
 gem 'rubocop', require: false
 gem 'rubocop-rspec'

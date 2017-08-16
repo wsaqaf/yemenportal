@@ -8,9 +8,25 @@
 }
 
 .topics-spotlight__set {
-  width: 140px;
+  width: 150px;
+
+  html[dir="rtl"] & {
+    margin-right: 5px;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-left: 5px;
+  }
 }
 
 .topics-spotlight__time {
-  width: 100px;
+  width: 115px;
+
+  html[dir="rtl"] & {
+    margin-right: 5px;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-left: 5px;
+  }
 }

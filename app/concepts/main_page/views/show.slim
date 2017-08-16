@@ -1,23 +1,23 @@
 .row
   .columns.small-12.medium-12.large-12.large-centered
-    .row
-      .column
-        = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
-          .topics-spotlight__query
-            = text_field_tag :q, filter_params.q, placeholder: st(".coming_soon")
-          .topics-spotlight__set
-            = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
-          .topics-spotlight__time
-            = select_tag :time, options_for_select(Topics::Filter::Params.time.options, filter_params.time)
+    .topics
+      .topics__spotlight.row
+        .column
+          = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
+            .topics-spotlight__query
+              = text_field_tag :q, filter_params.q, disabled: true, placeholder: st(".coming_soon")
+            .topics-spotlight__set
+              = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
 
-    .row
-      .column.small-12.medium-8.large-9
-        .topics
+            = select_tag :time, options_for_select(Topics::Filter::Params.time.options, filter_params.time), class: "topics-spotlight__time"
+
+      .topics__topics-section.row
+        .column.small-12.medium-8.large-9
           .topics__topics
             - topics.each do |topic|
               .topics__topic= concept("topics/topic/cell", topic).call
 
           .topics__pagination= pagination
 
-      .column.small-12.medium-4.large-3
-        .topics-filter Filter
+        .column.small-12.medium-4.large-3
+          .topics-filter Filter
