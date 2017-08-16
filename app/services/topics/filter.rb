@@ -5,7 +5,7 @@ class Topics::Filter
 
   def topics
     filters.reduce(all_topics) do |topics, filter|
-      topics = filter.call(topics)
+      filter.call(topics)
     end
   end
 
@@ -26,14 +26,14 @@ class Topics::Filter
   end
 
   def page_filter
-    -> (topics) { topics.paginate(page: params.page) }
+    ->(topics) { topics.paginate(page: params.page) }
   end
 
   def time_filter
     if params.all_time?
-      -> (topics) { topics }
+      ->(topics) { topics }
     else
-      -> (topics) { topics.where("created_at > ?", beginning_time_from_params) }
+      ->(topics) { topics.where("created_at > ?", beginning_time_from_params) }
     end
   end
 
@@ -51,11 +51,11 @@ class Topics::Filter
   def sorting_filter
     case params.set.to_sym
     when :new
-      -> (topics) { topics.ordered_by_date }
+      ->(topics) { topics.ordered_by_date }
     when :highly_voted
-      -> (topics) { topics.ordered_by_voting_result.ordered_by_date }
+      ->(topics) { topics.ordered_by_voting_result.ordered_by_date }
     when :most_covered
-      -> (topics) { topics.ordered_by_size.ordered_by_voting_result.ordered_by_date }
+      ->(topics) { topics.ordered_by_size.ordered_by_voting_result.ordred }
     end
   end
 end
