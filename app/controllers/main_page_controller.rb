@@ -14,7 +14,6 @@ class MainPageController < ApplicationController
   end
 
   def topics
-    Topic.ordered_by_date.paginate(page: params[:page])
-      .includes(posts: [:source, :categories])
+    Topics::Filter.new(params).topics.includes(posts: [:source, :categories])
   end
 end

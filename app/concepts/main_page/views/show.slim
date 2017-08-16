@@ -4,7 +4,7 @@
       .column
         = form_tag root_path, method: :get, class: "topics-spotlight" do
           .topics-spotlight__query
-            = text_field_tag :q, filter_params.q, disabled: true, placeholder: st(".coming_soon")
+            = text_field_tag :q, filter_params.q, placeholder: st(".coming_soon")
           .topics-spotlight__set
             = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
           .topics-spotlight__time
