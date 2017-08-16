@@ -55,7 +55,7 @@ class Topics::Filter
     when :highly_voted
       ->(topics) { topics.ordered_by_voting_result.ordered_by_date }
     when :most_covered
-      ->(topics) { topics.ordered_by_size.ordered_by_voting_result.ordred }
+      ->(topics) { topics.ordered_by_size.ordered_by_voting_result.ordered_by_date }
     end
   end
 end
