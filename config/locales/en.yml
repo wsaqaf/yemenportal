@@ -168,6 +168,8 @@ en:
     create:
       sent_successfully: Your message was sent successfully
       not_sent: Something went wrong
+  main_page:
+    coming_soon: Coming soon...
   feedback_mailer:
     feedback:
       subject: You got new message from "Contact Us" page

@@ -1,6 +1,16 @@
 .row
   .columns.small-12.medium-12.large-12.large-centered
     .row
+      .column
+        = form_tag root_path, method: :get, class: "topics-spotlight" do
+          .topics-spotlight__query
+            = text_field_tag :q, filter_params.q, disabled: true, placeholder: st(".coming_soon")
+          .topics-spotlight__set
+            = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
+          .topics-spotlight__time
+            = select_tag :time, options_for_select(Topics::Filter::Params.time.options, filter_params.time)
+
+    .row
       .column.small-12.medium-8.large-9
         .topics
           .topics__topics

@@ -8,6 +8,8 @@ ar:
   feedbacks:
     new:
       submit: عرض
+  main_page:
+    coming_soon: قريبا...
   simple_form:
     labels:
       feedback:

@@ -1,0 +1,16 @@
+.topics-spotlight {
+  display: flex;
+  flex-direction: row;
+}
+
+.topics-spotlight__query {
+  flex-grow: 5;
+}
+
+.topics-spotlight__set {
+  width: 140px;
+}
+
+.topics-spotlight__time {
+  width: 100px;
+}
