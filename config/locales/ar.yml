@@ -8,3 +8,18 @@ ar:
   feedbacks:
     new:
       submit: عرض
+  simple_form:
+    labels:
+      feedback:
+        name: الإسم
+        email: البريد الالكتروني
+        reason: سبب الإتصال
+        body: نص الرسالة
+  enumerize:
+    feedback:
+      reason:
+        join_moderators_team: طلب الانضمام لفريق التقييم
+        question_about_engine: استفسار حول المحرك
+        note_about_news_or_source: ملاحظة حول خبر أو مصدر ما
+        general_proposal: اقتراح عام أو شكوى
+        other: غير ذلك

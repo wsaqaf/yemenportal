@@ -165,6 +165,12 @@ en:
   feedbacks:
     new:
       submit: Submit
+    create:
+      sent_successfully: Your message was sent successfully
+      not_sent: Something went wrong
+  feedback_mailer:
+    feedback:
+      subject: You got new message from "Contact Us" page
   activerecord:
     errors:
       models:
@@ -172,3 +178,11 @@ en:
           attributes:
             link:
               taken: This link is already in the system.
+  enumerize:
+    feedback:
+      reason:
+        join_moderators_team: Moderators team
+        question_about_engine: Question about the engine
+        note_about_news_or_source: Note about news or source
+        general_proposal: General question or proposal
+        other: Other

@@ -1,4 +1,10 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: "support@yemenportal.net"
   layout "mailer"
+
+  private
+
+  def support_email
+    "support@yemenportal.net"
+  end
 end
