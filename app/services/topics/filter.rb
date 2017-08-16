@@ -33,7 +33,7 @@ class Topics::Filter
     if params.all_time?
       ->(topics) { topics }
     else
-      ->(topics) { topics.where("created_at > ?", beginning_time_from_params) }
+      ->(topics) { topics.created_later_than(beginning_time_from_params) }
     end
   end
 

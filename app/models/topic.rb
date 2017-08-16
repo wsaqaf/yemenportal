@@ -19,7 +19,7 @@ class Topic < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
 
-  scope :ordered_by_date, -> { order("created_at DESC") }
+  scope :ordered_by_date, -> { order("topics.created_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
   scope :ordered_by_size, -> { order("topic_size DESC") }
 
@@ -28,6 +28,10 @@ class Topic < ApplicationRecord
       .group(:id).select("topics.*,
         (COUNT(votes.*) > 0 AND SUM(votes.value) > 0) AS upvoted_by_user,
         (COUNT(votes.*) > 0 AND SUM(votes.value) < 0) AS downvoted_by_user")
+  end
+
+  def self.created_later_than(timestamp)
+    where("topics.created_at > ?", timestamp)
   end
 
   def self.include_review_comments
