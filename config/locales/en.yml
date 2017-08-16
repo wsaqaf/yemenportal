@@ -8,6 +8,11 @@ en:
       logs_date: "%d%b %H:%M"
   site_title: يمن بورتال نت YemenPortal.net
   site_name: "YemenPortal"
+  layouts:
+    application:
+      about_us: About Us
+      terms_of_use: Terms of Use
+      contact_us: Contact Us
   common_buttons:
     delete: Delete
   menu:
