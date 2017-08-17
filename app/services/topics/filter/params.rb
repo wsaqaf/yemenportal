@@ -5,14 +5,14 @@ class Topics::Filter::Params
   def initialize(raw_params)
     @page = raw_params[:page]
     @q = raw_params[:q]
-    @set = raw_params[:set] || :most_covered
-    @time = raw_params[:time] || :weekly
+    @set = raw_params[:set] || :highly_voted
+    @time = raw_params[:time] || :daily
   end
 
   attr_reader :page, :q
 
-  enumerize :set, in: [:new, :highly_voted, :most_covered], default: :most_covered
+  enumerize :set, in: [:new, :highly_voted, :most_covered], default: :highly_voted
 
-  enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :weekly,
+  enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :daily,
     predicates: true
 end
