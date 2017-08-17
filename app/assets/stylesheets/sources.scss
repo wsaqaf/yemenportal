@@ -1,5 +1,6 @@
+@import "settings";
+
 .sources {
-  margin-top: 0.5em;
   .title {
     font-size: 1.5em;
   }
@@ -49,4 +50,31 @@
   span.has-tip{
     border: none;
   }
+}
+
+.sources__title-row {
+  margin-bottom: 20px;
+}
+
+.sources__title {
+  margin: 5px 0 5px;
+}
+
+.sources__add-button {
+  margin: 5px 0 5px;
+
+  float: right;
+
+  html[dir="rtl"] & {
+    float: left;
+  }
+}
+
+.sources__filters {
+  list-style: none;
+  margin: 0 0 20px 0;
+}
+
+.sources__pagination {
+  text-align: center;
 }

@@ -21,4 +21,13 @@ class ApplicationPolicy
   def moderator?
     current_user && (current_user.role.moderator? || current_user.role.admin?)
   end
+
+  class BaseScope
+    attr_reader :current_user, :scope
+
+    def initialize(current_user, scope)
+      @current_user = current_user
+      @scope = scope
+    end
+  end
 end

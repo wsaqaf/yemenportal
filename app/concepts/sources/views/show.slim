@@ -1,16 +1,24 @@
-.columns.large-6.medium-8.small-12.small-centered.sources
-  .row.title
-    .float-left
-      - if policy(User).moderator?
-        = link_to t('source.buttons.add_source'), new_source_path, class: 'button small float-left'
-      - else
-        = suggest_button
-    = title
-    hr
+.sources.row
+  .columns.small-12.medium-centered
+    .sources__title-row.row
+      .column.small-6
+        h3.sources__title Sources
+      .column.small-6
+        - if policy(Source).create?
+          = link_to t("source.buttons.add_source"), new_source_path, class: "sources__add-button button small"
+        - else
+          = suggest_button
+    .row
+      .column.small-12.medium-4.large-3
+        - if policy(Source).approve?
+          ul.sources__filters
+            li= link_to_unless(params[:approve_state].blank?, t("menu.sources.all"), sources_path)
+            li= link_to_unless_current(t("menu.sources.suggested"), sources_path(approve_state: "suggested"))
+            li= link_to_unless_current(t("menu.sources.approved"), sources_path(approve_state: "approved"))
+      .column.small-12.medium-8.large-9.sources
+        - if model.blank? && params[:page].present?
+          = st("no_source_on_this_page", page: params[:page], first_page_path: sources_path(approve_state: params[:approve_state]))
+        - else
+          = table_body
 
-  - if model.blank? && params[:page].present?
-    = st("no_source_on_this_page", page: params[:page], first_page_path: sources_path(approve_state: params[:approve_state]))
-  - else
-    = table_body
-
-  = will_paginate model, renderer: FoundationPagination::Rails
+        .sources__pagination= will_paginate model, renderer: FoundationPagination::Rails

@@ -49,6 +49,14 @@ class Source < ApplicationRecord
   scope :approved, -> { where(approve_state: :approved) }
   scope :by_state, ->(state) { where(approve_state: state) }
 
+  def self.by_state(state)
+    if state.in? ["approved", "suggested"]
+      where(approve_state: state)
+    else
+      all
+    end
+  end
+
   def facebook_page
     link.match(FACEBOOK_REGEXP).to_s if source_type.facebook?
   end

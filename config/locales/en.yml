@@ -18,6 +18,7 @@ en:
   menu:
     sources:
       name: Sources
+      all: All
       approved: Approved
       suggested: Suggestions
       suggest_source: Suggest source

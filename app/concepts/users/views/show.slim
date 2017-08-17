@@ -7,7 +7,7 @@
 
 
   .row
-    .column.small-12.large-3.medium-3
+    .column.small-12.large-3.medium-4
       .users-filter
         = form_tag(users_path, method: :get)
           label
@@ -19,7 +19,7 @@
 
           = submit_tag st("filter.apply"), class: "button"
 
-    .column.small-12.large-9.medium-9
+    .column.small-12.large-9.medium-8
       .users__list
         - users.each do |user|
           .users__user= concept("users/card/cell", user).call

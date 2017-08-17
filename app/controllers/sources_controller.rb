@@ -5,9 +5,8 @@ class SourcesController < ApplicationController
   before_action :find_source, only: [:edit, :update, :destroy]
 
   def index
-    sources = Source.by_state(params.fetch(:approve_state)).paginate(page: params[:page])
-    render cell: true, model: sources, options: { approve_state: params.fetch(:approve_state),
-      current_user: current_user }
+    sources = all_sources.by_state(params[:approve_state]).paginate(page: params[:page])
+    render cell: true, model: sources, options: {current_user: current_user }
   end
 
   def create
@@ -51,6 +50,10 @@ class SourcesController < ApplicationController
   end
 
   private
+
+  def all_sources
+    policy_scope(Source)
+  end
 
   def check_permissions
     authorize User, :moderator?
