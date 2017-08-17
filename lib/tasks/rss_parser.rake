@@ -1,4 +1,3 @@
-require "rss"
 require "open-uri"
 require "feedjira"
 
@@ -15,7 +14,7 @@ task rss_parser: :environment do
     rescue Errno::ENOENT, OpenURI::HTTPError
       source.update(state: Source.state.incorrect_path)
       SourceLog.create(source: source, state: :invalid)
-    rescue RSS::NotWellFormedError, RSS::NotAvailableValueError, Feedjira::NoParserAvailable
+    rescue Feedjira::NoParserAvailable
       source.update(state: Source.state.incorrect_stucture)
       SourceLog.create(source: source, state: :invalid)
     rescue
