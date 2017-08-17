@@ -9,6 +9,9 @@ ar:
     new:
       submit: عرض
   main_page:
+    filter:
+      categories: الاقسام
+      sources: منشأ
     coming_soon: قريبا...
   simple_form:
     labels:

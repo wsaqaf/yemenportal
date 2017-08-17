@@ -5,7 +5,7 @@
         .column.small-12
           = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
             .topics-spotlight__query
-              = text_field_tag :q, filter_params.q, disabled: true, placeholder: st(".coming_soon")
+              = text_field_tag :q, filter_params.q, disabled: true, placeholder: st("coming_soon")
             .topics-spotlight__set
               = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
 
@@ -20,4 +20,10 @@
           .topics__pagination= pagination
 
         .column.small-12.medium-4.large-3
-          .topics-filter Filter
+          .topics-filter
+            label
+              = st("filter.categories")
+              = select_tag :source, options_for_select([st("coming_soon")]), disabled: true
+            label
+              = st("filter.sources")
+              = select_tag :source, options_for_select([st("coming_soon")]), disabled: true

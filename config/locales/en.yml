@@ -170,6 +170,9 @@ en:
       sent_successfully: Your message was sent successfully
       not_sent: Something went wrong
   main_page:
+    filter:
+      categories: Categories
+      sources: Sources
     coming_soon: Coming soon...
   feedback_mailer:
     feedback:
