@@ -1,3 +1,3 @@
-every 1.day, at: '1:00 am' do
+every 1.hour do
   rake "rss_parser"
 end
