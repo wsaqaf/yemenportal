@@ -4,7 +4,7 @@
 //= require foundation
 //= require selectize
 //= require moment
-//= require moment/ar-tn.js
+//= require moment/ar-ly.js
 //= require_tree .
 
 window.facebookApi = new FacebookApi();
