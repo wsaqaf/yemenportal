@@ -1,9 +1,9 @@
 class PostsFetcher::Fetcher
   def self.for(source)
     if source.rss?
-      PostsFetcher::Fetcher::RSS.new(source)
+      RSS.new(source)
     elsif source.facebook?
-      PostsFetcher::Fetcher::Facebook.new(source)
+      Facebook.new(source)
     end
   end
 
