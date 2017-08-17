@@ -11,7 +11,11 @@ class Topics::Filter::Params
 
   attr_reader :page, :q
 
-  enumerize :set, in: [:new, :highly_voted, :most_covered], default: :highly_voted
+  if FeatureToggle.clustering_enabled?
+    enumerize :set, in: [:new, :highly_voted, :most_covered], default: :most_covered
+  else
+    enumerize :set, in: [:new, :highly_voted], default: :highly_voted
+  end
 
   enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :daily,
     predicates: true

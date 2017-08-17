@@ -30,7 +30,11 @@ class PostsFetcher::ItemSaver
   end
 
   def topic
-    topic_with_related_posts || new_topic
+    if FeatureToggle.clustering_enabled?
+      topic_with_related_posts || new_topic
+    else
+      new_topic
+    end
   end
 
   def topic_with_related_posts
