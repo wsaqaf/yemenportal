@@ -1,3 +1,3 @@
-every 1.hour do
+every 20.minutes do
   rake "rss_parser"
 end
