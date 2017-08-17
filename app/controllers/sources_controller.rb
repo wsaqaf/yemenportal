@@ -6,7 +6,7 @@ class SourcesController < ApplicationController
 
   def index
     sources = all_sources.by_state(params[:approve_state]).paginate(page: params[:page])
-    render cell: true, model: sources, options: {current_user: current_user }
+    render cell: true, model: sources, options: { current_user: current_user }
   end
 
   def create

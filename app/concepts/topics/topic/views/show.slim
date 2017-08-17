@@ -15,7 +15,7 @@
       - if topic.category_names.present?
         .topic__subtitle-item= topic.category_names.join(", ")
       .topic__subtitle-item
-        time.js-publication-time= topic.created_at.iso8601
+        time.js-time datetime=topic.created_at.iso8601 = topic.created_at
 
     - if description.present?
       .topic__topic-body.clearfix

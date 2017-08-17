@@ -37,16 +37,4 @@ document.addEventListener("turbolinks:load", function() {
 
     return true;
   })
-
-  $('.js-publication-time').each(function() {
-    var $this = $(this);
-    var day_ago = moment().subtract(1,'days');
-    var publiction_time = moment($this.text());
-
-    if (publiction_time.isAfter(day_ago)) {
-      $this.text(publiction_time.fromNow());
-    } else {
-      $this.text(publiction_time.format('lll'));
-    }
-  });
 });

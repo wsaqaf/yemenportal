@@ -3,4 +3,4 @@
   .topic__related-subtitle
     .topic__related-subtitle-item= post.source_name
     .topic__related-subtitle-item
-      time.js-publication-time= post.created_at
+      time.js-time datetime=post.created_at.iso8601 = post.created_at

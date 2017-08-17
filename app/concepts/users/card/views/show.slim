@@ -11,7 +11,7 @@
     .user-card__invitation
       .user-card__invited-at
         | #{st("invited")}&nbsp;
-        time.js-publication-time #{invitation_sent_at}
+        time.js-time datetime=invitation_sent_at.iso8601 = invitation_sent_at
       = resend_invite_button
   .user-card__actions
     - if member?
