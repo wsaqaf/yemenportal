@@ -6,7 +6,9 @@ class PostsFetcher::ItemSaver
 
   def save!
     return if post_already_exist?
-    Post.create!(post_params)
+    Post.transaction do
+      Post.create!(post_params)
+    end
   end
 
   private
