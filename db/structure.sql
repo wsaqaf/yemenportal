@@ -28,6 +28,20 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
+--
+-- Name: pg_trgm; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS pg_trgm WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION pg_trgm; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION pg_trgm IS 'text similarity measurement and index searching based on trigrams';
+
+
 SET search_path = public, pg_catalog;
 
 --
@@ -351,7 +365,8 @@ CREATE TABLE sources (
     approve_state character varying DEFAULT 'suggested'::character varying,
     user_id integer,
     iframe_flag boolean DEFAULT true,
-    logo_url character varying
+    logo_url character varying,
+    deleted_at timestamp without time zone
 );
 
 
@@ -977,6 +992,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170605180442'),
 ('20170605181632'),
 ('20170609161819'),
+('20170627093620'),
 ('20170704140350'),
 ('20170710164314'),
 ('20170711113816'),
@@ -984,6 +1000,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170803161107'),
 ('20170810153334'),
 ('20170810153646'),
-('20170814104111');
+('20170814104111'),
+('20170818072941');
 
 

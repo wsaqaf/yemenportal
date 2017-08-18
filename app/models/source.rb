@@ -20,6 +20,7 @@
 #  user_id       :integer
 #  iframe_flag   :boolean          default("true")
 #  logo_url      :string
+#  deleted_at    :datetime
 #
 # Indexes
 #
@@ -55,6 +56,14 @@ class Source < ApplicationRecord
     else
       all
     end
+  end
+
+  def self.not_deleted
+    where(deleted_at: nil)
+  end
+
+  def safe_destroy
+    update(deleted_at: Time.zone.now)
   end
 
   def facebook_page

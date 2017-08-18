@@ -3,7 +3,7 @@ require "feedjira"
 
 desc "Fetches posts for all sources"
 task rss_parser: :environment do
-  Source.approved.find_each do |source|
+  Source.not_deleted.approved.find_each do |source|
     begin
       PostsFetcher.new(source).fetch!
       source.update(state: Source.state.valid)

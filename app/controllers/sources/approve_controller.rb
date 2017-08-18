@@ -10,7 +10,7 @@ class Sources::ApproveController < ApplicationController
   private
 
   def find_source
-    @source = Source.find(params.fetch(:id))
+    @source = Source.not_deleted.find(params.fetch(:id))
   end
 
   def check_permissions

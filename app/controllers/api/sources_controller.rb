@@ -12,7 +12,7 @@ class Api::SourcesController < ApplicationController
   private
 
   def find_source
-    @source = Source.find(params.fetch(:id))
+    @source = Source.not_deleted.find(params.fetch(:id))
   end
 
   def source_params

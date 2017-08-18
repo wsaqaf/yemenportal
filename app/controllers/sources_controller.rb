@@ -26,9 +26,7 @@ class SourcesController < ApplicationController
   end
 
   def destroy
-    topics_ids = @source.posts.map(&:topic_id).uniq.compact
-    @source.destroy
-    topics_ids.each { |id| Topic.reset_counters(id, :posts) }
+    @source.safe_destroy
 
     redirect_back(fallback_location: sources_path(approve_state: @source.approve_state),
       notice: t(".successfully_destroyed", name: @source.name))
@@ -52,7 +50,7 @@ class SourcesController < ApplicationController
   private
 
   def all_sources
-    policy_scope(Source)
+    policy_scope(Source).not_deleted
   end
 
   def check_permissions
@@ -64,7 +62,7 @@ class SourcesController < ApplicationController
   end
 
   def find_source
-    @source = Source.find(params.fetch(:id))
+    @source = Source.not_deleted.find(params.fetch(:id))
   end
 
   def source_params
