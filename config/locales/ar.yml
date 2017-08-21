@@ -1,5 +1,6 @@
 ar:
-  site_name: "YemenPortal"
+  site_title: يمن بورتال.نت
+  site_name: يمن بورتال
   layouts:
     application:
       about_us: حول يمن بورتال
@@ -13,13 +14,6 @@ ar:
       categories: الاقسام
       sources: منشأ
     coming_soon: قريبا...
-  simple_form:
-    labels:
-      feedback:
-        name: الإسم
-        email: البريد الالكتروني
-        reason: سبب الإتصال
-        body: نص الرسالة
   enumerize:
     feedback:
       reason:
@@ -38,3 +32,230 @@ ar:
         weekly: أسبوع
         monthly: شهر
         all_time: كل الوقت
+  will_paginate:
+    previous_label: السابق
+    next_label: التالي
+  time:
+    formats:
+      created_at: "%d-%m-%Y %H:%M"
+      logs_date: "%d%b %H:%M"
+      devise:
+        mailer:
+          invitation_instructions:
+            accept_until_format: "%B %d, %Y %I:%M %p"
+  common_buttons:
+    delete: حذف
+  menu:
+    sources:
+      name: مصادر
+      approved: مصدق عليه
+      suggested: 'اقتراحات '
+      suggest_source: 'اقتراح مصدر '
+    categories: 'أقسام '
+    edit_profile: تعديل الملف الشخصي
+    users:
+      name: مستخدمين
+      admins: مشرفين
+      moderators: مدراء
+    posts:
+      name: مشاركات
+      pending: 'قيد الانتظار '
+      rejected: مرفوض
+  post:
+    fields:
+      source_name: 'اسم المصدر '
+      link: رابط المصدر
+    button:
+      show: إظهار
+      approve: وافق
+      reject: رفض
+      read_source: اقرأ المصدر
+      delete: حذف
+      more: 'اقرأ اكثر '
+      comments: تعليقات
+    pending:
+      title: منشور معلق
+    rejected:
+      title: 'المشاركات المرفوضة '
+    same_posts: 'نفس الأخبار '
+  category:
+    select_category: اختر الفئة
+    title: فئة
+    base_list:
+      breaking: عاجل
+      local: محلي
+      regional: 'إقليمي '
+      international: دولي
+      economy: اقتصاد
+      society: مجتمع
+      health: صحة
+      sports: رياضة
+      reports: تقارير
+      entertainment: 'وسائل الترفية '
+      opinion: 'رأي '
+      general: عام
+    buttons:
+      create: خلق
+      delete: حذف
+      add_category: إضافة فئة
+  user:
+    should_login: الرجاء تسجيل الدخول
+    roles:
+      moderator: وسيط
+      admon: مشرف
+    buttons:
+      update: تحديث
+  users:
+    title: مستخدمين
+    invite_new_user: دعوة مستخدم جديد
+    filter:
+      email: البريد الالكتروني
+      roles: 'الأدوار '
+      apply: تطبيق
+    card:
+      resend_invite: 'اعادة إرسال '
+      moderator: وسيط
+      moderator_role: وسيط
+      admin: مشرف
+      admin_role: مشرف
+      retire_button: انسحب
+      invited: دعوة
+      promote_to: تعزيز ل
+      or: 'أو '
+  source:
+    notice:
+      success_suggest: شكراً لتقريركم. تمت اضافة المصدر ٪{source_name} بنجاح. سيتم
+        مراجعتها من قبل المشرفين. إذا قبلت، سيتم الموافقة عليه.
+    title:
+      approved: مصادر
+      suggested: مقترح
+    fields:
+      added_by: تمت إضافته بواسطة
+      note: 'ملحوظة '
+      admin_email: البريد الالكتروني للمشرف
+      admin_name: اسم المشرف
+      brief_info: 'معلومات موجزة '
+      website: 'موقع إلكتروني '
+      link: مسار RSS
+      name: اسم
+    logs:
+      success: تم جلب ٪{post_count} بنجاح
+      failure: حدث خطأ اثناء جلب المشاركات
+    error:
+      invalid_state: غير صالحة
+      incorrect_path: مسار  RSS غير صحيح
+      incorrect_stucture: مشاركات من هذا المصدر لديها بنية غير صحيحة
+      other: هناك خطأ ما
+      not_full_info: مشاركات المصدر لا تحتوي على خانة مهمة أو تم تكرار الرابط
+    buttons:
+      approve: يوافق
+      update: تحديث
+      edit: تعديل
+      create: 'إضافة مصدر '
+      delete: إزالة
+      add_source: إضافة مصدر
+  sources:
+    no_source_on_this_page: 'لا توجد مصادر في الصفحة ٪{page}. الرجاء الانتقال الى
+      first page</a>”<"a href=%{first_page_path}"> '
+    destroy:
+      successfully_destroyed: 'تمت إزالة المصدر ٪{name} بنجاح '
+  tag:
+    select_tag: حدد علامة
+    base_list:
+      misleading_title: عنوان مضلل
+      missing_picture: صورة مفقودة
+      irrelevant_picture: 'صورة غير ملائمة '
+      plagiarised_copied: مسروق / منسوخ
+      wrong_category: 'فئة غير صحيحة '
+      inappropriate_content: محتوى غير لائق
+      propaganda_advertising: 'دعاية / اعلان '
+      missing_name: اسم الكاتب مفقود / غامض
+  topics:
+    topic:
+      discuss: ناقش
+      review: مراجعة
+      related_posts: مشاركات ذات الصلة
+      details: تفاصيل
+    reviews:
+      create:
+        successfully_created: تمت إضافة العلم بنجاح
+        not_created: 'هناك خطأ ما. لم تتم إضافة العلم  '
+      destroy:
+        successfully_destroyed: تم حذف العلم بنجاح
+      comment: أرسل تعليق
+      only_moderators_can_review_topics: يمكن للمشرفين فقط مراجعة الموضوعات
+    review_comments:
+      create:
+        successfully_created: تمت اضافة التعليق بنجاح
+        not_created: هناك خطا ما، لم تتم إضافة التعليق
+      destroy:
+        successfully_destroyed: تم حذف التعليق بنجاح
+        not_destroyed: 'هناك خطاً ما، لا يمكن حذف التعليق. '
+  posts:
+    show:
+      back: رجوع
+  activerecord:
+    errors:
+      models:
+        source:
+          attributes:
+            link:
+              taken: هذا الرابط موجود في النظام
+  devise:
+    log_in: تسجيل الدخول
+    sign_up: سجل
+    sign_out: خروج
+    sign_in_with: تسجيل الدخول ب %{provider}
+    forgot_password: هل نسيت كلمة المرور؟
+    confirmaions:
+      not_send_confirmation: ألم تتلقى تعليمات التأكيد؟
+    failure:
+      invited: لديك دعوة معلقة، اقبلها لإكمال التسجيل
+    invitations:
+      send_instructions: تم إرسال دعوة بالبريد الالكتروني الى ٪{email}
+      invitation_token_invalid: 'قسيمة الدعوة الموفرة غير صالحة! '
+      updated: تم تعين كلمة المرور بنجاح. انت الان مسجل.
+      updated_not_active: تم تعيين كلمة المرور بنجاح.
+      no_invitations_remaining: ليست هناك دعوات متبقية.
+      invitation_removed: تمت إزالة دعوتك
+      new:
+        header: أرسل دعوة
+        submit_button: أرسل الدعوة
+      edit:
+        header: تعين كلمة المرور الخاصة بك
+        submit_button: تعيين كلمة المرور
+    mailer:
+      invitation_instructions:
+        subject: تعليمات الدعوة
+        hello: مرحبا ٪{email}
+        someone_invited_you: 'دعاك شخصاً ما الى ٪{url}، يمكنك القبول من خلال الرابط
+          أدناه '
+        accept: قبول الدعوة
+        accept_until: هذه الدعوة واجب الأداء في ٪{due_date}
+        ignore: اذا كنت لا تريد قبول الدعوة، يرجى تجاهل هذه الرسالة الالكترونية <br/>
+          لن يتم انشاء حسابك حتى تفتح الرابط أعلاه و تعيين كلمة المرور
+  simple_form:
+    'yes': نعم
+    'no': لا
+    required:
+      text: مطلوب
+      mark: "*"
+    error_notification:
+      default_message: 'يرجى مراجعة المشكلات أذناه '
+    labels:
+      user:
+        password: كلمة المرور
+        email: 'البريد الالكتروني '
+        remember_me: تذكرني
+        password_confirmation: تاكيد كلمة المرور
+      category:
+        name: كلمة مرور
+      source:
+        whitelisted: مدرج في القائمة البيضاء
+        link: رابط المصدر
+        iframe_flag: هل البيان في أيفرايم؟
+      feedback:
+        name: الإسم
+        email: البريد الالكتروني
+        reason: سبب الإتصال
+        body: نص الرسالة
