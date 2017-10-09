@@ -124,7 +124,7 @@ ar:
       or: 'أو '
   source:
     notice:
-      success_suggest: شكراً لتقريركم. تمت اضافة المصدر ٪{source_name} بنجاح. سيتم
+      success_suggest: شكراً لتقريركم. تمت اضافة المصدر %{source_name} بنجاح. سيتم
         مراجعتها من قبل المشرفين. إذا قبلت، سيتم الموافقة عليه.
     title:
       approved: مصادر
@@ -139,7 +139,7 @@ ar:
       link: مسار RSS
       name: اسم
     logs:
-      success: تم جلب ٪{post_count} بنجاح
+      success: تم جلب %{post_count} بنجاح
       failure: حدث خطأ اثناء جلب المشاركات
     error:
       invalid_state: غير صالحة
@@ -155,10 +155,10 @@ ar:
       delete: إزالة
       add_source: إضافة مصدر
   sources:
-    no_source_on_this_page: 'لا توجد مصادر في الصفحة ٪{page}. الرجاء الانتقال الى
+    no_source_on_this_page: 'لا توجد مصادر في الصفحة %{page}. الرجاء الانتقال الى
       first page</a>”<"a href=%{first_page_path}"> '
     destroy:
-      successfully_destroyed: 'تمت إزالة المصدر ٪{name} بنجاح '
+      successfully_destroyed: 'تمت إزالة المصدر %{name} بنجاح '
   tag:
     select_tag: حدد علامة
     base_list:
@@ -212,7 +212,7 @@ ar:
     failure:
       invited: لديك دعوة معلقة، اقبلها لإكمال التسجيل
     invitations:
-      send_instructions: تم إرسال دعوة بالبريد الالكتروني الى ٪{email}
+      send_instructions: تم إرسال دعوة بالبريد الالكتروني الى %{email}
       invitation_token_invalid: 'قسيمة الدعوة الموفرة غير صالحة! '
       updated: تم تعين كلمة المرور بنجاح. انت الان مسجل.
       updated_not_active: تم تعيين كلمة المرور بنجاح.
@@ -227,11 +227,11 @@ ar:
     mailer:
       invitation_instructions:
         subject: تعليمات الدعوة
-        hello: مرحبا ٪{email}
-        someone_invited_you: 'دعاك شخصاً ما الى ٪{url}، يمكنك القبول من خلال الرابط
+        hello: مرحبا %{email}
+        someone_invited_you: 'دعاك شخصاً ما الى %{url}، يمكنك القبول من خلال الرابط
           أدناه '
         accept: قبول الدعوة
-        accept_until: هذه الدعوة واجب الأداء في ٪{due_date}
+        accept_until: هذه الدعوة واجب الأداء في %{due_date}
         ignore: اذا كنت لا تريد قبول الدعوة، يرجى تجاهل هذه الرسالة الالكترونية <br/>
           لن يتم انشاء حسابك حتى تفتح الرابط أعلاه و تعيين كلمة المرور
   simple_form:
