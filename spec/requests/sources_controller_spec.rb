@@ -67,9 +67,6 @@ describe SourcesController, type: :request do
 
     it "source params" do
       sign_in user
-      stub_const("PostsFetcherJob", posts_fetcher_job)
-      allow(posts_fetcher_job).to receive(:perform_later) { true }
-
       do_request
       expect(response).to redirect_to(sources_path(approve_state: Source.approve_state.approved))
     end
