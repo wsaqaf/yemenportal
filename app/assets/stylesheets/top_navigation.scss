@@ -9,17 +9,6 @@
   background-color: $topbar-background;
 }
 
-.top-navigation__title {
-  font-weight: bold;
-  html[dir="rtl"] & {
-    margin-left: 1em;
-  }
-
-  html:not([dir="rtl"]) & {
-    margin-right: 1em;
-  }
-}
-
 .top-navigation__menu {
 }
 
@@ -33,5 +22,13 @@
   li {
     display: inline-block;
     padding: 0.5rem;
+
+    &.navigation-logo-item {
+      padding: 0 0 0 1em;
+
+      .navigation-logo-item--picture {
+        height: 39px;
+      }
+    }
   }
 }

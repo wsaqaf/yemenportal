@@ -15,8 +15,10 @@ html dir="rtl" lang="ar"
 
     .top-navigation
       ul.top-navigation__menu.top-navigation__items
-        li.top-navigation__title= link_to t("site_name"), root_path
-        li= link_to t("menu.sources.name"), sources_path
+        li.navigation-logo-item
+          = link_to root_path do
+            = image_tag('header_logo', class: 'navigation-logo-item--picture')
+        li = link_to t("menu.sources.name"), sources_path
         - if user_signed_in? && current_user.admin?
           li= link_to t("menu.categories"), categories_path
           li= link_to t("menu.users.name"), users_path
