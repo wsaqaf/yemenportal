@@ -40,6 +40,15 @@ html dir="rtl" lang="ar"
       .footer__link= link_to t('.about_us'), about_us_path
       .footer__link= link_to t('.terms_of_use'), terms_of_use_path
       .footer__link= link_to t('.contact_us'), new_feedback_path
+      .footer-social-links
+        .social-link
+          = link_to facebook_link do
+            = image_tag 'socials/facebook', class: 'social-link--image'
+            span.social-link--text = t('layouts.footer.socials.facebook')
+        .social-link
+          = link_to twitter_link do
+            = image_tag 'socials/twitter', class: 'social-link--image'
+            span.social-link--text = t('layouts.footer.socials.twitter')
 
     .alerts.js-alerts
       .row
