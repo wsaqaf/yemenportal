@@ -20,7 +20,7 @@ class Sources::Form::Cell < Application::Cell
     logs || []
   end
 
-  def log_meassage(log)
+  def log_message(log)
     if log.state.valid?
       "#{l log.created_at, format: :logs_date} - #{t('source.logs.success', post_count: log.posts_count)}"
     else
