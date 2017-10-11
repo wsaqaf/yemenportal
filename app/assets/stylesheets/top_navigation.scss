@@ -2,14 +2,16 @@
 
 .top-navigation {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 0.5rem 1.5rem;
   background-color: $topbar-background;
-}
 
-.top-navigation__menu {
+  &__menu {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    border-bottom: 2px solid $topbar-separate-line;
+    width: 100%;
+    padding: 0.5rem 1.5rem;
+  }
 }
 
 .top-navigation__actions {
@@ -23,12 +25,14 @@
     display: inline-block;
     padding: 0.5rem;
 
-    &.navigation-logo-item {
+    &.top-navigation__logo {
       padding: 0 0 0 1em;
-
-      .navigation-logo-item--picture {
-        height: 39px;
-      }
     }
+  }
+}
+
+.top-navigation-logo {
+  &--picture {
+    height: 39px;
   }
 }
