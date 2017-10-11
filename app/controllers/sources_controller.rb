@@ -40,7 +40,6 @@ class SourcesController < ApplicationController
   def update
     @source.attributes = source_params
     if @source.save
-      PostsFetcherJob.perform_later(@source.id)
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
       render cell: :form, model: @source, options: { categories: categories }
