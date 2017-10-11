@@ -19,7 +19,7 @@ html dir="rtl" lang="ar"
           li.top-navigation__logo
             .top-navigation-logo
               = link_to root_path do
-                = image_tag('header_logo', class: 'top-navigation-logo--picture')
+                = image_tag('header_logo.png', class: 'top-navigation-logo__picture')
           li = link_to t("menu.sources.name"), sources_path
           - if user_signed_in? && current_user.admin?
             li= link_to t("menu.categories"), categories_path
