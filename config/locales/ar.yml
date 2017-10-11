@@ -6,6 +6,10 @@ ar:
       about_us: حول يمن بورتال
       terms_of_use: شروط استخدام الموقع
       contact_us: إتصل بنا
+    footer:
+      socials:
+        facebook: Facebook
+        twitter: Twitter
   feedbacks:
     new:
       submit: عرض

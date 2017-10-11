@@ -13,6 +13,10 @@ en:
       about_us: About Us
       terms_of_use: Terms of Use
       contact_us: Contact Us
+    footer:
+      socials:
+        facebook: Facebook
+        twitter: Twitter
   common_buttons:
     delete: Delete
   menu:
