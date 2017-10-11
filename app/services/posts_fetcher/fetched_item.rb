@@ -1,4 +1,7 @@
 class PostsFetcher::FetchedItem
+  TITLE_LENGTH_LIMIT = 100
+  TITLE_WORDS_SEPARATOR = /\s/
+
   def initialize(params)
     @params = params
   end
@@ -8,7 +11,7 @@ class PostsFetcher::FetchedItem
   end
 
   def title
-    params[:title]
+    params[:title] || title_extracted_from_description
   end
 
   def description
@@ -41,5 +44,9 @@ class PostsFetcher::FetchedItem
 
   def description_as_html
     Nokogiri::HTML.fragment(params[:description])
+  end
+
+  def title_extracted_from_description
+    description&.truncate(TITLE_LENGTH_LIMIT, separator: TITLE_WORDS_SEPARATOR)
   end
 end

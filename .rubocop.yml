@@ -15,11 +15,17 @@ AllCops:
     - "app/channels/application_cable/**"
     - "spec/spec_helper.rb"
 
+RSpec/MessageChain:
+  Enabled: false
+
 RSpec/MultipleExpectations:
   Exclude:
     - "spec/requests/**/*"
 
 RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/NestedGroups:
   Enabled: false
 
 RSpec/SubjectStub:
