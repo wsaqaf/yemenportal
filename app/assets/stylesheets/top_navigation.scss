@@ -2,13 +2,13 @@
 
 .top-navigation {
   width: 100%;
-  background-color: $topbar-background;
+  background-color: $bar-background;
 
   &__menu {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    border-bottom: 2px solid $topbar-separate-line;
+    border-bottom: $bar-content-border;
     width: 100%;
     padding: 0.5rem 1.5rem;
   }

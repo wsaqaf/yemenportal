@@ -16,7 +16,8 @@ body {
   bottom: 0;
   padding: 0.5rem;
   line-height: 1.5;
-  background-color: $light-gray;
+  background-color: $bar-background;
+  border-top: $bar-content-border;
 }
 
 .footer__link {
