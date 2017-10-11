@@ -14,21 +14,25 @@ html dir="rtl" lang="ar"
     #fb-root data=Rails.application.secrets.facebook.slice("app_id", "api_version", "locale")
 
     .top-navigation
-      ul.top-navigation__menu.top-navigation__items
-        li.top-navigation__title= link_to t("site_name"), root_path
-        li= link_to t("menu.sources.name"), sources_path
-        - if user_signed_in? && current_user.admin?
-          li= link_to t("menu.categories"), categories_path
-          li= link_to t("menu.users.name"), users_path
-        - if !user_signed_in? || current_user.member?
-          li= link_to t(".contact_us"), new_feedback_path
+      .top-navigation__menu
+        ul.top-navigation__items
+          li.top-navigation__logo
+            .top-navigation-logo
+              = link_to root_path do
+                = image_tag('header_logo', class: 'top-navigation-logo--picture')
+          li = link_to t("menu.sources.name"), sources_path
+          - if user_signed_in? && current_user.admin?
+            li= link_to t("menu.categories"), categories_path
+            li= link_to t("menu.users.name"), users_path
+          - if !user_signed_in? || current_user.member?
+            li= link_to t(".contact_us"), new_feedback_path
 
-      ul.top-navigation__actions.top-navigation__items
-        - if user_signed_in?
-          li= link_to t("menu.edit_profile"), edit_user_path(current_user)
-          li= link_to t("devise.sign_out"), destroy_user_session_path, method: :delete
-        - else
-          li= link_to t("devise.log_in"), new_user_session_path
+        ul.top-navigation__actions.top-navigation__items
+          - if user_signed_in?
+            li= link_to t("menu.edit_profile"), edit_user_path(current_user)
+            li= link_to t("devise.sign_out"), destroy_user_session_path, method: :delete
+          - else
+            li= link_to t("devise.log_in"), new_user_session_path
 
     == yield
 

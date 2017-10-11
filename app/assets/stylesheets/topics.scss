@@ -20,6 +20,10 @@
   display: flex;
 }
 
+.topics__topics-filter {
+  float: left;
+}
+
 .topic__vote-buttons {
   width: 20px;
   color: $medium-gray;
