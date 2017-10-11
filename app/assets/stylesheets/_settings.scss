@@ -39,7 +39,8 @@
 //  34. Thumbnail
 //  35. Title Bar
 //  36. Tooltip
-//  37. Top Bar
+//  37. Layout Bars
+//  38. Top Bar
 
 @import 'util/util';
 
@@ -611,13 +612,16 @@ $tooltip-pip-width: 0.75rem;
 $tooltip-pip-height: $tooltip-pip-width * 0.866;
 $tooltip-radius: $global-radius;
 
-// 37. Top Bar
+// 37. Layout Bars
+// -----------
+$bar-background: $white;
+$bar-content-border: 2px solid $purple-color;
+
+// 38. Top Bar
 // -----------
 
 $topbar-padding: 0.5rem;
-$topbar-background: $white;
-$topbar-separate-line: $purple-color;
-$topbar-submenu-background: $topbar-background;
+$topbar-submenu-background: $bar-background;
 $topbar-title-spacing: 0.5rem 1rem 0.5rem 1rem;
 $topbar-input-width: 200px;
 $topbar-unstack-breakpoint: medium;

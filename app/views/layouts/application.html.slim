@@ -34,21 +34,23 @@ html dir="rtl" lang="ar"
           - else
             li= link_to t("devise.log_in"), new_user_session_path
 
-    == yield
+    .application-content
+      == yield
 
     .footer
-      .footer__link= link_to t('.about_us'), about_us_path
-      .footer__link= link_to t('.terms_of_use'), terms_of_use_path
-      .footer__link= link_to t('.contact_us'), new_feedback_path
-      .footer__social-links
-        .footer__link
-          = link_to facebook_link do
-            = image_tag 'socials/facebook.svg', class: 'footer__social-icon'
-            span.footer__social-name= t('layouts.footer.socials.facebook')
-        .footer__link
-          = link_to twitter_link do
-            = image_tag 'socials/twitter.svg', class: 'footer__social-icon'
-            span.footer__social-name = t('layouts.footer.socials.twitter')
+      .footer__links
+        .footer__link= link_to t('.about_us'), about_us_path
+        .footer__link= link_to t('.terms_of_use'), terms_of_use_path
+        .footer__link= link_to t('.contact_us'), new_feedback_path
+        .footer__social-links
+          .footer__link
+            = link_to facebook_link do
+              = image_tag 'socials/facebook.svg', class: 'footer__social-icon'
+              span.footer__social-name= t('layouts.footer.socials.facebook')
+          .footer__link
+            = link_to twitter_link do
+              = image_tag 'socials/twitter.svg', class: 'footer__social-icon'
+              span.footer__social-name = t('layouts.footer.socials.twitter')
 
     .alerts.js-alerts
       .row

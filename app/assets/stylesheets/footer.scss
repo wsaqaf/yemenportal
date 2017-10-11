@@ -1,22 +1,14 @@
 @import "settings";
 
-html {
-  height: 100%;
-}
-
-body {
-  position: relative;
-  min-height: 100%;
-  padding-bottom: 80px !important;
-}
-
 .footer {
   width: 100%;
-  position: absolute;
-  bottom: 0;
-  padding: 0.5rem;
   line-height: 1.5;
-  background-color: $light-gray;
+  background-color: $bar-background;
+}
+
+.footer__links {
+  padding: 0.5rem;
+  border-top: $bar-content-border;
 }
 
 .footer__link {
