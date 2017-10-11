@@ -24,24 +24,20 @@ body {
   padding: 0.7rem 1rem;
 }
 
-.footer-social-links {
+.footer__social-links {
   float: left;
 
   @media only screen and (max-width: 768px) {
     float: right;
     width: 100%;
   }
+}
 
-  .social-link {
-    @extend .footer__link;
+.footer__social-name {
+  vertical-align: middle;
+}
 
-    &--text {
-      vertical-align: middle;
-    }
-
-    &--image {
-      height: 1.4em;
-      margin-left: 0.4em;
-    }
-  }
+.footer__social-icon {
+  height: 1.4em;
+  margin-left: 0.4em;
 }
