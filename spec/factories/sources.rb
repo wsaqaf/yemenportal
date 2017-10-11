@@ -18,6 +18,9 @@
 #  source_type   :string
 #  approve_state :string           default("suggested")
 #  user_id       :integer
+#  iframe_flag   :boolean          default("true")
+#  logo_url      :string
+#  deleted_at    :datetime
 #
 # Indexes
 #
