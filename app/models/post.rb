@@ -72,4 +72,8 @@ class Post < ApplicationRecord
   def show_internally?
     source.show_internally?
   end
+
+  def page_content
+    PageFetcher.new(self).content
+  end
 end

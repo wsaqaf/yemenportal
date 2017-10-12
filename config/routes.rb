@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: [:show]
+  resources :posts_proxy, only: [:show]
 
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do
