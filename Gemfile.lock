@@ -453,6 +453,7 @@ DEPENDENCIES
   koala
   listen (~> 3.0.5)
   momentjs-rails
+  nokogiri
   omniauth
   omniauth-facebook
   omniauth-twitter
@@ -489,4 +490,4 @@ DEPENDENCIES
   will_paginate-foundation
 
 BUNDLED WITH
-   1.14.6
+   1.15.4

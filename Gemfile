@@ -49,6 +49,7 @@ gem 'babel-transpiler'
 
 gem "tf-idf-similarity"
 gem 'ar-stemmer'
+gem 'nokogiri'
 
 group :development do
   gem 'web-console', '>= 3.3.0'
