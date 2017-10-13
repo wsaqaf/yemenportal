@@ -12,8 +12,4 @@ class Posts::Show::Cell < Application::Cell
   def post_link
     post.link
   end
-
-  def post_content_proxy_url
-    PostProxy.new(post).iframe_url
-  end
 end

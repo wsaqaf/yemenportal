@@ -8,7 +8,7 @@
       .post-page__close-button.column.small-1.medium-2.large-2
         = link_to("&times;", post_link, class: "button hollow float-left")
 
-  iframe.post-page__iframe scrolling="no" src=post_content_proxy_url
+  object.post-page__external-content[data=proxy_post_path(post) type="text/html"]
 
   javascript:
     $('iframe').iFrameResize();

@@ -19,6 +19,11 @@ Rails.application.routes.draw do
 
   resources :posts, only: [:show]
 
+  namespace :proxy do
+    get "content", to: "content#show"
+    resources :posts, only: [:show]
+  end
+
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do
       resource :moderator_permissions, only: [:create, :destroy]
