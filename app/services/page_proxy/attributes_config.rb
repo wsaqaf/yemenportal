@@ -1,4 +1,4 @@
-class LinksRectifier::AttributesConfig
+class PageProxy::AttributesConfig
   CONFIG_FILE_NAME = "html_attributes_with_links.yml".freeze
   CONFIG_DIRECTORY = "config".freeze
 
@@ -7,7 +7,7 @@ class LinksRectifier::AttributesConfig
   end
 
   def self.instance
-    @instance ||= LinksRectifier::AttributesConfig.new
+    @instance ||= PageProxy::AttributesConfig.new
   end
 
   def tags_with_url_attributes
