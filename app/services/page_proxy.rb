@@ -1,5 +1,5 @@
 class PageProxy
-  MIME_TYPE_ATTRIBUTE = "type"
+  MIME_TYPE_ATTRIBUTE = "type".freeze
 
   def initialize(page_url, page_content)
     @page_url = page_url

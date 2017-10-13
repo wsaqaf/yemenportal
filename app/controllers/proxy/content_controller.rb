@@ -15,4 +15,3 @@ class Proxy::ContentController < ApplicationController
     params[:type].presence || request.format
   end
 end
-

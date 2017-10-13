@@ -1,10 +1,10 @@
 class PageProxy::LinkProxy
   include Rails.application.routes.url_helpers
 
-  LINK_TAG_NAME = "a"
-  HTTP_SCHEME = "http"
-  SCRIPT_TAG_NAME = "script"
-  SCRIPT_MIME_TYPE = "application/x-javascript"
+  LINK_TAG_NAME = "a".freeze
+  HTTP_SCHEME = "http".freeze
+  SCRIPT_TAG_NAME = "script".freeze
+  SCRIPT_MIME_TYPE = "application/x-javascript".freeze
 
   def initialize(link, tag_name, tag_type)
     @link = PageProxy::UriParser.new(link).parse
