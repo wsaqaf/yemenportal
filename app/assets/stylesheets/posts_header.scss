@@ -4,4 +4,9 @@
   &__controls {
     margin-top: 1.2rem;
   }
+
+  &__topic-card {
+    height: 8rem;
+    overflow-y: scroll;
+  }
 }

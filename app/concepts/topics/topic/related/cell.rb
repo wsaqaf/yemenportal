@@ -11,7 +11,8 @@ class Topics::Topic::Related::Cell < Application::Cell
 
   def path_to_post
     if post.show_internally?
-      post_path(post)
+      #post_url(post, protocol: "http")
+      post_url(post, protocol: "http", host: "yp.local", port: 3001, root: root_url)
     else
       post.link
     end
