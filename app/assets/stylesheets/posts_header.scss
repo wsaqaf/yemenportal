@@ -1,11 +1,7 @@
 @import "settings";
 
-.post-header {
-  &__back-button {
-    margin-top: 20px;
-  }
-
-  &__close-button {
-    margin-top: 20px;
+.post-page-header {
+  &__controls {
+    margin-top: 1.2rem;
   }
 }
