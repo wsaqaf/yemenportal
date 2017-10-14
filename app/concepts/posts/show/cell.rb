@@ -6,7 +6,7 @@ class Posts::Show::Cell < Application::Cell
   end
 
   def header_url
-    posts_header_url(post, protocol: "https")
+    posts_header_url(post)
   end
 
   delegate :link, to: :post, prefix: true, allow_nil: true
