@@ -5,15 +5,5 @@ class Posts::Show::Cell < Application::Cell
     model
   end
 
-  def topic
-    post.topic
-  end
-
-  def post_link
-    post.link
-  end
-
-  def post_content_proxy_url
-    PostProxy.new(post).iframe_url
-  end
+  delegate :link, to: :post, prefix: true, allow_nil: true
 end

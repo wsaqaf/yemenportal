@@ -1,6 +1,6 @@
 class PostsController < ApplicationController
   def show
-    render html: "ada"
+    render cell: :show, model: post, layout: "post_layout"
   end
 
   private

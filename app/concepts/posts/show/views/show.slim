@@ -1,14 +1,3 @@
 .post-page
-  .post-page__header
-    .row
-      .post-page__back-button.column.small-2.medium-2.large-2
-        = link_to("⟶ #{st("back")}", root_path, class: "button hollow float-right")
-      .post-page__topic-card.column.small-9.medium-8.large-8
-        = cell("topics/topic/cell", topic)
-      .post-page__close-button.column.small-1.medium-2.large-2
-        = link_to("&times;", post_link, class: "button hollow float-left")
-
-  iframe.post-page__iframe scrolling="no" src=post_content_proxy_url
-
-  javascript:
-    $('iframe').iFrameResize();
+  object.post-page__post-header[data = posts_header_path(post)]
+  object.post-page__external-site[data = post_link]
