@@ -1,6 +1,6 @@
 class PostsHeaderController < ApplicationController
   def show
-    allow_to_return_header_to_unsafe_post_page
+    allow_header_frame_render
     render cell: :show, model: post, layout: "post_header_layout"
   end
 
@@ -10,7 +10,7 @@ class PostsHeaderController < ApplicationController
     Post.find(params[:id])
   end
 
-  def allow_to_return_header_to_unsafe_post_page
+  def allow_header_frame_render
     response.headers["X-Frame-Options"] = "ALLOWALL"
   end
 end

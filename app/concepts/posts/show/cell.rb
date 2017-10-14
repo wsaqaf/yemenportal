@@ -6,7 +6,7 @@ class Posts::Show::Cell < Application::Cell
   end
 
   def header_url
-    URI.join(@options[:host], posts_header_path(post))
+    posts_header_url(post, protocol: "https")
   end
 
   delegate :link, to: :post, prefix: true, allow_nil: true

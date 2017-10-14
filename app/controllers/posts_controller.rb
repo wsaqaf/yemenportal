@@ -1,13 +1,6 @@
 class PostsController < ApplicationController
-  skip_before_action :verify_authenticity_token
-
   def show
-    render(
-      cell: :show,
-      model: post,
-      layout: "post_layout",
-      options: { host: params[:root] }
-    )
+    render cell: :show, model: post, layout: "post_layout"
   end
 
   private
