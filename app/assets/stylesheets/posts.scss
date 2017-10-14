@@ -1,10 +1,12 @@
 @import "settings";
 
 .post-page {
+  height: 100%;
+
   &__post-header {
-    width: 100%;
-    height: 100%;
     display: block;
+    width: 100%;
+    padding: 20px 50px;
   }
 
   &__external-site {

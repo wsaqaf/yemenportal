@@ -1,0 +1,7 @@
+.post-page__header
+  .post-page__back-button.column.small-2.medium-2.large-2
+    = link_to("⟶ #{st("back")}", root_path, class: "button hollow float-right")
+  .post-page__topic-card.column.small-9.medium-8.large-8
+    = cell("topics/topic/cell", post_topic)
+  .post-page__close-button.column.small-1.medium-2.large-2
+    = link_to("&times;", post_link, class: "button hollow float-left")
