@@ -18,7 +18,11 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: :show, constraints: ->(request) { request.protocol == "http://" }
-  resources :posts_header, only: :show
+  resources :posts, only: [] do
+    scope module: :posts do
+      resource :header, only: :show
+    end
+  end
 
   resources :users, only: [:index, :update, :edit] do
     scope module: :users do

@@ -165,8 +165,9 @@ en:
         successfully_destroyed: Comment was successfully deleted.
         not_destroyed: Something went wrong. Can't delete comment.
   posts:
-    show:
-      back: Back
+    headres:
+      show:
+        back: Back
   feedbacks:
     new:
       submit: Submit

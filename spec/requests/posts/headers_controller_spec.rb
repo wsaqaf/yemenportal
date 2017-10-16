@@ -1,8 +1,8 @@
 require "rails_helper"
 
-describe PostsHeaderController, type: :request do
+describe Posts::HeadersController, type: :request do
   describe "#show" do
-    let(:do_request) { get "/posts_header/#{post_id}" }
+    let(:do_request) { get "/posts/#{post_id}/header" }
 
     context "when there is no post for id" do
       let(:post_id) { 404 }

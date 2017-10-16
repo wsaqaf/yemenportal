@@ -1,4 +1,4 @@
-class PostsHeader::Show::Cell < Application::Cell
+class Posts::Headers::Show::Cell < Application::Cell
   private
 
   def post

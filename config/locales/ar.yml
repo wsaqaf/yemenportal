@@ -195,9 +195,10 @@ ar:
       destroy:
         successfully_destroyed: تم حذف التعليق بنجاح
         not_destroyed: 'هناك خطاً ما، لا يمكن حذف التعليق. '
-  posts_header:
-    show:
-      back: رجوع
+  posts:
+    headers:
+      show:
+        back: رجوع
   activerecord:
     errors:
       models:

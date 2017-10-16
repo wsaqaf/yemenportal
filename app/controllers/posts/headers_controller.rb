@@ -1,4 +1,4 @@
-class PostsHeaderController < ApplicationController
+class Posts::HeadersController < ApplicationController
   def show
     allow_header_frame_render
     render cell: :show, model: post, layout: "post_header_layout"
@@ -7,7 +7,7 @@ class PostsHeaderController < ApplicationController
   private
 
   def post
-    Post.find(params[:id])
+    Post.find(params[:post_id])
   end
 
   def allow_header_frame_render
