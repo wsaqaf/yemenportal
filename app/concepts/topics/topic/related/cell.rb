@@ -11,7 +11,7 @@ class Topics::Topic::Related::Cell < Application::Cell
 
   def path_to_post
     if post.show_internally?
-      post_path(post)
+      post_url(post, protocol: "http")
     else
       post.link
     end

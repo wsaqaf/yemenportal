@@ -8,7 +8,7 @@
 
   .topic__body
     - if title.present?
-      = link_to(title, path_to_topic, class: "topic__title")
+      = link_to(title, path_to_topic, class: "topic__title", target: "_parent")
 
     .topic__subtitle
       .topic__subtitle-item= topic.source_name
@@ -33,6 +33,6 @@
 
     .topic__footer
       .topic__footer-item
-        = link_to(st("discuss"), topic_comments_path(topic), class: "topic__footer-discuss-link")
+        = link_to(st("discuss"), topic_comments_path(topic), class: "topic__footer-discuss-link", target: "_parent")
       .topic__footer-item
-        = link_to(st("review"), topic_reviews_path(topic), class: "topic__footer-discuss-link")
+        = link_to(st("review"), topic_reviews_path(topic), class: "topic__footer-discuss-link", target: "_parent")
