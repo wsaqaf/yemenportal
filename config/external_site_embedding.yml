@@ -1,0 +1,11 @@
+default: &default
+  post_header_protocol: http
+  cookies_security_flag: false
+
+development:
+  *default
+test:
+  *default
+production:
+  post_header_protocol: https
+  cookies_security_flag: true
