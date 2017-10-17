@@ -1,0 +1,10 @@
+.topic-review-comment
+  .topic-review-comment__author= comment.author.full_name
+  time.js-time.topic-review-comment__subheader datetime=comment.created_at.iso8601
+  .topic-review-comment__body= comment.body
+  - if deletable_by_current_user?
+    .topic-review-comment__delete
+      = button_to "Delete",
+          post_review_comment_path(post, comment),
+          class: "button hollow tiny alert",
+          method: :delete

@@ -1,11 +1,11 @@
-class Topics::Flag::Cell < Application::Cell
+class Posts::Flag::Cell < Application::Cell
   builds do |flag, _options|
     if flag.read_only?
-      Topics::Flag::ReadOnly::Cell
+      Posts::Flag::ReadOnly::Cell
     elsif flag.reviewed?
-      Topics::Flag::Reviewed::Cell
+      Posts::Flag::Reviewed::Cell
     else
-      Topics::Flag::NotReviewed::Cell
+      Posts::Flag::NotReviewed::Cell
     end
   end
 
@@ -15,8 +15,8 @@ class Topics::Flag::Cell < Application::Cell
     model
   end
 
-  def topic
-    options[:topic]
+  def post
+    options[:post]
   end
 
   def button_options
