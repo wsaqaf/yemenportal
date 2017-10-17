@@ -28,6 +28,8 @@ class Post < ApplicationRecord
 
   has_many :post_category
   has_many :categories, through: :post_category
+  has_many :reviews, dependent: :destroy
+  has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
 
   belongs_to :source
   belongs_to :topic, counter_cache: :topic_size, touch: true
@@ -51,6 +53,10 @@ class Post < ApplicationRecord
 
   def self.available_states
     state.values
+  end
+
+  def self.include_review_comments
+    includes(review_comments: [:author])
   end
 
   def same_posts

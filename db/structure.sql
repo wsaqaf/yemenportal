@@ -230,10 +230,10 @@ ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 CREATE TABLE review_comments (
     id integer NOT NULL,
     author_id integer,
-    topic_id integer,
     body text,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    post_id integer
 );
 
 
@@ -262,9 +262,9 @@ ALTER SEQUENCE review_comments_id_seq OWNED BY review_comments.id;
 
 CREATE TABLE reviews (
     id integer NOT NULL,
-    topic_id integer,
     flag_id integer,
-    moderator_id integer
+    moderator_id integer,
+    post_id integer
 );
 
 
@@ -755,10 +755,10 @@ CREATE INDEX index_review_comments_on_author_id ON review_comments USING btree (
 
 
 --
--- Name: index_review_comments_on_topic_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_review_comments_on_post_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_review_comments_on_topic_id ON review_comments USING btree (topic_id);
+CREATE INDEX index_review_comments_on_post_id ON review_comments USING btree (post_id);
 
 
 --
@@ -776,10 +776,10 @@ CREATE INDEX index_reviews_on_moderator_id ON reviews USING btree (moderator_id)
 
 
 --
--- Name: index_reviews_on_topic_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_reviews_on_post_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_reviews_on_topic_id ON reviews USING btree (topic_id);
+CREATE INDEX index_reviews_on_post_id ON reviews USING btree (post_id);
 
 
 --
@@ -876,6 +876,14 @@ ALTER TABLE ONLY post_categories
 
 
 --
+-- Name: review_comments fk_rails_3dc3eafbd8; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY review_comments
+    ADD CONSTRAINT fk_rails_3dc3eafbd8 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
 -- Name: post_categories fk_rails_419dd5143d; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -913,6 +921,14 @@ ALTER TABLE ONLY posts
 
 ALTER TABLE ONLY source_logs
     ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: reviews fk_rails_a4cffdde38; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY reviews
+    ADD CONSTRAINT fk_rails_a4cffdde38 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -987,6 +1003,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170810153646'),
 ('20170814104111'),
 ('20170818072941'),
-('20171011064759');
+('20171011064759'),
+('20171017124739');
 
 
