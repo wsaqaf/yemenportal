@@ -3,7 +3,7 @@ require 'sidekiq/web'
 Rails.application.routes.draw do
   devise_for :users, controllers: { omniauth_callbacks: "omniauth_callbacks", invitations: 'users/invitations',
     confirmations: 'users/confirmations' }
-  root to: 'main_page#show'
+  root to: "posts#index"
 
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   end
 
   resources :posts, only: :show, constraints: ->(request) { request.protocol == "http://" }
-  resources :posts, only: [] do
+  resources :posts, only: :index do
     scope module: :posts do
       resource :header, only: :show
     end

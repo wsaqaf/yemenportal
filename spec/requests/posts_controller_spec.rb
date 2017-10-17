@@ -24,4 +24,13 @@ describe PostsController, type: :request do
       end
     end
   end
+
+  describe "#index" do
+    let(:do_request) { get "/posts/" }
+
+    it "renders posts page" do
+      do_request
+      expect(response).to have_http_status(:ok)
+    end
+  end
 end
