@@ -1,7 +1,7 @@
 FactoryGirl.define do
   factory :review do
     moderator factory: :user_moderator
-    topic
+    post
     flag
   end
 end
