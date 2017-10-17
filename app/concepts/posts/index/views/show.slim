@@ -5,11 +5,14 @@
         .column.small-12
           = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
             .topics-spotlight__query
-              = text_field_tag :q, filter_params.q, disabled: true, placeholder: st("coming_soon")
+              = text_field_tag :q, post_filter_params.q, disabled: true, placeholder: st("coming_soon")
             .topics-spotlight__set
-              = select_tag :set, options_for_select(Topics::Filter::Params.set.options, filter_params.set)
+              = select_tag :set,
+                  options_for_select(Posts::Filter::Params.set.options, post_filter_params.set)
 
-            = select_tag :time, options_for_select(Topics::Filter::Params.time.options, filter_params.time), class: "topics-spotlight__time"
+            = select_tag :time,
+                options_for_select(Posts::Filter::Params.time.options, post_filter_params.time),
+                class: "topics-spotlight__time"
 
       .topics__topics-section.row
         .column.small-12.medium-4.large-3.topics__topics-filter
@@ -22,7 +25,7 @@
               = select_tag :source, options_for_select([st("coming_soon")]), disabled: true
         .column.small-12.medium-8.large-9
           .topics__topics
-            - topics.each do |topic|
-              .topics__topic= concept("topics/topic/cell", topic).call
+            - posts.each do |post|
+              .topics__topic = concept("posts/post/cell", post).call
 
           .topics__pagination= pagination

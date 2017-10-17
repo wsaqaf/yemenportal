@@ -1,11 +1,11 @@
-class Topics::Filter
+class Posts::Filter
   def initialize(params)
     @params = Params.new(params)
   end
 
-  def topics
-    filters.reduce(all_topics) do |topics, filter|
-      filter.call(topics)
+  def filtered_posts
+    filters.reduce(all_posts) do |posts, filter|
+      filter.call(posts)
     end
   end
 
@@ -13,20 +13,17 @@ class Topics::Filter
 
   attr_reader :params
 
-  def all_topics
-    ::Topic.all
+  def all_posts
+    ::Post.all
   end
 
+  # More filters will be added later
   def filters
-    [
-      page_filter,
-      time_filter,
-      sorting_filter
-    ]
+    [page_filter]
   end
 
   def page_filter
-    ->(topics) { topics.paginate(page: params.page) }
+    ->(posts) { posts.paginate(page: params.page) }
   end
 
   def time_filter

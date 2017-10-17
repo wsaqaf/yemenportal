@@ -1,4 +1,4 @@
-class Topics::Filter::Params
+class Posts::Filter::Params
   extend ActiveModel::Naming
   extend Enumerize
 
@@ -17,6 +17,5 @@ class Topics::Filter::Params
     enumerize :set, in: [:new, :highly_voted], default: :highly_voted
   end
 
-  enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :daily,
-    predicates: true
+  enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :daily, predicates: true
 end

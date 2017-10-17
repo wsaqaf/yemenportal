@@ -13,11 +13,6 @@ ar:
   feedbacks:
     new:
       submit: عرض
-  main_page:
-    filter:
-      categories: الاقسام
-      sources: منشأ
-    coming_soon: قريبا...
   enumerize:
     feedback:
       reason:
@@ -26,7 +21,7 @@ ar:
         note_about_news_or_source: ملاحظة حول خبر أو مصدر ما
         general_proposal: اقتراح عام أو شكوى
         other: غير ذلك
-    topics/filter/params:
+    posts/filter/params:
       set:
         new: جديد
         highly_voted: صوت بشدة
@@ -175,11 +170,6 @@ ar:
       propaganda_advertising: 'دعاية / اعلان '
       missing_name: اسم الكاتب مفقود / غامض
   topics:
-    topic:
-      discuss: ناقش
-      review: مراجعة
-      related_posts: مشاركات ذات الصلة
-      details: تفاصيل
     reviews:
       create:
         successfully_created: تمت إضافة العلم بنجاح
@@ -199,6 +189,16 @@ ar:
     headers:
       show:
         back: رجوع
+    index:
+      filter:
+        categories: الاقسام
+        sources: منشأ
+      coming_soon: قريبا...
+    post:
+      discuss: ناقش
+      review: مراجعة
+      related_posts: مشاركات ذات الصلة
+      details: تفاصيل
   activerecord:
     errors:
       models:

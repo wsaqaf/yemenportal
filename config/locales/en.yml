@@ -144,11 +144,6 @@ en:
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
   topics:
-    topic:
-      discuss: Discuss
-      review: Review
-      related_posts: Related posts
-      details: Details
     reviews:
       create:
         successfully_created: Flag was successfully added.
@@ -168,17 +163,22 @@ en:
     headres:
       show:
         back: Back
+    index:
+      filter:
+        categories: Categories
+        sources: Sources
+      coming_soon: Coming soon...
+    post:
+      discuss: Discuss
+      review: Review
+      related_posts: Related posts
+      details: Details
   feedbacks:
     new:
       submit: Submit
     create:
       sent_successfully: Your message was sent successfully
       not_sent: Something went wrong
-  main_page:
-    filter:
-      categories: Categories
-      sources: Sources
-    coming_soon: Coming soon...
   feedback_mailer:
     feedback:
       subject: You got new message from "Contact Us" page
