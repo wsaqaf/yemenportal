@@ -1,31 +1,31 @@
-.topic.js-votable[data-vote-path="" class="" class=""]
-  .topic__vote-buttons
-    button.topic__vote-button.js-upvote-button
+.post.js-votable[data-vote-path="" class="" class=""]
+  .post__vote-buttons
+    button.post__vote-button.js-upvote-button
       i.fi-like
-    .topic__vote-result.js-vote-count[dir="ltr"]= post_voting_result
-    button.topic__vote-button.js-downvote-button
+    .post__vote-result.js-vote-count[dir="ltr"]= post_voting_result
+    button.post__vote-button.js-downvote-button
       i.fi-dislike
 
-  .topic__body
+  .post__body
     - if post_title.present?
-      = link_to(post_title, path_to_post, class: "topic__title", target: "_parent")
+      = link_to(post_title, path_to_post, class: "post__title", target: "_parent")
 
-    .topic__subtitle
-      .topic__subtitle-item= post_source_name
-      .topic__subtitle-item= post_category_names
-      .topic__subtitle-item
+    .post__subtitle
+      .post__subtitle-item= post_source_name
+      .post__subtitle-item= post_category_names
+      .post__subtitle-item
         time.js-time datetime=post_created_at
 
     - if post_description.present?
-      .topic__topic-body.clearfix
+      .post__post-body.clearfix
         - if post_image_url.present?
-          = image_tag(post_image_url, alt: post_title, class: "topic__image")
-        .topic__description
-          .topic__description-text> = post_description
-          .topic__link-to-more = link_to_more
+          = image_tag(post_image_url, alt: post_title, class: "post__image")
+        .post__description
+          .post__description-text> = post_description
+          .post__link-to-more = link_to_more
 
-    .topic__footer
-      .topic__footer-item
-        = link_to(st("discuss"), "", class: "topic__footer-discuss-link", target: "_parent")
-      .topic__footer-item
-        = link_to(st("review"), "", class: "topic__footer-discuss-link", target: "_parent")
+    .post__footer
+      .post__footer-item
+        = link_to(st("discuss"), "", class: "post__footer-discuss-link", target: "_parent")
+      .post__footer-item
+        = link_to(st("review"), "", class: "post__footer-discuss-link", target: "_parent")

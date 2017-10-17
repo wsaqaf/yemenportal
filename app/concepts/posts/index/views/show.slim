@@ -1,22 +1,22 @@
 .row
   .columns.small-12.medium-12.large-12.large-centered
-    .topics
-      .topics__spotlight.row
+    .posts
+      .posts__spotlight.row
         .column.small-12
-          = form_tag root_path, method: :get, class: "topics-spotlight js-spotlight-form" do
-            .topics-spotlight__query
+          = form_tag root_path, method: :get, class: "posts-spotlight js-spotlight-form" do
+            .posts-spotlight__query
               = text_field_tag :q, post_filter_params.q, disabled: true, placeholder: st("coming_soon")
-            .topics-spotlight__set
+            .posts-spotlight__set
               = select_tag :set,
                   options_for_select(Posts::Filter::Params.set.options, post_filter_params.set)
 
             = select_tag :time,
                 options_for_select(Posts::Filter::Params.time.options, post_filter_params.time),
-                class: "topics-spotlight__time"
+                class: "posts-spotlight__time"
 
-      .topics__topics-section.row
-        .column.small-12.medium-4.large-3.topics__topics-filter
-          .topics-filter
+      .posts__posts-section.row
+        .column.small-12.medium-4.large-3.posts__posts-filter
+          .posts-filter
             label
               = st("filter.categories")
               = select_tag :source, options_for_select([st("coming_soon")]), disabled: true
@@ -24,8 +24,8 @@
               = st("filter.sources")
               = select_tag :source, options_for_select([st("coming_soon")]), disabled: true
         .column.small-12.medium-8.large-9
-          .topics__topics
+          .posts__posts
             - posts.each do |post|
-              .topics__topic = concept("posts/post/cell", post).call
+              .posts__post= concept("posts/post/cell", post).call
 
-          .topics__pagination= pagination
+          .posts__pagination= pagination
