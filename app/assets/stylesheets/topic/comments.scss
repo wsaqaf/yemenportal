@@ -1,6 +1,6 @@
 @import "settings";
 
-.topic-comments__comments {
+.post-comments__comments {
   position: relative;
 }
 
@@ -8,7 +8,7 @@
   background-color: $body-background;
 }
 
-.topic-comments__loader {
+.post-comments__loader {
   position: absolute;
   left: calc(50% - 32px);
   top: 110px;
