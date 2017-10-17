@@ -1,10 +1,10 @@
 require "rails_helper"
 
-describe Topics::Flagging do
+describe Posts::Flagging do
   let(:moderator) { instance_double(User) }
-  let(:topic) { instance_double(Topic) }
+  let(:the_post) { instance_double(Post) }
   let(:review_class) { class_double(Review).as_stubbed_const }
-  let(:flagging) { Topics::Flagging.new(moderator: moderator, topic: topic, flag: flag) }
+  let(:flagging) { Posts::Flagging.new(moderator: moderator, post: the_post, flag: flag) }
 
   describe "#create_review" do
     context "when flag is general" do
@@ -14,7 +14,7 @@ describe Topics::Flagging do
         set_with_resolve_flag = double(destroy_all: true)
         allow(review_class).to receive(:with_resolve_flag).and_return(set_with_resolve_flag)
 
-        expect(review_class).to receive(:create).with(moderator: moderator, topic: topic,
+        expect(review_class).to receive(:create).with(moderator: moderator, post: the_post,
           flag: flag).and_return(true)
         expect(flagging.create_review).to be_truthy
       end
@@ -23,7 +23,7 @@ describe Topics::Flagging do
         set_with_resolve_flag = double
         allow(review_class).to receive(:create)
 
-        expect(review_class).to receive(:with_resolve_flag).with(topic, moderator)
+        expect(review_class).to receive(:with_resolve_flag).with(the_post, moderator)
           .and_return(set_with_resolve_flag)
         expect(set_with_resolve_flag).to receive(:destroy_all)
 
@@ -38,7 +38,7 @@ describe Topics::Flagging do
         allow(review_class).to receive(:create)
 
         set_of_reviews = double
-        expect(review_class).to receive(:where).with(topic: topic, moderator: moderator)
+        expect(review_class).to receive(:where).with(post: the_post, moderator: moderator)
           .and_return(set_of_reviews)
         expect(set_of_reviews).to receive(:destroy_all)
 
@@ -49,7 +49,7 @@ describe Topics::Flagging do
         set_of_reviews = double(destroy_all: true)
         allow(review_class).to receive(:where).and_return(set_of_reviews)
 
-        expect(review_class).to receive(:create).with(moderator: moderator, topic: topic,
+        expect(review_class).to receive(:create).with(moderator: moderator, post: the_post,
           flag: flag).and_return(true)
         expect(flagging.create_review).to be_truthy
       end

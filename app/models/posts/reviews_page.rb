@@ -1,9 +1,9 @@
-class Topics::ReviewsPage
-  attr_reader :topic
+class Posts::ReviewsPage
+  attr_reader :post
 
-  def initialize(user, topic)
+  def initialize(user, post)
     @user = user
-    @topic = topic
+    @post = post
   end
 
   def flags
@@ -13,7 +13,7 @@ class Topics::ReviewsPage
   end
 
   def comments
-    topic.review_comments
+    post.review_comments
   end
 
   def new_review_comment
@@ -25,11 +25,11 @@ class Topics::ReviewsPage
   attr_reader :user
 
   def all_flags
-    @_all_flags ||= ::Flag.all.include_number_of_reviews_for_topic(topic)
+    @_all_flags ||= ::Flag.all.include_number_of_reviews_for_post(post)
   end
 
   def reviews
-    @_reviews ||= Review.where(moderator: user, topic: topic)
+    @_reviews ||= Review.where(moderator: user, post: post)
   end
 
   class Flag
@@ -41,7 +41,7 @@ class Topics::ReviewsPage
       @user = user
     end
 
-    delegate :id, :name, :color, :number_of_reviews_for_topic, to: :flag
+    delegate :id, :name, :color, :number_of_reviews_for_post, to: :flag
 
     def reviewed?
       review.present?
