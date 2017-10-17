@@ -1,4 +1,4 @@
-class Topics::Flag::ReadOnly::Cell < Topics::Flag::Cell
+class Posts::Flag::ReadOnly::Cell < Posts::Flag::Cell
   private
 
   def button
@@ -10,7 +10,7 @@ class Topics::Flag::ReadOnly::Cell < Topics::Flag::Cell
   end
 
   def zero_flags_class
-    if flag.number_of_reviews_for_topic.zero?
+    if flag.number_of_reviews_for_post.zero?
       "topic-flag--zero"
     end
   end

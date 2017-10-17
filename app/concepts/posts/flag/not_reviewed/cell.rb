@@ -1,4 +1,4 @@
-class Topics::Flag::NotReviewed::Cell < Topics::Flag::Cell
+class Posts::Flag::NotReviewed::Cell < Posts::Flag::Cell
   private
 
   def reviewed_by_user_class
@@ -6,7 +6,7 @@ class Topics::Flag::NotReviewed::Cell < Topics::Flag::Cell
   end
 
   def button
-    button_to(topic_reviews_path(topic), button_options) do
+    button_to(post_reviews_path(post), button_options) do
       yield
     end
   end

@@ -2,19 +2,19 @@
   .row
     .column.small-12.medium-8.large-9.medium-centered
       .topic-reviews__header
-        = concept("topics/topic/cell", topic).call
+        = concept("posts/post/cell", post).call
       .topic-reviews__flags
         - flags.each do |flag|
           .topic-reviews__flag
-            = concept("topics/flag/cell", flag, topic: topic).call
+            = concept("posts/flag/cell", flag, post: post).call
       .topic-reviews__comments
         - comments.each do |comment|
           .topic-reviews__comment
-            = concept("topics/reviews/comment/cell", comment, topic: topic).call
+            = concept("posts/reviews/comment/cell", comment, post: post).call
 
         - if can_current_user_create_comment?
           .topic-reviews__new-comment
-            = simple_form_for [topic, new_review_comment] do |f|
+            = simple_form_for [post, new_review_comment] do |f|
               = f.input :body, label: false
               .button-group
                 = f.submit st('.comment'), class: "button"
