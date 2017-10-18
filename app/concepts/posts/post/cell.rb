@@ -5,9 +5,12 @@ class Posts::Post::Cell < Application::Cell
     model
   end
 
-  # Votes for posts will be implemented later
-  def post_voting_result
-    0
+  def upvoted_class_if_upvoted
+    "js-upvoted" if post.upvoted_by_user?
+  end
+
+  def downvoted_class_if_downvoted
+    "js-downvoted" if post.downvoted_by_user?
   end
 
   def post_description
@@ -36,6 +39,6 @@ class Posts::Post::Cell < Application::Cell
     end
   end
 
-  delegate :title, :source_name, :source_name, :image_url,
+  delegate :title, :source_name, :source_name, :image_url, :voting_result,
     to: :post, prefix: true, allow_nil: true
 end
