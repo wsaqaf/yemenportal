@@ -1,11 +1,7 @@
 class Posts::Reviews::Cell < Application::Cell
   private
 
-  def reviews_page
-    model
-  end
-
-  delegate :post, :flags, :comments, :new_review_comment, to: :reviews_page
+  property :post, :flags, :comments, :new_review_comment
 
   def can_current_user_create_comment?
     policy(ReviewComment).create?

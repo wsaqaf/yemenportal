@@ -11,18 +11,13 @@ class Posts::Flag::Cell < Application::Cell
 
   private
 
-  def flag
-    model
-  end
-
-  def post
-    options[:post]
-  end
+  property :id, :name, :number_of_reviews_for_post, :color, :review
+  option :post
 
   def button_options
     {
       form_class: ["post-flag", reviewed_by_user_class].join(" "),
-      form: { style: "background-color: #{flag.color}" }
+      form: { style: "background-color: #{color}" }
     }
   end
 end

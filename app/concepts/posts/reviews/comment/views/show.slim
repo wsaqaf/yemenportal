@@ -1,7 +1,7 @@
 .post-review-comment
-  .post-review-comment__author= comment.author.full_name
-  time.js-time.post-review-comment__subheader datetime=comment.created_at.iso8601
-  .post-review-comment__body= comment.body
+  .post-review-comment__author= author.full_name
+  time.js-time.post-review-comment__subheader[datetime= created_at.iso8601]
+  .post-review-comment__body= body
   - if deletable_by_current_user?
     .post-review-comment__delete
       = button_to "Delete",

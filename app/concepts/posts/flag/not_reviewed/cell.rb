@@ -12,6 +12,6 @@ class Posts::Flag::NotReviewed::Cell < Posts::Flag::Cell
   end
 
   def button_options
-    super.merge({ method: :post, params: { flag_id: flag.id } })
+    super.merge({ method: :post, params: { flag_id: id } })
   end
 end

@@ -6,7 +6,7 @@ class Posts::Flag::Reviewed::Cell < Posts::Flag::Cell
   end
 
   def button
-    button_to(post_review_path(post, flag.review), button_options) do
+    button_to(post_review_path(post, review), button_options) do
       yield
     end
   end
