@@ -8,11 +8,7 @@ Rails.application.routes.draw do
   resources :categories, only: [:index, :new, :create, :destroy]
   resources :sources
 
-  resources :topics, only: [:show] do
-    scope module: :topics do
-      resource :vote, only: [:update, :destroy]
-    end
-  end
+  resources :topics, only: :show
 
   resources :posts, only: :show, constraints: ->(request) { request.protocol == "http://" }
   resources :posts, only: :index do
@@ -21,6 +17,7 @@ Rails.application.routes.draw do
       resources :comments, only: :index
       resources :reviews, only: [:index, :create, :destroy]
       resources :review_comments, only: [:create, :destroy]
+      resource :vote, only: [:update, :destroy]
     end
   end
 
