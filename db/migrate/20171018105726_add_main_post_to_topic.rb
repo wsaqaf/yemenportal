@@ -20,15 +20,22 @@ class AddMainPostToTopic < ActiveRecord::Migration[5.0]
   class TopicMainPostMigration
     def initialize(topic)
       @topic = topic
-      @initial_post_id = topic.initial_post&.id
     end
 
     def up
-      if @initial_post_id.present?
-        @topic.update(main_post_id: @initial_post_id)
+      if initial_post_id.present?
+        topic.update(main_post_id: initial_post_id)
       else
-        @topic.destroy
+        topic.destroy
       end
+    end
+
+    private
+
+    attr_reader :topic
+
+    def initial_post_id
+      @_initial_post_id ||= topic.initial_post&.id
     end
   end
 end

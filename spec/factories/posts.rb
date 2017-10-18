@@ -34,5 +34,11 @@ FactoryGirl.define do
     state "pending"
     association :source
     published_at Time.new
+
+    trait :main_post do
+      after(:create) do |post|
+        create(:topic, main_post: post)
+      end
+    end
   end
 end

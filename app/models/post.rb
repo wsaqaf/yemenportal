@@ -37,7 +37,7 @@ class Post < ApplicationRecord
   belongs_to :source
   belongs_to :topic, optional: true, counter_cache: :topic_size, touch: true
 
-  has_one :main_topic, class_name: "Topic", foreign_key: :main_post_id
+  has_one :main_topic, class_name: "Topic", foreign_key: :main_post_id, dependent: :destroy
 
   validates :published_at, :link, presence: true
   validates :link, uniqueness: true
