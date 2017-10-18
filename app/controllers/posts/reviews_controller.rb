@@ -6,7 +6,7 @@ class Posts::ReviewsController < ApplicationController
   end
 
   def create
-    authorize ::Review, :create?
+    authorize ::Review
     if flagging.create_review
       redirect_to(post_reviews_path(post), notice: t(".successfully_created"))
     else
@@ -15,7 +15,7 @@ class Posts::ReviewsController < ApplicationController
   end
 
   def destroy
-    authorize review, :destroy?
+    authorize review
     if review.destroy
       redirect_to(post_reviews_path(post), notice: t(".successfully_destroyed"))
     end

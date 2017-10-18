@@ -9,7 +9,7 @@ class Posts::ReviewCommentsController < ApplicationController
   end
 
   def destroy
-    authorize review_comment, :destroy?
+    authorize review_comment
     if review_comment.destroy
       redirect_to post_reviews_path(post), notice: t(".successfully_destroyed")
     else
