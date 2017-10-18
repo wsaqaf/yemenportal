@@ -32,7 +32,7 @@ class Posts::VoteUpdater
   attr_reader :user, :post
 
   def vote
-    Vote.find_by(user: user, post: post)
+    @_vote = Vote.find_by(user: user, post: post)
   end
 
   def update_post_voting_result
@@ -40,6 +40,6 @@ class Posts::VoteUpdater
   end
 
   def voting_result_for_post
-    Vote.voting_result_for(post)
+    @_voting_result_for_post = Vote.voting_result_for(post)
   end
 end

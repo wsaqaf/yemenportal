@@ -20,6 +20,6 @@ class Posts::VotesController < ApplicationController
   end
 
   def post
-    ::Post.find(params[:post_id])
+    @_post = ::Post.find(params[:post_id])
   end
 end
