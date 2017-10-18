@@ -25,6 +25,18 @@ describe Post do
     it { is_expected.to validate_presence_of(field) }
   end
 
+  describe ".ordered_by_coverage" do
+    subject { described_class.ordered_by_coverage.to_sql }
+
+    it do
+      is_expected.to end_with(
+        'LEFT OUTER JOIN "topics" '\
+        'ON "topics"."main_post_id" = "posts"."id" '\
+        'ORDER BY "topics"."topic_size" DESC NULLS LAST'
+      )
+    end
+  end
+
   describe ".include_voted_by_user" do
     it "returns posts with upvoted_by_user and downvoted_by_user attributes" do
       user = create(:user)
