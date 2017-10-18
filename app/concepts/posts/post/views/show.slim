@@ -1,0 +1,31 @@
+.post.js-votable[data-vote-path="" class="" class=""]
+  .post__vote-buttons
+    button.post__vote-button.js-upvote-button
+      i.fi-like
+    .post__vote-result.js-vote-count[dir="ltr"]= post_voting_result
+    button.post__vote-button.js-downvote-button
+      i.fi-dislike
+
+  .post__body
+    - if post_title.present?
+      = link_to(post_title, path_to_post, class: "post__title", target: "_parent")
+
+    .post__subtitle
+      .post__subtitle-item= post_source_name
+      .post__subtitle-item= post_category_names
+      .post__subtitle-item
+        time.js-time datetime=post_created_at
+
+    - if post_description.present?
+      .post__post-body.clearfix
+        - if post_image_url.present?
+          = image_tag(post_image_url, alt: post_title, class: "post__image")
+        .post__description
+          .post__description-text> = post_description
+          .post__link-to-more = link_to_more
+
+    .post__footer
+      .post__footer-item
+        = link_to(st("discuss"), "", class: "post__footer-discuss-link", target: "_parent")
+      .post__footer-item
+        = link_to(st("review"), "", class: "post__footer-discuss-link", target: "_parent")

@@ -1,13 +1,13 @@
-.topics-spotlight {
+.posts-spotlight {
   display: flex;
   flex-direction: row;
 }
 
-.topics-spotlight__query {
+.posts-spotlight__query {
   flex-grow: 5;
 }
 
-.topics-spotlight__set {
+.posts-spotlight__set {
   width: 150px;
 
   html[dir="rtl"] & {
@@ -19,7 +19,7 @@
   }
 }
 
-.topics-spotlight__time {
+.posts-spotlight__time {
   width: 115px;
 
   html[dir="rtl"] & {

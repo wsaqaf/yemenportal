@@ -16,3 +16,177 @@
     position: relative;
   }
 }
+
+.posts {
+  &__spotlight {
+    margin-top: 20px;
+    margin-bottom: 15px;
+  }
+
+  &__posts-filter {
+    float: left;
+  }
+
+  &__post {
+    margin-bottom: 40px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__pagination {
+    text-align: center;
+  }
+}
+
+.post {
+  display: flex;
+}
+
+.posts__posts-filter {
+  float: left;
+}
+
+.post__vote-buttons {
+  width: 20px;
+  color: $medium-gray;
+
+  html[dir="rtl"] & {
+    margin-left: 1em;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-right: 1em;
+  }
+}
+
+.post__vote-button {
+  font-size: 1.5em;
+  line-height: 1.5em;
+  color: $medium-gray;
+  cursor: pointer;
+}
+
+.post__vote-result {
+  text-align: center;
+}
+
+.post__body {
+  flex-grow: 1;
+}
+
+.post__description-text {
+  display: inline;
+}
+
+.post__link-to-more {
+  display: inline;
+}
+
+.post__title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.post__subtitle {
+  margin: 5px 0;
+  color: $medium-gray;
+  font-size: 0.9em;
+}
+
+.post__subtitle-item {
+  display: inline-block;
+
+  &:first-child {
+    html[dir="rtl"] & {
+      margin-right: 0;
+    }
+
+    html:not([dir="rtl"]) & {
+      margin-left: 0;
+    }
+  }
+
+  &:not(:last-child) {
+    &:after {
+      margin: 0 5px;
+      content: "\00B7";
+      color: $light-gray;
+      vertical-align: center;
+    }
+  }
+}
+
+.post__post-body {
+  margin-bottom: 5px;
+}
+
+.post__image {
+  max-height: 4em;
+
+  html[dir="rtl"] & {
+    float: right;
+    margin-left: 0.5em;
+  }
+
+  html:not([dir="rtl"]) & {
+    float: left;
+    margin-right: 0.5em;
+  }
+}
+
+.post__related-posts {
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.post__related-posts-title {
+  color: $dark-gray;
+}
+
+.post__related {
+  margin-bottom: 5px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.post__related-subtitle {
+  color: $medium-gray;
+  font-size: 0.8em;
+}
+
+.post__related-subtitle-item {
+  display: inline-block;
+
+  &:not(:last-child) {
+    &:after {
+      margin: 0 5px;
+      content: "\00B7";
+      color: $light-gray;
+      vertical-align: center;
+    }
+  }
+}
+
+.post__footer-item {
+  display: inline-block;
+
+  html[dir="rtl"] & {
+    margin-left: 0.5em;
+  }
+
+  html:not([dir="rtl"]) & {
+    margin-right: 0.5em;
+  }
+
+  &:last-child {
+    margin: 0;
+  }
+}
+
+.posts__pagination {
+  text-align: center;
+}

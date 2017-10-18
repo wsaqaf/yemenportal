@@ -5,5 +5,5 @@ class Posts::Headers::Show::Cell < Application::Cell
     model
   end
 
-  delegate :topic, :link, to: :post, prefix: true, allow_nil: true
+  delegate :link, to: :post, prefix: true, allow_nil: true
 end
