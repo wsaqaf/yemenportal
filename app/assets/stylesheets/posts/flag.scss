@@ -1,4 +1,4 @@
-.topic-flag {
+.post-flag {
   html[dir="rtl"] & {
     margin-left: 8px;
   }
@@ -30,17 +30,17 @@
     cursor: pointer;
   }
 
-  .topic-flag__element {
+  .post-flag__element {
     padding: 8px;
     color: #fff;
   }
 }
 
-.topic-flag__name {
+.post-flag__name {
   display: inline-block;
 }
 
-.topic-flag__count {
+.post-flag__count {
   display: inline-block;
 
   html[dir="rtl"] & {

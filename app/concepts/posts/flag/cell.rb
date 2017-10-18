@@ -21,7 +21,7 @@ class Posts::Flag::Cell < Application::Cell
 
   def button_options
     {
-      form_class: ["topic-flag", reviewed_by_user_class].join(" "),
+      form_class: ["post-flag", reviewed_by_user_class].join(" "),
       form: { style: "background-color: #{flag.color}" }
     }
   end

@@ -1,14 +1,14 @@
 @import "settings";
 
-.topic-review-comment {
+.post-review-comment {
 }
 
-.topic-review-comment__author {
+.post-review-comment__author {
   display: inline-block;
   font-weight: 500;
 }
 
-.topic-review-comment__subheader {
+.post-review-comment__subheader {
   display: inline-block;
   margin-bottom: 5px;
   color: $medium-gray;
@@ -23,6 +23,6 @@
   }
 }
 
-.topic-review-comment__delete {
+.post-review-comment__delete {
   margin-top: 5px;
 }
