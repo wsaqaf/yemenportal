@@ -2,7 +2,7 @@ class Posts::Flag::NotReviewed::Cell < Posts::Flag::Cell
   private
 
   def reviewed_by_user_class
-    "topic-flag--unflagged"
+    "post-flag--unflagged"
   end
 
   def button

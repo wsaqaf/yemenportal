@@ -1,21 +1,21 @@
-.topic-reviews {
+.post-reviews {
 }
 
-.topic-reviews__header {
+.post-reviews__header {
   margin-bottom: 20px;
 }
 
-.topic-reviews__flag {
+.post-reviews__flag {
   display: inline-block;
   margin-bottom: 8px;
 }
 
 
-.topic-reviews__comments {
+.post-reviews__comments {
   margin-top: 20px;
 }
 
-.topic-reviews__comment {
+.post-reviews__comment {
   margin-bottom: 15px;
 
   &:last-child {
@@ -23,7 +23,7 @@
   }
 }
 
-.topic-reviews__new-comment {
+.post-reviews__new-comment {
   margin-top: 20px;
 
   textarea {
@@ -31,6 +31,6 @@
   }
 }
 
-.topic-reviews__warning {
+.post-reviews__warning {
   font-size: 1.2em;
 }

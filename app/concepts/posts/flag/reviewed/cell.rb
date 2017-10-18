@@ -2,7 +2,7 @@ class Posts::Flag::Reviewed::Cell < Posts::Flag::Cell
   private
 
   def reviewed_by_user_class
-    "topic-flag--flagged"
+    "post-flag--flagged"
   end
 
   def button
