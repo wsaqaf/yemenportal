@@ -3,30 +3,30 @@ require "rails_helper"
 describe Vote do
   context "class methods" do
     let(:user) { instance_double("User") }
-    let(:topic) { instance_double("Topic") }
+    let(:post) { instance_double("Post") }
 
     describe ".create_upvote" do
       it "creates Vote with value equal to 1" do
-        expect(Vote).to receive(:create).with(user: user, topic: topic, value: 1)
+        expect(Vote).to receive(:create).with(user: user, post: post, value: 1)
 
-        Vote.create_upvote(user: user, topic: topic)
+        Vote.create_upvote(user: user, post: post)
       end
     end
 
     describe ".create_downvote" do
       it "creates Vote with value equal to -1" do
-        expect(Vote).to receive(:create).with(user: user, topic: topic, value: -1)
+        expect(Vote).to receive(:create).with(user: user, post: post, value: -1)
 
-        Vote.create_downvote(user: user, topic: topic)
+        Vote.create_downvote(user: user, post: post)
       end
     end
 
     describe ".voting_result_for" do
-      it "returns sum of values for the topic" do
-        expect(Vote).to receive(:where).with(topic: topic).and_return(Vote)
+      it "returns sum of values for the post" do
+        expect(Vote).to receive(:where).with(post: post).and_return(Vote)
         expect(Vote).to receive(:sum).with(:value).and_return(42)
 
-        expect(Vote.voting_result_for(topic)).to eq(42)
+        expect(Vote.voting_result_for(post)).to eq(42)
       end
     end
   end

@@ -200,7 +200,8 @@ CREATE TABLE posts (
     image_url character varying,
     topic_id integer,
     stemmed_text text DEFAULT ''::text,
-    source_id integer NOT NULL
+    source_id integer NOT NULL,
+    voting_result integer DEFAULT 0
 );
 
 
@@ -383,8 +384,7 @@ CREATE TABLE topics (
     id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    topic_size integer,
-    voting_result integer DEFAULT 0
+    topic_size integer
 );
 
 
@@ -476,10 +476,10 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 CREATE TABLE votes (
     id integer NOT NULL,
     user_id integer NOT NULL,
-    topic_id integer NOT NULL,
     value integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    post_id integer
 );
 
 
@@ -748,6 +748,13 @@ CREATE INDEX index_posts_on_topic_id ON posts USING btree (topic_id);
 
 
 --
+-- Name: index_posts_on_voting_result; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_posts_on_voting_result ON posts USING btree (voting_result);
+
+
+--
 -- Name: index_review_comments_on_author_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -804,13 +811,6 @@ CREATE INDEX index_sources_on_user_id ON sources USING btree (user_id);
 
 
 --
--- Name: index_topics_on_voting_result; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_topics_on_voting_result ON topics USING btree (voting_result);
-
-
---
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -846,10 +846,10 @@ CREATE UNIQUE INDEX index_users_on_reset_password_token ON users USING btree (re
 
 
 --
--- Name: index_votes_on_topic_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_votes_on_post_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_votes_on_topic_id ON votes USING btree (topic_id);
+CREATE INDEX index_votes_on_post_id ON votes USING btree (post_id);
 
 
 --
@@ -892,14 +892,6 @@ ALTER TABLE ONLY post_categories
 
 
 --
--- Name: votes fk_rails_4d0d93784c; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY votes
-    ADD CONSTRAINT fk_rails_4d0d93784c FOREIGN KEY (topic_id) REFERENCES topics(id) ON DELETE CASCADE;
-
-
---
 -- Name: identities fk_rails_5373344100; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -921,6 +913,14 @@ ALTER TABLE ONLY posts
 
 ALTER TABLE ONLY source_logs
     ADD CONSTRAINT fk_rails_8679f875d2 FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE;
+
+
+--
+-- Name: votes fk_rails_9801d647c1; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY votes
+    ADD CONSTRAINT fk_rails_9801d647c1 FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
 
 
 --
@@ -1004,6 +1004,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170814104111'),
 ('20170818072941'),
 ('20171011064759'),
-('20171017124739');
+('20171017124739'),
+('20171018071200');
 
 
