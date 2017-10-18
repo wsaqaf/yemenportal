@@ -11,8 +11,6 @@ Rails.application.routes.draw do
   resources :topics, only: [:show] do
     scope module: :topics do
       resource :vote, only: [:update, :destroy]
-      resources :reviews, only: [:index, :create, :destroy]
-      resources :review_comments, only: [:create, :destroy]
     end
   end
 
@@ -21,6 +19,8 @@ Rails.application.routes.draw do
     scope module: :posts do
       resource :header, only: :show
       resources :comments, only: :index
+      resources :reviews, only: [:index, :create, :destroy]
+      resources :review_comments, only: [:create, :destroy]
     end
   end
 
