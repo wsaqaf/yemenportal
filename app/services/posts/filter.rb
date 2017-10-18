@@ -18,7 +18,7 @@ class Posts::Filter
   end
 
   def filters
-    [page_filter, time_filter]
+    [page_filter, time_filter, sorting_filter]
   end
 
   def page_filter
@@ -47,11 +47,11 @@ class Posts::Filter
   def sorting_filter
     case params.set.to_sym
     when :new
-      ->(topics) { topics.ordered_by_date }
+      ->(posts) { posts.ordered_by_date }
     when :highly_voted
-      ->(topics) { topics.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_voting_result.ordered_by_date }
     when :most_covered
-      ->(topics) { topics.ordered_by_size.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_coverage.ordered_by_voting_result.ordered_by_date }
     end
   end
 end
