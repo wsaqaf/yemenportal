@@ -3,25 +3,25 @@
 # Table name: reviews
 #
 #  id           :integer          not null, primary key
-#  topic_id     :integer
 #  flag_id      :integer
 #  moderator_id :integer
+#  post_id      :integer
 #
 # Indexes
 #
 #  index_reviews_on_flag_id       (flag_id)
 #  index_reviews_on_moderator_id  (moderator_id)
-#  index_reviews_on_topic_id      (topic_id)
+#  index_reviews_on_post_id       (post_id)
 #
 
 class Review < ApplicationRecord
   belongs_to :flag
-  belongs_to :topic
+  belongs_to :post
   belongs_to :moderator, class_name: "User"
 
-  validates :flag, uniqueness: { scope: [:topic, :moderator] }
+  validates :flag, uniqueness: { scope: [:post, :moderator] }
 
-  def self.with_resolve_flag(topic, moderator)
-    joins(:flag).where(topic: topic, moderator: moderator, flags: { resolve: true })
+  def self.with_resolve_flag(post, moderator)
+    joins(:flag).where(post: post, moderator: moderator, flags: { resolve: true })
   end
 end

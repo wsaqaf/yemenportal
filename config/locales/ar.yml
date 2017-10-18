@@ -169,22 +169,6 @@ ar:
       inappropriate_content: محتوى غير لائق
       propaganda_advertising: 'دعاية / اعلان '
       missing_name: اسم الكاتب مفقود / غامض
-  topics:
-    reviews:
-      create:
-        successfully_created: تمت إضافة العلم بنجاح
-        not_created: 'هناك خطأ ما. لم تتم إضافة العلم  '
-      destroy:
-        successfully_destroyed: تم حذف العلم بنجاح
-      comment: أرسل تعليق
-      only_moderators_can_review_topics: يمكن للمشرفين فقط مراجعة الموضوعات
-    review_comments:
-      create:
-        successfully_created: تمت اضافة التعليق بنجاح
-        not_created: هناك خطا ما، لم تتم إضافة التعليق
-      destroy:
-        successfully_destroyed: تم حذف التعليق بنجاح
-        not_destroyed: 'هناك خطاً ما، لا يمكن حذف التعليق. '
   posts:
     headers:
       show:
@@ -199,6 +183,21 @@ ar:
       review: مراجعة
       related_posts: مشاركات ذات الصلة
       details: تفاصيل
+    reviews:
+      create:
+        successfully_created: تمت إضافة العلم بنجاح
+        not_created: 'هناك خطأ ما. لم تتم إضافة العلم  '
+      destroy:
+        successfully_destroyed: تم حذف العلم بنجاح
+      comment: أرسل تعليق
+      only_moderators_can_review_posts: يمكن للمشرفين فقط مراجعة مشاركات
+    review_comments:
+      create:
+        successfully_created: تمت اضافة التعليق بنجاح
+        not_created: هناك خطا ما، لم تتم إضافة التعليق
+      destroy:
+        successfully_destroyed: تم حذف التعليق بنجاح
+        not_destroyed: 'هناك خطاً ما، لا يمكن حذف التعليق. '
   activerecord:
     errors:
       models:

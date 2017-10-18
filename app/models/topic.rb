@@ -16,8 +16,6 @@
 class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :votes, dependent: :destroy
-  has_many :reviews, dependent: :destroy
-  has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
 
   scope :ordered_by_date, -> { order("topics.created_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
@@ -32,10 +30,6 @@ class Topic < ApplicationRecord
 
   def self.created_later_than(timestamp)
     where("topics.created_at > ?", timestamp)
-  end
-
-  def self.include_review_comments
-    includes(review_comments: [:author])
   end
 
   def upvoted_by_user?

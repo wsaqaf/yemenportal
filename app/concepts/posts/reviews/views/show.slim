@@ -1,0 +1,22 @@
+.post-reviews
+  .row
+    .column.small-12.medium-8.large-9.medium-centered
+      .post-reviews__header
+        = concept("posts/post/cell", post).call
+      .post-reviews__flags
+        - flags.each do |flag|
+          .post-reviews__flag
+            = concept("posts/flag/cell", flag, post: post).call
+      .post-reviews__comments
+        - comments.each do |comment|
+          .post-reviews__comment
+            = concept("posts/reviews/comment/cell", comment, post: post).call
+
+        - if can_current_user_create_comment?
+          .post-reviews__new-comment
+            = simple_form_for [post, new_review_comment] do |f|
+              = f.input :body, label: false
+              .button-group
+                = f.submit st('.comment'), class: "button"
+        - else
+          .post-reviews__warning= st(".only_moderators_can_review_posts")

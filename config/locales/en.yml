@@ -143,7 +143,7 @@ en:
       inappropriate_content: Inappropriate content
       propaganda_advertising: Propaganda/advertising
       missing_name:  Missing/ambiguous writer name
-  topics:
+  posts:
     reviews:
       create:
         successfully_created: Flag was successfully added.
@@ -151,7 +151,7 @@ en:
       destroy:
         successfully_destroyed: Flag was successfully deleted.
       comment: "Send Comment"
-      only_moderators_can_review_topics: Only moderators can review topics.
+      only_moderators_can_review_posts: Only moderators can review posts.
     review_comments:
       create:
         successfully_created: Comment was successfully added.
@@ -159,7 +159,6 @@ en:
       destroy:
         successfully_destroyed: Comment was successfully deleted.
         not_destroyed: Something went wrong. Can't delete comment.
-  posts:
     headres:
       show:
         back: Back

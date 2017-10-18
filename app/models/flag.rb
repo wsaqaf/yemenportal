@@ -11,12 +11,12 @@
 class Flag < ApplicationRecord
   has_many :reviews, dependent: :destroy
 
-  def self.include_number_of_reviews_for_topic(topic)
-    joins("LEFT JOIN reviews ON reviews.flag_id = flags.id AND reviews.topic_id = #{topic.id}")
-      .group(:id).select("flags.*, COUNT(reviews.*) AS number_of_reviews_for_topic")
+  def self.include_number_of_reviews_for_post(post)
+    joins("LEFT JOIN reviews ON reviews.flag_id = flags.id AND reviews.post_id = #{post.id}")
+      .group(:id).select("flags.*, COUNT(reviews.*) AS number_of_reviews_for_post")
   end
 
-  def number_of_reviews_for_topic
-    attributes["number_of_reviews_for_topic"] || 0
+  def number_of_reviews_for_post
+    attributes["number_of_reviews_for_post"] || 0
   end
 end

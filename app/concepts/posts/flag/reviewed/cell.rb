@@ -1,12 +1,12 @@
-class Topics::Flag::Reviewed::Cell < Topics::Flag::Cell
+class Posts::Flag::Reviewed::Cell < Posts::Flag::Cell
   private
 
   def reviewed_by_user_class
-    "topic-flag--flagged"
+    "post-flag--flagged"
   end
 
   def button
-    button_to(topic_review_path(topic, flag.review), button_options) do
+    button_to(post_review_path(post, review), button_options) do
       yield
     end
   end

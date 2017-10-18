@@ -28,4 +28,4 @@
       .post__footer-item
         = link_to(st("discuss"), post_comments_path(post), class: "post__footer-discuss-link", target: "_parent")
       .post__footer-item
-        = link_to(st("review"), "", class: "post__footer-discuss-link", target: "_parent")
+        = link_to(st("review"), post_reviews_path(post), class: "post__footer-discuss-link", target: "_parent")

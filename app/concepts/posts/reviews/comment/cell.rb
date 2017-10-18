@@ -1,12 +1,11 @@
-class Topics::Reviews::Comment::Cell < Application::Cell
+class Posts::Reviews::Comment::Cell < Application::Cell
   private
+
+  property :author, :created_at, :body
+  option :post
 
   def comment
     model
-  end
-
-  def topic
-    options[:topic]
   end
 
   def deletable_by_current_user?
