@@ -17,9 +17,8 @@ class Posts::Filter
     ::Post.all
   end
 
-  # More filters will be added later
   def filters
-    [page_filter]
+    [page_filter, time_filter]
   end
 
   def page_filter
@@ -28,9 +27,9 @@ class Posts::Filter
 
   def time_filter
     if params.all_time?
-      ->(topics) { topics }
+      ->(posts) { posts }
     else
-      ->(topics) { topics.created_later_than(beginning_time_from_params) }
+      ->(posts) { posts.created_later_than(beginning_time_from_params) }
     end
   end
 

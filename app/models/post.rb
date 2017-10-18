@@ -62,6 +62,10 @@ class Post < ApplicationRecord
     order("created_at ASC").first
   end
 
+  def self.created_later_than(timestamp)
+    where("posts.created_at > ?", timestamp)
+  end
+
   def self.available_states
     state.values
   end
