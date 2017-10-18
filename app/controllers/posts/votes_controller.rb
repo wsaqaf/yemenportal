@@ -1,4 +1,4 @@
-class Topics::VotesController < ApplicationController
+class Posts::VotesController < ApplicationController
   before_action :authenticate_user!
 
   def update
@@ -16,10 +16,10 @@ class Topics::VotesController < ApplicationController
   private
 
   def vote_updater
-    Topics::VoteUpdater.new(current_user, topic)
+    Posts::VoteUpdater.new(current_user, post)
   end
 
-  def topic
-    Topic.find(params[:topic_id])
+  def post
+    @_post = ::Post.find(params[:post_id])
   end
 end

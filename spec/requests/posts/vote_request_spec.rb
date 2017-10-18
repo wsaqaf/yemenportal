@@ -1,7 +1,7 @@
 require "rails_helper"
 
-describe "Topics voting", type: :request do
-  describe "PATCH /topics/:topic_id/vote" do
+describe "Posts voting", type: :request do
+  describe "PATCH /posts/:post_id/vote" do
     context "when type=upvote" do
       it "increases voting result by 1"
 
@@ -15,7 +15,7 @@ describe "Topics voting", type: :request do
     end
   end
 
-  describe "DELETE /topics/:topic_id/vote" do
+  describe "DELETE /posts/:post_id/vote" do
     it "removes vote and changes voting result"
   end
 end
