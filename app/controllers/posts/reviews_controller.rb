@@ -28,7 +28,7 @@ class Posts::ReviewsController < ApplicationController
   end
 
   def post
-    ::Post.include_review_comments.find(params[:post_id])
+    @_post = ::Post.include_review_comments.find(params[:post_id])
   end
 
   def flagging
@@ -36,10 +36,10 @@ class Posts::ReviewsController < ApplicationController
   end
 
   def flag
-    ::Flag.find(params[:flag_id])
+    @_flag = ::Flag.find(params[:flag_id])
   end
 
   def review
-    ::Review.find(params[:id])
+    @_review = ::Review.find(params[:id])
   end
 end

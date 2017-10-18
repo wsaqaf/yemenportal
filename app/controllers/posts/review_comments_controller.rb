@@ -1,6 +1,6 @@
 class Posts::ReviewCommentsController < ApplicationController
   def create
-    authorize review_comment, :create?
+    authorize review_comment
     if review_comment.save
       redirect_to post_reviews_path(post), notice: t(".successfully_created")
     else
@@ -36,6 +36,6 @@ class Posts::ReviewCommentsController < ApplicationController
   end
 
   def post
-    ::Post.find(params[:post_id])
+    @_post = ::Post.find(params[:post_id])
   end
 end
