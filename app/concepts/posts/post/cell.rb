@@ -3,7 +3,9 @@ class Posts::Post::Cell < Application::Cell
 
   property :title, :source_name, :image_url, :voting_result, :description,
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :created_at,
-    :show_internally?, :link
+    :show_internally?, :link, :main_post_of_topic?, :related_posts
+
+  option :related_posts_count
 
   def post
     model
@@ -36,6 +38,22 @@ class Posts::Post::Cell < Application::Cell
       post_url(post, protocol: "http")
     else
       link
+    end
+  end
+
+  def post_related_posts
+    if related_posts_count.present?
+      related_posts.first(related_posts_count)
+    else
+      related_posts
+    end
+  end
+
+  def topic_link_title
+    if main_post_of_topic? && !related_posts.empty?
+      st("show_more_related")
+    else
+      st("show_topic")
     end
   end
 

@@ -24,7 +24,14 @@
           .post__description-text> = description
           .post__link-to-more = link_to_more
 
+    - if main_post_of_topic?
+      .post__related-posts
+        - post_related_posts.each do |post|
+          = cell("posts/post/related/cell", post).call
+
     .post__footer
+      .post__footer-item
+        = link_to(topic_link_title, "#topic page", class: "post__footer-discuss-link", target: "_parent")
       .post__footer-item
         = link_to(st("discuss"), post_comments_path(post), class: "post__footer-discuss-link", target: "_parent")
       .post__footer-item

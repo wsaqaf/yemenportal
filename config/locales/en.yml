@@ -170,7 +170,8 @@ en:
     post:
       discuss: Discuss
       review: Review
-      related_posts: Related posts
+      show_more_related: Show more
+      show_topic: Show topic
       details: Details
   feedbacks:
     new:
