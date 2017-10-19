@@ -40,7 +40,13 @@ class RelatedPostsFinder
   end
 
   def posts
-    @_posts ||= Post.where("created_at > ?", clustering_time_limit.hours.ago)
+    @_posts ||= load_posts
+  end
+
+  def load_posts
+    Post
+      .not_for_source(post.source_id)
+      .created_after_date(clustering_time_limit.hours.ago)
   end
 
   def related_post_similarity_threshold

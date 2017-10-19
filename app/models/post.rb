@@ -49,7 +49,8 @@ class Post < ApplicationRecord
   scope :pending_posts, -> { where(state: :pending).ordered_by_date }
   scope :approved_posts, -> { where(state: :approved).ordered_by_date }
   scope :rejected_posts, -> { where(state: :rejected).ordered_by_date }
-
+  scope :not_for_source, ->(source_id) { where.not(source_id: source_id) }
+  scope :created_after_date, ->(date) { where("created_at > ?", date) }
   scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending

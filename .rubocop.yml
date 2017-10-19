@@ -15,6 +15,9 @@ AllCops:
     - "app/channels/application_cable/**"
     - "spec/spec_helper.rb"
 
+RSpec/LetSetup:
+  Enabled: false
+
 RSpec/MessageChain:
   Enabled: false
 
