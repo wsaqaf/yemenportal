@@ -1,8 +1,8 @@
 require "matrix"
 
 class RelatedPostsFinder
-  def initialize(item)
-    @item = item
+  def initialize(post)
+    @post = post
   end
 
   def topic_with_related_posts_or_nil
@@ -13,7 +13,7 @@ class RelatedPostsFinder
 
   private
 
-  attr_reader :item
+  attr_reader :post
 
   def related_post_found?
     similarity_value_of_most_similar_post > related_post_similarity_threshold
@@ -70,7 +70,7 @@ class RelatedPostsFinder
   end
 
   def documents
-    documents_from_posts.unshift(item_as_document)
+    documents_from_posts.unshift(post_as_document)
   end
 
   def documents_from_posts
@@ -79,7 +79,7 @@ class RelatedPostsFinder
     end
   end
 
-  def item_as_document
-    Document.new(item)
+  def post_as_document
+    Document.new(post)
   end
 end
