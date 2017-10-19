@@ -33,6 +33,7 @@ class Post < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
   has_many :votes, dependent: :destroy
+  has_many :posts_of_topic, through: :topic, source: :posts
 
   belongs_to :source
   belongs_to :topic, optional: true, counter_cache: :topic_size, touch: true
@@ -76,6 +77,14 @@ class Post < ApplicationRecord
 
   def self.include_review_comments
     includes(review_comments: [:author])
+  end
+
+  def main_post_of_topic?
+    main_topic.present?
+  end
+
+  def related_posts
+    posts_of_topic - [self]
   end
 
   def same_posts

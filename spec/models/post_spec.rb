@@ -103,4 +103,34 @@ describe Post do
       post.update_voting_result(42)
     end
   end
+
+  describe "#main_post_of_topic?" do
+    subject { post.main_post_of_topic? }
+
+    context "when post is a main post of topic" do
+      let(:post) { build(:post) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when post is not a main post of topic" do
+      let(:topic) { create(:topic) }
+      let(:post) { topic.main_post }
+
+      it { is_expected.to be_truthy }
+    end
+  end
+
+  describe "#related_posts" do
+    subject { post.related_posts }
+
+    let(:topic) { create(:topic) }
+    let(:post) { create(:post, topic: topic) }
+    let!(:another_post) { create(:post, topic: topic) }
+    let!(:post_of_another_topic) { create(:post, topic: create(:topic)) }
+
+    it "returns posts of topic except self" do
+      is_expected.to match([another_post])
+    end
+  end
 end
