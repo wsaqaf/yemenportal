@@ -384,7 +384,8 @@ CREATE TABLE topics (
     id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    topic_size integer
+    topic_size integer,
+    main_post_id integer
 );
 
 
@@ -811,6 +812,13 @@ CREATE INDEX index_sources_on_user_id ON sources USING btree (user_id);
 
 
 --
+-- Name: index_topics_on_main_post_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_topics_on_main_post_id ON topics USING btree (main_post_id);
+
+
+--
 -- Name: index_users_on_email; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -897,6 +905,14 @@ ALTER TABLE ONLY post_categories
 
 ALTER TABLE ONLY identities
     ADD CONSTRAINT fk_rails_5373344100 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topics fk_rails_70c142087f; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY topics
+    ADD CONSTRAINT fk_rails_70c142087f FOREIGN KEY (main_post_id) REFERENCES posts(id);
 
 
 --
@@ -1005,6 +1021,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20170818072941'),
 ('20171011064759'),
 ('20171017124739'),
-('20171018071200');
+('20171018071200'),
+('20171018105726');
 
 

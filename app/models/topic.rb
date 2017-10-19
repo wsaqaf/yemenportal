@@ -2,30 +2,22 @@
 #
 # Table name: topics
 #
-#  id         :integer          not null, primary key
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
-#  topic_size :integer
+#  id           :integer          not null, primary key
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  topic_size   :integer
+#  main_post_id :integer
+#
+# Indexes
+#
+#  index_topics_on_main_post_id  (main_post_id)
 #
 
 class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
-
-  scope :ordered_by_date, -> { order("topics.created_at DESC") }
-  scope :ordered_by_size, -> { order("topic_size DESC") }
-
-  def self.created_later_than(timestamp)
-    where("topics.created_at > ?", timestamp)
-  end
-
-  def initial_post
-    posts.min_by(&:created_at)
-  end
-
-  delegate :title, :source_name, :category_names, :description, :image_url, :link,
-    :show_internally?, to: :initial_post
+  belongs_to :main_post, class_name: "Post"
 
   def related_posts
-    posts - [initial_post]
+    posts.where.not(id: main_post.id)
   end
 end

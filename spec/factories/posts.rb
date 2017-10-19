@@ -33,7 +33,12 @@ FactoryGirl.define do
     sequence(:stemmed_text) { |n| "stemmed_text_#{n}" }
     state "pending"
     association :source
-    association :topic
     published_at Time.new
+
+    trait :main_post do
+      after(:create) do |post|
+        create(:topic, main_post: post)
+      end
+    end
   end
 end

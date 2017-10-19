@@ -17,9 +17,8 @@ class Posts::Filter
     ::Post.all
   end
 
-  # More filters will be added later
   def filters
-    [page_filter]
+    [page_filter, time_filter, sorting_filter]
   end
 
   def page_filter
@@ -28,9 +27,9 @@ class Posts::Filter
 
   def time_filter
     if params.all_time?
-      ->(topics) { topics }
+      ->(posts) { posts }
     else
-      ->(topics) { topics.created_later_than(beginning_time_from_params) }
+      ->(posts) { posts.created_later_than(beginning_time_from_params) }
     end
   end
 
@@ -48,11 +47,11 @@ class Posts::Filter
   def sorting_filter
     case params.set.to_sym
     when :new
-      ->(topics) { topics.ordered_by_date }
+      ->(posts) { posts.ordered_by_date }
     when :highly_voted
-      ->(topics) { topics.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_voting_result.ordered_by_date }
     when :most_covered
-      ->(topics) { topics.ordered_by_size.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_coverage.ordered_by_voting_result.ordered_by_date }
     end
   end
 end

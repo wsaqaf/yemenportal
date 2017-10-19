@@ -35,13 +35,16 @@ class Post < ApplicationRecord
   has_many :votes, dependent: :destroy
 
   belongs_to :source
-  belongs_to :topic, counter_cache: :topic_size, touch: true
+  belongs_to :topic, optional: true, counter_cache: :topic_size, touch: true
+
+  has_one :main_topic, class_name: "Topic", foreign_key: :main_post_id, dependent: :destroy
 
   validates :published_at, :link, presence: true
   validates :link, uniqueness: true
 
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
+  scope :ordered_by_coverage, -> { left_joins(:main_topic).order('"topics"."topic_size" DESC NULLS LAST') }
   scope :source_posts, ->(source_id) { ordered_by_date.where(source_id: source_id) }
   scope :pending_posts, -> { where(state: :pending).ordered_by_date }
   scope :approved_posts, -> { where(state: :approved).ordered_by_date }
@@ -60,6 +63,10 @@ class Post < ApplicationRecord
 
   def self.latest
     order("created_at ASC").first
+  end
+
+  def self.created_later_than(timestamp)
+    where("posts.created_at > ?", timestamp)
   end
 
   def self.available_states
