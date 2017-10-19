@@ -1,5 +1,5 @@
 class PostsFetcher::PostFactory
-  def initialize(source, item)
+  def initialize(source:, item:)
     @source = source
     @item = item
   end
@@ -12,13 +12,15 @@ class PostsFetcher::PostFactory
 
   attr_reader :source, :item
 
+  delegate :title, :link, :description, :published_at, :image_url, to: :item
+
   def post_params
     {
-      title: item.title,
-      link: item.link,
-      description: item.description,
-      published_at: item.published_at,
-      image_url: item.image_url,
+      title: title,
+      link: link,
+      description: description,
+      published_at: published_at,
+      image_url: image_url,
       source: source
     }
   end

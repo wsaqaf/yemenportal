@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PostsFetcher::ItemSaver do
   describe "#save!" do
-    subject { described_class.new(source, item).save! }
+    subject { described_class.new(source: source, item: item).save! }
 
     let(:source) { instance_double(Source) }
     let(:item) { instance_double(PostsFetcher::FetchedItem) }

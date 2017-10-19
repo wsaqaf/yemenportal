@@ -1,6 +1,6 @@
 class PostsFetcher::ItemSaver
-  def initialize(source, item)
-    @post = PostsFetcher::PostFactory.new(source, item).create
+  def initialize(source:, item:)
+    @post = PostsFetcher::PostFactory.new(source: source, item: item).create
   end
 
   def save!

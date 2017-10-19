@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PostsFetcher::PostFactory do
   describe "#create" do
-    subject { described_class.new(source, item).create }
+    subject { described_class.new(source: source, item: item).create }
 
     let(:source) { create(:source) }
     let(:valid_post_attributes) do
