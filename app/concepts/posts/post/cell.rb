@@ -5,7 +5,7 @@ class Posts::Post::Cell < Application::Cell
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :created_at,
     :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id
 
-  option :related_posts_count, :hide_link_to_related
+  option :related_posts_count, :hide_link_to_related, :truncate_description
 
   def post
     model
@@ -20,7 +20,11 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def post_description
-    truncate(description, length: 250, separator: " ")
+    if truncate_description
+      truncate(description, length: 250, separator: " ")
+    else
+      description
+    end
   end
 
   def post_category_names

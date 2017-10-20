@@ -1,7 +1,8 @@
 .topic {
+  display: flex;
+  justify-content: center;
+
   &__topic-posts {
-    display: flex;
-    justify-content: space-around;
-    padding: 2rem 0;
+    padding: 2rem;
   }
 }
