@@ -1,7 +1,17 @@
 .topic {
+  display: flex;
+  justify-content: center;
+
   &__topic-posts {
-    display: flex;
-    justify-content: space-around;
-    padding: 2rem 0;
+    padding: 2rem;
+    width: 66%;
+
+    @media only screen and (max-width: 64em) {
+      width: 75%
+    }
+
+    @media only screen and (max-width: 40em) {
+      width: 100%;
+    }
   }
 }
