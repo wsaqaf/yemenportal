@@ -6,6 +6,6 @@ class Posts::CommentsController < ApplicationController
   private
 
   def post
-    ::Post.find(params[:post_id])
+    ::Post.include_voted_by_user(current_user).find(params[:post_id])
   end
 end

@@ -25,6 +25,8 @@ describe Posts::HeadersController, type: :request do
         do_request
         expect(response.headers["X-Frame-Options"]).to eq("ALLOWALL")
       end
+
+      it_behaves_like "votes including action"
     end
   end
 end

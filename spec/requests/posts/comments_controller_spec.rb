@@ -20,6 +20,8 @@ describe Posts::CommentsController, type: :request do
         do_request
         expect(response).to have_http_status(:ok)
       end
+
+      it_behaves_like "votes including action"
     end
   end
 end

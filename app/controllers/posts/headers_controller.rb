@@ -7,7 +7,7 @@ class Posts::HeadersController < ApplicationController
   private
 
   def post
-    Post.find(params[:post_id])
+    ::Post.include_voted_by_user(current_user).find(params[:post_id])
   end
 
   def allow_header_frame_render
