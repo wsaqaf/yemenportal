@@ -50,7 +50,7 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def topic_link_title
-    if main_post_of_topic? && !related_posts.empty?
+    if main_post_of_topic? && related_posts.present?
       st("show_more_related")
     else
       st("show_topic")

@@ -14,7 +14,7 @@ class Posts::Filter
   attr_reader :params
 
   def all_posts
-    ::Post.includes(:posts_of_topic)
+    ::Post.all
   end
 
   def filters
