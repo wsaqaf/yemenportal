@@ -1,7 +1,7 @@
 default: &default
   related_similarity_threshold: 0.5
   duplicate_similarity_threshold: 0.85
-  clustering_time_limit: 12 # in hours
+  clustering_time_limit: 3 # in hours
 
 development:
   *default
