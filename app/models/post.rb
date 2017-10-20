@@ -45,7 +45,11 @@ class Post < ApplicationRecord
 
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
-  scope :ordered_by_coverage, -> { left_joins(:main_topic).order('"topics"."topic_size" DESC NULLS LAST') }
+  scope :ordered_by_coverage, lambda {
+    left_joins(:main_topic)
+      .select("SUM(topics.topic_size) AS topic_size")
+      .order("topic_size DESC NULLS LAST")
+  }
   scope :source_posts, ->(source_id) { ordered_by_date.where(source_id: source_id) }
   scope :pending_posts, -> { where(state: :pending).ordered_by_date }
   scope :approved_posts, -> { where(state: :approved).ordered_by_date }
