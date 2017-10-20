@@ -1,5 +1,6 @@
 class Posts::Filter
-  def initialize(params)
+  def initialize(user:, params:)
+    @user = user
     @params = Params.new(params)
   end
 
@@ -14,7 +15,7 @@ class Posts::Filter
   attr_reader :params
 
   def all_posts
-    ::Post.all
+    ::Post.include_voted_by_user(@user)
   end
 
   def filters

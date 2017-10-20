@@ -10,10 +10,12 @@ class PostsController < ApplicationController
   private
 
   def post
-    Post.find(params[:id])
+    Post.include_voted_by_user(current_user).find(params[:id])
   end
 
   def posts
-    Posts::Filter.new(params).filtered_posts.includes(:posts_of_topic)
+    Posts::Filter.new(user: current_user, params: params)
+      .filtered_posts
+      .includes(:posts_of_topic)
   end
 end

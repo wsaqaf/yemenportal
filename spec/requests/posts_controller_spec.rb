@@ -22,6 +22,11 @@ describe PostsController, type: :request do
         do_request
         expect(response).to have_http_status(:ok)
       end
+
+      it "includes user votes" do
+        expect(Post).to receive(:include_voted_by_user).and_call_original
+        do_request
+      end
     end
   end
 
@@ -31,6 +36,11 @@ describe PostsController, type: :request do
     it "renders posts page" do
       do_request
       expect(response).to have_http_status(:ok)
+    end
+
+    it "includes user votes" do
+      expect(Post).to receive(:include_voted_by_user).and_call_original
+      do_request
     end
   end
 end
