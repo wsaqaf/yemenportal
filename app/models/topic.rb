@@ -20,4 +20,8 @@ class Topic < ApplicationRecord
   def related_posts
     posts.where.not(id: main_post.id)
   end
+
+  def sources_of_all_posts
+    [main_post.source, *posts.map(&:source)]
+  end
 end
