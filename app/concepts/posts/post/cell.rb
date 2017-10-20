@@ -58,7 +58,7 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def related_posts_count_more_than_showing?
-    related_posts_count.blank? || related_posts.count > related_posts_count
+    related_posts_count.blank? || (related_posts.count > related_posts_count)
   end
 
   def show_link_to_related?
