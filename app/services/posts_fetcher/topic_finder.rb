@@ -7,7 +7,7 @@ class PostsFetcher::TopicFinder
     if post.valid?
       # we create topic and post
       Post.transaction do
-        post.update(topic: topic)
+        attach_or_create_new_topic
       end
     end
   end
@@ -16,11 +16,11 @@ class PostsFetcher::TopicFinder
 
   attr_reader :post
 
-  def topic
+  def attach_or_create_new_topic
     if topic_with_related_posts.present? && topic_does_not_contain_post_from_same_source?
-      topic_with_related_posts
+      post.update(topic: topic_with_related_posts)
     else
-      new_topic
+      create_new_topic!
     end
   end
 
@@ -32,7 +32,7 @@ class PostsFetcher::TopicFinder
     !topic_with_related_posts.sources_of_all_posts.include?(post.source)
   end
 
-  def new_topic
+  def create_new_topic!
     Topic.create!(main_post: post)
   end
 end

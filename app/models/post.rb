@@ -33,7 +33,7 @@ class Post < ApplicationRecord
   has_many :reviews, dependent: :destroy
   has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
   has_many :votes, dependent: :destroy
-  has_many :posts_of_topic, through: :topic, source: :posts
+  has_many :related_posts, through: :main_topic, source: :posts
 
   belongs_to :source
   belongs_to :topic, optional: true, counter_cache: :topic_size, touch: true
@@ -53,14 +53,21 @@ class Post < ApplicationRecord
   scope :not_for_source, ->(source_id) { where.not(source_id: source_id) }
   scope :created_after_date, ->(date) { where("created_at > ?", date) }
   scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
-
-  enumerize :state, in: [:approved, :rejected, :pending], default: :pending
-
-  def self.include_voted_by_user(user)
+  scope :with_user_votes, lambda { |user|
     joins("LEFT JOIN votes ON votes.post_id = posts.id AND votes.user_id = #{user.id}")
       .group(:id).select("posts.*,
         (COUNT(votes.*) > 0 AND SUM(votes.value) > 0) AS upvoted_by_user,
         (COUNT(votes.*) > 0 AND SUM(votes.value) < 0) AS downvoted_by_user")
+  }
+
+  enumerize :state, in: [:approved, :rejected, :pending], default: :pending
+
+  def self.include_voted_by_user(user)
+    if user.present?
+      with_user_votes(user)
+    else
+      all
+    end
   end
 
   def self.latest
@@ -81,10 +88,6 @@ class Post < ApplicationRecord
 
   def main_post_of_topic?
     main_topic.present?
-  end
-
-  def related_posts
-    posts_of_topic - [self]
   end
 
   def same_posts

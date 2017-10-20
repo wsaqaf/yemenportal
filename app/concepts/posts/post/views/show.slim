@@ -16,12 +16,12 @@
       .post__subtitle-item
         time.js-time datetime=created_at.iso8601
 
-    - if description.present?
+    - if post_description.present?
       .post__post-body.clearfix
         - if post_image_url.present?
           = image_tag(post_image_url, alt: title, class: "post__image")
         .post__description
-          .post__description-text> = description
+          .post__description-text> = post_description
           .post__link-to-more = link_to_more
 
     - if main_post_of_topic?

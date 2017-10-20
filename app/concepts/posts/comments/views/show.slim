@@ -2,7 +2,7 @@
   .row
     .column.small-12.medium-8.large-9.medium-centered
       .post-comments__header
-        = concept("posts/post/cell", post).call
+        = concept("posts/post/cell", post, hide_link_to_related: true).call
       .post-comments__comments
         .fb-comments data-href=post_url(post, protocol: "http") data-numposts="5"
         .post-comments__loader= image_tag "loader.gif"

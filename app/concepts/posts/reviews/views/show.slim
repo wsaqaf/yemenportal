@@ -2,7 +2,7 @@
   .row
     .column.small-12.medium-8.large-9.medium-centered
       .post-reviews__header
-        = concept("posts/post/cell", post).call
+        = concept("posts/post/cell", post, hide_link_to_related: true).call
       .post-reviews__flags
         - flags.each do |flag|
           .post-reviews__flag
