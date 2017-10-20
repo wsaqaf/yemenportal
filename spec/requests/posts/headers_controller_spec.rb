@@ -26,10 +26,7 @@ describe Posts::HeadersController, type: :request do
         expect(response.headers["X-Frame-Options"]).to eq("ALLOWALL")
       end
 
-      it "includes user votes" do
-        expect(Post).to receive(:include_voted_by_user).and_call_original
-        do_request
-      end
+      it_behaves_like "votes including action"
     end
   end
 end
