@@ -146,13 +146,21 @@ describe Post do
   describe "#related_posts" do
     subject { post.related_posts }
 
-    let(:topic) { create(:topic) }
-    let(:post) { create(:post, topic: topic) }
-    let!(:another_post) { create(:post, topic: topic) }
-    let!(:post_of_another_topic) { create(:post, topic: create(:topic)) }
+    context "when post is main post of topic" do
+      let(:post) { create(:post) }
+      let(:topic) { create(:topic, main_post: post) }
+      let!(:post_of_topic) { create(:post, topic: topic) }
 
-    it "returns posts of topic except self" do
-      is_expected.to match([another_post])
+      it "returns topic posts except main post" do
+        is_expected.to match([post_of_topic])
+      end
+    end
+
+    context "when post in not a main post of topic" do
+      let(:topic) { create(:topic) }
+      let(:post) { create(:post, topic: topic) }
+
+      it { is_expected.to be_empty }
     end
   end
 end

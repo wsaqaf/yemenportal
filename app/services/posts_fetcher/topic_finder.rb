@@ -3,10 +3,10 @@ class PostsFetcher::TopicFinder
     @post = post
   end
 
-  def post_with_topic!
+  def attach_topic!
     return if post.invalid?
     Post.transaction do
-      post.update(topic: topic)
+      attach_or_create_new_topic
     end
   end
 
@@ -14,19 +14,19 @@ class PostsFetcher::TopicFinder
 
   attr_reader :post
 
-  def topic
-    if FeatureToggle.clustering_enabled?
-      topic_with_related_posts || new_topic
+  def attach_or_create_new_topic
+    if topic_with_related_posts.present?
+      post.update(topic: topic_with_related_posts)
     else
-      new_topic
+      create_new_topic!
     end
   end
 
   def topic_with_related_posts
-    RelatedPostsFinder.new(post).topic_with_related_posts_or_nil
+    @_topic_with_related_posts ||= RelatedPostsFinder.new(post).topic_with_related_posts_or_nil
   end
 
-  def new_topic
+  def create_new_topic!
     Topic.create!(main_post: post)
   end
 end

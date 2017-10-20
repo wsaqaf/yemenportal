@@ -16,7 +16,7 @@ class PostsController < ApplicationController
   def posts
     Posts::Filter.new(params)
       .filtered_posts
-      .includes(:posts_of_topic)
+      .includes(:related_posts)
       .include_voted_by_user(current_user)
   end
 end

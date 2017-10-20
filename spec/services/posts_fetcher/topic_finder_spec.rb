@@ -1,12 +1,8 @@
 require "rails_helper"
 
 RSpec.describe PostsFetcher::TopicFinder do
-  describe "#post_with_topic!" do
-    subject { described_class.new(post).post_with_topic! }
-
-    before do
-      allow(FeatureToggle).to receive(:clustering_enabled?).and_return(:true)
-    end
+  describe "#attach_topic!" do
+    subject { described_class.new(post).attach_topic! }
 
     context "when post item is invalid" do
       let(:post) { build(:post, link: nil) }
@@ -46,7 +42,7 @@ RSpec.describe PostsFetcher::TopicFinder do
 
         it "makes new post the main post of topic" do
           subject
-          expect(post.topic).to be_present
+          expect(post.topic).to be_blank
           expect(post.main_topic).to be_present
         end
       end

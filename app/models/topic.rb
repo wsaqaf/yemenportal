@@ -16,8 +16,4 @@
 class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
   belongs_to :main_post, class_name: "Post"
-
-  def related_posts
-    posts.where.not(id: main_post.id)
-  end
 end
