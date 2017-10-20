@@ -70,6 +70,30 @@ describe Post do
     end
   end
 
+  describe ".not_for_source" do
+    subject { described_class.not_for_source(source_id) }
+
+    let(:post) { create(:post) }
+    let!(:post_of_another_source) { create(:post) }
+    let(:source_id) { post.source_id }
+
+    it "returns posts with different from the passed source id" do
+      is_expected.to match([post_of_another_source])
+    end
+  end
+
+  describe ".created_after_date" do
+    subject { described_class.created_after_date(date) }
+
+    let(:date) { Time.zone.now }
+    let!(:before_date_post) { create(:post, created_at: date - 1.hour) }
+    let!(:after_date_post) { create(:post, created_at: date + 1.hour) }
+
+    it "returns posts which was created after passing date" do
+      is_expected.to match([after_date_post])
+    end
+  end
+
   describe "#update_voting_result" do
     it "updates voting_result to received value" do
       post = Post.new

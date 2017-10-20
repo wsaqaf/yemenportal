@@ -5,7 +5,7 @@ class PostsFetcher
 
   def fetch!
     fetched_items.each do |item|
-      PostsFetcher::ItemSaver.new(source, item).save!
+      PostsFetcher::ItemSaver.new(source: source, item: item).save!
     end
   end
 
