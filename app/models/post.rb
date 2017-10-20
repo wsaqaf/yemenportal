@@ -63,8 +63,11 @@ class Post < ApplicationRecord
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 
   def self.include_voted_by_user(user)
-    return self if user.blank?
-    with_user_votes(user)
+    if user.present?
+      with_user_votes(user)
+    else
+      self
+    end
   end
 
   def self.latest

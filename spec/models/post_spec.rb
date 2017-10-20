@@ -73,7 +73,7 @@ describe Post do
   describe ".include_voted_by_user" do
     subject { described_class.include_voted_by_user(user) }
 
-    context "when passing user presents" do
+    context "when passing user is blank" do
       let(:user) { nil }
 
       it "returns self" do
@@ -81,7 +81,7 @@ describe Post do
       end
     end
 
-    context "when passing user is blank" do
+    context "when passing user presents" do
       let(:user) { create(:user) }
 
       it "adds user votes to posts" do

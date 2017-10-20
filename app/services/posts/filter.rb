@@ -12,10 +12,10 @@ class Posts::Filter
 
   private
 
-  attr_reader :params
+  attr_reader :user, :params
 
   def all_posts
-    ::Post.include_voted_by_user(@user)
+    ::Post.include_voted_by_user(user)
   end
 
   def filters
