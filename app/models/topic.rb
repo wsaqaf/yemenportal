@@ -16,4 +16,8 @@
 class Topic < ApplicationRecord
   has_many :posts, dependent: :destroy
   belongs_to :main_post, class_name: "Post"
+
+  def sources_of_all_posts
+    [main_post.source, *posts.map(&:source)]
+  end
 end
