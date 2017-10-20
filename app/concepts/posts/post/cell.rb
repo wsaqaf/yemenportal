@@ -3,7 +3,7 @@ class Posts::Post::Cell < Application::Cell
 
   property :title, :source_name, :image_url, :voting_result, :description,
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :created_at,
-    :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id
+    :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id, :main_topic
 
   option :related_posts_count, :hide_link_to_related, :truncate_description
 
@@ -50,6 +50,18 @@ class Posts::Post::Cell < Application::Cell
       related_posts.first(related_posts_count)
     else
       related_posts
+    end
+  end
+
+  def path_to_topic
+    @_path_to_topic ||= load_path_to_topic
+  end
+
+  def load_path_to_topic
+    if main_post_of_topic?
+      topic_path(main_topic)
+    elsif topic_id.present?
+      topic_path(topic_id)
     end
   end
 
