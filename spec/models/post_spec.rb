@@ -48,7 +48,7 @@ describe Post do
     end
   end
 
-  describe ".include_voted_by_user" do
+  describe ".with_user_votes" do
     it "returns posts with upvoted_by_user and downvoted_by_user attributes" do
       user = create(:user)
       post_voted_by_user = create(:post)
@@ -67,6 +67,28 @@ describe Post do
       expect(posts.first.upvoted_by_user?).to eq(true)
       expect(posts.second.upvoted_by_user?).to eq(false)
       expect(posts.third.downvoted_by_user?).to eq(true)
+    end
+  end
+
+  describe ".include_voted_by_user" do
+    subject { described_class.include_voted_by_user(user) }
+
+    context "when passing user is blank" do
+      let(:user) { nil }
+
+      it "returns all posts" do
+        expect(described_class).to receive(:all)
+        subject
+      end
+    end
+
+    context "when passing user presents" do
+      let(:user) { create(:user) }
+
+      it "adds user votes to posts" do
+        expect(described_class).to receive(:with_user_votes).with(user)
+        subject
+      end
     end
   end
 

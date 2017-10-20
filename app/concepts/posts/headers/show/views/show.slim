@@ -3,6 +3,6 @@
     .post-page-header__back-button.column.small-2.medium-2.large-2
       = link_to("⟶ #{st("back")}", root_path, class: "button hollow float-right", target: "_parent")
     .post-page-header__post.column.small-9.medium-8.large-8
-      = cell("posts/post/cell", post)
+      = cell("posts/post/cell", post, related_posts_count: 0)
     .post-page-header__close-button.column.small-1.medium-2.large-2
       = link_to("&times;", post_link, class: "button hollow float-left", target: "_parent")

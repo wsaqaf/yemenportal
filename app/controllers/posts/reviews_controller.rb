@@ -28,7 +28,11 @@ class Posts::ReviewsController < ApplicationController
   end
 
   def post
-    @_post = ::Post.include_review_comments.find(params[:post_id])
+    @_post = posts.find(params[:post_id])
+  end
+
+  def posts
+    @_posts = ::Post.include_review_comments.include_voted_by_user(current_user)
   end
 
   def flagging
