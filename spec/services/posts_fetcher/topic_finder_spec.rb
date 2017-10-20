@@ -42,7 +42,7 @@ RSpec.describe PostsFetcher::TopicFinder do
 
         it "makes new post the main post of topic" do
           subject
-          expect(post.topic).to be_present
+          expect(post.topic).to be_blank
           expect(post.main_topic).to be_present
         end
       end
