@@ -3,9 +3,9 @@ class Posts::Post::Cell < Application::Cell
 
   property :title, :source_name, :image_url, :voting_result, :description,
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :created_at,
-    :show_internally?, :link, :main_post_of_topic?, :related_posts
+    :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id
 
-  option :related_posts_count
+  option :related_posts_count, :hide_link_to_related
 
   def post
     model
@@ -55,6 +55,10 @@ class Posts::Post::Cell < Application::Cell
     else
       st("show_topic")
     end
+  end
+
+  def show_link_to_related?
+    !hide_link_to_related
   end
 
   delegate :image_url, to: :post, prefix: true, allow_nil: true

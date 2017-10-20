@@ -30,8 +30,9 @@
           = cell("posts/post/related/cell", post).call
 
     .post__footer
-      .post__footer-item
-        = link_to(topic_link_title, "#topic page", class: "post__footer-discuss-link", target: "_parent")
+      - if show_link_to_related? && topic_id.present?
+        .post__footer-item
+          = link_to(topic_link_title, topic_path(topic_id), class: "post__footer-discuss-link", target: "_parent")
       .post__footer-item
         = link_to(st("discuss"), post_comments_path(post), class: "post__footer-discuss-link", target: "_parent")
       .post__footer-item
