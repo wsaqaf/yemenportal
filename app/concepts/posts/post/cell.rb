@@ -20,7 +20,7 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def post_description
-    truncate(description, length: 300, separator: " ")
+    truncate(description, length: 250, separator: " ")
   end
 
   def post_category_names
