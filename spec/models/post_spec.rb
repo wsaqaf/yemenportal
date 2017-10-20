@@ -76,8 +76,9 @@ describe Post do
     context "when passing user is blank" do
       let(:user) { nil }
 
-      it "returns self" do
-        is_expected.to eq(described_class)
+      it "returns all posts" do
+        expect(described_class).to receive(:all)
+        subject
       end
     end
 

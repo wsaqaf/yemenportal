@@ -66,7 +66,7 @@ class Post < ApplicationRecord
     if user.present?
       with_user_votes(user)
     else
-      self
+      all
     end
   end
 

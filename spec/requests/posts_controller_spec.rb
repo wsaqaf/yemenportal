@@ -13,10 +13,8 @@ describe PostsController, type: :request do
     end
 
     context "when there is a post for id" do
-      let(:post_id) { 1 }
-      let(:post) { instance_double(Post, link: "link") }
-
-      before { allow(Post).to receive(:find).with(post_id.to_s).and_return(post) }
+      let(:post) { create(:post) }
+      let(:post_id) { post.id }
 
       it "renders post page" do
         do_request
