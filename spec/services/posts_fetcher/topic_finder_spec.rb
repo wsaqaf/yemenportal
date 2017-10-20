@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe PostsFetcher::TopicFinder do
-  describe "#post_with_topic!" do
-    subject { described_class.new(post).post_with_topic! }
+  describe "#attach_topic!" do
+    subject { described_class.new(post).attach_topic! }
 
     context "when post item is invalid" do
       let(:post) { build(:post, link: nil) }

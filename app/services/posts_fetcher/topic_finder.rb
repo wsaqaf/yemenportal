@@ -3,7 +3,7 @@ class PostsFetcher::TopicFinder
     @post = post
   end
 
-  def post_with_topic!
+  def attach_topic!
     return if post.invalid?
     Post.transaction do
       post.update(topic: topic)

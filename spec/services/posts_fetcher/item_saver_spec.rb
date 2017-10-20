@@ -9,7 +9,7 @@ RSpec.describe PostsFetcher::ItemSaver do
 
     it "creates a post with its topic" do
       expect(PostsFetcher::PostFactory).to receive_message_chain(:new, :create)
-      expect(PostsFetcher::TopicFinder).to receive_message_chain(:new, :post_with_topic!)
+      expect(PostsFetcher::TopicFinder).to receive_message_chain(:new, :attach_topic!)
       subject
     end
   end
