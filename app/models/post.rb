@@ -53,14 +53,18 @@ class Post < ApplicationRecord
   scope :not_for_source, ->(source_id) { where.not(source_id: source_id) }
   scope :created_after_date, ->(date) { where("created_at > ?", date) }
   scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
-
-  enumerize :state, in: [:approved, :rejected, :pending], default: :pending
-
-  def self.include_voted_by_user(user)
+  scope :with_user_votes, lambda { |user|
     joins("LEFT JOIN votes ON votes.post_id = posts.id AND votes.user_id = #{user.id}")
       .group(:id).select("posts.*,
         (COUNT(votes.*) > 0 AND SUM(votes.value) > 0) AS upvoted_by_user,
         (COUNT(votes.*) > 0 AND SUM(votes.value) < 0) AS downvoted_by_user")
+  }
+
+  enumerize :state, in: [:approved, :rejected, :pending], default: :pending
+
+  def self.include_voted_by_user(user)
+    return self if user.blank?
+    with_user_votes(user)
   end
 
   def self.latest
