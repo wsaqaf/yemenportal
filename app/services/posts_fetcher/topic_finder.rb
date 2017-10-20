@@ -15,11 +15,7 @@ class PostsFetcher::TopicFinder
   attr_reader :post
 
   def topic
-    if FeatureToggle.clustering_enabled?
-      topic_with_related_posts || new_topic
-    else
-      new_topic
-    end
+    topic_with_related_posts || new_topic
   end
 
   def topic_with_related_posts

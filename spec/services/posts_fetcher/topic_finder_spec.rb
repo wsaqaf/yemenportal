@@ -4,10 +4,6 @@ RSpec.describe PostsFetcher::TopicFinder do
   describe "#post_with_topic!" do
     subject { described_class.new(post).post_with_topic! }
 
-    before do
-      allow(FeatureToggle).to receive(:clustering_enabled?).and_return(:true)
-    end
-
     context "when post item is invalid" do
       let(:post) { build(:post, link: nil) }
 
