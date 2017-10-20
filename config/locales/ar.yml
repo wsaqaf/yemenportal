@@ -181,7 +181,8 @@ ar:
     post:
       discuss: ناقش
       review: مراجعة
-      related_posts: مشاركات ذات الصلة
+      show_more_related: إعرض المزيد
+      show_topic: إعرض الموضوع
       details: تفاصيل
     reviews:
       create:

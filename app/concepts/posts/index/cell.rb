@@ -1,4 +1,6 @@
 class Posts::Index::Cell < Application::Cell
+  RELATED_POSTS_COUNT = 3
+
   private
 
   def posts

@@ -1,0 +1,6 @@
+.post__related
+  .post__related-title= link_to(title, path_to_post, target: "_parent")
+  .post__related-subtitle
+    .post__related-subtitle-item= source_name
+    .post__related-subtitle-item
+      time.js-time datetime=created_at.iso8601

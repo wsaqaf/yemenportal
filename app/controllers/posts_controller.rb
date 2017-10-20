@@ -14,6 +14,6 @@ class PostsController < ApplicationController
   end
 
   def posts
-    Posts::Filter.new(params).filtered_posts
+    Posts::Filter.new(params).filtered_posts.includes(:posts_of_topic)
   end
 end
