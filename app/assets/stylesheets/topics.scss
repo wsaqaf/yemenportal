@@ -4,14 +4,5 @@
 
   &__topic-posts {
     padding: 2rem;
-    width: 66%;
-
-    @media only screen and (max-width: 64em) {
-      width: 75%
-    }
-
-    @media only screen and (max-width: 40em) {
-      width: 100%;
-    }
   }
 }
