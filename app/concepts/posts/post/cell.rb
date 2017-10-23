@@ -3,7 +3,8 @@ class Posts::Post::Cell < Application::Cell
 
   property :title, :source_name, :image_url, :voting_result, :description,
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :published_at,
-    :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id, :main_topic
+    :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id,
+    :main_topic, :related_post_of_topic?
 
   option :related_posts_count, :hide_link_to_related, :truncate_description
 
@@ -60,15 +61,19 @@ class Posts::Post::Cell < Application::Cell
   def load_path_to_topic
     if main_post_of_topic?
       topic_path(main_topic)
-    elsif topic_id.present?
+    elsif related_post_of_topic?
       topic_path(topic_id)
     end
   end
 
   def topic_link_title
+    @_topic_link_title ||= load_topic_link_title
+  end
+
+  def load_topic_link_title
     if related_posts.present? && related_posts_count_more_than_showing?
       st("show_more_related")
-    else
+    elsif related_post_of_topic?
       st("show_topic")
     end
   end
@@ -78,7 +83,7 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def show_link_to_related?
-    !hide_link_to_related
+    !hide_link_to_related && topic_link_title.present? && path_to_topic.present?
   end
 
   delegate :image_url, to: :post, prefix: true, allow_nil: true
