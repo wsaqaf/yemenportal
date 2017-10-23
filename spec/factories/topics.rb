@@ -5,7 +5,7 @@
 #  id           :integer          not null, primary key
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
-#  topic_size   :integer
+#  topic_size   :integer          default("0")
 #  main_post_id :integer
 #
 # Indexes
