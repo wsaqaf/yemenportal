@@ -43,6 +43,8 @@ class Posts::Filter
       7.days.ago
     when :monthly
       1.month.ago
+    when :annually
+      1.year.ago
     end
   end
 
