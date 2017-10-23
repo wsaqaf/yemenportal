@@ -4,26 +4,22 @@ describe Posts::Filter::Params do
   describe "#set" do
     subject { described_class.new(raw_params).set }
 
-    context "when params aren't initialized with set" do
-      let(:raw_params) { {} }
+    let(:filter_property) { :set }
+    let(:default_value) { :most_covered }
+    let(:valid_predefined_value) { :highly_voted }
+    let(:invalid_value) { :something }
 
-      it { is_expected.to eq(:most_covered) }
-    end
+    it_behaves_like "filter property"
+  end
 
-    context "when params are initialized with set" do
-      let(:raw_params) { { set: set_value } }
+  describe "#time" do
+    subject { described_class.new(raw_params).time }
 
-      context "when set is initialized with predefined value" do
-        let(:set_value) { :highly_voted }
+    let(:filter_property) { :time }
+    let(:default_value) { :daily }
+    let(:valid_predefined_value) { :hourly }
+    let(:invalid_value) { :something }
 
-        it { is_expected.to eq(set_value) }
-      end
-
-      context "when set is initialized with other value" do
-        let(:set_value) { :something }
-
-        it { is_expected.to be_nil }
-      end
-    end
+    it_behaves_like "filter property"
   end
 end
