@@ -26,12 +26,25 @@ describe Post do
   end
 
   describe ".ordered_by_coverage" do
+    subject { described_class.ordered_by_coverage }
+
+    let!(:main_post) { create(:post, :main_post) }
+
     context "when there are a main post and related post of topic" do
-      it "gives priority to main post in order"
+      let!(:related_post) { create(:post, topic: main_post.main_topic) }
+
+      it "gives priority to main post in order" do
+        is_expected.to eq([main_post, related_post])
+      end
     end
 
     context "when there are two main posts" do
-      it "orders them by topic size"
+      let(:another_main_post) { create(:post, :main_post) }
+      let!(:related_post) { create(:post, topic: another_main_post.main_topic) }
+
+      it "orders them by topic size" do
+        is_expected.to eq([another_main_post, main_post, related_post])
+      end
     end
   end
 

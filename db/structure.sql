@@ -384,7 +384,7 @@ CREATE TABLE topics (
     id integer NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    topic_size integer,
+    topic_size integer DEFAULT 0,
     main_post_id integer
 );
 
@@ -1022,6 +1022,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171011064759'),
 ('20171017124739'),
 ('20171018071200'),
-('20171018105726');
+('20171018105726'),
+('20171020212939');
 
 
