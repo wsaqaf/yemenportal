@@ -95,6 +95,10 @@ class Post < ApplicationRecord
     main_topic.present?
   end
 
+  def related_post_of_topic?
+    topic.present?
+  end
+
   def same_posts
     (topic.posts.ordered_by_date - [self]) if topic
   end

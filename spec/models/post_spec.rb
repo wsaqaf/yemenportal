@@ -163,4 +163,22 @@ describe Post do
       it { is_expected.to be_empty }
     end
   end
+
+  describe "#related_post_of_topic?" do
+    subject { post.related_post_of_topic? }
+
+    context "when post is a main post of topic" do
+      let(:post) { create(:post) }
+      let!(:topic) { create(:topic, main_post: post) }
+
+      it { is_expected.to be_falsey }
+    end
+
+    context "when post is a part of topic" do
+      let(:topic) { create(:topic) }
+      let(:post) { create(:post, topic: topic) }
+
+      it { is_expected.to be_truthy }
+    end
+  end
 end

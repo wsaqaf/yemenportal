@@ -7,7 +7,7 @@ class RelatedPostsFinder
 
   def topic_with_related_posts_or_nil
     if posts.present? && related_post_found?
-      most_similar_post.topic
+      most_similar_topic
     end
   end
 
@@ -35,8 +35,12 @@ class RelatedPostsFinder
       .max
   end
 
+  def most_similar_topic
+    most_similar_post.main_topic || most_similar_post.topic
+  end
+
   def most_similar_post
-    posts[similarity_post_id]
+    @_most_similar_post ||= posts[similarity_post_id]
   end
 
   def posts
