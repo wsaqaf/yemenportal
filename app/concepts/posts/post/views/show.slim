@@ -16,7 +16,7 @@
       .post__subtitle-item
         time.js-time datetime=published_at.iso8601
 
-    - if post_description.present?
+    - unless hide_description || post_description.blank?
       .post__post-body.clearfix
         - if post_image_url.present?
           = image_tag(post_image_url, alt: title, class: "post__image")
