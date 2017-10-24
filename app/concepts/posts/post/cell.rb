@@ -79,11 +79,11 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def main_post_with_few_related?
-    related_posts.present? && !related_posts_count_more_than_showing?
+    related_posts.any? && !related_posts_count_more_than_showing?
   end
 
   def main_post_with_many_related?
-    related_posts.present? && related_posts_count_more_than_showing?
+    related_posts.any? && related_posts_count_more_than_showing?
   end
 
   def related_posts_count_more_than_showing?

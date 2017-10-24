@@ -8,13 +8,15 @@ class PostsFetcher::TopicAttacher
     if attaching_post_was_published_early?
       set_new_main_post
     else
-      post.update(topic: topic)
+      append_attaching_post_to_topic
     end
   end
 
   private
 
   attr_reader :post, :topic
+
+  delegate :main_post, to: :topic, prefix: true
 
   def attaching_post_was_published_early?
     topic_main_post.published_at > post.published_at
@@ -25,7 +27,7 @@ class PostsFetcher::TopicAttacher
     topic.update(main_post: post)
   end
 
-  def topic_main_post
-    @_topic_main_post ||= topic.main_post
+  def append_attaching_post_to_topic
+    post.update(topic: topic)
   end
 end
