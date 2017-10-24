@@ -19,7 +19,7 @@ class PostsFetcher::FetchedItem
   end
 
   def published_at
-    params[:published_at]
+    [params[:published_at], Time.zone.now].min
   end
 
   def image_url

@@ -53,4 +53,24 @@ RSpec.describe PostsFetcher::FetchedItem do
       end
     end
   end
+
+  describe "#published_at" do
+    subject { described_class.new(published_at: publish_time).published_at }
+
+    context "when passing publish time in the future" do
+      let(:publish_time) { Time.zone.now + 1.day }
+
+      it "sets current time" do
+        is_expected.to be < Time.zone.now
+      end
+    end
+
+    context "when passing publish time in the past" do
+      let(:publish_time) { Time.zone.now - 1.day }
+
+      it "uses this value as publish date" do
+        is_expected.to be < Time.zone.now
+      end
+    end
+  end
 end
