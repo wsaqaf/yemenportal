@@ -52,6 +52,8 @@ class Posts::Filter
     case params.set.to_sym
     when :new
       ->(posts) { posts.ordered_by_date }
+    when :most_read
+      ->(posts) { posts.ordered_by_views_count.ordered_by_date }
     when :highly_voted
       ->(posts) { posts.ordered_by_voting_result.ordered_by_date }
     when :most_covered

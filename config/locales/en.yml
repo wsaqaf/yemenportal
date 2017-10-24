@@ -201,6 +201,7 @@ en:
     posts/filter/params:
       set:
         new: New
+        most_read: Most read
         highly_voted: Highly voted
         most_covered: Most covered
       time:
