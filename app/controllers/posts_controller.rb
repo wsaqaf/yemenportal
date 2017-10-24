@@ -21,15 +21,15 @@ class PostsController < ApplicationController
     PostView.create(user: current_user, post: post)
   end
 
-  def post
-    @_post ||= Post.include_voted_by_user(current_user).find(params[:id])
-  end
-
   def show_post_page
     if post.show_internally?
       render cell: :show, model: post, layout: "post_layout"
     else
       redirect_to post.link
     end
+  end
+
+  def post
+    @_post ||= Post.include_voted_by_user(current_user).find(params[:id])
   end
 end

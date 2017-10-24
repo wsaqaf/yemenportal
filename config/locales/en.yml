@@ -168,6 +168,7 @@ en:
         sources: Sources
       coming_soon: Coming soon...
     post:
+      post_views_count: "Views: %{count}"
       discuss: Discuss
       review: Review
       show_more_related: Show more

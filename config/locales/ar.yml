@@ -179,6 +179,7 @@ ar:
         sources: منشأ
       coming_soon: قريبا...
     post:
+      post_views_count: "القراءات %{count}"
       discuss: ناقش
       review: مراجعة
       show_more_related: إعرض المزيد
