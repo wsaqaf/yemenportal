@@ -185,6 +185,38 @@ ALTER SEQUENCE post_categories_id_seq OWNED BY post_categories.id;
 
 
 --
+-- Name: post_views; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE post_views (
+    id integer NOT NULL,
+    post_id integer NOT NULL,
+    user_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: post_views_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE post_views_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: post_views_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE post_views_id_seq OWNED BY post_views.id;
+
+
+--
 -- Name: posts; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -201,7 +233,8 @@ CREATE TABLE posts (
     topic_id integer,
     stemmed_text text DEFAULT ''::text,
     source_id integer NOT NULL,
-    voting_result integer DEFAULT 0
+    voting_result integer DEFAULT 0,
+    post_views_count integer DEFAULT 0 NOT NULL
 );
 
 
@@ -532,6 +565,13 @@ ALTER TABLE ONLY post_categories ALTER COLUMN id SET DEFAULT nextval('post_categ
 
 
 --
+-- Name: post_views id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_views ALTER COLUMN id SET DEFAULT nextval('post_views_id_seq'::regclass);
+
+
+--
 -- Name: posts id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -628,6 +668,14 @@ ALTER TABLE ONLY post_categories
 
 
 --
+-- Name: post_views post_views_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_views
+    ADD CONSTRAINT post_views_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: posts posts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -718,6 +766,20 @@ CREATE INDEX index_post_categories_on_category_id ON post_categories USING btree
 --
 
 CREATE INDEX index_post_categories_on_post_id ON post_categories USING btree (post_id);
+
+
+--
+-- Name: index_post_views_on_post_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_views_on_post_id ON post_views USING btree (post_id);
+
+
+--
+-- Name: index_post_views_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_post_views_on_user_id ON post_views USING btree (user_id);
 
 
 --
@@ -908,6 +970,14 @@ ALTER TABLE ONLY identities
 
 
 --
+-- Name: post_views fk_rails_69837c6309; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_views
+    ADD CONSTRAINT fk_rails_69837c6309 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: topics fk_rails_70c142087f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -972,6 +1042,14 @@ ALTER TABLE ONLY posts
 
 
 --
+-- Name: post_views fk_rails_f2f2d28c2c; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY post_views
+    ADD CONSTRAINT fk_rails_f2f2d28c2c FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -1023,6 +1101,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171017124739'),
 ('20171018071200'),
 ('20171018105726'),
-('20171020212939');
+('20171020212939'),
+('20171024073133');
 
 

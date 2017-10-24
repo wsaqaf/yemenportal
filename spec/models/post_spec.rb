@@ -25,6 +25,10 @@ describe Post do
     it { is_expected.to validate_presence_of(field) }
   end
 
+  describe "relations" do
+    it { is_expected.to have_many(:post_views).dependent(:destroy) }
+  end
+
   describe ".ordered_by_coverage" do
     subject { described_class.ordered_by_coverage }
 

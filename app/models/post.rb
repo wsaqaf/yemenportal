@@ -2,19 +2,20 @@
 #
 # Table name: posts
 #
-#  id            :integer          not null, primary key
-#  description   :text
-#  published_at  :datetime
-#  link          :string           not null
-#  title         :string
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
-#  state         :string           default("pending"), not null
-#  image_url     :string
-#  topic_id      :integer
-#  stemmed_text  :text             default("")
-#  source_id     :integer          not null
-#  voting_result :integer          default("0")
+#  id               :integer          not null, primary key
+#  description      :text
+#  published_at     :datetime
+#  link             :string           not null
+#  title            :string
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  state            :string           default("pending"), not null
+#  image_url        :string
+#  topic_id         :integer
+#  stemmed_text     :text             default("")
+#  source_id        :integer          not null
+#  voting_result    :integer          default("0")
+#  post_views_count :integer          default("0"), not null
 #
 # Indexes
 #
@@ -34,6 +35,7 @@ class Post < ApplicationRecord
   has_many :review_comments, -> { ordered_by_date }, dependent: :destroy
   has_many :votes, dependent: :destroy
   has_many :related_posts, through: :main_topic, source: :posts
+  has_many :post_views, dependent: :destroy
 
   belongs_to :source
   belongs_to :topic, optional: true, counter_cache: :topic_size, touch: true

@@ -47,6 +47,10 @@ describe User do
     it { is_expected.to validate_presence_of(field) }
   end
 
+  describe "relations" do
+    it { is_expected.to have_many(:post_views) }
+  end
+
   describe "#from_omniauth" do
     let(:user) { build(:user, email: "aa@aa.aa") }
     let(:info) { double(email: "aa@aa.aa") }
