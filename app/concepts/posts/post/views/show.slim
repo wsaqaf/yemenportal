@@ -11,6 +11,7 @@
       = link_to(title, path_to_post, class: "post__title", target: "_parent")
 
     .post__subtitle
+      .post__subtitle-item= st("post_views_count", count: post_views_count)
       .post__subtitle-item= source_name
       .post__subtitle-item= post_category_names
       .post__subtitle-item
