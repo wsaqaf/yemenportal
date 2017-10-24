@@ -4,13 +4,17 @@ class PostsController < ApplicationController
   end
 
   def show
-    render cell: :show, model: post, layout: "post_layout"
+    if post.show_internally?
+      render cell: :show, model: post, layout: "post_layout"
+    else
+      redirect_to post.link
+    end
   end
 
   private
 
   def post
-    Post.include_voted_by_user(current_user).find(params[:id])
+    @_post ||= Post.include_voted_by_user(current_user).find(params[:id])
   end
 
   def posts

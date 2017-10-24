@@ -13,15 +13,28 @@ describe PostsController, type: :request do
     end
 
     context "when there is a post for id" do
-      let(:post) { create(:post) }
+      let(:post) { create(:post, source: source) }
       let(:post_id) { post.id }
 
-      it "renders post page" do
-        do_request
-        expect(response).to have_http_status(:ok)
+      context "when post for internal show" do
+        let(:source) { create(:source, iframe_flag: true) }
+
+        it "renders post page" do
+          do_request
+          expect(response).to have_http_status(:ok)
+        end
+
+        it_behaves_like "votes including action"
       end
 
-      it_behaves_like "votes including action"
+      context "when post for external show" do
+        let(:source) { create(:source, iframe_flag: false) }
+
+        it "redirects to post link" do
+          do_request
+          expect(response).to have_http_status(302)
+        end
+      end
     end
   end
 
