@@ -18,7 +18,7 @@ class PostsFetcher::TopicFinder
 
   def attach_or_create_new_topic
     if topic_with_related_posts.present? && topic_does_not_contain_post_from_same_source?
-      post.update(topic: topic_with_related_posts)
+      topic_attacher.attach
     else
       create_new_topic!
     end
@@ -26,6 +26,10 @@ class PostsFetcher::TopicFinder
 
   def topic_with_related_posts
     @_topic_with_related_posts ||= RelatedPostsFinder.new(post).topic_with_related_posts_or_nil
+  end
+
+  def topic_attacher
+    @_topic_attacher ||= PostsFetcher::TopicAttacher.new(post: post, topic: topic_with_related_posts)
   end
 
   def topic_does_not_contain_post_from_same_source?

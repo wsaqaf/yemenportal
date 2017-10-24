@@ -72,15 +72,23 @@ class Posts::Post::Cell < Application::Cell
   end
 
   def load_topic_link_title
-    if related_posts.present? && related_posts_count_more_than_showing?
-      st("show_more_related")
-    elsif related_post_of_topic?
+    if related_post_of_topic? || main_post_with_few_related?
       st("show_topic")
+    elsif main_post_with_many_related?
+      st("show_more_related")
     end
   end
 
+  def main_post_with_few_related?
+    related_posts.any? && !related_posts_count_more_than_showing?
+  end
+
+  def main_post_with_many_related?
+    related_posts.any? && related_posts_count_more_than_showing?
+  end
+
   def related_posts_count_more_than_showing?
-    related_posts_count.blank? || (related_posts.count > related_posts_count)
+    related_posts.count > related_posts_count
   end
 
   def show_link_to_related?
