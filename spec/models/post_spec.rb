@@ -52,6 +52,19 @@ describe Post do
     end
   end
 
+  describe ".ordered_by_views_count" do
+    subject { described_class.ordered_by_views_count }
+
+    let(:post) { create(:post) }
+    let(:most_viewed_post) { create(:post) }
+
+    before { PostView.create(post: most_viewed_post) }
+
+    it "sorts by views count" do
+      is_expected.to eq([most_viewed_post, post])
+    end
+  end
+
   describe ".with_user_votes" do
     it "returns posts with upvoted_by_user and downvoted_by_user attributes" do
       user = create(:user)
