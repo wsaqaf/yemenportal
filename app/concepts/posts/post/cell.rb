@@ -4,7 +4,7 @@ class Posts::Post::Cell < Application::Cell
   property :title, :source_name, :image_url, :voting_result, :description,
     :upvoted_by_user?, :downvoted_by_user?, :category_names, :published_at,
     :main_post_of_topic?, :related_posts, :topic_id, :main_topic,
-    :related_post_of_topic?
+    :related_post_of_topic?, :post_views_count
 
   option :related_posts_count, :hide_link_to_related, :truncate_description
 

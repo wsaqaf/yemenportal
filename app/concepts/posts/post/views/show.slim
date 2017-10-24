@@ -15,6 +15,7 @@
       .post__subtitle-item= post_category_names
       .post__subtitle-item
         time.js-time datetime=published_at.iso8601
+      .post__subtitle-item= st("post")
 
     - if post_description.present?
       .post__post-body.clearfix
