@@ -6,7 +6,8 @@ class Posts::Post::Cell < Application::Cell
     :show_internally?, :link, :main_post_of_topic?, :related_posts, :topic_id,
     :main_topic, :related_post_of_topic?
 
-  option :related_posts_count, :hide_link_to_related, :truncate_description
+  option :related_posts_count, :hide_link_to_related,
+    :truncate_description, :hide_description
 
   def post
     model
