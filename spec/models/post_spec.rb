@@ -58,7 +58,7 @@ describe Post do
     let(:post) { create(:post) }
     let(:most_viewed_post) { create(:post) }
 
-    before { PostView.create(post: most_viewed_post) }
+    before { create(:post_view, post: most_viewed_post) }
 
     it "sorts by views count" do
       is_expected.to eq([most_viewed_post, post])
