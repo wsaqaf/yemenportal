@@ -13,5 +13,5 @@ class Posts::Filter::Params
 
   enumerize :set, in: [:new, :highly_voted, :most_covered], default: :most_covered
 
-  enumerize :time, in: [:daily, :weekly, :monthly, :all_time], default: :daily, predicates: true
+  enumerize :time, in: [:hourly, :daily, :weekly, :monthly, :annually, :all_time], default: :daily, predicates: true
 end

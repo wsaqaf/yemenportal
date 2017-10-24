@@ -35,12 +35,16 @@ class Posts::Filter
 
   def beginning_time_from_params
     case params.time.to_sym
+    when :hourly
+      1.hour.ago
     when :daily
       1.day.ago
     when :weekly
       7.days.ago
     when :monthly
       1.month.ago
+    when :annually
+      1.year.ago
     end
   end
 

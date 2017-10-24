@@ -27,9 +27,11 @@ ar:
         highly_voted: صوت بشدة
         most_covered: الأكثر تداولاً
       time:
+        hourly: ساعة
         daily: يوم
         weekly: أسبوع
         monthly: شهر
+        annually: السنة
         all_time: كل الوقت
   will_paginate:
     previous_label: السابق
