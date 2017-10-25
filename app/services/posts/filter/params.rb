@@ -11,7 +11,7 @@ class Posts::Filter::Params
 
   attr_reader :page, :q
 
-  enumerize :set, in: [:new, :highly_voted, :most_covered], default: :most_covered
+  enumerize :set, in: [:new, :most_read, :highly_voted, :most_covered], default: :most_covered
 
   enumerize :time, in: [:hourly, :daily, :weekly, :monthly, :annually, :all_time], default: :daily, predicates: true
 end

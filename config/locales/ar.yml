@@ -24,6 +24,7 @@ ar:
     posts/filter/params:
       set:
         new: جديد
+        most_read: الأكثر قراءة
         highly_voted: صوت بشدة
         most_covered: الأكثر تداولاً
       time:

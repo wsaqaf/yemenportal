@@ -47,6 +47,7 @@ class Post < ApplicationRecord
 
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
+  scope :ordered_by_views_count, -> { order(post_views_count: :desc) }
   scope :ordered_by_coverage, lambda {
     left_joins(:main_topic)
       .group(:id)
