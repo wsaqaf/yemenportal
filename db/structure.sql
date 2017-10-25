@@ -193,7 +193,8 @@ CREATE TABLE post_views (
     post_id integer NOT NULL,
     user_id integer,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    ip_hash character varying
 );
 
 
@@ -1102,6 +1103,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171018071200'),
 ('20171018105726'),
 ('20171020212939'),
-('20171024073133');
+('20171024073133'),
+('20171024172219');
 
 

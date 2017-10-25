@@ -4,7 +4,7 @@ class PostsController < ApplicationController
   end
 
   def show
-    commit_post_view
+    post_view_registrar.commit_view
     show_post_page
   end
 
@@ -17,8 +17,9 @@ class PostsController < ApplicationController
       .include_voted_by_user(current_user)
   end
 
-  def commit_post_view
-    PostView.create(user: current_user, post: post)
+  def post_view_registrar
+    @_post_view_registrar ||=
+      PostViewRegistrar.new(post: post, user: current_user, user_ip: request.remote_ip)
   end
 
   def show_post_page
