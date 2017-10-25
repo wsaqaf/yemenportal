@@ -18,6 +18,7 @@ Rails.application.routes.draw do
       resources :reviews, only: [:index, :create, :destroy]
       resources :review_comments, only: [:create, :destroy]
       resource :vote, only: [:update, :destroy]
+      resource :categories, only: :update
     end
   end
 
