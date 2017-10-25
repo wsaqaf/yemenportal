@@ -151,6 +151,7 @@ en:
       destroy:
         successfully_destroyed: Flag was successfully deleted.
       comment: "Send Comment"
+      add_category: Add category
       only_moderators_can_review_posts: Only moderators can review posts.
     review_comments:
       create:

@@ -195,6 +195,7 @@ ar:
       destroy:
         successfully_destroyed: تم حذف العلم بنجاح
       comment: أرسل تعليق
+      add_category: التصنيف
       only_moderators_can_review_posts: يمكن للمشرفين فقط مراجعة مشاركات
     review_comments:
       create:

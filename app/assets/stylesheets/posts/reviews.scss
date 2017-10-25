@@ -34,3 +34,16 @@
 .post-reviews__warning {
   font-size: 1.2em;
 }
+
+.post-reviews__categories {
+  margin-top: 20px;
+
+  .selectize-input {
+    height: 3.2em;
+    padding: 0 0.2rem !important;
+
+    .item {
+      margin: 0.6rem 0.15rem !important;
+    }
+  }
+}
