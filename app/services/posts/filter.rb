@@ -29,7 +29,7 @@ class Posts::Filter
     if params.all_time?
       ->(posts) { posts }
     else
-      ->(posts) { posts.created_later_than(beginning_time_from_params) }
+      ->(posts) { posts.published_later_than(beginning_time_from_params) }
     end
   end
 
