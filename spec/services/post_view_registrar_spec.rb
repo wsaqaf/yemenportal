@@ -30,14 +30,14 @@ RSpec.describe PostViewRegistrar do
     context "when user is unauthorized" do
       let(:user) { nil }
 
-      context "and there is a view for post from user ip" do
+      context "and there is no view for post from user ip" do
         it "creates a new post view for post and ip" do
           expect { subject }.to change { PostView.count }
         end
       end
 
-      context "and there is no view for post from user ip" do
-        let(:ip_hash) { "66efff4c945d3c3b87fc271b47d456db" } # 192.168.1.1 hash
+      context "and there is a view for post from user ip" do
+        let(:ip_hash) { "66efff4c945d3c3b87fc271b47d456db" }
         let!(:post_view) { create(:post_view, ip_hash: ip_hash, post: post) }
 
         it "doesn't commit the view as a new view" do
