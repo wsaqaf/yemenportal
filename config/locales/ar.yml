@@ -181,6 +181,7 @@ ar:
         categories: الاقسام
         sources: منشأ
       coming_soon: قريبا...
+      apply: تطبيق
     post:
       post_views_count: "القراءات %{count}"
       discuss: ناقش
