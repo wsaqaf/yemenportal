@@ -3,8 +3,5 @@
     = link_to(st("review"), review_path, target: "_parent")
   - else
     = flags.map do |flag|
-      .post-review-flags__flag[title=flag.name style="background-color: #{flag.color}" data-tooltip]
-        = link_to flag.number_of_reviews_for_post,
-            review_path,
-            class: "post-review-flags__flag-link",
-            target: "_parent"
+      = concept("posts/post/review_flags/flag/cell", flag, review_path: review_path)
+

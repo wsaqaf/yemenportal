@@ -51,20 +51,21 @@
 }
 
 .post-review-flags {
-  $circle-radius: 1.5em;
   display: inline-block;
+}
 
-  &__flag {
-    width: $circle-radius;
-    height: $circle-radius;
-    border-radius: $circle-radius;
-    text-align: center;
-    cursor: pointer;
-    border: none;
-    margin-left: 0.5em;
-  }
+.post-review-flag {
+  $circle-radius: 1.5em;
 
-  &__flag-link {
+  width: $circle-radius;
+  height: $circle-radius;
+  border-radius: $circle-radius;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  margin-left: 0.5em;
+
+  &__link {
     color: $white;
 
     &:hover {
