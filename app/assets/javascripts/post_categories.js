@@ -1,12 +1,12 @@
 document.addEventListener("turbolinks:load", function() {
-  $(".post-reviews__categories-selector").selectize({
+  $(".post-review-categories__selector").selectize({
     plugins: ["remove_button", "restore_on_backspace"],
     delimiter: ",",
     create: false,
     persist: false
   });
 
-  $(".post-reviews__categories-selector").change(function() {
+  $(".post-review-categories__selector").change(function() {
     var $this = $(this);
 
     $.ajax({
