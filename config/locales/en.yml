@@ -163,11 +163,13 @@ en:
       show:
         back: Back
     index:
-      filter:
-        categories: Categories
-        sources: Sources
-      coming_soon: Coming soon...
-      apply: Apply
+      spotlight:
+        filter:
+          categories: Categories
+          sources: Sources
+        coming_soon: Coming soon...
+        apply: Apply
+        select_sources: Select sources
     post:
       post_views_count: "Views: %{count}"
       discuss: Discuss

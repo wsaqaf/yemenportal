@@ -23,10 +23,6 @@
     margin-bottom: 15px;
   }
 
-  &__posts-filter {
-    float: left;
-  }
-
   &__post {
     margin-bottom: 40px;
 
@@ -42,10 +38,6 @@
 
 .post {
   display: flex;
-}
-
-.posts__posts-filter {
-  float: left;
 }
 
 .post__vote-buttons {

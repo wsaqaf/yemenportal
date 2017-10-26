@@ -1,29 +1,8 @@
 .row
   .columns.small-12.medium-12.large-12.large-centered
     .posts
-      .posts__spotlight.column.small-12
-        = form_tag root_path, method: :get, class: "posts-spotlight js-spotlight-form" do
-          .posts-spotlight__query
-            = text_field_tag :q, post_filter_params.q, disabled: true, placeholder: st("coming_soon")
-          .posts-spotlight__set
-            = select_tag :set,
-                options_for_select(Posts::Filter::Params.set.options, post_filter_params.set)
-          = select_tag :time,
-              options_for_select(Posts::Filter::Params.time.options, post_filter_params.time),
-              class: "posts-spotlight__time"
-      .posts__posts-filter.column.small-12.medium-4.large-3
-        = form_tag root_path, method: :get, class: "posts-filter" do
-          .posts-filter__categories-filter
-            label
-              = st("filter.categories")
-              = select_tag :categories, options_for_select([st("coming_soon")]), disabled: true
-          .posts-filter__source-filter
-            label= st("filter.sources")
-            = select_tag :sources,
-                options_from_collection_for_select(Source.all, "id", "name", post_filter_params.sources),
-                multiple: true,
-                class: "posts-filter__source-select-box"
-          = submit_tag st("apply"), class: "button", name: ""
+      .posts__spotlight
+        = concept("/posts/index/spotlight/cell", post_filter_params)
       .posts__posts.column.small-12.medium-8.large-9
         - posts.each do |post|
           .posts__post

@@ -177,11 +177,13 @@ ar:
       show:
         back: رجوع
     index:
-      filter:
-        categories: الاقسام
-        sources: منشأ
-      coming_soon: قريبا...
-      apply: تطبيق
+      spotlight:
+        filter:
+          categories: الاقسام
+          sources: منشأ
+        coming_soon: قريبا...
+        apply: قم بالفلترة
+        select_sources: مصادر محددة
     post:
       post_views_count: "القراءات %{count}"
       discuss: ناقش
