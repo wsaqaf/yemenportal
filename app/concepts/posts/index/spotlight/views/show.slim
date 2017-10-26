@@ -12,11 +12,8 @@
           class: "posts-spotlight__time-select-box"
   .posts-spotlight__filter-section.column.small-12.medium-4.large-3
     .posts-spotlight__categories
-      label
-        = st("filter.categories")
-        = select_tag :categories, options_for_select([st("coming_soon")]), disabled: true
+      = select_tag :categories, options_for_select([st("coming_soon")]), disabled: true
     .posts-spotlight__sources
-      label= st("filter.sources")
       = select_tag :sources,
           options_from_collection_for_select(source_options, "id", "name", post_filter_params.sources),
           multiple: true,

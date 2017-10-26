@@ -178,9 +178,6 @@ ar:
         back: رجوع
     index:
       spotlight:
-        filter:
-          categories: الاقسام
-          sources: منشأ
         coming_soon: قريبا...
         apply: قم بالفلترة
         select_sources: مصادر محددة
