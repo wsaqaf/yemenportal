@@ -78,12 +78,8 @@ class Post < ApplicationRecord
     end
   end
 
-  def self.latest
-    order("created_at ASC").first
-  end
-
-  def self.created_later_than(timestamp)
-    where("posts.created_at > ?", timestamp)
+  def self.published_later_than(timestamp)
+    where("posts.published_at > ?", timestamp)
   end
 
   def self.available_states

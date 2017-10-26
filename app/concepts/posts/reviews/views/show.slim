@@ -7,6 +7,9 @@
         - flags.each do |flag|
           .post-reviews__flag
             = concept("posts/flag/cell", flag, post: post).call
+      - if can_current_user_update_post?
+        .post-reviews__categories
+          = concept("posts/reviews/categories/cell", post)
       .post-reviews__comments
         - comments.each do |comment|
           .post-reviews__comment

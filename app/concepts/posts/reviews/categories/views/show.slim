@@ -1,0 +1,7 @@
+.post-review-categories
+  = st("add_category")
+  = select_tag :category_ids,
+      options_from_collection_for_select(all_categories, "id", "name", category_ids),
+      multiple: true,
+      class: "post-review-categories__selector",
+      data: { update_path: post_categories_path(post) }

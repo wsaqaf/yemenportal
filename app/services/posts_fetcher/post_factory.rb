@@ -13,6 +13,7 @@ class PostsFetcher::PostFactory
   attr_reader :source, :item
 
   delegate :title, :link, :description, :published_at, :image_url, to: :item
+  delegate :category, to: :source, prefix: true
 
   def post_params
     {
@@ -21,7 +22,8 @@ class PostsFetcher::PostFactory
       description: description,
       published_at: published_at,
       image_url: image_url,
-      source: source
+      source: source,
+      categories: Array(source_category)
     }
   end
 end

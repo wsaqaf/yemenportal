@@ -13,7 +13,7 @@
     .post__subtitle
       .post__subtitle-item= source_name
       .post__subtitle-item= st("post_views_count", count: post_views_count)
-      .post__subtitle-item= post_category_names
+      .post__subtitle-item.post__subtitle-item--categories= post_category_names
       .post__subtitle-item
         time.js-time datetime=published_at.iso8601
 

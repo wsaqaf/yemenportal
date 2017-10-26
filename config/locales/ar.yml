@@ -197,6 +197,8 @@ ar:
         not_created: 'هناك خطأ ما. لم تتم إضافة العلم  '
       destroy:
         successfully_destroyed: تم حذف العلم بنجاح
+      categories:
+        add_category: التصنيف
       comment: أرسل تعليق
       only_moderators_can_review_posts: يمكن للمشرفين فقط مراجعة مشاركات
     review_comments:
