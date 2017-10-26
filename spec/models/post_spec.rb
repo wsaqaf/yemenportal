@@ -65,6 +65,25 @@ describe Post do
     end
   end
 
+  describe ".order_by_review_rating" do
+    subject { described_class.order_by_review_rating }
+
+    let(:good_flag) { create(:flag, rate: 1) }
+    let(:bad_flag) { create(:flag, rate: -1) }
+    let(:good_post) { create(:post) }
+    let(:post) { create(:post) }
+    let(:bad_post) { create(:post) }
+
+    before do
+      create(:review, post: good_post, flag: good_flag)
+      create(:review, post: bad_post, flag: bad_flag)
+    end
+
+    it "orders by posts review rating" do
+      is_expected.to eq([good_post, post, bad_post])
+    end
+  end
+
   describe ".with_user_votes" do
     it "returns posts with upvoted_by_user and downvoted_by_user attributes" do
       user = create(:user)
