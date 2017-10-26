@@ -10,6 +10,7 @@
 
 class Flag < ApplicationRecord
   has_many :reviews, dependent: :destroy
+  scope :reviewed_flags, ->(post) { include_number_of_reviews_for_post(post).having("COUNT(reviews.*) > 0") }
 
   def self.include_number_of_reviews_for_post(post)
     joins("LEFT JOIN reviews ON reviews.flag_id = flags.id AND reviews.post_id = #{post.id}")
