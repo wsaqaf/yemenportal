@@ -7,9 +7,10 @@ class Posts::Filter::Params
     @q = raw_params[:q]
     @set = raw_params[:set] || :most_covered
     @time = raw_params[:time] || :daily
+    @sources = raw_params[:sources]
   end
 
-  attr_reader :page, :q
+  attr_reader :page, :q, :sources
 
   enumerize :set, in: [:new, :most_read, :highly_voted, :most_covered], default: :most_covered
 

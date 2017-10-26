@@ -18,7 +18,7 @@ class Posts::Filter
   end
 
   def filters
-    [page_filter, time_filter, sorting_filter]
+    [page_filter, time_filter, sorting_filter, source_filter]
   end
 
   def page_filter
@@ -58,6 +58,14 @@ class Posts::Filter
       ->(posts) { posts.ordered_by_voting_result.ordered_by_date }
     when :most_covered
       ->(posts) { posts.ordered_by_coverage.ordered_by_voting_result.ordered_by_date }
+    end
+  end
+
+  def source_filter
+    if params.sources.present?
+      ->(posts) { posts.source_posts(params.sources) }
+    else
+      ->(posts) { posts }
     end
   end
 end

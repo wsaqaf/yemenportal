@@ -1,6 +1,11 @@
-.posts-spotlight {
+.posts-spotlight__sort-section {
   display: flex;
   flex-direction: row;
+}
+
+.posts-spotlight__filter-section {
+  display: flex;
+  flex-direction: column;
 }
 
 .posts-spotlight__query {
@@ -28,5 +33,11 @@
 
   html:not([dir="rtl"]) & {
     margin-left: 5px;
+  }
+}
+
+.posts-spotlight__sources {
+  .item {
+    margin: 0.6rem 0.15rem !important;
   }
 }

@@ -1,0 +1,25 @@
+= form_tag root_path, method: :get, class: "posts-spotlight" do
+  .posts-spotlight__sort-section.column.small-12
+    .posts-spotlight__query
+      = text_field_tag :q, post_filter_params.q, disabled: true, placeholder: st("coming_soon")
+    .posts-spotlight__set
+      = select_tag :set,
+          options_for_select(set_options, post_filter_params.set),
+          class: "posts-spotlight__set-select-box"
+    .posts-spotlight__time
+      = select_tag :time,
+          options_for_select(time_options, post_filter_params.time),
+          class: "posts-spotlight__time-select-box"
+  .posts-spotlight__filter-section.column.small-12.medium-4.large-3
+    .posts-spotlight__categories
+      label
+        = st("filter.categories")
+        = select_tag :categories, options_for_select([st("coming_soon")]), disabled: true
+    .posts-spotlight__sources
+      label= st("filter.sources")
+      = select_tag :sources,
+          options_from_collection_for_select(source_options, "id", "name", post_filter_params.sources),
+          multiple: true,
+          class: "posts-spotlight__sources-select-box",
+          placeholder: st("select_sources")
+    = submit_tag st("apply"), class: "button", name: ""
