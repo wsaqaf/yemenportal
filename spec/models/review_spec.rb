@@ -29,7 +29,7 @@ describe Review do
     let(:another_review) { create(:review, flag: bad_flag) }
     let(:reviews_rate) { review.flag.rate + another_review.flag.rate }
 
-    it "summarize rating for reviews" do
+    it "summarizes rating for reviews" do
       is_expected.to eq(reviews_rate)
     end
   end
