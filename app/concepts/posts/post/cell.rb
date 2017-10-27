@@ -7,7 +7,7 @@ class Posts::Post::Cell < Application::Cell
     :related_post_of_topic?, :post_views_count
 
   option :related_posts_count, :hide_link_to_related,
-    :truncate_description, :hide_description
+    :truncate_description, :hide_description, :hide_comments_count
 
   def post
     model
