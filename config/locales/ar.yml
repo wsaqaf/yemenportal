@@ -182,9 +182,10 @@ ar:
         apply: قم بالفلترة
         select_sources: مصادر محددة
     post:
+      review_flags:
+        review: مراجعة
       post_views_count: "القراءات %{count}"
       discuss: ناقش
-      review: مراجعة
       show_more_related: إعرض المزيد
       show_topic: إعرض الموضوع
       details: تفاصيل

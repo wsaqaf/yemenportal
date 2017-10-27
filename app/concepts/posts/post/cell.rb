@@ -6,8 +6,8 @@ class Posts::Post::Cell < Application::Cell
     :main_post_of_topic?, :related_posts, :topic_id, :main_topic,
     :related_post_of_topic?, :post_views_count
 
-  option :related_posts_count, :hide_link_to_related,
-    :truncate_description, :hide_description, :hide_comments_count
+  option :related_posts_count, :hide_link_to_related, :truncate_description,
+    :hide_description, :hide_comments_count, :hide_review_flags
 
   def post
     model

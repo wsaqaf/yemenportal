@@ -17,7 +17,7 @@ describe Flag do
   end
 
   describe ".reviewed_flags" do
-    subject { described_class.reviewed_flags(post)  }
+    subject { described_class.reviewed_flags(post) }
 
     let(:post) { create(:post) }
 
