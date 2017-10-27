@@ -173,9 +173,6 @@ ar:
       propaganda_advertising: 'دعاية / اعلان '
       missing_name: اسم الكاتب مفقود / غامض
   posts:
-    headers:
-      show:
-        back: رجوع
     index:
       spotlight:
         coming_soon: قريبا...
@@ -185,7 +182,6 @@ ar:
       review_flags:
         review: مراجعة
       post_views_count: "القراءات %{count}"
-      discuss: ناقش
       show_more_related: إعرض المزيد
       show_topic: إعرض الموضوع
       details: تفاصيل

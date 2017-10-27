@@ -161,9 +161,6 @@ en:
       destroy:
         successfully_destroyed: Comment was successfully deleted.
         not_destroyed: Something went wrong. Can't delete comment.
-    headres:
-      show:
-        back: Back
     index:
       spotlight:
         coming_soon: Coming soon...
@@ -173,7 +170,6 @@ en:
       review_flags:
         review: Review
       post_views_count: "Views: %{count}"
-      discuss: Discuss
       show_more_related: Show more
       show_topic: Show topic
       details: Details
