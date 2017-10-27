@@ -20,24 +20,17 @@ describe Review do
     end
   end
 
-  describe "#add_rating" do
-    let(:post) { create(:post) }
-    let(:flag) { create(:flag) }
-    let(:apply_review) { create(:review, post: post, flag: flag) }
+  describe ".reviews_rate" do
+    subject { described_class.reviews_rate }
 
-    it "increases post rating by review flag rate" do
-      expect { apply_review }.to change { post.review_rating }.from(0).to(flag.rate)
-    end
-  end
+    let(:good_flag) { create(:flag, rate: 1) }
+    let(:bad_flag) { create(:flag, rate: -1) }
+    let(:review) { create(:review, flag: good_flag) }
+    let(:another_review) { create(:review, flag: bad_flag) }
+    let(:reviews_rate) { review.flag.rate + another_review.flag.rate }
 
-  describe "#subtract_rating" do
-    let(:post) { create(:post) }
-    let(:flag) { create(:flag) }
-    let!(:review) { create(:review, post: post, flag: flag) }
-    let(:destroy_review) { review.destroy }
-
-    it "decreses post rating by review flag rate" do
-      expect { destroy_review }.to change { post.review_rating }.from(flag.rate).to(0)
+    it "summarize rating for reviews" do
+      is_expected.to eq(reviews_rate)
     end
   end
 end
