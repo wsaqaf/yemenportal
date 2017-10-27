@@ -1,0 +1,32 @@
+@import "settings";
+
+.post-comments-count {
+  &__link {
+    display: inline-block;
+    background-color: $facebook-color;
+    border-radius: 2em;
+    color: $white;
+    padding: 0 0.5em 0 1em;
+    min-width: 4.6em;
+
+    &:hover {
+      color: $white;
+    }
+  }
+
+  &__icon {
+    width: 2em;
+    height: 2em;
+    margin-left: 0.5em;
+  }
+
+  &__number {
+    vertical-align: middle;
+    opacity: 0;
+    transition: opacity 500ms ease-out;
+
+    &[fb-xfbml-state="rendered"] {
+      opacity: 1;
+    }
+  }
+}
