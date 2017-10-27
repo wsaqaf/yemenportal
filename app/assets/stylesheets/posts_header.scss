@@ -1,11 +1,29 @@
 @import "settings";
 
 .post-page-header {
+  $header-height: 5.5rem;
+
   &__controls {
     margin-top: 1.2rem;
   }
 
   &__post {
-    height: 5.5rem;
+    height: $header-height;
+  }
+
+  &__back-button {
+    overflow-x: hidden;
+
+    @media only screen and (max-width: 992px) {
+      width: 55px;
+    }
+  }
+
+  &__logo-link {
+    line-height: $header-height;
+  }
+
+  &__logo-image {
+    min-width: 134px;
   }
 }
