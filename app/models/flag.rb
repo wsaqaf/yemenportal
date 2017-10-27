@@ -6,6 +6,7 @@
 #  name    :string
 #  color   :string
 #  resolve :boolean          default("false"), not null
+#  rate    :integer          default("0"), not null
 #
 
 class Flag < ApplicationRecord

@@ -25,6 +25,7 @@ ar:
       set:
         new: جديد
         most_read: الأكثر قراءة
+        most_reviewed: الأفضل تقييما
         highly_voted: صوت بشدة
         most_covered: الأكثر تداولاً
       time:

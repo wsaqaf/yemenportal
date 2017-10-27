@@ -24,4 +24,8 @@ class Review < ApplicationRecord
   def self.with_resolve_flag(post, moderator)
     joins(:flag).where(post: post, moderator: moderator, flags: { resolve: true })
   end
+
+  def self.reviews_rate
+    joins(:flag).sum("flags.rate")
+  end
 end

@@ -16,6 +16,7 @@
 #  source_id        :integer          not null
 #  voting_result    :integer          default("0")
 #  post_views_count :integer          default("0"), not null
+#  review_rating    :integer          default("0"), not null
 #
 # Indexes
 #
@@ -48,6 +49,7 @@ class Post < ApplicationRecord
   scope :ordered_by_date, -> { order("published_at DESC") }
   scope :ordered_by_voting_result, -> { order("voting_result DESC") }
   scope :ordered_by_views_count, -> { order(post_views_count: :desc) }
+  scope :order_by_review_rating, -> { order(review_rating: :desc) }
   scope :ordered_by_coverage, lambda {
     left_joins(:main_topic)
       .group(:id)

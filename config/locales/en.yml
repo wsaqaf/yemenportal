@@ -201,6 +201,7 @@ en:
       set:
         new: New
         most_read: Most read
+        most_reviewed: Most reviewed
         highly_voted: Highly voted
         most_covered: Most covered
       time:
