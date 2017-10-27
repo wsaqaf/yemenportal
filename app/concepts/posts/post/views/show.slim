@@ -17,9 +17,9 @@
       .post__subtitle-item
         time.js-time datetime=published_at.iso8601
       - unless hide_review_flags
-          .post__subtitle-item = concept("posts/post/review_flags/cell", post)
+          .post__subtitle-item=concept("posts/post/review_flags/cell", post)
       - unless hide_comments_count
-          .post__subtitle-item= concept("posts/post/comments_count/cell", post)
+          .post__subtitle-item=concept("posts/post/comments_count/cell", post)
 
     - unless hide_description || post_description.blank?
       .post__post-body.clearfix
