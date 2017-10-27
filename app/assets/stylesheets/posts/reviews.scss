@@ -1,3 +1,5 @@
+@import "settings";
+
 .post-reviews {
 }
 
@@ -44,6 +46,30 @@
 
     .item {
       margin: 0.6rem 0.15rem !important;
+    }
+  }
+}
+
+.post-review-flags {
+  display: inline-block;
+}
+
+.post-review-flag {
+  $circle-radius: 1.5em;
+
+  width: $circle-radius;
+  height: $circle-radius;
+  border-radius: $circle-radius;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  margin-left: 0.5em;
+
+  &__link {
+    color: $white;
+
+    &:hover {
+      color: $white;
     }
   }
 }

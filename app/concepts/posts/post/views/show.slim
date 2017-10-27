@@ -16,8 +16,10 @@
       .post__subtitle-item.post__subtitle-item--categories= post_category_names
       .post__subtitle-item
         time.js-time datetime=published_at.iso8601
+      - unless hide_review_flags
+          .post__subtitle-item=concept("posts/post/review_flags/cell", post)
       - unless hide_comments_count
-        .post__subtitle-item= concept("posts/post/comments_count/cell", post)
+          .post__subtitle-item=concept("posts/post/comments_count/cell", post)
 
     - unless hide_description || post_description.blank?
       .post__post-body.clearfix
@@ -36,5 +38,3 @@
       - if show_link_to_related?
         .post__footer-item
           = link_to(topic_link_title, path_to_topic, class: "post__footer-discuss-link", target: "_parent")
-      .post__footer-item
-        = link_to(st("review"), post_reviews_path(post), class: "post__footer-discuss-link", target: "_parent")
