@@ -16,6 +16,7 @@
 #  source_id        :integer          not null
 #  voting_result    :integer          default("0")
 #  post_views_count :integer          default("0"), not null
+#  review_rating    :integer          default("0"), not null
 #
 # Indexes
 #

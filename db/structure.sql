@@ -96,7 +96,8 @@ CREATE TABLE flags (
     id integer NOT NULL,
     name character varying,
     color character varying,
-    resolve boolean DEFAULT false NOT NULL
+    resolve boolean DEFAULT false NOT NULL,
+    rate integer DEFAULT 0 NOT NULL
 );
 
 
@@ -235,7 +236,8 @@ CREATE TABLE posts (
     stemmed_text text DEFAULT ''::text,
     source_id integer NOT NULL,
     voting_result integer DEFAULT 0,
-    post_views_count integer DEFAULT 0 NOT NULL
+    post_views_count integer DEFAULT 0 NOT NULL,
+    review_rating integer DEFAULT 0 NOT NULL
 );
 
 
@@ -1105,6 +1107,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171020212939'),
 ('20171024073133'),
 ('20171024172219'),
-('20171026132128');
+('20171026132128'),
+('20171026174656');
 
 
