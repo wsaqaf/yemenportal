@@ -49,7 +49,7 @@ class SourcesController < ApplicationController
   private
 
   def all_sources
-    policy_scope(Source).not_deleted
+    policy_scope(Source).not_deleted.ordered_by_date
   end
 
   def check_permissions
