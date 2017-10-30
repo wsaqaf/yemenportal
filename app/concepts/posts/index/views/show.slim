@@ -6,5 +6,5 @@
       .posts__posts.column.small-12.medium-8.large-9
         - posts.each do |post|
           .posts__post
-            = concept("posts/post/cell", post, related_posts_count: RELATED_POSTS_COUNT, truncate_description: true)
+            = concept("posts/post/cell", post, related_posts_count: related_posts_count, truncate_description: true)
         .posts__pagination= pagination
