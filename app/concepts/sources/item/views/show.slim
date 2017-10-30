@@ -5,7 +5,7 @@
       .medium-8.columns.source_name
         input name=('name') disabled=disabled? placeholder=field_name("name") value = name
         = " #{author} " if policy(User).moderator?
-        time.js-time datetime=created_at.iso8601 = created_at
+        time.js-time datetime=created_at.iso8601
       .medium-4.float-left.columns
         - if logo_url.present?
           .row
