@@ -7,7 +7,7 @@
 
   &__post-header {
     display: block;
-    height: 7.5rem;
+    height: 9rem;
   }
 
   &__external-site {
@@ -112,6 +112,10 @@
 
 .post__post-body {
   margin-bottom: 5px;
+}
+
+.post__share-buttons {
+  height: 1em;
 }
 
 .post__image {

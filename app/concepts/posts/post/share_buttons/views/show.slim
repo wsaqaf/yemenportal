@@ -1,0 +1,9 @@
+.post-share-buttons
+  .a2a_kit.a2a_kit_size_32.a2a_default_style
+    a.a2a_button_whatsapp
+    a.a2a_button_telegram
+    a.a2a_button_facebook
+    javascript:
+      var a2a_config = a2a_config || {};
+      a2a_config.linkurl = '#{model}';
+    = javascript_include_tag(share_script_path, async: true)
