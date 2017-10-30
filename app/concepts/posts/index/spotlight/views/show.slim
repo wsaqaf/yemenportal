@@ -1,7 +1,7 @@
 = form_tag root_path, method: :get, class: "posts-spotlight" do
   .posts-spotlight__sort-section.column.small-12
     .posts-spotlight__query
-      = text_field_tag :q, post_filter_params.q, disabled: true, placeholder: st("coming_soon")
+      = text_field_tag :q, post_filter_params.q, placeholder: st("search_posts")
     .posts-spotlight__set
       = select_tag :set,
           options_for_select(set_options, post_filter_params.set),

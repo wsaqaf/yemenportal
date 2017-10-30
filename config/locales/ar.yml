@@ -176,6 +176,7 @@ ar:
   posts:
     index:
       spotlight:
+        search_posts: Search posts
         coming_soon: قريبا...
         apply: قم بالفلترة
         select_sources: مصادر محددة
