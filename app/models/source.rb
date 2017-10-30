@@ -49,6 +49,7 @@ class Source < ApplicationRecord
   scope :suggested, -> { where(approve_state: [:suggested, nil]) }
   scope :approved, -> { where(approve_state: :approved) }
   scope :by_state, ->(state) { where(approve_state: state) }
+  scope :ordered_by_date, -> { order(created_at: :desc) }
 
   def self.by_state(state)
     if state.in? ["approved", "suggested"]
