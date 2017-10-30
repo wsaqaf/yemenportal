@@ -163,7 +163,7 @@ en:
         not_destroyed: Something went wrong. Can't delete comment.
     index:
       spotlight:
-        search_posts: Search posts
+        search_posts: Search
         coming_soon: Coming soon...
         apply: Apply
         select_sources: Select sources
