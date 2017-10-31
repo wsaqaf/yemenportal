@@ -8,6 +8,7 @@ class Posts::Filter::Params
     @set = raw_params[:set] || :most_covered
     @time = raw_params[:time] || :daily
     @sources = raw_params[:sources]
+    @categories = raw_params[:categories]
   end
 
   attr_reader :page, :q, :sources
