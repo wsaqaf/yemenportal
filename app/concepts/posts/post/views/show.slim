@@ -29,6 +29,9 @@
           .post__description-text> = post_description
           .post__link-to-more = link_to_more
 
+    .post__share-buttons
+      = concept("posts/post/share_buttons/cell", path_to_post)
+
     - if main_post_of_topic?
       .post__related-posts
         - post_related_posts.each do |post|
