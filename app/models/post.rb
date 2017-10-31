@@ -72,6 +72,11 @@ class Post < ApplicationRecord
         (COUNT(votes.*) > 0 AND SUM(votes.value) > 0) AS upvoted_by_user,
         (COUNT(votes.*) > 0 AND SUM(votes.value) < 0) AS downvoted_by_user")
   }
+  scope :for_categories, lambda { |categories|
+    joins(:post_category)
+      .where(post_categories: { category: categories })
+      .distinct
+  }
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 
