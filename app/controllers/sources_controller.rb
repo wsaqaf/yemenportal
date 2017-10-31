@@ -10,19 +10,17 @@ class SourcesController < ApplicationController
   end
 
   def create
-    source = SourceForm.new(Source.new)
-
-    if source.validate(source_params.merge(user: current_user))
-      source.save
+    if source_form.validate(source_params.merge(user: current_user))
+      source_form.save
+      send_notification_email_to_admins
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
-      render cell: :form, model: source
+      render cell: :form, model: source_form
     end
   end
 
   def new
-    source = SourceForm.new(Source.new)
-    render cell: :form, model: source, options: { categories: categories }
+    render cell: :form, model: source_form, options: { categories: categories }
   end
 
   def destroy
@@ -62,6 +60,16 @@ class SourcesController < ApplicationController
 
   def find_source
     @source = Source.not_deleted.find(params.fetch(:id))
+  end
+
+  def source_form
+    @_source_form ||= SourceForm.new(Source.new)
+  end
+
+  def send_notification_email_to_admins
+    SourceProposalMailer
+      .notification(source: source_form.model, submitter_email: current_user.email)
+      .deliver_later
   end
 
   def source_params

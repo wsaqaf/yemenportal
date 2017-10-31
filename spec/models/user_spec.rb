@@ -51,6 +51,26 @@ describe User do
     it { is_expected.to have_many(:post_views) }
   end
 
+  describe ".admin_emails" do
+    subject { described_class.admin_emails }
+
+    context "when user is admin" do
+      let!(:user) { create(:user, role: "ADMIN") }
+
+      it "returns its email" do
+        is_expected.to include(user.email)
+      end
+    end
+
+    context "when user isn't admin" do
+      let!(:user) { create(:user, role: "MODERATOR") }
+
+      it "doesn't return its email" do
+        is_expected.not_to include(user.email)
+      end
+    end
+  end
+
   describe "#from_omniauth" do
     let(:user) { build(:user, email: "aa@aa.aa") }
     let(:info) { double(email: "aa@aa.aa") }

@@ -88,6 +88,10 @@ class User < ApplicationRecord
     user
   end
 
+  def self.admin_emails
+    where(role: "ADMIN").pluck(:email)
+  end
+
   def full_name
     if first_name && last_name
       "#{first_name} #{last_name}"
