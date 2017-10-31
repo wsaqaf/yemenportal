@@ -18,7 +18,7 @@ class Posts::Filter
   end
 
   def filters
-    [page_filter, time_filter, sorting_filter, source_filter]
+    [page_filter, time_filter, sorting_filter, source_filter, search_filter]
   end
 
   def page_filter
@@ -66,6 +66,14 @@ class Posts::Filter
   def source_filter
     if params.sources.present?
       ->(posts) { posts.source_posts(params.sources) }
+    else
+      ->(posts) { posts }
+    end
+  end
+
+  def search_filter
+    if params.q.present?
+      ->(posts) { posts.for_search_query(params.q) }
     else
       ->(posts) { posts }
     end

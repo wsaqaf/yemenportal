@@ -145,6 +145,36 @@ describe Post do
     end
   end
 
+  describe ".for_search_query" do
+    subject { described_class.for_search_query(query) }
+
+    context "when passing query specific symbols" do
+      let(:query) { "%_" }
+
+      it "shields such symbols" do
+        expect { subject.to_sql("%\\%\\_%") }
+      end
+    end
+
+    context "when there are posts with title or description are matching query" do
+      let(:post) { create(:post, title: "text") }
+      let(:query) { post.title }
+
+      it "returns such post" do
+        is_expected.to match([post])
+      end
+    end
+
+    context "when there aren't posts are matching query" do
+      let(:post) { create(:post, title: "title") }
+      let(:query) { "query" }
+
+      it "returns nothing" do
+        is_expected.to be_empty
+      end
+    end
+  end
+
   describe "#update_voting_result" do
     it "updates voting_result to received value" do
       post = Post.new

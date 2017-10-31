@@ -63,6 +63,9 @@ class Post < ApplicationRecord
   scope :not_for_source, ->(source_id) { where.not(source_id: source_id) }
   scope :created_after_date, ->(date) { where("created_at > ?", date) }
   scope :posts_by_state, ->(state) { where(state: state).order("published_at DESC") }
+  scope :for_search_query, lambda { |query|
+    where('concat_ws(\' \', "posts"."title", "posts"."description") LIKE ?', "%#{sanitize_sql_like(query)}%")
+  }
   scope :with_user_votes, lambda { |user|
     joins("LEFT JOIN votes ON votes.post_id = posts.id AND votes.user_id = #{user.id}")
       .group(:id).select("posts.*,
