@@ -1,0 +1,11 @@
+.source-proposal[dir="rtl"]
+  p = t("mailer.source_proposal.body_1")
+  br
+  p = t("mailer.source_proposal.source_detailes.name", name: @source.name)
+  p = t("mailer.source_proposal.source_detailes.website", link: @source.website)
+  p = t("mailer.source_proposal.source_detailes.rss_link", link: @source.link)
+  p = t("mailer.source_proposal.source_detailes.submitter_email", email: @submitter_email)
+  br
+  p = t("mailer.source_proposal.body_2")
+  p = t("mailer.source_proposal.greetings")
+  p = t("mailer.source_proposal.footer")

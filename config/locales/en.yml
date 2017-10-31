@@ -212,3 +212,16 @@ en:
         monthly: Monthly
         annually: Annually
         all_time: All time
+  mailer:
+    source_proposal:
+      subject: "Source proposal %{source_name}. Yemen Portal"
+      body: "A new source was recently proposed to join the Yemen Portal. Find details here:"
+      source_detailes:
+        name: "Name: %{name}"
+        website: "Website: %{link}"
+        rss_link: "RSS: %{link}"
+        submitter_email: "Added by: %{email}"
+      body_2: "Please go to the site and approve or reject it with a letter to the member who \
+               suggested it to explain the reason for the rejection."
+      greetings: "With greetings"
+      footer: "Yemen Portal Management"
