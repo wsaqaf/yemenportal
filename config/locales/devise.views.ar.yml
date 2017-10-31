@@ -104,11 +104,11 @@ ar:
       update_needs_confirmation: "تُم تعديل الحساب بنجاح، يرجى تأكيد البريد الإلكتروني. الرجاء الذهاب الى البريد الإلكتروني والضغط على الرابط الموجود للانتهاء من عمليّة التاكيد."
       updated: "تمّ تعديل الحساب بنجاح."
     sessions:
-      already_signed_out:
+      already_signed_out: ""
       new:
-        sign_in: "سجّلْ الدخول"
-      signed_in: "تمّ تسجيل الدخول."
-      signed_out: "تمّ تسجيل الخروج."
+        sign_in: ""
+      signed_in: ""
+      signed_out: ""
     shared:
       links:
         back: "عودة"
