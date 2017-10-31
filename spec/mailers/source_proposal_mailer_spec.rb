@@ -4,19 +4,20 @@ RSpec.describe SourceProposalMailer do
   describe ".notification" do
     subject do
       described_class
-        .notification(admin: admin, source: source, submitter_email: submitter_email)
+        .notification(source: source, submitter_email: submitter_email)
         .deliver_now
     end
 
-    let(:admin) { create(:user) }
-    let(:source) { create(:source) }
-    let(:submitter_email) { "test@email.com" }
+    let(:submitter_email) { Faker::Internet.email }
+    let(:source) { build(:source) }
+    let!(:admin) { create(:user, role: "ADMIN") }
+    let!(:moderator) { create(:user, role: "MODERATOR") }
 
     it "sends an email" do
       expect { subject }.to change { ActionMailer::Base.deliveries.count }.by(1)
     end
 
-    it "sends it to admin" do
+    it "sends it to admins" do
       expect(subject.to).to eq([admin.email])
     end
 
