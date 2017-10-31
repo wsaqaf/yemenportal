@@ -74,7 +74,7 @@ class Post < ApplicationRecord
   }
   scope :for_categories, lambda { |categories|
     joins(:post_category)
-      .where(post_categories: { category: categories })
+      .where(post_categories: { category: Array(categories) })
       .distinct
   }
 

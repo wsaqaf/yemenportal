@@ -167,6 +167,7 @@ en:
         coming_soon: Coming soon...
         apply: Apply
         select_sources: Select sources
+        select_categories: Select categories
     post:
       review_flags:
         review: Review

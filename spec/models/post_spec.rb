@@ -194,7 +194,7 @@ describe Post do
       let(:categories) { [category] }
 
       it "doesn't return such post" do
-        is_expected.to be_empty
+        is_expected.to match([post])
       end
     end
 

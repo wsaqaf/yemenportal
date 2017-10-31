@@ -11,7 +11,7 @@ class Posts::Filter::Params
     @categories = raw_params[:categories]
   end
 
-  attr_reader :page, :q, :sources
+  attr_reader :page, :q, :sources, :categories
 
   enumerize :set, in: [:new, :most_read, :highly_voted, :most_reviewed, :most_covered], default: :most_covered
 

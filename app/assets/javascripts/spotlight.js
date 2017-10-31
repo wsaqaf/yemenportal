@@ -8,7 +8,7 @@ document.addEventListener("turbolinks:load", function() {
     event.target.form.submit();
   });
 
-  $(".posts-spotlight__sources-select-box").selectize({
+  $(".posts-spotlight__multiple-select-box").selectize({
     plugins: ["remove_button", "restore_on_backspace"],
     delimiter: ",",
     create: false,

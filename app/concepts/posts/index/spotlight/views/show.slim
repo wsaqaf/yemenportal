@@ -12,11 +12,15 @@
           class: "posts-spotlight__time-select-box"
   .posts-spotlight__filter-section.column.small-12.medium-4.large-3
     .posts-spotlight__categories
-      = select_tag :categories, options_for_select([st("coming_soon")]), disabled: true
+      = select_tag :categories,
+        options_from_collection_for_select(categories_options, "id", "name", post_filter_params.categories),
+        multiple: true,
+        class: "posts-spotlight__multiple-select-box",
+        placeholder: st("select_categories")
     .posts-spotlight__sources
       = select_tag :sources,
           options_from_collection_for_select(source_options, "id", "name", post_filter_params.sources),
           multiple: true,
-          class: "posts-spotlight__sources-select-box",
+          class: "posts-spotlight__multiple-select-box",
           placeholder: st("select_sources")
     = submit_tag st("apply"), class: "button", name: ""
