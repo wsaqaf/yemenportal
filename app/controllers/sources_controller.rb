@@ -14,6 +14,9 @@ class SourcesController < ApplicationController
 
     if source.validate(source_params.merge(user: current_user))
       source.save
+      SourceProposalMailer
+        .notification(source: source.model, submitter_email: current_user.email)
+        .deliver_later
       redirect_to sources_path(approve_state: Source.approve_state.approved)
     else
       render cell: :form, model: source
