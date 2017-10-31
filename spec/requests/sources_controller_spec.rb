@@ -20,7 +20,10 @@ describe SourcesController, type: :request do
     let(:do_request) { post "/sources", params: params }
 
     context "success reques" do
-      before { sign_in(user) }
+      before do
+        allow(SourceProposalMailer).to receive_message_chain(:notification, :deliver_later)
+        sign_in(user)
+      end
 
       it "redirect to sources list" do
         do_request
