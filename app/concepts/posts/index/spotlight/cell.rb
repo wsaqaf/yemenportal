@@ -16,4 +16,8 @@ class Posts::Index::Spotlight::Cell < Application::Cell
   def source_options
     Source.all
   end
+
+  def categories_options
+    Category.all
+  end
 end

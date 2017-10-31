@@ -175,6 +175,38 @@ describe Post do
     end
   end
 
+  describe ".for_categories" do
+    subject { described_class.for_categories(category, another_category) }
+
+    let(:category) { create(:category) }
+    let(:another_category) { create(:category) }
+    let(:post) { create(:post, categories: categories) }
+
+    context "when post has both categories" do
+      let(:categories) { [category, another_category] }
+
+      it "returns such post" do
+        is_expected.to match([post])
+      end
+    end
+
+    context "when post has one of the passing categories" do
+      let(:categories) { [category] }
+
+      it "doesn't return such post" do
+        is_expected.to match([post])
+      end
+    end
+
+    context "when post hasn't any categories" do
+      let(:categories) { [] }
+
+      it "doesn't return such post" do
+        is_expected.to be_empty
+      end
+    end
+  end
+
   describe "#update_voting_result" do
     it "updates voting_result to received value" do
       post = Post.new

@@ -180,6 +180,7 @@ ar:
         coming_soon: قريبا...
         apply: قم بالفلترة
         select_sources: مصادر محددة
+        select_categories: أقسام محددة
     post:
       review_flags:
         review: مراجعة
