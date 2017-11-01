@@ -8,7 +8,6 @@
 #  updated_at    :datetime         not null
 #  category_id   :integer
 #  state         :string           default("valid")
-#  whitelisted   :boolean          default("false")
 #  name          :string           default(""), not null
 #  website       :string
 #  brief_info    :string

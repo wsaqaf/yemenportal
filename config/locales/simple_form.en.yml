@@ -16,7 +16,6 @@ en:
       category:
         name: 'Password'
       source:
-        whitelisted: Whitelisted
         link: Source link
         iframe_flag: Show in iframe?
     # Examples

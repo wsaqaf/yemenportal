@@ -15,7 +15,6 @@ class SourceForm < Reform::Form
   property :logo_url
   property :brief_info
   property :note
-  property :whitelisted
   property :category_id
   property :state
   property :approve_state

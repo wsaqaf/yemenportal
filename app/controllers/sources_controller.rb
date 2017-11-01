@@ -74,7 +74,7 @@ class SourcesController < ApplicationController
 
   def source_params
     @_source_params ||= begin
-      source_params = params.require(:source).permit(:link, :category_id, :whitelisted,
+      source_params = params.require(:source).permit(:link, :category_id,
         :name, :website, :brief_info, :admin_email, :admin_name, :note, :iframe_flag,
         :logo_url)
       source_params[:source_type] = SourceService.source_type(source_params[:link]) if source_params[:link]
