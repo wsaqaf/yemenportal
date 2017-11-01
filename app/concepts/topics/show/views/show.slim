@@ -1,3 +1,8 @@
 .topic.row
   .topic__topic-posts.column.small-12.medium-8.large-9
-    = cell("posts/post/cell", model, hide_link_to_related: true)
+    = cell("posts/post/cell", model, hide_link_to_related: true, related_posts_count: 0)
+    .topic__related-posts
+      .posts
+        - related_posts.each do |post|
+          .posts__post
+            = cell("posts/post/cell", post, hide_link_to_related: true)
