@@ -5,6 +5,7 @@
   p = t("mailer.source_proposal.source_detailes.website", link: @source.website)
   p = t("mailer.source_proposal.source_detailes.rss_link", link: @source.link)
   p = t("mailer.source_proposal.source_detailes.submitter_email", email: @submitter_email)
+  p = link_to t("mailer.source_proposal.source_detailes.source_page"), edit_source_url(@source)
   br
   p = t("mailer.source_proposal.body_2")
   p = t("mailer.source_proposal.greetings")
