@@ -1,38 +1,34 @@
-.posts-spotlight__sort-section {
-  display: flex;
-  flex-direction: row;
-}
-
-.posts-spotlight__filter-section {
+.posts-spotlight__filters {
   display: flex;
   flex-direction: column;
 }
 
-.posts-spotlight__query {
-  flex-grow: 5;
+.posts-spotlight__row-section {
+  display: flex;
+  flex-direction: row;
 }
 
 .posts-spotlight__set {
-  width: 150px;
+  flex-grow: 1;
 
   html[dir="rtl"] & {
-    margin-right: 5px;
+    margin-left: 0.1em;
   }
 
   html:not([dir="rtl"]) & {
-    margin-left: 5px;
+    margin-right: 0.1em;
   }
 }
 
 .posts-spotlight__time {
-  width: 115px;
+  flex-grow: 1;
 
   html[dir="rtl"] & {
-    margin-right: 5px;
+    margin-right: 0.1em;
   }
 
   html:not([dir="rtl"]) & {
-    margin-left: 5px;
+    margin-left: 0.1em;
   }
 }
 
