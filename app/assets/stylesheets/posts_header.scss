@@ -17,6 +17,10 @@
     @media only screen and (max-width: 992px) {
       width: 55px;
     }
+
+    @media only screen and (max-width: 639px) {
+      width: 52px;
+    }
   }
 
   &__logo-link {
@@ -24,6 +28,6 @@
   }
 
   &__logo-image {
-    min-width: 134px;
+    min-width: 111px;
   }
 }
