@@ -19,12 +19,21 @@ describe Sources::SuggestController, type: :request do
     let(:do_request) { post "/sources/suggest", params: params }
 
     context "success reques" do
+      before do
+        allow(SourceProposalMailer).to receive_message_chain(:notification, :deliver_later)
+        sign_in(user)
+      end
+
       it "redirect to sources list" do
-        sign_in user
         do_request
 
         expect(response.status).to eq 302
         expect(response).to redirect_to(root_path)
+      end
+
+      it "sends notification email for every admin" do
+        expect(SourceProposalMailer).to receive_message_chain(:notification, :deliver_later)
+        do_request
       end
     end
 
