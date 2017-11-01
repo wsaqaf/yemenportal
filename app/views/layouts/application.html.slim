@@ -10,6 +10,7 @@ html dir="rtl" lang="ar"
     = javascript_include_tag "application", "data-turbolinks-track" => true
     = csrf_meta_tag
     = google_analytics_tag
+    = favicon_link_tag "favicon.png"
 
   body
     #fb-root data=Rails.application.secrets.facebook.slice("app_id", "api_version", "locale")
