@@ -7,7 +7,7 @@
 
   &__post-header {
     display: block;
-    height: 9rem;
+    height: 8rem;
   }
 
   &__external-site {
@@ -89,6 +89,7 @@
 
 .post__subtitle-item {
   display: inline-block;
+  vertical-align: middle;
 
   &:first-child {
     html[dir="rtl"] & {
@@ -112,10 +113,6 @@
 
 .post__post-body {
   margin-bottom: 5px;
-}
-
-.post__share-buttons {
-  height: 1em;
 }
 
 .post__image {
