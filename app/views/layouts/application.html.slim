@@ -59,9 +59,9 @@ html dir="rtl" lang="ar"
       .row
         .js-alerts__placeholder
       .alerts__queue
-        - if flash[:notice]
+        - if flash[:notice].present?
           .js-alerts__queued-alert data-type="success" data-text=flash[:notice]
-        - if flash[:alert]
+        - if flash[:alert].present?
           .js-alerts__queued-alert data-type="alert" data-text=flash[:alert]
 
     = render partial: 'layouts/application_js'
