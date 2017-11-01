@@ -262,7 +262,6 @@ ar:
       category:
         name: كلمة مرور
       source:
-        whitelisted: مدرج في القائمة البيضاء
         link: رابط المصدر
         iframe_flag: هل البيان في أيفرايم؟
       feedback:

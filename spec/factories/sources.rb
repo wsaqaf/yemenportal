@@ -8,7 +8,6 @@
 #  updated_at    :datetime         not null
 #  category_id   :integer
 #  state         :string           default("valid")
-#  whitelisted   :boolean          default("false")
 #  name          :string           default(""), not null
 #  website       :string
 #  brief_info    :string
@@ -34,7 +33,6 @@ FactoryGirl.define do
     association :category
     sequence(:name) { |n| "name_#{n}" }
     sequence(:website) { |n| "http://source_#{n}.ru" }
-    whitelisted false
     iframe_flag true
   end
 end

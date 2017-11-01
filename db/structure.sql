@@ -377,7 +377,6 @@ CREATE TABLE sources (
     updated_at timestamp without time zone NOT NULL,
     category_id integer,
     state character varying DEFAULT 'valid'::character varying,
-    whitelisted boolean DEFAULT false,
     name character varying DEFAULT ''::character varying NOT NULL,
     website character varying,
     brief_info character varying,
@@ -1108,6 +1107,7 @@ INSERT INTO schema_migrations (version) VALUES
 ('20171024073133'),
 ('20171024172219'),
 ('20171026132128'),
-('20171026174656');
+('20171026174656'),
+('20171101112431');
 
 
