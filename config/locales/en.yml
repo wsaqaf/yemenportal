@@ -222,6 +222,7 @@ en:
         website: "Website: %{link}"
         rss_link: "RSS: %{link}"
         submitter_email: "Added by: %{email}"
+        source_page: "Source edit page"
       body_2: "Please go to the site and approve or reject it with a letter to the member who \
                suggested it to explain the reason for the rejection."
       greetings: "With greetings"
