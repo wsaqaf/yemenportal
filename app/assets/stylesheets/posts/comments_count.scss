@@ -1,6 +1,8 @@
 @import "settings";
 
 .post-comments-count {
+  display: inline-block;
+
   &__link {
     display: inline-block;
     background-color: $facebook-color;
