@@ -9,7 +9,7 @@ RSpec.describe SourceProposalMailer do
     end
 
     let(:submitter_email) { Faker::Internet.email }
-    let(:source) { build(:source) }
+    let(:source) { create(:source) }
     let!(:admin) { create(:user, role: "ADMIN") }
     let!(:moderator) { create(:user, role: "MODERATOR") }
 
