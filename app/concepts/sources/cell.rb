@@ -10,7 +10,7 @@ class Sources::Cell < Application::Cell
 
   def suggest_button
     path = policy(User).login? ? new_sources_suggest_path : "#"
-    button = link_to t("menu.sources.suggest_source"), path, class: "sources__add-button button small"
+    button = link_to st("suggest_source"), path, class: "sources__add-button button small"
     button = tooltip_wraper(button) unless policy(User).login?
     button
   end
