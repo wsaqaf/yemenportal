@@ -17,26 +17,29 @@ html dir="rtl" lang="ar"
 
     .top-navigation
       .top-navigation__menu
-        ul.top-navigation__items
-          li.top-navigation__logo
-            .top-navigation-logo
-              = link_to root_path do
-                = image_tag "header_logo.png",
-                             class: "top-navigation-logo__picture",
-                             srcset: "#{path_to_image('header_logo_2x.png')} 2x"
-          li = link_to t("menu.sources.name"), sources_path
-          - if user_signed_in? && current_user.admin?
-            li= link_to t("menu.categories"), categories_path
-            li= link_to t("menu.users.name"), users_path
-          - if !user_signed_in? || current_user.member?
-            li= link_to t(".contact_us"), new_feedback_path
+        .top-navigation__logo
+          .top-navigation-logo
+            = link_to root_path do
+              = image_tag "header_logo.png",
+                      class: "top-navigation-logo__picture",
+                      srcset: "#{path_to_image('header_logo_2x.png')} 2x"
+        = check_box_tag "menu_toggle", "", false, class: "top-navigation__menu-toggle-checkbox"
+        = label_tag "menu_toggle", "", class: "top-navigation__menu-toggle"
+        .top-navigation__menu-items
+          ul.top-navigation__actions
+            li = link_to t("menu.sources.name"), sources_path
+            - if user_signed_in? && current_user.admin?
+              li= link_to t("menu.categories"), categories_path
+              li= link_to t("menu.users.name"), users_path
+            - if !user_signed_in? || current_user.member?
+              li= link_to t(".contact_us"), new_feedback_path
 
-        ul.top-navigation__actions.top-navigation__items
-          - if user_signed_in?
-            li= link_to t("menu.edit_profile"), edit_user_path(current_user)
-            li= link_to t("devise.sign_out"), destroy_user_session_path, method: :delete
-          - else
-            li= link_to t("devise.log_in"), new_user_session_path
+          ul.top-navigation__actions
+            - if user_signed_in?
+              li= link_to t("menu.edit_profile"), edit_user_path(current_user)
+              li= link_to t("devise.sign_out"), destroy_user_session_path, method: :delete
+            - else
+              li= link_to t("devise.log_in"), new_user_session_path
 
     .application-content
       == yield
