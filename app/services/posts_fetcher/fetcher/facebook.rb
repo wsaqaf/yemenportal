@@ -4,7 +4,7 @@ class PostsFetcher::Fetcher::Facebook < PostsFetcher::Fetcher
   def normalized_raw_items
     raw_items.map do |item|
       {
-        link: item["link"],
+        link: item["permalink_url"],
         description: item["message"] || item["name"],
         published_at: item["created_time"].to_time,
         image_url: item["picture"]
@@ -13,8 +13,11 @@ class PostsFetcher::Fetcher::Facebook < PostsFetcher::Fetcher
   end
 
   def raw_items
-    connection.get_connection(source.facebook_link, "posts", fields: ["link",
-      "message", "name", "created_time", "picture"])
+    connection.get_connection(
+      source.facebook_link,
+      "posts",
+      fields: %w(permalink_url message name created_time picture)
+    )
   end
 
   def connection
