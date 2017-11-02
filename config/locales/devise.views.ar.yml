@@ -30,6 +30,7 @@ ar:
   devise:
     confirmations:
       confirmed: "تمّ تأكيد الحساب بنجاح، وتمّ تسجيل الدّخول."
+      not_send_confirmation: "لم يصلك التأكيد بالإيميل؟"
       new:
         resend_confirmation_instructions: "أعدْ إرسال تعليمات التأكيد"
       send_instructions: "ستصل خلال دقائق رسالة على البريد الإلكتروني تتضمّن الخطوات اللازمة لتأكيد الحساب."

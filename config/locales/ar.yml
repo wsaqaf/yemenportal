@@ -1,6 +1,6 @@
 ar:
-  site_title: يمن بورتال.نت
-  site_name: يمن بورتال
+  site_title: يمن بورتال
+  page_title: "يمن بورتال - %{title}"
   layouts:
     application:
       about_us: حول يمن بورتال
@@ -12,7 +12,7 @@ ar:
         twitter: Twitter
   feedbacks:
     new:
-      submit: عرض
+      submit: "إرسال"
   enumerize:
     feedback:
       reason:
@@ -48,12 +48,10 @@ ar:
             accept_until_format: "%B %d, %Y %I:%M %p"
   common_buttons:
     delete: حذف
+    back: "عودة"
   menu:
     sources:
-      name: مصادر
-      approved: مصدق عليه
-      suggested: 'اقتراحات '
-      suggest_source: 'اقتراح مصدر '
+      name: المصادر
     categories: 'أقسام '
     edit_profile: تعديل الملف الشخصي
     users:
@@ -83,7 +81,7 @@ ar:
     same_posts: 'نفس الأخبار '
   category:
     select_category: اختر الفئة
-    title: فئة
+    title: التنصيف
     base_list:
       breaking: عاجل
       local: محلي
@@ -100,7 +98,7 @@ ar:
     buttons:
       create: خلق
       delete: حذف
-      add_category: إضافة فئة
+      add_category: إضافة تصنيف جديد
   user:
     should_login: الرجاء تسجيل الدخول
     roles:
@@ -139,7 +137,7 @@ ar:
       admin_name: اسم المشرف
       brief_info: 'معلومات موجزة '
       website: 'موقع إلكتروني '
-      link: مسار RSS
+      link: "رابط RSS"
       name: اسم
     logs:
       success: تم جلب %{post_count} بنجاح
@@ -151,13 +149,18 @@ ar:
       other: هناك خطأ ما
       not_full_info: مشاركات المصدر لا تحتوي على خانة مهمة أو تم تكرار الرابط
     buttons:
-      approve: يوافق
+      approve: موافق
       update: تحديث
       edit: تعديل
       create: 'إضافة مصدر '
       delete: إزالة
       add_source: إضافة مصدر
   sources:
+    main_title: "المصادر"
+    all: "الجميع"
+    approved: مصدق عليه
+    suggested: 'اقتراحات '
+    suggest_source: 'اقتراح مصدر '
     no_source_on_this_page: 'لا توجد مصادر في الصفحة %{page}. الرجاء الانتقال الى
       first page</a>”<"a href=%{first_page_path}"> '
     destroy:
@@ -206,6 +209,18 @@ ar:
         successfully_destroyed: تم حذف التعليق بنجاح
         not_destroyed: 'هناك خطاً ما، لا يمكن حذف التعليق. '
   activerecord:
+    attributes:
+      source:
+        name: "إسم المصدر"
+        link: "رابط RSS"
+        category_id: "التصنيف"
+        iframe_flag: "هل البيان في أيفرايم؟"
+        website: "موقع إلكتروني"
+        logo_url: "رابط إلى الشعار"
+        brief_info: "معلومات موجزة"
+        admin_email: "البريد الإلكتروني للمشرف"
+        admin_name: "إسم المشرف"
+        note: "ملحوظة"
     errors:
       models:
         source:
@@ -214,7 +229,7 @@ ar:
               taken: هذا الرابط موجود في النظام
   devise:
     log_in: تسجيل الدخول
-    sign_up: سجل
+    sign_up: قم بفتح حساب جديد
     sign_out: خروج
     sign_in_with: تسجيل الدخول ب %{provider}
     forgot_password: هل نسيت كلمة المرور؟
@@ -262,8 +277,16 @@ ar:
       category:
         name: كلمة مرور
       source:
-        link: رابط المصدر
-        iframe_flag: هل البيان في أيفرايم؟
+        name: "إسم المصدر"
+        link: "رابط RSS"
+        category_id: "التصنيف"
+        iframe_flag: "هل البيان في أيفرايم؟"
+        website: "موقع إلكتروني"
+        logo_url: "رابط إلى الشعار"
+        brief_info: "معلومات موجزة"
+        admin_email: "البريد الإلكتروني للمشرف"
+        admin_name: "إسم المشرف"
+        note: "ملحوظة"
       feedback:
         name: الإسم
         email: البريد الالكتروني
