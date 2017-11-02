@@ -6,8 +6,8 @@ en:
     formats:
       created_at: "%d-%m-%Y %H:%M"
       logs_date: "%d%b %H:%M"
-  site_title: يمن بورتال نت YemenPortal.net
-  site_name: "YemenPortal"
+  site_title: يمن بورتال نت YemenPortal
+  page_title: "YemenPortal - %{title}"
   layouts:
     application:
       about_us: About Us
@@ -19,13 +19,10 @@ en:
         twitter: Twitter
   common_buttons:
     delete: Delete
+    back: Back
   menu:
     sources:
       name: Sources
-      all: All
-      approved: Approved
-      suggested: Suggestions
-      suggest_source: Suggest source
     categories: Categories
     edit_profile: Edit profile
     users:
@@ -129,6 +126,11 @@ en:
       delete: Remove
       add_source: Add Source
   sources:
+    main_title: Sources
+    all: All
+    approved: Approved
+    suggested: Suggestions
+    suggest_source: Suggest source
     no_source_on_this_page: There are no sources on page %{page}. Please go to <a href="%{first_page_path}">first page</a>.
     destroy:
       successfully_destroyed: Source "%{name}" successfully deleted.
