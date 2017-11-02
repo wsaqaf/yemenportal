@@ -10,12 +10,15 @@
 
 .fb-comments {
   background-color: $body-background;
+
+  &[fb-xfbml-state="rendered"] + .post-comments__loader {
+    display: none;
+  }
 }
 
 .post-comments__loader {
   position: absolute;
   left: calc(50% - 32px);
-  top: 110px;
+  top: 2em;
   overflow: hidden;
-  z-index: -1;
 }
