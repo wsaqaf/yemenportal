@@ -23,10 +23,10 @@ ar:
         other: غير ذلك
     posts/filter/params:
       set:
-        new: جديد
+        new: الأحدث
         most_read: الأكثر قراءة
         most_reviewed: الأفضل تقييما
-        highly_voted: صوت بشدة
+        highly_voted: الأعلى تصويتا
         most_covered: الأكثر تداولاً
       time:
         hourly: ساعة
@@ -115,11 +115,11 @@ ar:
       apply: تطبيق
     card:
       resend_invite: 'اعادة إرسال '
-      moderator: وسيط
+      moderator: مراجع
       moderator_role: وسيط
       admin: مشرف
       admin_role: مشرف
-      retire_button: انسحب
+      retire_button: إلغاء الحساب
       invited: دعوة
       promote_to: تعزيز ل
       or: 'أو '
@@ -152,7 +152,7 @@ ar:
       approve: موافق
       update: تحديث
       edit: تعديل
-      create: 'إضافة مصدر '
+      create: 'إضافة'
       delete: إزالة
       add_source: إضافة مصدر
   sources:
@@ -160,7 +160,7 @@ ar:
     all: "الجميع"
     approved: مصدق عليه
     suggested: 'اقتراحات '
-    suggest_source: 'اقتراح مصدر '
+    suggest_source: 'اقترح مصدر'
     no_source_on_this_page: 'لا توجد مصادر في الصفحة %{page}. الرجاء الانتقال الى
       first page</a>”<"a href=%{first_page_path}"> '
     destroy:
