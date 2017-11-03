@@ -22,6 +22,7 @@ gem 'pg', '~> 0.18'
 gem 'rails-views'
 gem 'simple_form'
 gem 'slim-rails'
+gem 'content_for_in_controllers'
 
 gem 'will_paginate-foundation'
 gem "seedbank"
