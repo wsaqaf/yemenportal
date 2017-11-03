@@ -77,6 +77,12 @@ class Post < ApplicationRecord
       .where(post_categories: { category: Array(categories) })
       .distinct
   }
+  scope :non_clustered_posts, lambda {
+    Post
+      .joins('LEFT JOIN "topics" ON "topics"."main_post_id" = "posts"."id"')
+      .where(topics: { main_post_id: nil })
+      .where(topic: nil)
+  }
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
 

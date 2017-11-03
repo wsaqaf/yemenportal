@@ -1,4 +1,4 @@
-class PostsFetcher::TopicAttacher
+class PostsClusterizer::TopicAttacher
   def initialize(post:, topic:)
     @post = post
     @topic = topic

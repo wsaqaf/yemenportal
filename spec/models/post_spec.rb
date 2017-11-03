@@ -217,6 +217,30 @@ describe Post do
     end
   end
 
+  describe ".non_clustered_posts" do
+    subject { described_class.non_clustered_posts }
+
+    context "when post is main post of topic" do
+      let(:post) { create(:post) }
+      let!(:topic) { create(:topic, main_post: post) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "when post is a related post of topic" do
+      let(:topic) { create(:topic) }
+      let!(:post) { create(:post, topic: topic) }
+
+      it { is_expected.to be_empty }
+    end
+
+    context "when post isn't main nor related" do
+      let!(:post) { create(:post) }
+
+      it { is_expected.to eq([post]) }
+    end
+  end
+
   describe "#main_post_of_topic?" do
     subject { post.main_post_of_topic? }
 

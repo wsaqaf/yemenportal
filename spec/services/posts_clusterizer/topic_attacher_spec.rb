@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe PostsFetcher::TopicAttacher do
+RSpec.describe PostsClusterizer::TopicAttacher do
   describe "#attach" do
     let(:topic) { create(:topic) }
     let(:main_post) { topic.main_post }
