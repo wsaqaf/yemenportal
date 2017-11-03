@@ -1,8 +1,8 @@
 require "rails_helper"
 
 RSpec.describe PostsClusterizer::TopicFinder do
-  describe "#attach_topic" do
-    subject { described_class.new(post).attach_topic }
+  describe "#attach_topic!" do
+    subject { described_class.new(post).attach_topic! }
 
     let(:post) { create(:post) }
 

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe PostsClusterizer do
   describe ".clusterize" do
-    subject { described_class.clusterize }
+    subject { described_class.clusterize! }
 
     context "when there are only clusterized posts" do
       it "changes noting" do

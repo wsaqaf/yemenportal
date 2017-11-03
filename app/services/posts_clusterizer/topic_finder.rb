@@ -3,7 +3,7 @@ class PostsClusterizer::TopicFinder
     @post = post
   end
 
-  def attach_topic
+  def attach_topic!
     if topic_with_related_posts.present? && topic_does_not_contain_post_from_same_source?
       topic_attacher.attach
     else
