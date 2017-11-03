@@ -76,7 +76,7 @@ class PostsClusterizer::RelatedPostsFinder
   end
 
   def tfidf_similarity_model
-    TfIdfSimilarity::TfIdfModel.new(documents)
+    ::TfIdfSimilarity::TfIdfModel.new(documents)
   end
 
   def documents
@@ -85,11 +85,11 @@ class PostsClusterizer::RelatedPostsFinder
 
   def documents_from_posts
     posts.map do |post|
-      PostsClusterizer::RelatedPostsFinder.new(post)
+      PostsClusterizer::RelatedPostsFinder::Document.new(post)
     end
   end
 
   def post_as_document
-    PostsClusterizer::RelatedPostsFinder.new(post)
+    PostsClusterizer::RelatedPostsFinder::Document.new(post)
   end
 end

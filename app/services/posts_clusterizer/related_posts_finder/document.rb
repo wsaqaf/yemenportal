@@ -1,4 +1,4 @@
-class PostsClusterizer::RelatedPostsFinder::Document < TfIdfSimilarity::Document
+class PostsClusterizer::RelatedPostsFinder::Document < ::TfIdfSimilarity::Document
   def initialize(post)
     super([post.title, post.description].join(" "))
   end
