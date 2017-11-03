@@ -1,6 +1,6 @@
 ar:
   site_title: يمن بورتال
-  page_title: "يمن بورتال - %{title}"
+  page_title: "%{title} - يمن بورتال"
   layouts:
     application:
       about_us: حول يمن بورتال

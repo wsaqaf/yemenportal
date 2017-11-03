@@ -45,5 +45,15 @@ class Application::Cell < Rails::View
     I18n.t("#{scope}.#{key}", params)
   end
 
+  def change_page_title_for_post(post)
+    change_page_title("#{post.title} - #{post.source.name}")
+  end
+
   alias st scoped_translation
+
+  private
+
+  def change_page_title(title)
+    parent_controller.content_for(:title, I18n.t("page_title", title: title))
+  end
 end

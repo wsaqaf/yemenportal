@@ -102,6 +102,7 @@ GEM
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
+    content_for_in_controllers (0.0.2)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     database_cleaner (1.5.3)
@@ -435,6 +436,7 @@ DEPENDENCIES
   capistrano-rails-console
   capistrano-rbenv
   capybara
+  content_for_in_controllers
   database_cleaner
   devise
   devise-i18n
