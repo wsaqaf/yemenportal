@@ -222,20 +222,20 @@ describe Post do
 
     context "when post is main post of topic" do
       let(:post) { create(:post) }
-      let(:topic) { create(:topic, main_post: post) }
+      let!(:topic) { create(:topic, main_post: post) }
 
       it { is_expected.to be_empty }
     end
 
     context "when post is a related post of topic" do
       let(:topic) { create(:topic) }
-      let(:post) { create(:post, topic: topic) }
+      let!(:post) { create(:post, topic: topic) }
 
       it { is_expected.to be_empty }
     end
 
     context "when post isn't main nor related" do
-      let(:post) { create(:post) }
+      let!(:post) { create(:post) }
 
       it { is_expected.to eq([post]) }
     end

@@ -81,6 +81,7 @@ class Post < ApplicationRecord
     Post
       .joins('LEFT JOIN "topics" ON "topics"."main_post_id" = "posts"."id"')
       .where(topics: { main_post_id: nil })
+      .where(topic: nil)
   }
 
   enumerize :state, in: [:approved, :rejected, :pending], default: :pending
