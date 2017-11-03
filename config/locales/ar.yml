@@ -270,6 +270,8 @@ ar:
       default_message: 'يرجى مراجعة المشكلات أذناه '
     labels:
       user:
+        first_name: الإسم
+        last_name: اللقب
         password: كلمة المرور
         email: 'البريد الالكتروني '
         remember_me: تذكرني
