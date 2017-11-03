@@ -1,6 +1,6 @@
 require "matrix"
 
-class RelatedPostsFinder
+class PostsClusterizer::RelatedPostsFinder
   def initialize(post)
     @post = post
   end
@@ -48,7 +48,7 @@ class RelatedPostsFinder
   end
 
   def load_posts
-    Post
+    ::Post
       .not_for_source(post.source_id)
       .created_after_date(clustering_time_limit.hours.ago)
   end
@@ -66,7 +66,7 @@ class RelatedPostsFinder
   end
 
   def related_posts_finder_config
-    Rails.application.config_for(:related_posts_finder)
+    ::Rails.application.config_for(:related_posts_finder)
   end
 
   # Pretty heavy operation. Consider to cache it.
@@ -85,11 +85,11 @@ class RelatedPostsFinder
 
   def documents_from_posts
     posts.map do |post|
-      Document.new(post)
+      PostsClusterizer::RelatedPostsFinder.new(post)
     end
   end
 
   def post_as_document
-    Document.new(post)
+    PostsClusterizer::RelatedPostsFinder.new(post)
   end
 end
