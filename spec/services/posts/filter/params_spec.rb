@@ -5,7 +5,7 @@ describe Posts::Filter::Params do
     subject { described_class.new(raw_params).set }
 
     let(:filter_property) { :set }
-    let(:default_value) { :most_covered }
+    let(:default_value) { :highly_voted }
     let(:valid_predefined_value) { :highly_voted }
     let(:invalid_value) { :something }
 
