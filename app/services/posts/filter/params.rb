@@ -5,7 +5,7 @@ class Posts::Filter::Params
   def initialize(raw_params)
     @page = raw_params[:page]
     @q = raw_params[:q]
-    @set = raw_params[:set] || :most_covered
+    @set = raw_params[:set] || :highly_voted
     @time = raw_params[:time] || :daily
     @sources = raw_params[:sources]
     @categories = raw_params[:categories]
