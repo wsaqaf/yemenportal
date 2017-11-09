@@ -51,7 +51,7 @@ class User < ApplicationRecord
   validates :email, uniqueness: true, email: true
 
   has_many :votes, dependent: :destroy
-  has_many :review_comments, inverse_of: :author, dependent: :destroy
+  has_many :review_comments, foreign_key: "author_id", inverse_of: :author, dependent: :destroy
   has_many :reviews, inverse_of: :moderator
   has_many :post_views
 
