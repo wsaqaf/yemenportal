@@ -14,7 +14,7 @@ class Posts::Index::Spotlight::Cell < Application::Cell
   end
 
   def source_options
-    Source.all
+    Source.not_deleted
   end
 
   def categories_options
