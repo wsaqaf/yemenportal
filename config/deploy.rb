@@ -17,10 +17,6 @@ set :disallow_pushing, true
 set :db_remote_clean, true
 set :db_local_clean, true
 
-set :rollbar_token, ENV['ROLLBAR_ACCESS_TOKEN']
-set :rollbar_env, Proc.new { fetch :stage }
-set :rollbar_role, Proc.new { :app }
-
 set :keep_releases, 4
 
 set :systemctl_roles, ["app"]
