@@ -1,4 +1,8 @@
 module SocialsHelper
+  def android_link
+    social_links.fetch("android")
+  end
+
   def facebook_link
     social_links.fetch("facebook")
   end

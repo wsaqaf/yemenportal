@@ -51,6 +51,10 @@ html dir="rtl" lang="ar"
         .footer__link= link_to t('.contact_us'), new_feedback_path
         .footer__social-links
           .footer__link
+            = link_to android_link do
+              = image_tag 'socials/android.svg', class: 'footer__social-icon'
+              span.footer__social-name= t('layouts.footer.socials.android')
+          .footer__link
             = link_to facebook_link do
               = image_tag 'socials/facebook.svg', class: 'footer__social-icon'
               span.footer__social-name= t('layouts.footer.socials.facebook')
