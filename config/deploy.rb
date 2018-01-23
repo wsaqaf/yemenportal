@@ -3,7 +3,7 @@ lock '3.6.1'
 set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
 
 set :application, 'yemenportal'
-set :repo_url, 'git@github.com:datarockets/yemenportal.git'
+set :repo_url, 'git@github.com:wsaqaf/yemenportal.git'
 set :deploy_to, '/home/yemenportal/app'
 set :ssh_options, { :forward_agent => true }
 
