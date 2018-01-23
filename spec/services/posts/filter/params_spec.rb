@@ -16,7 +16,7 @@ describe Posts::Filter::Params do
     subject { described_class.new(raw_params).time }
 
     let(:filter_property) { :time }
-    let(:default_value) { :daily }
+    let(:default_value) { :hourly }
     let(:valid_predefined_value) { :hourly }
     let(:invalid_value) { :something }
 
