@@ -1,9 +1,9 @@
 .post-page-header
   .post-page-header__controls.row
     .post-page-header__back-button.column.small-2.medium-2.large-2
-      = link_to root_path, target: "_parent", class: "post-page-header__logo-link" do
+      = link_to root_path, target: "_blank", class: "post-page-header__logo-link" do
         = image_tag "header_logo.png", srcset: logo_srcset, class: "post-page-header__logo-image"
     .post-page-header__post.column.small-9.medium-8.large-8
       = cell("posts/post/cell", post, related_posts_count: 0, hide_description: true)
     .post-page-header__close-button.column.small-1.medium-2.large-2
-      = link_to("&times;", post_link, class: "button hollow float-left", target: "_parent")
+      = link_to("&times;", post_link, class: "button hollow float-left", target: "_blank")

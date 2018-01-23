@@ -1,6 +1,6 @@
 .post-review-flags
   - if show_review_link?
-    = link_to(st("review"), review_path, target: "_parent")
+    = link_to(st("review"), review_path, target: "_blank")
   - else
     = flags.map do |flag|
       = concept("posts/post/review_flags/flag/cell", flag, review_path: review_path)

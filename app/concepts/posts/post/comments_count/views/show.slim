@@ -1,4 +1,4 @@
 .post-comments-count
-  = link_to comments_path, class: "post-comments-count__link", target: "_parent" do
+  = link_to comments_path, class: "post-comments-count__link", target: "_blank" do
     = image_tag "comment_icon.svg", class: "post-comments-count__icon"
     span.post-comments-count__number.fb-comments-count[data-href=post_data_url]>

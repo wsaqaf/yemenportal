@@ -8,7 +8,7 @@
 
   .post__body
     - if title.present?
-      = link_to(title, path_to_post, class: "post__title", target: "_parent")
+      = link_to(title, path_to_post, class: "post__title", target: "_blank")
 
     .post__subtitle
       .post__subtitle-item= source_name
@@ -39,4 +39,4 @@
     .post__footer
       - if show_link_to_related?
         .post__footer-item
-          = link_to(topic_link_title, path_to_topic, class: "post__footer-discuss-link", target: "_parent")
+          = link_to(topic_link_title, path_to_topic, class: "post__footer-discuss-link", target: "_blank")
