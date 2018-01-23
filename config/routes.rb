@@ -39,6 +39,7 @@ Rails.application.routes.draw do
 
   get "terms_of_use", to: "static_pages#terms_of_use"
   get "about_us", to: "static_pages#about_us"
+  get "qs_and_as", to: "static_pages#qs_and_as"
 
   namespace :api do
     resources :sources, only: [:update]

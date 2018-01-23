@@ -6,4 +6,9 @@ class StaticPagesController < ApplicationController
   def about_us
     render cell: "static_pages/about_us"
   end
+
+  def qs_and_as
+    render cell: "static_pages/qs_and_as"
+  end
+
 end
