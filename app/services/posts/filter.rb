@@ -55,11 +55,11 @@ class Posts::Filter
     when :most_read
       ->(posts) { posts.ordered_by_views_count.ordered_by_date }
     when :highly_voted
-      ->(posts) { posts.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_voting_result.ordered_by_views_count.ordered_by_date }
     when :most_reviewed
-      ->(posts) { posts.order_by_review_rating.ordered_by_date }
+      ->(posts) { posts.order_by_review_rating.ordered_by_views_count.ordered_by_date }
     when :most_covered
-      ->(posts) { posts.ordered_by_coverage.ordered_by_voting_result.ordered_by_date }
+      ->(posts) { posts.ordered_by_coverage.ordered_by_voting_result.ordered_by_views_count.ordered_by_date }
     end
   end
 
