@@ -27,7 +27,7 @@ gem 'content_for_in_controllers'
 gem 'will_paginate-foundation'
 gem "seedbank"
 gem "enumerize"
-gem "sidekiq", '~> 4.2'
+gem "sidekiq", '~> 6.2'
 gem "whenever", require: false
 
 gem 'devise'
