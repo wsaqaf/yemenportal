@@ -30,4 +30,12 @@ app.conf.beat_schedule = {
         'task': 'apps.posts.tasks.prewarm_category_counts',
         'schedule': crontab(minute='0', hour='*/6'),
     },
+    'audit-sources-daily-2am': {
+        'task': 'apps.sources.tasks.audit_and_cleanup_sources',
+        'schedule': crontab(minute='0', hour='2'),
+    },
+    'maintain-database-vacuum-daily-3am': {
+        'task': 'apps.posts.tasks.maintain_database_indexes',
+        'schedule': crontab(minute='0', hour='3'),
+    },
 }
