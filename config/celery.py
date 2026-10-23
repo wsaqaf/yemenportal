@@ -22,4 +22,12 @@ app.conf.beat_schedule = {
         'task': 'apps.crawler.tasks.crawl_all_sources',
         'schedule': crontab(minute='*/10'),
     },
+    'cluster-posts-every-15-minutes': {
+        'task': 'apps.posts.tasks.cluster_recent_posts',
+        'schedule': crontab(minute='*/15'),
+    },
+    'prewarm-category-counts-every-6h': {
+        'task': 'apps.posts.tasks.prewarm_category_counts',
+        'schedule': crontab(minute='0', hour='*/6'),
+    },
 }
