@@ -176,3 +176,31 @@ class VoteView(View):
             'post': post,
             'user_voted': user_voted
         })
+
+from django.views.generic import DetailView
+from django.shortcuts import get_object_or_404
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'posts/post_detail.html'
+    context_object_name = 'post'
+
+    def get_queryset(self):
+        # Allow viewing approved posts, using select_related to eliminate extra queries
+        return Post.objects.select_related('source', 'topic').prefetch_related('categories')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = self.object
+        # If part of an event cluster/topic, load up to 5 other related articles
+        if post.topic_id:
+            context['related_posts'] = (
+                Post.objects.filter(topic_id=post.topic_id, state=Post.State.APPROVED)
+                .exclude(id=post.id)
+                .select_related('source')
+                .only('id', 'title', 'published_at', 'source__name', 'image_url')
+                .order_by('-published_at')[:5]
+            )
+        else:
+            context['related_posts'] = []
+        return context
