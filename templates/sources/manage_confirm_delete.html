@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}حذف المصدر الإخباري - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-16">
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8 text-center">
+        
+        <!-- Warning Icon -->
+        <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-100">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+        </div>
+
+        <!-- Header -->
+        <h1 class="text-2xl font-extrabold text-gray-900 mb-2">هل أنت متأكد من الحذف؟</h1>
+        <p class="text-gray-500 leading-relaxed mb-6">
+            أنت على وشك حذف المصدر الإخباري <strong class="text-gray-800">"{{ object.name }}"</strong> نهائياً. 
+            <br>
+            <span class="text-xs text-red-500 font-semibold mt-2 block">تحذير: سيتم حذف القناة وكافة السجلات المرتبطة بها!</span>
+        </p>
+
+        <!-- Form -->
+        <form method="POST" class="space-y-3">
+            {% csrf_token %}
+            
+            <button type="submit" class="w-full py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-600/20 transition-all duration-300 transform hover:-translate-y-0.5">
+                تأكيد حذف المصدر
+            </button>
+            
+            <a href="{% url 'sources:manage_list' %}" class="block w-full py-3 px-4 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold rounded-xl transition-all">
+                إلغاء والتراجع
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

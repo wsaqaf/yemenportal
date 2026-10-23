@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Sign Up" %} - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[80vh]">
+    <div class="w-full max-w-md p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-900">{% trans "Sign Up" %}</h1>
+            <p class="text-gray-500 mt-2">انضم إلى مجتمع يمن بورتال اليوم</p>
+        </div>
+
+        <form class="signup space-y-6" id="signup_form" method="post" action="{% url 'account_signup' %}">
+            {% csrf_token %}
+            
+            {{ form|crispy }}
+            
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            
+            <button class="w-full py-3 px-4 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 focus:ring-4 focus:ring-blue-300" type="submit">
+                {% trans "Sign Up" %}
+            </button>
+        </form>
+
+        <div class="relative flex py-5 items-center">
+            <div class="flex-grow border-t border-gray-200"></div>
+            <span class="flex-shrink mx-4 text-gray-400 text-sm">لديك حساب بالفعل؟</span>
+            <div class="flex-grow border-t border-gray-200"></div>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ login_url }}" class="font-bold text-primary hover:underline">تسجيل الدخول</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

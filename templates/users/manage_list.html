@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}إدارة الأعضاء والمستخدمين - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    
+    <!-- Title & Intro -->
+    <div class="mb-8 text-right">
+        <h1 class="text-3xl font-extrabold text-gray-900">إدارة الأعضاء والمستخدمين</h1>
+        <p class="text-sm text-gray-500 mt-1">عرض، وتعديل صلاحيات، وحظر أو حذف المستخدمين المسجلين في منصة يمن بورتال.</p>
+    </div>
+
+    <!-- Stats summary cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 text-right">
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-gray-400 block">إجمالي الأعضاء</span>
+                <strong class="text-2xl font-extrabold text-gray-900 mt-1 block">{{ paginator.count }}</strong>
+            </div>
+            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-3xl shadow-xl border border-gray-100 flex items-center justify-between">
+            <div>
+                <span class="text-xs font-bold text-gray-400 block">البحث النشط</span>
+                <span class="text-xs text-gray-500 mt-1 block">تصفية سريعة لحسابات الأعضاء</span>
+            </div>
+            <form method="GET" class="flex gap-2 max-w-xs">
+                <input type="text" name="q" value="{{ q }}" placeholder="ابحث بالبريد الإلكتروني..." 
+                       class="text-xs px-3 py-2 border border-gray-200 rounded-xl focus:border-primary focus:ring-primary w-48">
+                <button type="submit" class="bg-primary text-white font-bold text-xs px-3 py-2 rounded-xl hover:bg-blue-700 transition-colors">ابحث</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Users Table Card -->
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-right border-collapse">
+                <thead>
+                    <tr class="bg-gray-50/50 border-b border-gray-100 text-gray-500 font-bold text-xs">
+                        <th class="px-6 py-4">#</th>
+                        <th class="px-6 py-4">البريد الإلكتروني</th>
+                        <th class="px-6 py-4">تاريخ الانضمام</th>
+                        <th class="px-6 py-4">الصلاحية / الدور</th>
+                        <th class="px-6 py-4">الحالة الحالية</th>
+                        <th class="px-6 py-4 text-left">الإجراءات والعمليات</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    {% for u in users_list %}
+                    <tr class="hover:bg-gray-50/30 transition-colors">
+                        <!-- Serial -->
+                        <td class="px-6 py-4 text-xs font-bold text-gray-400">
+                            {{ page_obj.start_index|add:forloop.counter0 }}
+                        </td>
+                        
+                        <!-- Email -->
+                        <td class="px-6 py-4">
+                            <div class="font-bold text-gray-900 text-sm">{{ u.email }}</div>
+                            <span class="text-[10px] font-mono text-gray-400 block">ID: #{{ u.id }}</span>
+                        </td>
+                        
+                        <!-- Date Joined -->
+                        <td class="px-6 py-4 text-xs text-gray-600">
+                            {{ u.date_joined|date:"Y-m-d H:i" }}
+                        </td>
+                        
+                        <!-- Role -->
+                        <td class="px-6 py-4">
+                            {% if u.is_superuser %}
+                            <span class="px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-100 rounded-full font-bold text-[10px]">
+                                مدير خارق (Super)
+                            </span>
+                            {% elif u.is_staff %}
+                            <span class="px-2.5 py-1 bg-blue-50 text-blue-700 border border-blue-100 rounded-full font-semibold text-[10px]">
+                                مشرف (Staff)
+                            </span>
+                            {% else %}
+                            <span class="px-2.5 py-1 bg-gray-50 text-gray-600 border border-gray-100 rounded-full text-[10px]">
+                                عضو مسجل
+                            </span>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- Status Badge -->
+                        <td class="px-6 py-4">
+                            {% if u.is_active %}
+                            <span class="px-2.5 py-1 bg-green-50 text-green-700 border border-green-100 rounded-full font-semibold text-[10px] inline-flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                نشط وصالح
+                            </span>
+                            {% else %}
+                            <span class="px-2.5 py-1 bg-red-50 text-red-700 border border-red-100 rounded-full font-semibold text-[10px] inline-flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                محظور ومغلق
+                            </span>
+                            {% endif %}
+                        </td>
+                        
+                        <!-- Actions -->
+                        <td class="px-6 py-4 text-left">
+                            <div class="flex items-center justify-end gap-2">
+                                <!-- Block/Unblock -->
+                                {% if u != request.user %}
+                                <a href="{% url 'users:toggle_user_status' u.pk %}" 
+                                   class="px-3 py-1.5 text-xs font-bold rounded-lg border transition-all 
+                                          {% if u.is_active %}
+                                          bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border-yellow-200
+                                          {% else %}
+                                          bg-green-50 hover:bg-green-100 text-green-700 border-green-200
+                                          {% endif %}"
+                                   title="{% if u.is_active %}حظر الحساب{% else %}إلغاء الحظر وتفعيل الحساب{% endif %}">
+                                    {% if u.is_active %}حظر الحساب{% else %}تفعيل الحساب{% endif %}
+                                </a>
+                                
+                                <!-- Delete Permanent -->
+                                <a href="{% url 'users:delete_user' u.pk %}" 
+                                   onclick="return confirm('هل أنت متأكد تماماً من رغبتك في حذف هذا العضو بالكامل؟ سيؤدي ذلك لمحو حسابه نهائياً ولا يمكن الرجوع عن هذا الإجراء.');"
+                                   class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 font-bold text-xs rounded-lg transition-all"
+                                   title="حذف نهائي">
+                                    حذف نهائي
+                                </a>
+                                {% else %}
+                                <span class="text-xs text-gray-400 italic">حسابك الحالي</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-400">
+                            <svg class="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            لا يوجد أعضاء يطابقون هذا البحث أو مسجلين حالياً.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+        <div class="p-6 bg-gray-50/50 border-t border-gray-100 flex justify-center">
+            <nav class="flex items-center gap-1">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}" 
+                   class="px-3 py-1.5 bg-white border border-gray-200 text-xs font-bold text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">السابق</a>
+                {% endif %}
+                
+                <span class="px-3.5 py-1.5 bg-primary text-white text-xs font-extrabold rounded-lg">{{ page_obj.number }} / {{ paginator.num_pages }}</span>
+                
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}" 
+                   class="px-3 py-1.5 bg-white border border-gray-200 text-xs font-bold text-gray-600 rounded-lg hover:bg-gray-50 transition-colors">التالي</a>
+                {% endif %}
+            </nav>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}لوحة الإشراف - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">لوحة التحكم والتدقيق</h1>
+            <p class="text-gray-500">إدارة ومراجعة الأخبار الواردة من المصادر المختلفة</p>
+        </div>
+        
+        <div class="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
+            <div class="px-4 py-2 text-center">
+                <span class="block text-2xl font-bold text-yellow-600">{{ pending_count }}</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wider">قيد الانتظار</span>
+            </div>
+            <div class="w-px h-8 bg-gray-100"></div>
+            <div class="px-4 py-2 text-center">
+                <span class="block text-2xl font-bold text-green-600">{{ approved_count }}</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wider">تمت الموافقة</span>
+            </div>
+            <div class="w-px h-8 bg-gray-100"></div>
+            <div class="px-4 py-2 text-center">
+                <span class="block text-2xl font-bold text-red-600">{{ rejected_count }}</span>
+                <span class="text-xs text-gray-400 uppercase tracking-wider">مرفوض</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
+                <select name="state" class="w-full rounded-xl border-gray-200 focus:border-primary focus:ring-primary">
+                    <option value="pending" {% if current_state == 'pending' %}selected{% endif %}>قيد الانتظار</option>
+                    <option value="approved" {% if current_state == 'approved' %}selected{% endif %}>تمت الموافقة</option>
+                    <option value="rejected" {% if current_state == 'rejected' %}selected{% endif %}>مرفوض</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">المصدر</label>
+                <select name="source" class="w-full rounded-xl border-gray-200 focus:border-primary focus:ring-primary">
+                    <option value="">كل المصادر</option>
+                    {% for s in sources %}
+                    <option value="{{ s.id }}" {% if current_source == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-primary/20">
+                    تطبيق الفلاتر
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Posts Table -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-gray-50 border-bottom border-gray-100">
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">الخبر</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider">المصدر</th>
+                    <th class="px-6 py-4 text-xs font-bold text-gray-500 uppercase tracking-wider w-48">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+                {% for post in posts %}
+                <tr id="post-row-{{ post.id }}" class="hover:bg-gray-50/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-4">
+                            {% if post.image_url %}
+                            <img src="{{ post.image_url }}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+                            {% endif %}
+                            <div>
+                                <h3 class="font-bold text-gray-900 leading-tight mb-1">{{ post.title }}</h3>
+                                <div class="flex items-center gap-2 text-xs text-gray-400">
+                                    <span>{{ post.published_at|date:"Y-m-d H:i" }}</span>
+                                    <span>•</span>
+                                    <a href="{{ post.link }}" target="_blank" class="text-primary hover:underline">رابط الخبر</a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800">
+                            {{ post.source.name }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            {% if post.state == 'pending' or post.state == 'rejected' %}
+                            <button hx-post="{% url 'moderation:approve_post' post.id %}" 
+                                    hx-target="#post-row-{{ post.id }}" 
+                                    hx-swap="outerHTML"
+                                    class="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                            {% endif %}
+                            
+                            {% if post.state == 'pending' or post.state == 'approved' %}
+                            <button hx-post="{% url 'moderation:reject_post' post.id %}" 
+                                    hx-target="#post-row-{{ post.id }}" 
+                                    hx-swap="outerHTML"
+                                    class="p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="px-6 py-12 text-center text-gray-500">
+                        لا توجد أخبار للمراجعة حالياً
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="mt-8 flex justify-center">
+        <nav class="flex gap-2">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if current_state %}&state={{ current_state }}{% endif %}{% if current_source %}&source={{ current_source }}{% endif %}" 
+               class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50">السابق</a>
+            {% endif %}
+            <span class="px-4 py-2 bg-primary text-white rounded-xl font-bold">{{ page_obj.number }}</span>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if current_state %}&state={{ current_state }}{% endif %}{% if current_source %}&source={{ current_source }}{% endif %}" 
+               class="px-4 py-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:bg-gray-50">التالي</a>
+            {% endif %}
+        </nav>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

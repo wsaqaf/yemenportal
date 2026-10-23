@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load account socialaccount %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Sign In" %} - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="flex flex-col items-center justify-center min-h-[70vh]">
+    <div class="w-full max-w-md p-8 bg-white rounded-3xl shadow-xl border border-gray-100">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-900">{% trans "Sign In" %}</h1>
+            <p class="text-gray-500 mt-2">مرحباً بك مجدداً في يمن بورتال</p>
+        </div>
+
+        <form class="login space-y-6" method="POST" action="{% url 'account_login' %}">
+            {% csrf_token %}
+            
+            {{ form|crispy }}
+            
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+            {% endif %}
+            
+            <button class="primaryAction w-full py-3 px-4 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 focus:ring-4 focus:ring-blue-300" type="submit">
+                {% trans "Sign In" %}
+            </button>
+            
+            <div class="text-center mt-6">
+                <a class="text-sm text-primary hover:underline" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            </div>
+        </form>
+
+        <div class="relative flex py-5 items-center">
+            <div class="flex-grow border-t border-gray-200"></div>
+            <span class="flex-shrink mx-4 text-gray-400 text-sm">أو</span>
+            <div class="flex-grow border-t border-gray-200"></div>
+        </div>
+
+        <div class="text-center">
+            <p class="text-sm text-gray-600">ليس لديك حساب؟ 
+                <a href="{{ signup_url }}" class="font-bold text-primary hover:underline">انضم إلينا الآن</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}نتائج البحث عن "{{ request.GET.q }}" - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 gap-4 mb-4">
+    <div class="p-8 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm">
+        <h1 class="text-2xl font-black mb-8">نتائج البحث عن: <span class="text-primary">"{{ request.GET.q }}"</span></h1>
+        
+        <div id="posts-container">
+            {% include "posts/partials/post_list_items.html" %}
+        </div>
+
+        <!-- Google Style Pagination (10 links) for Search -->
+        {% if is_paginated %}
+        <div class="flex justify-center items-center gap-2 mt-12 pt-8 border-t border-gray-50">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                السابق
+            </a>
+            {% endif %}
+            
+            <div class="flex gap-1">
+                {% for i in paginator.page_range %}
+                    {% if i >= page_obj.number|add:"-5" and i <= page_obj.number|add:"4" %}
+                        {% if page_obj.number == i %}
+                        <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold">{{ i }}</span>
+                        {% else %}
+                        <a href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">{{ i }}</a>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                التالي
+            </a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

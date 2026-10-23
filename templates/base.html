@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}يمن بورتال - محرك بحث إخباري يمني مستقل{% endblock %}</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1779ba',
+                        brandPurple: '#663399',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-[#f8fafc] text-gray-900 font-sans antialiased;
+            }
+        }
+    </style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="flex flex-col min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm" x-data="{ mobileMenuOpen: false }">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                
+                <!-- Logo & Nav Links -->
+                <div class="flex items-center gap-8">
+                    <a href="{% url 'home' %}" class="flex items-center">
+                        <img src="{% static 'logo.png' %}" class="h-10 w-auto" alt="يمن بورتال" />
+                    </a>
+
+                    <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-700">
+                        <a href="{% url 'home' %}" class="hover:text-primary transition-colors">الرئيسية</a>
+                        <a href="{% url 'sources:source_list' %}" class="hover:text-primary transition-colors">المصادر</a>
+                        <a href="https://docs.google.com/forms/d/1uY8hR7916-p7yTGPZKQ8KW5iJArfSKVHcAGTf6OXF4o/viewform?ts=5b082a4d&edit_requested=true" target="_blank" class="hover:text-primary transition-colors">إستبيان</a>
+                        <a href="{% url 'contact_us' %}" class="hover:text-primary transition-colors">إتصل بنا</a>
+                        {% if user.is_staff %}
+                        <a href="{% url 'moderation:dashboard' %}" class="text-brandPurple hover:underline">لوحة الإشراف</a>
+                        <a href="{% url 'sources:manage_list' %}" class="text-brandPurple hover:underline">إدارة المصادر</a>
+                        <a href="{% url 'users:manage_list' %}" class="text-brandPurple hover:underline">المستخدمين</a>
+                        {% endif %}
+                    </nav>
+                </div>
+
+                <!-- User Controls -->
+                <div class="hidden md:flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'sources:source_suggest' %}" class="text-xs font-bold text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors border border-green-200">
+                            + اقتراح مصدر
+                        </a>
+                        <span class="text-sm font-medium text-gray-600">{{ user.email }}</span>
+                        <form action="{% url 'account_logout' %}" method="post" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">تسجيل الخروج</button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'account_login' %}" class="px-4 py-2 bg-primary hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
+                            تسجيل الدخول
+                        </a>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex md:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" class="md:hidden border-t border-gray-200 bg-white px-4 pt-2 pb-4 space-y-2">
+            <a href="{% url 'home' %}" class="block py-2 text-sm font-bold text-gray-700">الرئيسية</a>
+            <a href="{% url 'sources:source_list' %}" class="block py-2 text-sm font-bold text-gray-700">المصادر</a>
+            <a href="{% url 'contact_us' %}" class="block py-2 text-sm font-bold text-gray-700">إتصل بنا</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'sources:source_suggest' %}" class="block py-2 text-sm font-bold text-green-700">+ اقتراح مصدر</a>
+                <form action="{% url 'account_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="block w-full text-right py-2 text-sm font-bold text-red-600">تسجيل الخروج</button>
+                </form>
+            {% else %}
+                <a href="{% url 'account_login' %}" class="block py-2 text-sm font-bold text-primary">تسجيل الدخول</a>
+            {% endif %}
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+            <div class="flex flex-wrap items-center gap-6">
+                <a href="{% url 'about_us' %}" class="hover:text-primary transition-colors">حول يمن بورتال</a>
+                <a href="{% url 'terms_of_use' %}" class="hover:text-primary transition-colors">شروط الاستخدام</a>
+                <a href="{% url 'qs_and_as' %}" class="hover:text-primary transition-colors">سؤال وجواب</a>
+                <a href="{% url 'contact_us' %}" class="hover:text-primary transition-colors">إتصل بنا</a>
+            </div>
+            <p class="text-xs text-gray-400">© 2026 يمن بورتال. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

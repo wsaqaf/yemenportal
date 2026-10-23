@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}حول يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-10 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 mb-12">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-gray-900 mb-4">حول يمن بورتال</h1>
+        <div class="h-1.5 w-24 bg-primary mx-auto rounded-full"></div>
+    </div>
+
+    <div class="prose prose-lg prose-blue max-w-none text-gray-700 leading-loose space-y-8">
+        <section>
+            <h2 class="text-2xl font-bold text-gray-900 border-r-4 border-primary pr-4 mb-4">نبذة عن تاريخ يمن بورتال</h2>
+            <p>
+                تم إطلاق يمن بورتال في عام 2007 كأول محرك بحث أخباري متخصص لليمن ويعتبر المحرك الأول من نوعه في العالم العربي حيث ساهم في إحداث ثورة نوعية في طريقة الإطلاع على الأخبار المتصلة باليمن خاصة بعد بروز عدد كبير من محركات البحث الخبرية المشابهة.
+            </p>
+            <p>
+                وفي عام 2017 أي بعد مرور عشرة أعوام على إطلاقه، تم تحديث المحرك بشكل كبير ليتوسع ويعطي القراء القدرة على التفاعل المباشر مع محتوى المحرك عبر عدد من الامتيازات مثل التعليق والتصويت ومتابعة تقييم جودة المصادر والمحتويات المختلفة عبر لجان تقييم تشمل متطوعين مدربين. وقد تم تأسيس المحرك <a href="http://al-saqaf.se" class="text-primary hover:underline font-bold">د. وليد عبد العزيز السقاف</a>، البروفيسور في <a href="https://www.sh.se" class="text-primary hover:underline">جامعة سوديتورن</a> في ستوكهولم.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-gray-900 border-r-4 border-primary pr-4 mb-4">طبيعة المحرك</h2>
+            <p>
+                محرك يمن بورتال هو نظام بحث، رصد، جمع، وحفظ وبحث بيانات للأخبار المتصلة باليمن على الإنترنت ويعتبر شبيها لما يقوم به موقع <a href="https://news.google.com" class="text-primary hover:underline">Google News</a> ولكن ينحصر عمله في مجال الأخبار ذات العلاقة باليمن.
+            </p>
+        </section>
+
+        <section>
+            <h2 class="text-2xl font-bold text-gray-900 border-r-4 border-primary pr-4 mb-4">امتيازات المحرك</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div class="p-6 bg-blue-50 rounded-2xl">
+                    <h3 class="font-bold text-primary mb-2">التصويت</h3>
+                    <p class="text-sm">يسمح للقارئ التصويت على الأخبار بناء على جودتها ومدى التزامها بالمعايير المهنية.</p>
+                </div>
+                <div class="p-6 bg-purple-50 rounded-2xl">
+                    <h3 class="font-bold text-secondary mb-2">تجميع المواد المتشابهة</h3>
+                    <p class="text-sm">لدى المحرك القدرة على الكشف عن المواد الخبرية المتشابهة لتوفير رؤية شاملة.</p>
+                </div>
+                <div class="p-6 bg-green-50 rounded-2xl">
+                    <h3 class="font-bold text-green-700 mb-2">التشفير الكامل</h3>
+                    <p class="text-sm">نحرص على أمن المعلومات عبر نظام SSL الكامل لضمان تصفح آمن.</p>
+                </div>
+                <div class="p-6 bg-orange-50 rounded-2xl">
+                    <h3 class="font-bold text-orange-700 mb-2">شفافية مطلقة</h3>
+                    <p class="text-sm">كود المحرك متاح ككود مفتوح المصدر على <a href="https://github.com/wsaqaf/yemenportal" class="underline">GitHub</a>.</p>
+                </div>
+            </div>
+        </section>
+
+        <p class="text-center pt-8 font-bold">
+            يمكنكم دائماً <a href="{% url 'contact_us' %}" class="text-primary hover:underline">التواصل معنا</a> لأي استفسار.
+        </p>
+        
+        <p class="text-center text-sm text-gray-400">فريق عمل يمن بورتال</p>
+    </div>
+</div>
+{% endblock %}

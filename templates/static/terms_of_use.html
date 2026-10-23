@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}شروط الاستخدام - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-10 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 mb-12">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-gray-900 mb-4">شروط استخدام الموقع</h1>
+        <div class="h-1.5 w-24 bg-primary mx-auto rounded-full"></div>
+    </div>
+
+    <div class="prose prose-lg prose-blue max-w-none text-gray-700 leading-loose space-y-8">
+        <p>
+            موقع يمن بورتال نت هو محرك للبحث في المحتويات المختلفة لمصادر متعددة تركيزها الرئيسي على اليمن وبالتالي فهو يشابه في أدائه محركات البحث العالمية الأخرى كجوجل وغيره.
+        </p>
+        <p>
+            بموافقتك تصفح الموقع فإنك تقر بأن لا مسؤولية قانونية أو غيرها تقع على المحرك بسبب ما ينشر فيه بما في ذلك المواد النصية أو الفيديو أو الصور وغيرها.
+        </p>
+        <p>
+            جميع ما يتم نشره في الموقع يسحب بشكل آلي من مصادر محددة مسبقاً ولا تقوم الإدارة بأي رقابة أو فلترة بشكل تلقائي. في حال تواجدت مواضيع لك اعتراض عليها، عليك بالمبادرة بالاتصال بالموقع وإبلاغه بسبب رغبتك بإزالة المواد. وللموقع الحق بالرفض أو الموافقة دون إبداء الأسباب.
+        </p>
+        <p>
+            إذا رغبت في إضافة مصادر تراها مناسبة، يمكنك ذلك عبر <a href="{% url 'account_signup' %}" class="text-primary font-bold hover:underline">الإنضمام لعضوية الموقع</a> واستخدام خدمة اقتراح مصدر جديد في الصفحة الرئيسية.
+        </p>
+        <p>
+            في حال وجدت لديك أية استفسارات، يمكنك <a href="{% url 'contact_us' %}" class="text-primary font-bold hover:underline">الإتصال بالإدارة</a> مباشرة.
+        </p>
+    </div>
+</div>
+{% endblock %}

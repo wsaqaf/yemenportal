@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}المصادر - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <h1 class="text-3xl font-bold mb-8">مصادر الأخبار</h1>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for source in sources %}
+        <div class="p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-primary transition-all hover:shadow-md">
+            <h2 class="text-xl font-bold mb-2">{{ source.name }}</h2>
+            <p class="text-gray-500 text-sm mb-4 leading-relaxed">{{ source.brief_info|default:"لا يوجد وصف متاح لهذا المصدر حالياً." }}</p>
+            <a href="{{ source.website }}" target="_blank" class="text-primary font-bold hover:underline flex items-center gap-2">
+                <span>زيارة الموقع الرسمي</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="flex justify-center items-center gap-2 mt-12">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        {% endif %}
+        
+        <div class="flex gap-1">
+            {% for i in paginator.page_range %}
+                {% if page_obj.number == i %}
+                <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold">{{ i }}</span>
+                {% else %}
+                <a href="?page={{ i }}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">{{ i }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="p-2 rounded-xl bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        </a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

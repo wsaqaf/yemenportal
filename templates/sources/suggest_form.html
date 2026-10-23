@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}اقتراح مصدر جديد - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-8">
+    
+    <!-- Header -->
+    <div class="mb-6 flex items-center justify-between">
+        <h1 class="text-3xl font-extrabold text-gray-900">اقتراح مصدر إخباري جديد</h1>
+        <a href="{% url 'sources:source_list' %}" class="text-sm font-bold text-gray-500 hover:text-primary transition-colors flex items-center gap-1">
+            <span>عودة إلى المصادر</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+    </div>
+
+    <!-- Alert / Message -->
+    <div class="bg-blue-50 border border-blue-200 text-blue-800 rounded-2xl p-4 mb-6 text-sm leading-relaxed">
+        <strong>ملاحظة:</strong>
+        سيقوم النظام بالتحقق التلقائي من أن رابط الـ RSS المقترح يعمل بشكل صحيح وأنه موقع إخباري صالح. بعد الاقتراح، سيتم إخطار إدارة الموقع لمراجعته وتفعيله.
+    </div>
+
+    <!-- Form Card -->
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Custom Styled Fields to match the user's screenshot exactly -->
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* إسم المصدر</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* رابط RSS</label>
+                    {{ form.link }}
+                    {% if form.link.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.link.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* التصنيف</label>
+                    {{ form.source_type }}
+                    {% if form.source_type.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.source_type.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="flex items-center gap-2.5 bg-gray-50/70 p-3 rounded-xl border border-gray-100/50">
+                    {{ form.iframe_flag }}
+                    <label for="{{ form.iframe_flag.id_for_label }}" class="text-sm font-bold text-gray-800 cursor-pointer">هل البيان في أيفرايم؟</label>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* موقع إلكتروني</label>
+                    {{ form.website }}
+                    {% if form.website.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.website.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* رابط إلى الشعار</label>
+                    {{ form.logo_url }}
+                    {% if form.logo_url.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.logo_url.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* معلومات موجزة</label>
+                    {{ form.brief_info }}
+                    {% if form.brief_info.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.brief_info.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* البريد الإلكتروني للمشرف</label>
+                    {{ form.admin_email }}
+                    {% if form.admin_email.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.admin_email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* إسم المشرف</label>
+                    {{ form.admin_name }}
+                    {% if form.admin_name.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.admin_name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">* ملحوظة</label>
+                    {{ form.note }}
+                    {% if form.note.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.note.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action buttons (Matches screenshot color layout) -->
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                <a href="{% url 'sources:source_list' %}" class="px-7 py-3 bg-gray-500 hover:bg-gray-600 text-white font-bold rounded-xl shadow-md transition-colors">
+                    عودة
+                </a>
+                <button type="submit" class="px-7 py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg transition-all transform hover:-translate-y-0.5">
+                    إضافة
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
+
+from apps.posts.views import PostListView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
+    
+    # Apps
+    path('', PostListView.as_view(), name='home'),
+    path('posts/', include('apps.posts.urls', namespace='posts')),
+    path('moderation/', include('apps.moderation.urls', namespace='moderation')),
+    path('sources/', include('apps.sources.urls')),
+    path('users/', include('apps.users.urls', namespace='users')),
+    
+    # Static Pages
+    path('about_us/', TemplateView.as_view(template_name='static/about_us.html'), name='about_us'),
+    path('terms_of_use/', TemplateView.as_view(template_name='static/terms_of_use.html'), name='terms_of_use'),
+    path('qs_and_as/', TemplateView.as_view(template_name='static/qs_and_as.html'), name='qs_and_as'),
+    path('contact_us/', TemplateView.as_view(template_name='static/contact_us.html'), name='contact_us'),
+    
+    # HTMX
+    # path('__debug__/', include('debug_toolbar.urls')), # Handled in DEBUG block below
+]
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += [path('__debug__/', include(debug_toolbar.urls))]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

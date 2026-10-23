@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}سؤال وجواب - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto p-10 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 mb-12">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-black text-gray-900 mb-4">سؤال وجواب</h1>
+        <div class="h-1.5 w-24 bg-primary mx-auto rounded-full"></div>
+    </div>
+
+    <div class="space-y-12">
+        <section class="p-8 bg-blue-50 rounded-3xl">
+            <h2 class="text-xl font-bold text-primary mb-4">سؤال 1 / كيف أرتب طريقة عرض الأخبار؟</h2>
+            <p class="text-gray-700 leading-relaxed">
+                لديك ميزات عديدة في طريقة عرض الأخبار باستخدام إعدادات الفلترة. يمكنك اختيار "الأحدث"، "الأكثر قراءة"، "الأفضل تقييماً"، أو "الأعلى تصويتاً". كما يمكنك الفلترة بناءً على الفترة الزمنية أو مصادر محددة.
+            </p>
+        </section>
+
+        <section class="p-8 bg-purple-50 rounded-3xl">
+            <h2 class="text-xl font-bold text-secondary mb-4">سؤال 3 / ما هي مزايا عضوية الموقع؟</h2>
+            <p class="text-gray-700 leading-relaxed">
+                يمكن للأعضاء التصويت على الأخبار، واقتراح مصادر جديدة، والترقية لمنصب مشرف للمساهمة في مراجعة الأخبار مهنياً.
+            </p>
+        </section>
+
+        <section class="p-8 bg-green-50 rounded-3xl">
+            <h2 class="text-xl font-bold text-green-700 mb-4">سؤال 5 / كيف لي أن أضيف موقعاً جديداً لمصادركم؟</h2>
+            <p class="text-gray-700 leading-relaxed">
+                بعد تسجيل الدخول، انتقل إلى صفحة "المصادر" وانقر على "إضافة مصدر". قم بتعبئة البيانات وسيقوم فريقنا بمراجعتها وإضافتها.
+            </p>
+        </section>
+
+        <div class="text-center pt-8">
+            <p class="text-gray-600 mb-4">لديك سؤال آخر؟</p>
+            <a href="{% url 'contact_us' %}" class="inline-block py-3 px-8 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors">اتصل بنا الآن</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

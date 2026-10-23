@@ -1,0 +1,42 @@
+# Django Core
+Django>=5.0,<5.1
+psycopg[binary]
+python-dotenv
+django-environ
+
+# Authentication & Social
+django-allauth
+
+# Frontend & Interactivity
+django-htmx
+django-tailwind
+django-browser-reload
+
+# Task Queue
+celery
+redis
+django-celery-results
+django-celery-beat
+
+# Utilities
+feedparser
+scikit-learn
+nltk
+pandas
+django-model-utils
+django-extensions
+django-filter
+django-crispy-forms
+crispy-tailwind
+
+# Production
+gunicorn
+whitenoise
+
+# Testing
+pytest
+pytest-django
+factory-boy
+faker
+django-debug-toolbar
+requests

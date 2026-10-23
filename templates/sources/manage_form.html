@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if object %}تعديل المصدر - {{ object.name }}{% else %}إضافة مصدر جديد{% endif %} - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-8">
+    
+    <!-- Breadcrumb -->
+    <div class="mb-6 flex items-center gap-2 text-sm text-gray-500">
+        <a href="{% url 'sources:manage_list' %}" class="hover:text-primary transition-colors">إدارة المصادر</a>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <span class="text-gray-900">{% if object %}تعديل المصدر{% else %}إضافة مصدر جديد{% endif %}</span>
+    </div>
+
+    <!-- Card Wrapper -->
+    <div class="bg-white rounded-3xl shadow-xl border border-gray-100 p-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-extrabold text-gray-900 mb-2">
+                {% if object %}تعديل تفاصيل المصدر{% else %}إضافة مصدر إخباري جديد{% endif %}
+            </h1>
+            <p class="text-gray-500">
+                {% if object %}تعديل إعدادات وقناة سحب الأخبار لـ {{ object.name }}{% else %}قم بإدخال بيانات المصدر الإخباري للبدء بسحب الأخبار فوراً{% endif %}
+            </p>
+        </div>
+
+        <!-- Form -->
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Basic fields -->
+                <div class="md:col-span-2">
+                    {{ form.name|as_crispy_field }}
+                </div>
+                <div class="md:col-span-2">
+                    {{ form.link|as_crispy_field }}
+                    <p class="text-xs text-gray-400 mt-1">يجب أن يكون رابطاً صالحاً لتغذية RSS (مثال: http://example.com/rss)</p>
+                </div>
+                
+                <div>
+                    {{ form.website|as_crispy_field }}
+                </div>
+                <div>
+                    {{ form.logo_url|as_crispy_field }}
+                </div>
+
+                <div class="md:col-span-2">
+                    {{ form.brief_info|as_crispy_field }}
+                </div>
+
+                <!-- Settings -->
+                <div>
+                    {{ form.state|as_crispy_field }}
+                </div>
+                <div>
+                    {{ form.approve_state|as_crispy_field }}
+                </div>
+
+                <div class="md:col-span-2 flex items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div class="flex items-center h-5">
+                        {{ form.iframe_flag }}
+                    </div>
+                    <div class="mr-3 text-sm">
+                        <label for="{{ form.iframe_flag.id_for_label }}" class="font-bold text-gray-900">تفعيل خيار التضمين (iframe)</label>
+                        <p class="text-gray-500 text-xs">عند التفعيل، سيتم عرض محتوى الخبر الأصلي في إطار iframe داخل الموقع بدلاً من الانتقال للموقع الأصلي.</p>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2">
+                    {{ form.note|as_crispy_field }}
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+                <a href="{% url 'sources:manage_list' %}" class="px-5 py-3 rounded-xl border border-gray-200 text-gray-700 font-bold hover:bg-gray-50 transition-colors">
+                    إلغاء
+                </a>
+                <button type="submit" class="px-6 py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all duration-300 transform hover:-translate-y-0.5">
+                    {% if object %}حفظ التغييرات{% else %}إضافة المصدر{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
