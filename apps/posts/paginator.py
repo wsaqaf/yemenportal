@@ -17,6 +17,13 @@ class CachedCountPaginator(Paginator):
         if cached_count is not None:
             return cached_count
 
+        # For text searches (LIKE/ILIKE), sample up to 501 rows without ordering
+        # to allow PostgreSQL to satisfy the check via the GIN trigram index instantly.
+        if "LIKE" in query_str or "~~" in query_str:
+            sample_count = self.object_list.order_by().values('id')[:501].count()
+            cache.set(cache_key, sample_count, timeout=3600)
+            return sample_count
+
         total = super().count
         cache.set(cache_key, total, timeout=1800)  # Cache for 30 minutes
         return total

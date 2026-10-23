@@ -41,7 +41,9 @@ class PostListView(ListView):
         # 1. Filtering by Query
         q = self.request.GET.get('q')
         if q:
-            queryset = queryset.filter(models.Q(title__icontains=q) | models.Q(description__icontains=q))
+            q_clean = q.strip()
+            if q_clean:
+                queryset = queryset.filter(title__icontains=q_clean)
 
         # 2. Filtering by Period
         period = self.request.GET.get('period')
