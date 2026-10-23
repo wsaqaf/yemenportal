@@ -1,8 +1,10 @@
-
+import logging
 import hashlib
 from celery import shared_task
 from django.core.cache import cache
 from apps.posts.models import Post, Category
+
+logger = logging.getLogger(__name__)
 
 @shared_task(name="apps.posts.tasks.prewarm_category_counts")
 def prewarm_category_counts():

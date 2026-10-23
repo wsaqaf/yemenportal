@@ -1,6 +1,7 @@
 import logging
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Count
 from celery import shared_task
 from apps.sources.models import Source, SourceLog
 
@@ -17,14 +18,6 @@ def audit_and_cleanup_sources():
     cutoff_14d = now - timedelta(days=14)
 
     # 1. Identify sources with >= 50 errors in the last 24h
-    failing_sources = (
-        SourceLog.objects.filter(created_at__gte=cutoff_24h, state__startswith='Error')
-        .values('source_id')
-        .annotate(error_count=models.Count('id'))
-        if hasattr(models, 'Count') else []
-    )
-
-    from django.db.models import Count
     failing = (
         SourceLog.objects.filter(created_at__gte=cutoff_24h, state__startswith='Error')
         .values('source_id')
@@ -46,5 +39,4 @@ def audit_and_cleanup_sources():
     deleted_logs, _ = SourceLog.objects.filter(created_at__lt=cutoff_14d).delete()
     logger.info(f"Pruned {deleted_logs} crawler logs older than 14 days.")
 
-    result_msg = f"Deactivated {len(deactivated)} failing sources. Pruned {deleted_logs} old logs."
-    return result_msg
+    return f"Deactivated {len(deactivated)} failing sources. Pruned {deleted_logs} old logs."
