@@ -1,3 +1,33 @@
+import re
+
+def normalize_arabic_search_variants(term: str) -> list[str]:
+    term = term.strip()
+    if not term:
+        return []
+    variants = {term}
+    
+    # 1. Alif / Hamza normalization (أ, إ, آ <-> ا)
+    alif_unified = re.sub(r'[أإآ]', 'ا', term)
+    variants.add(alif_unified)
+    # If term uses plain alif, test common hamza forms
+    if 'ا' in term:
+        variants.add(term.replace('ا', 'أ', 1))
+        variants.add(term.replace('ا', 'إ', 1))
+    
+    # 2. Taa Marbuta / Haa normalization (ة <-> ه)
+    if term.endswith('ة'):
+        variants.add(term[:-1] + 'ه')
+    elif term.endswith('ه'):
+        variants.add(term[:-1] + 'ة')
+        
+    # 3. Yaa / Alif Maqsura (ي <-> ى)
+    if term.endswith('ي'):
+        variants.add(term[:-1] + 'ى')
+    elif term.endswith('ى'):
+        variants.add(term[:-1] + 'ي')
+
+    return [v for v in variants if v][:4]
+
 from apps.posts.paginator import CachedCountPaginator
 from django.db import models
 from django.shortcuts import render, get_object_or_404
@@ -43,7 +73,11 @@ class PostListView(ListView):
         if q:
             q_clean = q.strip()
             if q_clean:
-                queryset = queryset.filter(title__icontains=q_clean)
+                variants = normalize_arabic_search_variants(q_clean)
+                q_filter = models.Q()
+                for var in variants:
+                    q_filter |= models.Q(title__icontains=var)
+                queryset = queryset.filter(q_filter)
 
         # 2. Filtering by Period
         period = self.request.GET.get('period')

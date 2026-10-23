@@ -38,9 +38,24 @@ class ModerationDashboardView(LoginRequiredMixin, StaffRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        from django.core.cache import cache
+        
+        # Pending count is dynamic (small set)
         context['pending_count'] = Post.objects.filter(state='pending').count()
-        context['approved_count'] = Post.objects.filter(state='approved').count()
-        context['rejected_count'] = Post.objects.filter(state='rejected').count()
+        
+        # Approved and Rejected counts are cached in Redis for 10 minutes
+        approved_count = cache.get('moderation_approved_count')
+        if approved_count is None:
+            approved_count = Post.objects.filter(state='approved').count()
+            cache.set('moderation_approved_count', approved_count, timeout=600)
+        context['approved_count'] = approved_count
+        
+        rejected_count = cache.get('moderation_rejected_count')
+        if rejected_count is None:
+            rejected_count = Post.objects.filter(state='rejected').count()
+            cache.set('moderation_rejected_count', rejected_count, timeout=600)
+        context['rejected_count'] = rejected_count
+
         context['sources'] = Source.objects.all().order_by('name')
         context['current_state'] = self.request.GET.get('state', 'pending')
         context['current_source'] = self.request.GET.get('source')
