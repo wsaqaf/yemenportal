@@ -225,6 +225,9 @@
         <span>✅ تم نسخ رابط الخبر بنجاح</span>
     </div>
 
+    <!-- Instant Full-Title Hover Tooltip for Truncated Headlines -->
+    <div id="yp-title-tooltip" dir="rtl" class="fixed z-50 hidden pointer-events-none max-w-md bg-slate-900/95 dark:bg-slate-100/95 text-white dark:text-slate-900 text-xs sm:text-sm font-bold leading-relaxed px-3.5 py-2.5 rounded-xl shadow-xl border border-slate-700/60 dark:border-slate-300 transition-opacity duration-150"></div>
+
     <!-- Global Footer -->
     <footer class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-16 py-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -293,6 +296,99 @@
                 setTimeout(() => toast.classList.add('hidden'), 2200);
             }
         }
+
+        // Instant tooltip when hovering over truncated titles (line-clamp-* or truncate)
+        (function() {
+            const tooltip = document.getElementById('yp-title-tooltip');
+            if (!tooltip) return;
+            let activeEl = null;
+
+            function findTruncatedContainer(el) {
+                let cur = el;
+                while (cur && cur !== document.body) {
+                    const cls = cur.className || '';
+                    if (typeof cls === 'string' && (cls.includes('line-clamp-') || cls.includes('truncate') || cur.hasAttribute('data-full-title'))) {
+                        return cur;
+                    }
+                    cur = cur.parentElement;
+                }
+                return null;
+            }
+
+            function isElementTruncated(el) {
+                return (el.scrollHeight > el.clientHeight + 2) || (el.scrollWidth > el.clientWidth + 2);
+            }
+
+            function positionTooltip(targetRect) {
+                const pad = 10;
+                const tipRect = tooltip.getBoundingClientRect();
+                let top = targetRect.top - tipRect.height - 8;
+                if (top < pad) {
+                    top = targetRect.bottom + 8;
+                }
+                let left = targetRect.right - tipRect.width;
+                if (left < pad) left = pad;
+                if (left + tipRect.width > window.innerWidth - pad) {
+                    left = window.innerWidth - tipRect.width - pad;
+                }
+                tooltip.style.top = `${Math.round(top)}px`;
+                tooltip.style.left = `${Math.round(left)}px`;
+            }
+
+            document.addEventListener('mouseover', function(e) {
+                const container = findTruncatedContainer(e.target);
+                if (!container) return;
+
+                const checkEl = container.classList && (
+                    container.className.includes('line-clamp-') || container.className.includes('truncate')
+                ) ? container : (container.parentElement || container);
+
+                if (!isElementTruncated(checkEl) && !isElementTruncated(container)) {
+                    return;
+                }
+
+                const fullText = (
+                    container.getAttribute('data-full-title') ||
+                    container.getAttribute('title') ||
+                    container.textContent ||
+                    ''
+                ).trim();
+                if (!fullText) return;
+
+                // Temporarily suppress native title tooltip on element & ancestors to avoid duplicate tooltips
+                let p = e.target;
+                while (p && p !== document.body) {
+                    if (p.hasAttribute && p.hasAttribute('title')) {
+                        p.setAttribute('data-saved-title', p.getAttribute('title'));
+                        p.removeAttribute('title');
+                    }
+                    p = p.parentElement;
+                }
+
+                activeEl = container;
+                tooltip.textContent = fullText;
+                tooltip.classList.remove('hidden');
+                positionTooltip(checkEl.getBoundingClientRect());
+            });
+
+            document.addEventListener('mouseout', function(e) {
+                if (!activeEl) return;
+                if (activeEl.contains(e.relatedTarget)) return;
+                tooltip.classList.add('hidden');
+                activeEl = null;
+                document.querySelectorAll('[data-saved-title]').forEach(function(node) {
+                    node.setAttribute('title', node.getAttribute('data-saved-title'));
+                    node.removeAttribute('data-saved-title');
+                });
+            });
+
+            window.addEventListener('scroll', function() {
+                if (activeEl) {
+                    tooltip.classList.add('hidden');
+                    activeEl = null;
+                }
+            }, { passive: true });
+        })();
     </script>
 
     {% block extra_js %}{% endblock %}

@@ -60,7 +60,7 @@
                                     <span>{{ hero_post.post_views_count }} قراءة</span>
                                 </div>
                                 <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100 leading-snug mb-3 hover:text-primary transition-colors">
-                                    <a href="{% url 'posts:post_detail' hero_post.pk %}">
+                                    <a href="{% url 'posts:post_detail' hero_post.pk %}" title="{{ hero_post.title }}" data-full-title="{{ hero_post.title }}">
                                         {{ hero_post.title }}
                                     </a>
                                 </h2>
@@ -104,7 +104,7 @@
                         {% endif %}
                         <div class="flex-grow min-w-0">
                             <div class="flex flex-wrap items-center gap-1.5 mb-1.5 text-[11px]">
-                                <a href="?sources={{ item.source.id }}" class="font-bold text-primary bg-blue-50 dark:bg-slate-700 px-2 py-0.5 rounded-md truncate max-w-[120px]">
+                                <a href="?sources={{ item.source.id }}" title="{{ item.source.name }}" class="font-bold text-primary bg-blue-50 dark:bg-slate-700 px-2 py-0.5 rounded-md truncate max-w-[120px]">
                                     {{ item.source.name }}
                                 </a>
                                 {% if item.topic and item.topic.topic_size > 1 %}
@@ -113,8 +113,8 @@
                                 </a>
                                 {% endif %}
                             </div>
-                            <h3 class="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-snug mb-1.5 transition-colors">
-                                <a href="{% url 'posts:post_detail' item.pk %}">{{ item.title }}</a>
+                            <h3 class="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-snug mb-1.5 transition-colors" title="{{ item.title }}" data-full-title="{{ item.title }}">
+                                <a href="{% url 'posts:post_detail' item.pk %}" title="{{ item.title }}">{{ item.title }}</a>
                             </h3>
                             <div class="flex items-center gap-2 text-[11px] text-gray-400">
                                 <span>{{ item.published_at|arabic_timesince }}</span>
@@ -150,13 +150,13 @@
                             </a>
                             {% endif %}
                             <div class="p-4">
-                                <a href="{% url 'posts:post_detail' pick.pk %}" class="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-3 leading-snug transition-colors">
+                                <a href="{% url 'posts:post_detail' pick.pk %}" title="{{ pick.title }}" data-full-title="{{ pick.title }}" class="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-3 leading-snug transition-colors">
                                     {{ pick.title }}
                                 </a>
                             </div>
                         </div>
                         <div class="px-4 pb-3.5 pt-2 border-t border-gray-50 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-gray-500">
-                            <a href="?sources={{ pick.source.id }}" class="font-bold text-primary truncate max-w-[110px]">{{ pick.source.name }}</a>
+                            <a href="?sources={{ pick.source.id }}" title="{{ pick.source.name }}" class="font-bold text-primary truncate max-w-[110px]">{{ pick.source.name }}</a>
                             <div class="flex items-center gap-1.5">
                                 {% if pick.topic and pick.topic.topic_size > 1 %}
                                 <a href="{% url 'posts:topic_detail' pick.topic.id %}" class="font-bold text-indigo-600">({{ pick.topic.topic_size }})</a>
@@ -196,11 +196,11 @@
                             </a>
                             {% endif %}
                             <div class="flex-grow min-w-0">
-                                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-snug mb-1.5 transition-colors">
-                                    <a href="{% url 'posts:post_detail' post.pk %}">{{ post.title }}</a>
+                                <h3 class="text-xs sm:text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-snug mb-1.5 transition-colors" title="{{ post.title }}" data-full-title="{{ post.title }}">
+                                    <a href="{% url 'posts:post_detail' post.pk %}" title="{{ post.title }}">{{ post.title }}</a>
                                 </h3>
                                 <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500 dark:text-slate-400">
-                                    <a href="?sources={{ post.source.id }}" class="font-bold text-primary hover:underline truncate max-w-[115px]">{{ post.source.name }}</a>
+                                    <a href="?sources={{ post.source.id }}" title="{{ post.source.name }}" class="font-bold text-primary hover:underline truncate max-w-[115px]">{{ post.source.name }}</a>
                                     {% if post.topic and post.topic.topic_size > 1 %}
                                     <span>·</span>
                                     <a href="{% url 'posts:topic_detail' post.topic.id %}" class="font-extrabold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-slate-600 px-1.5 py-0.5 rounded">
