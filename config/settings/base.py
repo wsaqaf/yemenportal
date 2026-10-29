@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
     'django_celery_results',
     'django_celery_beat',
     
@@ -126,6 +128,42 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Allauth Social Account Settings (Google & Facebook)
+GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
+GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET', default='')
+FACEBOOK_CLIENT_ID = env('FACEBOOK_CLIENT_ID', default='')
+FACEBOOK_CLIENT_SECRET = env('FACEBOOK_CLIENT_SECRET', default='')
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APPS': [{
+            'client_id': GOOGLE_CLIENT_ID or 'yemenportal-google-oauth-client',
+            'secret': GOOGLE_CLIENT_SECRET or 'yemenportal-google-oauth-secret',
+            'key': '',
+        }],
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+    },
+    'facebook': {
+        'APPS': [{
+            'client_id': FACEBOOK_CLIENT_ID or 'FACEBOOK_CLIENT_ID',
+            'secret': FACEBOOK_CLIENT_SECRET or 'FACEBOOK_CLIENT_SECRET',
+            'key': '',
+        }],
+        'METHOD': 'oauth2',
+        'SCOPE': ['email', 'public_profile'],
+        'FIELDS': [
+            'id', 'first_name', 'last_name', 'name', 'name_format',
+            'picture', 'short_name', 'email',
+        ],
+        'EXCHANGE_TOKEN': True,
+    }
+}
+
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
