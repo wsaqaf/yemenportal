@@ -1,3 +1,4 @@
+from django.utils.html import strip_tags
 import feedparser
 import requests
 import re
@@ -83,27 +84,44 @@ def fetch_source(source: Source):
     source_cat_id = get_source_default_category_id(source.id)
 
     for entry in feed.entries:
-        if not Post.objects.filter(link=entry.link).exists():
-            if hasattr(entry, 'published_parsed') and entry.published_parsed:
+        entry_link = getattr(entry, 'link', None) or (entry.get('link') if hasattr(entry, 'get') else None)
+        if not entry_link and hasattr(entry, 'links') and entry.links:
+            try:
+                entry_link = entry.links[0].get('href')
+            except Exception:
+                entry_link = None
+        if not entry_link:
+            continue
+
+        if Post.objects.filter(link=entry_link).exists():
+            continue
+
+        if hasattr(entry, 'published_parsed') and entry.published_parsed:
+            try:
                 published_at = make_aware(datetime.fromtimestamp(mktime(entry.published_parsed)))
-            else:
+            except Exception:
                 published_at = timezone.now()
+        else:
+            published_at = timezone.now()
 
-            post = Post.objects.create(
-                title=entry.title,
-                description=entry.get('summary', entry.get('description', '')),
-                link=entry.link,
-                published_at=published_at,
-                source=source,
-                image_url=extract_image_url(entry),
-                state=Post.State.APPROVED
-            )
+        # Cap future dates to prevent articles sticking to the top of homepage
+        if published_at > timezone.now():
+            published_at = timezone.now()
 
-            target_cat_id = get_matching_category(entry, default_cat_id=source_cat_id)
-            if target_cat_id:
-                post.categories.add(target_cat_id)
+        post = Post.objects.create(
+            title=getattr(entry, 'title', '') or 'بدون عنوان',
+            description=strip_tags(entry.get('summary', entry.get('description', '')) if hasattr(entry, 'get') else '').strip(),
+            link=entry_link,
+            published_at=published_at,
+            source=source,
+            image_url=extract_image_url(entry),
+            state=Post.State.APPROVED
+        )
 
-            new_posts_count += 1
+        target_cat_id = get_matching_category(entry, default_cat_id=source_cat_id)
+        if target_cat_id:
+            post.categories.add(target_cat_id)
 
+        new_posts_count += 1
     SourceLog.objects.create(source=source, state="Success", posts_count=new_posts_count)
     return new_posts_count

@@ -1,3 +1,4 @@
+from .newsletter import NewsletterUnsubscribeView
 from django.urls import path
 from django.views.generic import RedirectView
 from .views import PostListView, VoteView, PostSearchView, TopicListView, PostDetailView
@@ -11,6 +12,7 @@ urlpatterns = [
     path('topic/<int:topic_id>/', views.TopicListView.as_view(), name='topic_detail'),
     
     # Core Post Detail Route (Matches /posts/<pk>/)
+    path('newsletter/unsubscribe/<str:token>/', NewsletterUnsubscribeView.as_view(), name='newsletter_unsubscribe'),
     path('<int:pk>/', PostDetailView.as_view(), name='post_detail'),
     
     # 301 Permanent Redirects for legacy Rails sub-routes

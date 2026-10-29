@@ -1,69 +1,38 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9fafb; color: #111827; margin: 0; padding: 20px; line-height: 1.6; }
-        .card { max-w: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px border #e5e7eb; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .header { background: #1a56db; color: #ffffff; padding: 24px; text-align: center; }
-        .header h2 { margin: 0; font-size: 20px; font-weight: bold; }
-        .content { padding: 24px; }
-        .field { margin-bottom: 16px; border-bottom: 1px solid #f3f4f6; padding-bottom: 12px; }
-        .field-label { font-weight: bold; color: #4b5563; font-size: 13px; }
-        .field-value { font-size: 15px; color: #111827; margin-top: 4px; }
-        .btn { display: inline-block; background-color: #1a56db; color: #ffffff !important; font-weight: bold; text-decoration: none; padding: 12px 24px; border-radius: 8px; margin-top: 20px; text-align: center; box-shadow: 0 4px 6px rgba(26,86,219,0.2); }
-        .footer { padding: 16px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; background-color: #fafafa; }
-    </style>
+    <meta charset="utf-8">
+    <title>اقتراح مصدر جديد</title>
 </head>
-<body>
-    <div class="card">
-        <div class="header">
-            <h2>اقتراح مصدر إخباري جديد</h2>
-        </div>
-        <div class="content">
-            <p>مرحباً يا مدير يمن بورتال،</p>
-            <p>لقد قام أحد الأعضاء باقتراح مصدر إخباري جديد للمراجعة والتدقيق. إليك التفاصيل:</p>
-            
-            <div class="field">
-                <div class="field-label">اسم المصدر</div>
-                <div class="field-value">{{ source.name }}</div>
-            </div>
-            <div class="field">
-                <div class="field-label">رابط التغذية (RSS)</div>
-                <div class="field-value"><a href="{{ source.link }}" target="_blank">{{ source.link }}</a></div>
-            </div>
-            <div class="field">
-                <div class="field-label">الموقع الرسمي</div>
-                <div class="field-value"><a href="{{ source.website }}" target="_blank">{{ source.website }}</a></div>
-            </div>
-            <div class="field">
-                <div class="field-label">التصنيف</div>
-                <div class="field-value">{{ source.source_type|default:"غير محدد" }}</div>
-            </div>
-            <div class="field">
-                <div class="field-label">تضمين في iframe؟</div>
-                <div class="field-value">{% if source.iframe_flag %}نعم{% else %}لا{% endif %}</div>
-            </div>
-            <div class="field">
-                <div class="field-label">معلومات موجزة</div>
-                <div class="field-value">{{ source.brief_info }}</div>
-            </div>
-            <div class="field">
-                <div class="field-label">المقترح بواسطة</div>
-                <div class="field-value">{{ user.email }}</div>
-            </div>
-            <div class="field">
-                <div class="field-label">ملاحظات المشرف المقترح</div>
-                <div class="field-value">{{ source.note }}</div>
-            </div>
-
-            <div style="text-align: center;">
-                <a href="{{ moderation_url }}" class="btn">الانتقال إلى لوحة تدقيق المصدر</a>
-            </div>
-        </div>
-        <div class="footer">
-            هذا البريد مرسل تلقائياً من نظام يمن بورتال.
-        </div>
-    </div>
+<body style="margin: 0; padding: 24px; background-color: #f8fafc; font-family: Tahoma, 'Segoe UI', Arial, sans-serif; direction: rtl; text-align: right; color: #1e293b;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; margin: 0 auto; direction: rtl; text-align: right;">
+        <tr>
+            <td style="background-color: #1a56db; padding: 24px; text-align: center;">
+                <h1 style="margin: 0; color: #ffffff; font-size: 20px; font-weight: bold;">اقتراح مصدر جديد للمراجعة</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 32px 28px; line-height: 1.8; font-size: 15px; direction: rtl; text-align: right;">
+                <p style="margin: 0 0 16px 0;">قام أحد الأعضاء باقتراح مصدر جديد للمراجعة والتدقيق:</p>
+                <table width="100%" style="background-color: #f1f5f9; border-radius: 12px; padding: 16px; margin: 16px 0; border: 1px solid #cbd5e1; direction: rtl; text-align: right;">
+                    <tr><td style="padding: 6px 0;"><strong>اسم المصدر:</strong> {{ source.name }}</td></tr>
+                    <tr><td style="padding: 6px 0;"><strong>رابط الـ RSS:</strong> <a href="{{ source.link }}" style="direction: ltr; unicode-bidi: embed; color: #1a56db;">{{ source.link }}</a></td></tr>
+                    <tr><td style="padding: 6px 0;"><strong>الموقع الرسمي:</strong> <a href="{{ source.website }}" style="direction: ltr; unicode-bidi: embed; color: #1a56db;">{{ source.website }}</a></td></tr>
+                    <tr><td style="padding: 6px 0;"><strong>التصنيف:</strong> {{ source.source_type|default:"أخبار عامة" }}</td></tr>
+                    <tr><td style="padding: 6px 0;"><strong>حالة الفحص الأولي:</strong> {% if feed_valid %}<span style="color: #16a34a; font-weight: bold;">سليم (Valid)</span>{% else %}<span style="color: #dc2626; font-weight: bold;">غير مستقر ({{ verification_error }})</span>{% endif %}</td></tr>
+                </table>
+                <div style="text-align: center; margin: 28px 0 16px 0;">
+                    <a href="{{ moderation_url }}" style="display: inline-block; background-color: #1a56db; color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: bold; font-size: 15px;">
+                        الانتقال إلى لوحة تدقيق المصدر
+                    </a>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="background-color: #f8fafc; padding: 16px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; direction: rtl;">
+                لوحة إشراف يمن بورتال نت.
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

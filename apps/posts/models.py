@@ -104,3 +104,32 @@ class PostView(models.Model):
     ip_hash = models.CharField(max_length=255, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class NewsletterOptOut(models.Model):
+    email = models.EmailField(unique=True, db_index=True, verbose_name='البريد الملغى')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'newsletter_optout'
+        verbose_name = 'إلغاء اشتراك نشرة'
+
+
+class NewsletterAnnouncement(models.Model):
+    STATUS_CHOICES = [('draft', 'مسودة'), ('sent', 'تم الإرسال')]
+    subject = models.CharField(max_length=255, verbose_name='عنوان الرسالة')
+    body = models.TextField(verbose_name='نص الرسالة / الإعلان')
+    is_html = models.BooleanField(default=False, verbose_name='تفعيل كود HTML المباشر')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='الحالة')
+    recipients_count = models.PositiveIntegerField(default=0, verbose_name='عدد المستلمين')
+    sent_at = models.DateTimeField(null=True, blank=True, verbose_name='تاريخ الإرسال')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'newsletter_announcements'
+        verbose_name = 'إعلان بريدي مخصص'
+        verbose_name_plural = 'إعلانات بريدية مخصصة'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.subject

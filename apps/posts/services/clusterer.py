@@ -1,53 +1,72 @@
+import re
 import logging
-from django.utils import timezone
 from datetime import timedelta
+from django.utils import timezone
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from apps.posts.models import Post, Topic
 
 logger = logging.getLogger(__name__)
 
+ARABIC_STOPWORDS = {
+    'في', 'من', 'على', 'إلى', 'عن', 'مع', 'هذا', 'هذه', 'تم', 'كان', 'كانت',
+    'أن', 'إن', 'قد', 'لا', 'ما', 'هو', 'هي', 'التي', 'الذي', 'الذين', 'بعد',
+    'قبل', 'حيث', 'كل', 'ذلك', 'بين', 'أو', 'ثم', 'حتى', 'إذا', 'خلال'
+}
+
+def normalize_arabic(text: str) -> str:
+    """Standardizes Arabic characters to increase clustering recall."""
+    if not text:
+        return ""
+    text = re.sub(r'[إأآا]', 'ا', text)
+    text = re.sub(r'ة\b', 'ه', text)
+    text = re.sub(r'ى\b', 'ي', text)
+    text = re.sub(r'[^\w\s]', ' ', text)
+    return text
+
 class PostClusterer:
-    RELATED_THRESHOLD = 0.4
+    RELATED_THRESHOLD = 0.28       # Lowered from 0.40 to capture varying coverage styles
     DUPLICATE_THRESHOLD = 0.95
-    LOOKBACK_HOURS = 24
+    LOOKBACK_HOURS = 36            # Time window for matching related news
 
     def clusterize_recent_posts(self):
-        """
-        Batch-clusters unassigned recent posts against active candidate posts.
-        """
         now = timezone.now()
         since = now - timedelta(hours=self.LOOKBACK_HOURS)
 
-        # 1. Fetch unclustered posts from the last 3 hours
+        # 1. Fetch unassigned posts from the last 6 hours
         unclustered = list(
             Post.objects.filter(
                 topic__isnull=True,
-                created_at__gte=now - timedelta(hours=3)
+                created_at__gte=now - timedelta(hours=6)
             )
             .only('id', 'title', 'source_id', 'created_at')
             .order_by('created_at')
         )
 
         if not unclustered:
-            logger.info("No unclustered posts found.")
+            logger.info("No unclustered posts to process.")
             return
 
-        # 2. Pre-fetch candidates from the last 24h once (avoiding description TOAST)
+        # 2. Pre-fetch candidates from the lookback window
         candidates = list(
             Post.objects.filter(created_at__gte=since)
             .only('id', 'title', 'source_id', 'topic_id', 'created_at')
         )
 
-        if not candidates:
+        if len(candidates) < 2:
             return
 
         candidate_map = {c.id: c for c in candidates}
         candidate_ids = [c.id for c in candidates]
-        candidate_texts = [c.title for c in candidates]
+        candidate_texts = [normalize_arabic(c.title) for c in candidates]
 
-        # 3. Vectorize all candidate titles in a single matrix
-        vectorizer = TfidfVectorizer(token_pattern=r'(?u)\b\w+\b')
+        vectorizer = TfidfVectorizer(
+            token_pattern=r'(?u)\b\w+\b',
+            stop_words=list(ARABIC_STOPWORDS),
+            ngram_range=(1, 2),
+            min_df=1
+        )
+        
         try:
             candidate_tfidf = vectorizer.fit_transform(candidate_texts)
         except ValueError:
@@ -55,7 +74,8 @@ class PostClusterer:
 
         for post in unclustered:
             try:
-                post_vec = vectorizer.transform([post.title])
+                norm_title = normalize_arabic(post.title)
+                post_vec = vectorizer.transform([norm_title])
                 sims = cosine_similarity(post_vec, candidate_tfidf).flatten()
 
                 # Zero out comparisons against the post itself or the same source
@@ -70,20 +90,18 @@ class PostClusterer:
                 if self.RELATED_THRESHOLD <= max_score < self.DUPLICATE_THRESHOLD:
                     matched_post = candidate_map[candidate_ids[max_idx]]
                     topic = matched_post.topic or getattr(matched_post, 'main_topic_of', None)
+
                     if topic:
                         post.topic = topic
                         post.save(update_fields=['topic'])
-                        Topic.objects.filter(id=topic.id).update(topic_size=topic.posts.count())
+                        actual_count = Post.objects.filter(topic=topic).count()
+                        Topic.objects.filter(id=topic.id).update(topic_size=actual_count)
                     else:
                         new_topic = Topic.objects.create(main_post=matched_post, topic_size=2)
                         matched_post.topic = new_topic
                         matched_post.save(update_fields=['topic'])
                         post.topic = new_topic
                         post.save(update_fields=['topic'])
-                elif max_score < self.RELATED_THRESHOLD:
-                    # Isolated story: create new topic seed
-                    new_topic = Topic.objects.create(main_post=post, topic_size=1)
-                    post.topic = new_topic
-                    post.save(update_fields=['topic'])
+                # If score < RELATED_THRESHOLD, leave post.topic as None (isolated post)
             except Exception as e:
                 logger.error(f"Error clustering post {post.id}: {e}")

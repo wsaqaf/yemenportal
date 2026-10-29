@@ -1,40 +1,127 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}سؤال وجواب - يمن بورتال{% endblock %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto p-10 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 mb-12">
+<div class="max-w-4xl mx-auto px-4 py-12" dir="rtl">
+    <!-- العنوان الرئيسي -->
     <div class="text-center mb-12">
-        <h1 class="text-4xl font-black text-gray-900 mb-4">سؤال وجواب</h1>
-        <div class="h-1.5 w-24 bg-primary mx-auto rounded-full"></div>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">سؤال وجواب</h1>
+        <div class="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
     </div>
 
-    <div class="space-y-12">
-        <section class="p-8 bg-blue-50 rounded-3xl">
-            <h2 class="text-xl font-bold text-primary mb-4">سؤال 1 / كيف أرتب طريقة عرض الأخبار؟</h2>
-            <p class="text-gray-700 leading-relaxed">
-                لديك ميزات عديدة في طريقة عرض الأخبار باستخدام إعدادات الفلترة. يمكنك اختيار "الأحدث"، "الأكثر قراءة"، "الأفضل تقييماً"، أو "الأعلى تصويتاً". كما يمكنك الفلترة بناءً على الفترة الزمنية أو مصادر محددة.
+    <div class="space-y-8">
+        <!-- سؤال 1 -->
+        <div class="p-8 rounded-3xl bg-blue-50/70 border border-blue-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-primary mb-3">سؤال 1 / ما هي فلسفة ورؤية محرك «يمن بورتال»؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يمن بورتال هو محرك بحث ورصد إخباري يمني مستقل ومحايد تقنياً. تتمثل فلسفتنا في توفير نافذة جامعة وشفافة تعكس كامل المشهد الإعلامي اليمني بمختلف أطيافه وتوجهاته الفكرية والسياسية دون إقصاء أو وصاية، لتمكين القارئ والباحث من الاطلاع على الروايات المتعددة للأحداث وبناء رأيه الخاص بموضوعية واستقلالية.
             </p>
-        </section>
-
-        <section class="p-8 bg-purple-50 rounded-3xl">
-            <h2 class="text-xl font-bold text-secondary mb-4">سؤال 3 / ما هي مزايا عضوية الموقع؟</h2>
-            <p class="text-gray-700 leading-relaxed">
-                يمكن للأعضاء التصويت على الأخبار، واقتراح مصادر جديدة، والترقية لمنصب مشرف للمساهمة في مراجعة الأخبار مهنياً.
-            </p>
-        </section>
-
-        <section class="p-8 bg-green-50 rounded-3xl">
-            <h2 class="text-xl font-bold text-green-700 mb-4">سؤال 5 / كيف لي أن أضيف موقعاً جديداً لمصادركم؟</h2>
-            <p class="text-gray-700 leading-relaxed">
-                بعد تسجيل الدخول، انتقل إلى صفحة "المصادر" وانقر على "إضافة مصدر". قم بتعبئة البيانات وسيقوم فريقنا بمراجعتها وإضافتها.
-            </p>
-        </section>
-
-        <div class="text-center pt-8">
-            <p class="text-gray-600 mb-4">لديك سؤال آخر؟</p>
-            <a href="{% url 'contact_us' %}" class="inline-block py-3 px-8 bg-primary text-white font-bold rounded-xl shadow-lg hover:bg-blue-700 transition-colors">اتصل بنا الآن</a>
         </div>
+
+        <!-- سؤال 2 -->
+        <div class="p-8 rounded-3xl bg-purple-50/70 border border-purple-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-purple-900 mb-3">سؤال 2 / هل ينحاز الموقع لطرف أو توجه سياسي أو أيديولوجي معين؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                إطلاقاً. لا يتبنى «يمن بورتال» أي موقف سياسي أو حزبي أو أيديولوجي، ولا نتدخل إطلاقاً في صياغة أو تعديل المحتوى الوارد من المصادر. الخوارزميات تتعامل مع جميع المواقع المعتمدة بمعايير برمجية متطابقة وتدفق زمني محايد بعيداً عن أي حسابات سياسية.
+            </p>
+        </div>
+
+        <!-- سؤال 3 -->
+        <div class="p-8 rounded-3xl bg-emerald-50/70 border border-emerald-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-emerald-900 mb-3">سؤال 3 / ما هو موقف المنصة من خطاب الكراهية والتضليل الإخباري؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                ننتهج سياسة <strong>عدم التسامح المطلق</strong> مع خطاب الكراهية والتحريض على العنف والتمييز المناطقي أو الطائفي، وكذلك الفبركة والتضليل المتعمد للرأي العام. التعددية الإعلامية التي ندعمها تنتهي تماماً عند حدود التحريض على إيذاء الآخرين واختلاق الأخبار الكاذبة.
+            </p>
+        </div>
+
+        <!-- سؤال 4 -->
+        <div class="p-8 rounded-3xl bg-blue-50/70 border border-blue-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-primary mb-3">سؤال 4 / كيف أبلغ عن خبر مضلل أو يحث على الكراهية؟ وما هي الإجراءات المتخذة؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base mb-2">
+                يمكن لزوار وأعضاء المنصة النقر على زر <strong>«إبلاغ»</strong> المتوفر بجانب أي مادة إخبارية لتحديد نوع المخالفة (تضليل، كراهية، انتهاك حقوق الملكية، أو تكرار).
+            </p>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يقوم فريق المراجعة بالتحقق من البلاغ؛ وعند ثبوت المخالفة يتم إيقاف عرض الخبر فوراً. وفي حال تكرار المخالفات المنهجية من قبل موقع معين، يتم توجيه تنبيه لإدارته، وقد يُتخذ قرار بتعليق أرشفة المصدر أو إزالته نهائياً من قاعدة بيانات المحرك.
+            </p>
+        </div>
+
+        <!-- سؤال 5 -->
+        <div class="p-8 rounded-3xl bg-purple-50/70 border border-purple-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-purple-900 mb-3">سؤال 5 / كيف أرتب وأخصص طريقة عرض وتدفق الأخبار؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                توفر المنصة أدوات فرز مرنة عبر خيارات التبويب:
+                <strong class="text-gray-900">«الأحدث»</strong> لمتابعة التحديثات اللحظية، 
+                <strong class="text-gray-900">«الأكثر قراءة»</strong> لرصد اهتمامات القراء، 
+                و<strong class="text-gray-900">«الأعلى تصويتاً»</strong> للأخبار التي نالت ثقة المجتمع. 
+                كما يمكنك الفلترة بحسب الأقسام الموضوعية (اقتصاد، تقارير، رياضة) أو حصر المتابعة في مصادر وصحف بعينها.
+            </p>
+        </div>
+
+        <!-- سؤال 6 -->
+        <div class="p-8 rounded-3xl bg-emerald-50/70 border border-emerald-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-emerald-900 mb-3">سؤال 6 / ما هي مزايا تسجيل العضوية في الموقع؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                تتيح لك العضوية المجانية حفظ المقالات لقراءتها لاحقاً، والتصويت على مصداقية وجودة التغطيات الإخبارية، واقتراح مواقع وصحف جديدة للمحرك، وبناء رصيد تفاعلي يؤهلك للترقية إلى رتبة <strong>«مشرف / مراجع مجتمعي»</strong> للمساهمة في تنقية وتدقيق الأخبار مهنياً.
+            </p>
+        </div>
+
+        <!-- سؤال 7 -->
+        <div class="p-8 rounded-3xl bg-blue-50/70 border border-blue-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-primary mb-3">سؤال 7 / كيف يعمل نظام التصويت على الأخبار؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                نظام التصويت أداة تشاركية تمنح القراء صوتاً في تقييم دقة المواد المنشورة؛ حيث يساهم تصويت الأعضاء الموثوقين في إبراز الأخبار الهامة والرصينة في قائمة «الأعلى تصويتاً»، بينما تساعد التقييمات السلبية المشرفين في سرعة الالتفات للمواد المشبوهة أو المضللة.
+            </p>
+        </div>
+
+        <!-- سؤال 8 -->
+        <div class="p-8 rounded-3xl bg-purple-50/70 border border-purple-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-purple-900 mb-3">سؤال 8 / كيف لي أن أقترح إضافة موقع إخباري جديد إلى المصادر؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                بعد تسجيل الدخول، انقر على زر <strong>«+ اقتراح مصدر»</strong> في أعلى الصفحة أو توجه إلى قائمة «المصادر». قم بتعبئة بيانات الموقع ورابط الـ RSS الخاص به، وسيقوم النظام البرمجي بالتحقق من صلاحية التغذية آلياً ثم إحالتها لإدارة المنصة للمراجعة والتفعيل.
+            </p>
+        </div>
+
+        <!-- سؤال 9 -->
+        <div class="p-8 rounded-3xl bg-emerald-50/70 border border-emerald-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-emerald-900 mb-3">سؤال 9 / ما هي المعايير التقنية المطلوبة لقبول موقع إخباري؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يشترط أن يكون الموقع منصة إخبارية نشطة، ويمتلك نطاقاً وخادماً مستقراً، ويوفر رابط تغذية إخبارية برمجية قياسية (RSS/Atom Feed) تدعم تصدير العناوين والمقتطفات باللغة العربية بشكل سليم وخالٍ من الأخطاء البرمجية.
+            </p>
+        </div>
+
+        <!-- سؤال 10 -->
+        <div class="p-8 rounded-3xl bg-blue-50/70 border border-blue-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-primary mb-3">سؤال 10 / لماذا قد تتوقف تغذية مصدر معتمد أو يُرفض اقتراحه؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يرجع ذلك غالباً إلى أسباب تقنية؛ مثل تعطل رابط الـ RSS في موقع المصدر، أو انتهاء صلاحية نطاق الموقع (Domain Expiration)، أو تفعيل جدران حماية تمنع زواحف الأرشفة من قراءة التغذية، أو نتيجة مخالفة الموقع لمعايير النشر ومكافحة التضليل والكراهية.
+            </p>
+        </div>
+
+        <!-- سؤال 11 -->
+        <div class="p-8 rounded-3xl bg-purple-50/70 border border-purple-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-purple-900 mb-3">سؤال 11 / كيف تحمي المنصة حقوق الملكية الفكرية للمواقع والناشرين؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يحترم «يمن بورتال» الملكية الفكرية للناشرين كاملة؛ فالمنصة لا تنسخ المقالات الكاملة، بل تقتصر على فهرسة العنوان، المقتطف الموجز، والصورة التعبيرية المتاحة عبر خلاصات الـ RSS، مع إدراج رابط مباشر وواضح ينقل الزائر إلى صفحة التقرير في الموقع الأصلي، دعماً لزيارات وحقوق الناشر.
+            </p>
+        </div>
+
+        <!-- سؤال 12 -->
+        <div class="p-8 rounded-3xl bg-emerald-50/70 border border-emerald-100 shadow-sm transition hover:shadow-md">
+            <h2 class="text-xl font-bold text-emerald-900 mb-3">سؤال 12 / كيف يمكنني البحث في أرشيف الأخبار القديمة؟</h2>
+            <p class="text-gray-700 leading-relaxed text-base">
+                يحتفظ يمن بورتال بأرشيف توثيقي ضخم يضم ملايين الأخبار التاريخية. يمكنك الاستفادة من شريط البحث المتقدم لإجراء استعلامات دقيقة بالكلمات المفتاحية، وتحديد النطاق الزمني المستهدف، وتصفية النتائج بحسب المصدر أو الكاتب.
+            </p>
+        </div>
+    </div>
+
+    <!-- صندوق المساعدة والتواصل -->
+    <div class="text-center mt-16 pt-8 border-t border-gray-200">
+        <p class="text-gray-600 mb-4 font-medium text-lg">لديك سؤال آخر أو استفسار لم تجد إجابته هنا؟</p>
+        <a href="{% url 'contact_us' %}" class="inline-flex items-center justify-center px-8 py-3.5 bg-primary text-white font-bold rounded-xl shadow-md hover:bg-primary/90 transition">
+            اتصل بنا الآن
+        </a>
     </div>
 </div>
 {% endblock %}

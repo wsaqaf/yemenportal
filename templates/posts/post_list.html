@@ -84,27 +84,31 @@
 
             <!-- Pagination -->
             {% if is_paginated %}
-            <div class="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200" dir="rtl">
                 {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
                     السابق
                 </a>
                 {% endif %}
                 
-                <div class="flex items-center gap-1">
-                    {% for page_num in page_obj.paginator.get_elided_page_range %}
-                        {% if page_num == paginator.ELLIPSIS %}
+                <div class="flex items-center gap-1.5">
+                    {% for page_num in elided_page_range %}
+                        {% if page_num == '…' or page_num == paginator.ELLIPSIS %}
                             <span class="px-2 text-gray-400 font-bold select-none">…</span>
                         {% elif page_num == page_obj.number %}
-                            <span class="w-10 h-10 flex items-center justify-center rounded-xl bg-primary text-white font-bold text-sm shadow-sm">{{ page_num }}</span>
+                            <span class="min-w-[2.5rem] h-10 px-3.5 flex items-center justify-center rounded-xl bg-primary text-white font-bold text-sm shadow-sm">
+                                {% if page_num == page_obj.paginator.num_pages %}الأخيرة{% else %}{{ page_num }}{% endif %}
+                            </span>
                         {% else %}
-                            <a href="?page={{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-700 text-sm hover:bg-gray-50 transition-colors">{{ page_num }}</a>
+                            <a href="?page={{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="min-w-[2.5rem] h-10 px-3.5 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm">
+                                {% if page_num == page_obj.paginator.num_pages %}الأخيرة{% else %}{{ page_num }}{% endif %}
+                            </a>
                         {% endif %}
                     {% endfor %}
                 </div>
 
                 {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
                     التالي
                 </a>
                 {% endif %}

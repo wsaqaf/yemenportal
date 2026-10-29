@@ -2,7 +2,25 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['194.163.154.154', 'localhost'])
+
+ALLOWED_HOSTS = ['yemenportal.net', 'www.yemenportal.net', '194.163.154.154', 'localhost', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://yemenportal.net',
+    'https://yemenportal.net',
+    'http://www.yemenportal.net',
+    'https://www.yemenportal.net',
+    'http://194.163.154.154',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://yemenportal.net',
+    'https://yemenportal.net',
+    'http://www.yemenportal.net',
+    'https://www.yemenportal.net',
+    'http://194.163.154.154',
+]
+
 
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
