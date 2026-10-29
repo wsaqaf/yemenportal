@@ -475,7 +475,7 @@ THEMATIC_SECTIONS_SPEC = [
         "icon": "📈",
         "accent": "bg-amber-500",
         "category_names": ["اقتصاد"],
-        "keywords": ["صرف", "الريال", "الدولار", "البنك المركزي", "الذهب", "النفط", "الوقود", "التجارة", "الجمارك", "الضرائب", "رواتب", "موازنة", "اقتصاد", "العملات"],
+        "keywords": ["صرف", "الريال", "الدولار", "البنك المركزي", "أسعار الذهب", "سعر الذهب", "جرام الذهب", "النفط", "الوقود", "التجارة", "الجمارك", "الضرائب", "رواتب", "موازنة", "اقتصاد", "العملات"],
     },
     {
         "slug": "reports",
@@ -595,6 +595,10 @@ def get_homepage_thematic_sections(source_weights: dict[int, dict], exclude_post
             post_cat_names = {c.name for c in p.categories.all()}
             title_text = p.title or ""
 
+            # Prevent sports articles from leaking into non-sports sections
+            if spec["slug"] != "sports" and "رياضة" in post_cat_names:
+                continue
+
             # For topical sections like Sports, Tech, Culture, Opinion, require category match or strong keyword
             if spec["slug"] in ("sports", "culture", "technology", "opinion"):
                 if not (post_cat_names.intersection(cat_set) or any(kw in title_text for kw in kw_list)):
@@ -711,9 +715,10 @@ def get_homepage_portal_widgets() -> dict:
     )
 
     # 4. 11 Main Thematic Sections for Main Body (sorted by Cluster Size -> Reads -> Source Reputation)
+    section_excludes = used_top_ids if len(ranked_yemen) > 10 else ({hero_post.id} if hero_post else set())
     thematic_sections = get_homepage_thematic_sections(
         source_weights=source_weights,
-        exclude_post_ids={hero_post.id} if hero_post else set(),
+        exclude_post_ids=section_excludes,
     )
 
     # Keep opinion_posts for subpages that reference it
