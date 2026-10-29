@@ -6,6 +6,7 @@ django-environ
 
 # Authentication & Social
 django-allauth
+pyjwt[crypto]
 
 # Frontend & Interactivity
 django-htmx
