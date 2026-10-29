@@ -207,8 +207,10 @@ class ArchiveListView(PostListView):
             except ValueError:
                 pass
 
-        if year and year.isdigit() and int(year) > 1990:
+        if year and year.isdigit() and int(year) >= 2013:
             queryset = queryset.filter(published_at__year=int(year))
+        else:
+            queryset = queryset.filter(published_at__year__gte=2013)
         if month and month.isdigit() and 1 <= int(month) <= 12:
             queryset = queryset.filter(published_at__month=int(month))
         if day and day.isdigit() and 1 <= int(day) <= 31:
@@ -220,7 +222,7 @@ class ArchiveListView(PostListView):
         context = super().get_context_data(**kwargs)
         from django.utils import timezone
         current_year = timezone.now().year
-        context['archive_years'] = list(range(current_year, 2006, -1))
+        context['archive_years'] = list(range(current_year, 2012, -1))
         context['archive_months'] = [
             (1, 'يناير'), (2, 'فبراير'), (3, 'مارس'), (4, 'أبريل'),
             (5, 'مايو'), (6, 'يونيو'), (7, 'يوليو'), (8, 'أغسطس'),

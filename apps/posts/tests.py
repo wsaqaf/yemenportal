@@ -115,9 +115,10 @@ class PortalServicesTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.context["posts"]), 3)
+        self.assertEqual(min(response.context["archive_years"]), 2013)
 
         response_empty = self.client.get(
-            f"{reverse('archive')}?year=2010&month=1",
+            f"{reverse('archive')}?year=2013&month=1",
             HTTP_HOST="localhost",
         )
         self.assertEqual(response_empty.status_code, 200)
