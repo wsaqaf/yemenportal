@@ -145,14 +145,22 @@ class MostReadListView(ListView):
     model = Post
     template_name = 'posts/most_read.html'
     context_object_name = 'posts'
-    paginate_by = 30
 
     def get_queryset(self):
         from django.utils import timezone
         from datetime import timedelta
+        from django.core.cache import cache
+
+        window = self.request.GET.get('window', '24h')
+        if window not in ('10h', '24h', 'week', 'all'):
+            window = '24h'
+
+        cache_key = f"portal_most_read_{window}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
 
         now = timezone.now()
-        window = self.request.GET.get('window', '24h')
         base_qs = (
             Post.objects.filter(state=Post.State.APPROVED)
             .select_related('source', 'topic')
@@ -164,14 +172,18 @@ class MostReadListView(ListView):
         elif window == 'week':
             qs = base_qs.filter(published_at__gte=now - timedelta(days=7))
         elif window == 'all':
-            qs = base_qs
+            qs = base_qs.filter(published_at__gte=now - timedelta(days=30))
         else:
             qs = base_qs.filter(published_at__gte=now - timedelta(hours=24))
 
-        qs = qs.order_by('-post_views_count', '-voting_result', '-published_at')
-        if qs.count() < 5 and window in ('10h', '24h'):
-            qs = base_qs.order_by('-post_views_count', '-voting_result', '-published_at')
-        return qs[:30]
+        posts = list(qs.order_by('-post_views_count', '-voting_result', '-published_at')[:30])
+        if len(posts) < 5 and window in ('10h', '24h'):
+            posts = list(
+                base_qs.filter(published_at__gte=now - timedelta(days=7))
+                .order_by('-post_views_count', '-voting_result', '-published_at')[:30]
+            )
+        cache.set(cache_key, posts, timeout=300)
+        return posts
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -236,40 +248,25 @@ class ArchiveListView(PostListView):
         return context
 
 
-class CurrencyServiceView(ListView):
-    model = Post
+class CurrencyServiceView(View):
     template_name = 'posts/currency_service.html'
-    context_object_name = 'economic_posts'
-    paginate_by = 15
 
-    def get_queryset(self):
-        return (
-            Post.objects.filter(state=Post.State.APPROVED)
-            .filter(
-                models.Q(categories__name__in=['اقتصاد', 'إقتصاد'])
-                | models.Q(title__icontains='صرف')
-                | models.Q(title__icontains='الريال')
-                | models.Q(title__icontains='الدولار')
-                | models.Q(title__icontains='البنك')
-            )
-            .select_related('source', 'topic')
-            .prefetch_related('categories')
-            .distinct()
-            .order_by('-published_at')
-        )
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
         from apps.posts.services.portal_services import (
             get_exchange_rates,
             get_yemen_weather,
             get_homepage_portal_widgets,
+            get_economic_posts,
         )
-        context['exchange_rates'] = get_exchange_rates()
-        context['yemen_weather'] = get_yemen_weather()
         widgets = get_homepage_portal_widgets()
-        context['top_sources'] = widgets.get('top_sources', [])
-        return context
+        context = {
+            'economic_posts': get_economic_posts(limit=15),
+            'exchange_rates': get_exchange_rates(),
+            'yemen_weather': get_yemen_weather(),
+            'opinion_posts': widgets.get('opinion_posts', []),
+            'top_sources': widgets.get('top_sources', []),
+        }
+        return render(request, self.template_name, context)
 
 
 class PostSearchView(PostListView):

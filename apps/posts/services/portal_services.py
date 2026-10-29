@@ -224,34 +224,56 @@ def get_homepage_portal_widgets() -> dict:
         )
         readers_picks.extend(fallback_picks)
 
-    # 3. Opinion & Columnists (مقالات وآراء)
-    opinion_categories = Category.objects.filter(
-        name__in=["آراء", "كتاب من اليمن", "مقالات", "تقارير", "بانوراما"]
+    # 3. Opinion & Columnists (مقالات وآراء) - bounded to recent 30 days for index speed
+    opinion_cat_ids = list(
+        Category.objects.filter(
+            name__in=["آراء", "كتاب من اليمن", "مقالات", "تقارير", "بانوراما"]
+        ).values_list("id", flat=True)
     )
     opinion_posts = list(
-        base_qs.filter(categories__in=opinion_categories)
-        .distinct()
+        base_qs.filter(
+            published_at__gte=now - timedelta(days=30),
+            categories__id__in=opinion_cat_ids,
+        )
         .order_by("-published_at")[:6]
     )
+    # Deduplicate in Python to avoid expensive SQL DISTINCT on M2M
+    seen_op_ids = set()
+    unique_opinion_posts = []
+    for p in opinion_posts:
+        if p.id not in seen_op_ids:
+            seen_op_ids.add(p.id)
+            unique_opinion_posts.append(p)
+    opinion_posts = unique_opinion_posts
+
     if len(opinion_posts) < 4:
         existing_op_ids = [p.id for p in opinion_posts] + exclude_ids
         opinion_posts.extend(
-            list(base_qs.exclude(id__in=existing_op_ids).order_by("-published_at")[: 6 - len(opinion_posts)])
+            list(
+                base_qs.filter(published_at__gte=now - timedelta(days=7))
+                .exclude(id__in=existing_op_ids)
+                .order_by("-published_at")[: 6 - len(opinion_posts)]
+            )
         )
 
-    # 4. Top Sources Directory (دليل المواقع / المصادر النشطة)
-    top_sources = list(
-        Source.objects.filter(
-            approve_state=Source.ApproveState.APPROVED,
-            state=Source.State.VALID,
+    # 4. Top Sources Directory (دليل المواقع / المصادر النشطة) - cached 1h & bounded to 14 days
+    top_sources = cache.get("portal_top_sources_v1")
+    if not top_sources:
+        recent_cutoff = now - timedelta(days=14)
+        top_sources = list(
+            Source.objects.filter(
+                approve_state=Source.ApproveState.APPROVED,
+                state=Source.State.VALID,
+                posts__published_at__gte=recent_cutoff,
+                posts__state=Post.State.APPROVED,
+            )
+            .annotate(
+                total_reads=Sum("posts__post_views_count"),
+                posts_total=Count("posts"),
+            )
+            .order_by("-total_reads", "-posts_total")[:12]
         )
-        .annotate(
-            total_reads=Sum("posts__post_views_count"),
-            posts_total=Count("posts", filter=Q(posts__state=Post.State.APPROVED)),
-        )
-        .filter(posts_total__gt=0)
-        .order_by("-total_reads", "-posts_total")[:12]
-    )
+        cache.set("portal_top_sources_v1", top_sources, timeout=3600)
 
     data = {
         "hero_post": hero_post,
@@ -259,5 +281,47 @@ def get_homepage_portal_widgets() -> dict:
         "opinion_posts": opinion_posts,
         "top_sources": top_sources,
     }
-    cache.set("portal_homepage_widgets_v1", data, timeout=300)
+    cache.set("portal_homepage_widgets_v1", data, timeout=600)
     return data
+
+
+def get_economic_posts(limit: int = 15) -> list[Post]:
+    """
+    Fast, Redis-cached query for recent economic and exchange-rate news.
+    Avoids full-table M2M joins and COUNT(*) queries.
+    """
+    cache_key = f"portal_economic_posts_{limit}"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    now = timezone.now()
+    recent_qs = (
+        Post.objects.filter(
+            state=Post.State.APPROVED,
+            published_at__gte=now - timedelta(days=30),
+        )
+        .filter(
+            Q(title__icontains="صرف")
+            | Q(title__icontains="الريال")
+            | Q(title__icontains="الدولار")
+            | Q(title__icontains="البنك")
+            | Q(title__icontains="اقتصاد")
+            | Q(title__icontains="العملات")
+            | Q(title__icontains="الذهب")
+        )
+        .select_related("source", "topic")
+        .prefetch_related("categories")
+        .order_by("-published_at")[:limit]
+    )
+    posts = list(recent_qs)
+    if not posts:
+        posts = list(
+            Post.objects.filter(state=Post.State.APPROVED)
+            .select_related("source", "topic")
+            .prefetch_related("categories")
+            .order_by("-published_at")[:limit]
+        )
+    cache.set(cache_key, posts, timeout=600)
+    return posts
+
