@@ -1,6 +1,22 @@
 from django import forms
 from .models import Source
 
+INPUT_CLASSES = (
+    'w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 '
+    'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 placeholder-gray-400 '
+    'shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all'
+)
+
+SELECT_CLASSES = (
+    'w-full px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-600 '
+    'bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100 shadow-sm '
+    'focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all cursor-pointer'
+)
+
+CHECKBOX_CLASSES = (
+    'w-4 h-4 rounded border border-gray-300 dark:border-slate-600 text-primary focus:ring-primary cursor-pointer'
+)
+
 class SourceForm(forms.ModelForm):
     class Meta:
         model = Source
@@ -16,15 +32,15 @@ class SourceForm(forms.ModelForm):
             'note'
         ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'link': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'website': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'brief_info': forms.Textarea(attrs={'rows': 3, 'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'state': forms.Select(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'approve_state': forms.Select(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'iframe_flag': forms.CheckboxInput(attrs={'class': 'rounded text-primary focus:ring-primary'}),
-            'logo_url': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'note': forms.Textarea(attrs={'rows': 2, 'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
+            'name': forms.TextInput(attrs={'class': INPUT_CLASSES}),
+            'link': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'website': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'brief_info': forms.Textarea(attrs={'rows': 3, 'class': INPUT_CLASSES}),
+            'state': forms.Select(attrs={'class': SELECT_CLASSES}),
+            'approve_state': forms.Select(attrs={'class': SELECT_CLASSES}),
+            'iframe_flag': forms.CheckboxInput(attrs={'class': CHECKBOX_CLASSES}),
+            'logo_url': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'note': forms.Textarea(attrs={'rows': 2, 'class': INPUT_CLASSES}),
         }
         labels = {
             'name': 'اسم المصدر',
@@ -51,7 +67,7 @@ class SourceSuggestionForm(forms.ModelForm):
     source_type = forms.ChoiceField(
         choices=SOURCE_TYPE_CHOICES,
         label='التصنيف',
-        widget=forms.Select(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'})
+        widget=forms.Select(attrs={'class': SELECT_CLASSES})
     )
 
     class Meta:
@@ -69,15 +85,15 @@ class SourceSuggestionForm(forms.ModelForm):
             'note'
         ]
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'link': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'iframe_flag': forms.CheckboxInput(attrs={'class': 'rounded text-primary focus:ring-primary'}),
-            'website': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'logo_url': forms.URLInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'brief_info': forms.Textarea(attrs={'rows': 3, 'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'admin_email': forms.EmailInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'admin_name': forms.TextInput(attrs={'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
-            'note': forms.Textarea(attrs={'rows': 2, 'class': 'w-full rounded-xl border-gray-400 focus:border-primary focus:ring-primary'}),
+            'name': forms.TextInput(attrs={'class': INPUT_CLASSES}),
+            'link': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'iframe_flag': forms.CheckboxInput(attrs={'class': CHECKBOX_CLASSES}),
+            'website': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'logo_url': forms.URLInput(attrs={'class': INPUT_CLASSES}),
+            'brief_info': forms.Textarea(attrs={'rows': 3, 'class': INPUT_CLASSES}),
+            'admin_email': forms.EmailInput(attrs={'class': INPUT_CLASSES}),
+            'admin_name': forms.TextInput(attrs={'class': INPUT_CLASSES}),
+            'note': forms.Textarea(attrs={'rows': 2, 'class': INPUT_CLASSES}),
         }
         labels = {
             'name': 'إسم المصدر',
