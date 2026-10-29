@@ -2,7 +2,11 @@
 {% load static %}
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/images/favicon.ico">
+
+        <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}يمن بورتال - محرك بحث إخباري يمني مستقل{% endblock %}</title>
 
@@ -35,6 +39,14 @@
     </style>
 
     {% block extra_head %}{% endblock %}
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DC6EV81706"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-DC6EV81706');
+    </script>
 </head>
 <body class="flex flex-col min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
@@ -46,7 +58,7 @@
                 <!-- Logo & Nav Links -->
                 <div class="flex items-center gap-8">
                     <a href="{% url 'home' %}" class="flex items-center">
-                        <img src="{% static 'logo.png' %}" class="h-10 w-auto" alt="يمن بورتال" />
+                        <img referrerpolicy="no-referrer" src="{% static 'logo.png' %}" class="h-10 w-auto" alt="يمن بورتال" />
                     </a>
 
                     <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-700">
@@ -127,5 +139,6 @@
     </footer>
 
     {% block extra_js %}{% endblock %}
+{% include 'moderation/partials/report_modal.html' %}
 </body>
 </html>
