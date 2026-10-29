@@ -13,13 +13,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://194.163.154.154',
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://yemenportal.net',
-    'https://yemenportal.net',
-    'http://www.yemenportal.net',
-    'https://www.yemenportal.net',
-    'http://194.163.154.154',
-]
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
 
 
 SECURE_BROWSER_XSS_FILTER = True
