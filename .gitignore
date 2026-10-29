@@ -14,3 +14,6 @@ htmlcov/
 *.bak
 celerybeat-schedule*
 yemenportal-master/
+local_seed.json
+local_seed.json
+.env
