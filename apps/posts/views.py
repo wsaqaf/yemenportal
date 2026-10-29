@@ -154,7 +154,7 @@ class MostReadListView(ListView):
         if window not in ('10h', '24h', 'week', 'all'):
             window = '24h'
 
-        cache_key = f"portal_most_read_v3_{window}"
+        cache_key = f"portal_most_read_v4_{window}"
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
@@ -218,7 +218,7 @@ class ArchiveListView(PostListView):
         context = super().get_context_data(**kwargs)
         from django.utils import timezone
         current_year = timezone.now().year
-        context['archive_years'] = list(range(current_year, 2008, -1))
+        context['archive_years'] = list(range(current_year, 2006, -1))
         context['archive_months'] = [
             (1, 'يناير'), (2, 'فبراير'), (3, 'مارس'), (4, 'أبريل'),
             (5, 'مايو'), (6, 'يونيو'), (7, 'يوليو'), (8, 'أغسطس'),

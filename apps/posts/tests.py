@@ -93,3 +93,26 @@ class PortalServicesTests(TestCase):
         self.assertTrue(CurrencyRate.objects.filter(region="sanaa", currency_code="USD").exists())
         content = response.content.decode("utf-8")
         self.assertIn("حاسبة تحويل العملات الفورية", content)
+
+    def test_intelligent_categorizer_prevents_false_sports_tagging(self):
+        from apps.posts.services.categorizer import classify_post_categories
+        cat_sports = Category.objects.create(name="رياضة")
+        cat_local = Category.objects.create(name="محلي")
+        cache.delete("portal_category_name_map_v1")
+
+        # 1. Real sports article -> gets رياضة
+        sports_ids = classify_post_categories(
+            title="منتخب اليمن للناشئين يتأهل إلى نصف نهائي بطولة كأس الخليج لكرة القدم",
+            description="فاز المنتخب الوطني في المباراة",
+        )
+        self.assertIn(cat_sports.id, sports_ids)
+
+        # 2. Military/local news -> gets محلي and NEVER gets رياضة
+        military_ids = classify_post_categories(
+            title="القوات المسلحة اليمنية: تنفيذ 982 عملية عسكرية في تعز ومأرب",
+            description="تفاصيل العمليات العسكرية",
+            rss_tags=["رياضة"],  # Even if a broken feed tag says رياضة, negative constraint blocks it
+        )
+        self.assertIn(cat_local.id, military_ids)
+        self.assertNotIn(cat_sports.id, military_ids)
+

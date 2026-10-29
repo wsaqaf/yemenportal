@@ -11,36 +11,20 @@ from django.utils.timezone import make_aware
 from apps.posts.models import Post, Category
 from apps.sources.models import Source, SourceLog
 
-def get_source_default_category_id(source_id: int):
-    cache_key = f"source_dominant_category_{source_id}"
-    cat_id = cache.get(cache_key)
-    if cat_id is not None:
-        return cat_id
+def get_matching_categories(entry, title: str, description: str, link: str, source_name: str) -> list[int]:
+    from apps.posts.services.categorizer import classify_post_categories
 
-    top_cat = (
-        Post.objects.filter(source_id=source_id, categories__isnull=False)
-        .values('categories__id')
-        .annotate(cnt=Count('id'))
-        .order_by('-cnt')
-        .first()
-    )
-    cat_id = top_cat['categories__id'] if top_cat else None
-    cache.set(cache_key, cat_id, timeout=86400 * 7)  # 7 days TTL
-    return cat_id
-
-def get_matching_category(entry, default_cat_id=None):
     tags = [t.get('term', '') for t in entry.get('tags', []) if t.get('term')]
     if entry.get('category'):
         tags.append(entry.get('category'))
 
-    if tags:
-        for tag in tags:
-            tag_clean = tag.strip()
-            cat = Category.objects.filter(name__iexact=tag_clean).first()
-            if cat:
-                return cat.id
-
-    return default_cat_id
+    return classify_post_categories(
+        title=title,
+        description=description,
+        link=link,
+        source_name=source_name,
+        rss_tags=tags,
+    )
 
 def extract_image_url(entry):
     if 'media_content' in entry and entry.media_content:
@@ -81,7 +65,6 @@ def fetch_source(source: Source):
         return 0
 
     new_posts_count = 0
-    source_cat_id = get_source_default_category_id(source.id)
 
     for entry in feed.entries:
         entry_link = getattr(entry, 'link', None) or (entry.get('link') if hasattr(entry, 'get') else None)
@@ -108,9 +91,12 @@ def fetch_source(source: Source):
         if published_at > timezone.now():
             published_at = timezone.now()
 
+        title_text = getattr(entry, 'title', '') or 'بدون عنوان'
+        desc_text = strip_tags(entry.get('summary', entry.get('description', '')) if hasattr(entry, 'get') else '').strip()
+
         post = Post.objects.create(
-            title=getattr(entry, 'title', '') or 'بدون عنوان',
-            description=strip_tags(entry.get('summary', entry.get('description', '')) if hasattr(entry, 'get') else '').strip(),
+            title=title_text,
+            description=desc_text,
             link=entry_link,
             published_at=published_at,
             source=source,
@@ -118,9 +104,15 @@ def fetch_source(source: Source):
             state=Post.State.APPROVED
         )
 
-        target_cat_id = get_matching_category(entry, default_cat_id=source_cat_id)
-        if target_cat_id:
-            post.categories.add(target_cat_id)
+        target_cat_ids = get_matching_categories(
+            entry=entry,
+            title=title_text,
+            description=desc_text,
+            link=entry_link,
+            source_name=source.name,
+        )
+        if target_cat_ids:
+            post.categories.add(*target_cat_ids)
 
         new_posts_count += 1
     SourceLog.objects.create(source=source, state="Success", posts_count=new_posts_count)

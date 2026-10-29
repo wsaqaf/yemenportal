@@ -67,40 +67,96 @@ def _wmo_to_arabic(code: int) -> tuple[str, str]:
     return "🌤️", "معتدل"
 
 
-def get_source_activity_weights() -> dict[int, float]:
+def get_source_activity_weights() -> dict[int, dict]:
     """
-    Computes a normalized activity & readership weight (0..30 pts) per source
-    over the last 14 days so active, high-traffic Yemeni portals carry more weight.
+    Computes on-the-fly dynamic weights per source and section over the latest 1,500 posts:
+    - yemen_ratio (0.0 .. 1.0): fraction of the source's recent posts that are about Yemen
+    - activity_score (0.0 .. 25.0): publishing frequency + reader engagement
+    - section_bonus (-20.0 .. +20.0): based on whether the feed/source name is a local news section vs sports/variety
+    - total_weight: composite weight applied on the fly when ranking stories
     """
-    cached = cache.get("portal_source_activity_weights_v1")
+    cached = cache.get("portal_dynamic_source_weights_v2")
     if cached is not None:
         return cached
 
-    cutoff = timezone.now() - timedelta(days=14)
-    rows = (
-        Source.objects.filter(
-            approve_state=Source.ApproveState.APPROVED,
-            state=Source.State.VALID,
-            posts__published_at__gte=cutoff,
-            posts__state=Post.State.APPROVED,
-        )
-        .annotate(
-            recent_posts=Count("posts"),
-            recent_reads=Sum("posts__post_views_count"),
-        )
-        .values("id", "recent_posts", "recent_reads")
+    from collections import defaultdict
+
+    recent_posts = list(
+        Post.objects.filter(state=Post.State.APPROVED)
+        .select_related("source")
+        .only("id", "title", "description", "source_id", "post_views_count", "source__name", "source__website")
+        .order_by("-published_at")[:1500]
     )
 
-    weights: dict[int, float] = {}
-    for row in rows:
-        posts_cnt = row["recent_posts"] or 0
-        reads_cnt = row["recent_reads"] or 0
-        # Combine publishing frequency + reader views (capped at 30 points)
-        w = min(15.0, posts_cnt * 0.15) + min(15.0, reads_cnt * 0.05)
-        weights[row["id"]] = round(w, 2)
+    totals = defaultdict(int)
+    yemen_hits = defaultdict(int)
+    views_sum = defaultdict(int)
+    source_meta = {}
 
-    cache.set("portal_source_activity_weights_v1", weights, timeout=1800)
+    for p in recent_posts:
+        sid = p.source_id
+        if not sid:
+            continue
+        totals[sid] += 1
+        views_sum[sid] += (p.post_views_count or 0)
+        if sid not in source_meta and p.source:
+            source_meta[sid] = (p.source.name or "", p.source.website or "")
+        text = f"{p.title or ''} {p.description or ''}"
+        if any(kw in text for kw in YEMEN_CORE_KEYWORDS):
+            yemen_hits[sid] += 1
+
+    weights: dict[int, dict] = {}
+    for sid, total_cnt in totals.items():
+        yh = yemen_hits[sid]
+        raw_ratio = yh / total_cnt if total_cnt > 0 else 0.0
+        src_name, src_web = source_meta.get(sid, ("", ""))
+
+        # Structural domain/name indicator for Yemeni outlets
+        yemen_markers = ["يمن", "عدن", "تعز", "سبأ", "صحوة", "مأرب", "حضرموت", "المصدر", "كريتر", "المهرية", "بلقيس", "حشد", "المنتصف", "الأمناء", "يافع", "تهامة", "شمسان"]
+        has_yemen_brand = any(m in src_name for m in yemen_markers) or ".ye" in src_web or "yemen" in src_web.lower()
+
+        # Bayesian smoothing for sources with very few posts in sample
+        prior = 0.75 if has_yemen_brand else 0.15
+        yemen_ratio = ((yh + (3 * prior)) / (total_cnt + 3))
+
+        # Section / Sub-feed modifier from source name (e.g. "- أخبار وتقارير" vs "- ثقافة وفن" / "- رياضة")
+        section_bonus = 0.0
+        if any(sec in src_name for sec in ["أخبار", "محلي", "تقارير", "اليمن"]):
+            section_bonus += 12.0
+        if any(sec in src_name for sec in ["رياضة", "ثقافة", "فن", "منوعات", "تكنولوجيا", "مرأة"]):
+            section_bonus -= 18.0
+
+        # Activity & readership score (0..25)
+        activity_score = min(12.0, total_cnt * 0.25) + min(13.0, views_sum[sid] * 0.08)
+
+        # Composite weight: heavily reward high Yemen focus ratio, penalize < 25% Yemen focus
+        focus_points = yemen_ratio * 55.0
+        penalty = -45.0 if yemen_ratio < 0.25 else 0.0
+        total_weight = round(focus_points + activity_score + section_bonus + penalty, 2)
+
+        weights[sid] = {
+            "yemen_ratio": round(yemen_ratio, 3),
+            "activity_score": round(activity_score, 2),
+            "section_bonus": section_bonus,
+            "total_weight": total_weight,
+        }
+
+    cache.set("portal_dynamic_source_weights_v2", weights, timeout=900)
     return weights
+
+
+def get_category_section_weight(post: Post) -> float:
+    """Computes section/category weight on the fly from the post's assigned categories."""
+    high_yemen_cats = {"عاجل": 25.0, "محلي": 20.0, "أخبار": 12.0, "تقارير": 12.0, "اقتصاد": 10.0}
+    low_priority_cats = {"رياضة": -20.0, "ثقافة وفن": -15.0, "تكنولوجيا": -15.0, "منوعات": -15.0, "عربي": -10.0, "دولي": -10.0}
+
+    bonus = 0.0
+    for cat in post.categories.all():
+        if cat.name in high_yemen_cats:
+            bonus += high_yemen_cats[cat.name]
+        elif cat.name in low_priority_cats:
+            bonus += low_priority_cats[cat.name]
+    return max(-25.0, min(30.0, bonus))
 
 
 def is_yemen_relevant(post: Post) -> bool:
@@ -130,14 +186,15 @@ def is_yemen_relevant(post: Post) -> bool:
     return False
 
 
-def score_yemen_post(post: Post, source_weights: dict[int, float], now=None) -> float:
+def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> float:
     """
     Scores a post prioritizing:
     1. Explicit Yemen relevance (title/description keywords)
     2. Cluster size (topic_size - number of independent sources covering the story)
-    3. Website / Source activity & readership level
-    4. Breaking / Urgent political, military, economic, or humanitarian keywords
-    5. Reader engagement (views & votes) + valid image presence + recency
+    3. Dynamic Source Yemen-Focus Ratio, Activity & Section Weight (computed on the fly)
+    4. Category / Section Weight (عاجل, محلي, تقارير vs رياضة, منوعات)
+    5. Breaking / Urgent political, military, economic, or humanitarian keywords
+    6. Reader engagement (views & votes) + valid image presence + recency
     """
     if now is None:
         now = timezone.now()
@@ -161,23 +218,30 @@ def score_yemen_post(post: Post, source_weights: dict[int, float], now=None) -> 
         else:
             score += min(topic_size, 15) * 18.0
 
-    # 3. Website / Source Activity Level (0..30 points)
-    score += source_weights.get(post.source_id, 0.0)
+    # 3. Dynamic Source Yemen-Focus Ratio + Activity + Section Weight
+    src_info = source_weights.get(post.source_id, {})
+    if isinstance(src_info, dict):
+        score += src_info.get("total_weight", 0.0)
+    else:
+        score += float(src_info or 0.0)
 
-    # 4. Breaking / Major event keywords in title (+35)
+    # 4. Category / Section weight on the fly
+    score += get_category_section_weight(post)
+
+    # 5. Breaking / Major event keywords in title (+35)
     if any(bkw in title for bkw in BREAKING_KEYWORDS):
         score += 35.0
 
-    # 5. Reader engagement (views + votes)
+    # 6. Reader engagement (views + votes)
     views = post.post_views_count or 0
     votes = post.voting_result or 0
     score += (min(views, 500) * 6.0) + (votes * 20.0)
 
-    # 6. Visual completeness bonus (+10 if post has an image)
+    # 7. Visual completeness bonus (+10 if post has an image)
     if post.image_url and post.image_url.startswith("http"):
         score += 10.0
 
-    # 7. Recency bonus (up to +24 points for stories in the last 8 hours)
+    # 8. Recency bonus (up to +24 points for stories in the last 8 hours)
     age_hours = max(0.0, (now - post.published_at).total_seconds() / 3600.0)
     score += max(0.0, 24.0 - (age_hours * 2.5))
 
@@ -388,7 +452,7 @@ def get_homepage_portal_widgets() -> dict:
     - opinion_posts: Latest 6 opinion / columnist articles
     - top_sources: Top 12 active sources ranked by total reads
     """
-    cached = cache.get("portal_homepage_widgets_v3")
+    cached = cache.get("portal_homepage_widgets_v4")
     if cached:
         return cached
 
@@ -437,11 +501,12 @@ def get_homepage_portal_widgets() -> dict:
                 if len(opinion_posts) >= 6:
                     break
 
-    # 4. Top Sources Directory (دليل المواقع / المصادر النشطة) - cached 1h & bounded to 14 days
-    top_sources = cache.get("portal_top_sources_v2")
+    # 4. Top Sources Directory (دليل المواقع / المصادر النشطة) - weighted by on-the-fly Yemen Focus Ratio
+    top_sources = cache.get("portal_top_sources_v3")
     if not top_sources:
+        source_weights = get_source_activity_weights()
         recent_cutoff = now - timedelta(days=14)
-        top_sources = list(
+        candidate_sources = list(
             Source.objects.filter(
                 approve_state=Source.ApproveState.APPROVED,
                 state=Source.State.VALID,
@@ -453,9 +518,22 @@ def get_homepage_portal_widgets() -> dict:
                 total_reads=Sum("posts__post_views_count"),
                 posts_total=Count("posts"),
             )
-            .order_by("-total_reads", "-posts_total")[:12]
+            .order_by("-total_reads", "-posts_total")[:30]
         )
-        cache.set("portal_top_sources_v2", top_sources, timeout=3600)
+        # Filter to sources with >= 35% Yemen focus ratio and sort by Yemen-weighted readership
+        yemen_sources = [
+            s for s in candidate_sources
+            if source_weights.get(s.id, {}).get("yemen_ratio", 0.5) >= 0.35
+        ]
+        yemen_sources.sort(
+            key=lambda s: (
+                (s.total_reads or s.posts_total or 0) * source_weights.get(s.id, {}).get("yemen_ratio", 0.5),
+                s.posts_total or 0,
+            ),
+            reverse=True,
+        )
+        top_sources = yemen_sources[:12]
+        cache.set("portal_top_sources_v3", top_sources, timeout=3600)
 
     data = {
         "hero_post": hero_post,
@@ -463,7 +541,7 @@ def get_homepage_portal_widgets() -> dict:
         "opinion_posts": opinion_posts,
         "top_sources": top_sources,
     }
-    cache.set("portal_homepage_widgets_v3", data, timeout=600)
+    cache.set("portal_homepage_widgets_v4", data, timeout=600)
     return data
 
 
