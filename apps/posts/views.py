@@ -117,7 +117,160 @@ class PostListView(ListView):
         context = super().get_context_data(**kwargs)
         context['selected_categories'] = self.request.GET.getlist('categories')
         context['selected_sources'] = self.request.GET.getlist('sources')
+
+        from apps.posts.services.portal_services import (
+            get_homepage_portal_widgets,
+            get_exchange_rates,
+            get_yemen_weather,
+        )
+        widgets = get_homepage_portal_widgets()
+        context.update(widgets)
+        context['exchange_rates'] = get_exchange_rates()
+        context['yemen_weather'] = get_yemen_weather()
+
+        page_num = self.request.GET.get('page', '1')
+        has_filters = any([
+            self.request.GET.get('q'),
+            self.request.GET.get('period'),
+            self.request.GET.get('sort') and self.request.GET.get('sort') != 'latest',
+            context['selected_categories'],
+            context['selected_sources'],
+            self.kwargs.get('topic_id'),
+        ])
+        context['show_portal_hero'] = (str(page_num) in ('1', '') and not has_filters)
         return context
+
+
+class MostReadListView(ListView):
+    model = Post
+    template_name = 'posts/most_read.html'
+    context_object_name = 'posts'
+    paginate_by = 30
+
+    def get_queryset(self):
+        from django.utils import timezone
+        from datetime import timedelta
+
+        now = timezone.now()
+        window = self.request.GET.get('window', '24h')
+        base_qs = (
+            Post.objects.filter(state=Post.State.APPROVED)
+            .select_related('source', 'topic')
+            .prefetch_related('categories')
+        )
+
+        if window == '10h':
+            qs = base_qs.filter(published_at__gte=now - timedelta(hours=10))
+        elif window == 'week':
+            qs = base_qs.filter(published_at__gte=now - timedelta(days=7))
+        elif window == 'all':
+            qs = base_qs
+        else:
+            qs = base_qs.filter(published_at__gte=now - timedelta(hours=24))
+
+        qs = qs.order_by('-post_views_count', '-voting_result', '-published_at')
+        if qs.count() < 5 and window in ('10h', '24h'):
+            qs = base_qs.order_by('-post_views_count', '-voting_result', '-published_at')
+        return qs[:30]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['current_window'] = self.request.GET.get('window', '24h')
+        from apps.posts.services.portal_services import (
+            get_homepage_portal_widgets,
+            get_exchange_rates,
+            get_yemen_weather,
+        )
+        widgets = get_homepage_portal_widgets()
+        context['opinion_posts'] = widgets.get('opinion_posts', [])
+        context['top_sources'] = widgets.get('top_sources', [])
+        context['exchange_rates'] = get_exchange_rates()
+        context['yemen_weather'] = get_yemen_weather()
+        return context
+
+
+class ArchiveListView(PostListView):
+    template_name = 'posts/archive.html'
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        date_str = self.request.GET.get('date', '').strip()
+        year = self.request.GET.get('year', '').strip()
+        month = self.request.GET.get('month', '').strip()
+        day = self.request.GET.get('day', '').strip()
+
+        if date_str:
+            try:
+                from datetime import datetime
+                parsed_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                queryset = queryset.filter(published_at__date=parsed_date)
+                return queryset
+            except ValueError:
+                pass
+
+        if year and year.isdigit() and int(year) > 1990:
+            queryset = queryset.filter(published_at__year=int(year))
+        if month and month.isdigit() and 1 <= int(month) <= 12:
+            queryset = queryset.filter(published_at__month=int(month))
+        if day and day.isdigit() and 1 <= int(day) <= 31:
+            queryset = queryset.filter(published_at__day=int(day))
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from django.utils import timezone
+        current_year = timezone.now().year
+        context['archive_years'] = list(range(current_year, 2008, -1))
+        context['archive_months'] = [
+            (1, 'يناير'), (2, 'فبراير'), (3, 'مارس'), (4, 'أبريل'),
+            (5, 'مايو'), (6, 'يونيو'), (7, 'يوليو'), (8, 'أغسطس'),
+            (9, 'سبتمبر'), (10, 'أكتوبر'), (11, 'نوفمبر'), (12, 'ديسمبر'),
+        ]
+        context['archive_days'] = list(range(1, 32))
+        context['selected_year'] = self.request.GET.get('year', '')
+        context['selected_month'] = self.request.GET.get('month', '')
+        context['selected_day'] = self.request.GET.get('day', '')
+        context['selected_date'] = self.request.GET.get('date', '')
+        return context
+
+
+class CurrencyServiceView(ListView):
+    model = Post
+    template_name = 'posts/currency_service.html'
+    context_object_name = 'economic_posts'
+    paginate_by = 15
+
+    def get_queryset(self):
+        return (
+            Post.objects.filter(state=Post.State.APPROVED)
+            .filter(
+                models.Q(categories__name__in=['اقتصاد', 'إقتصاد'])
+                | models.Q(title__icontains='صرف')
+                | models.Q(title__icontains='الريال')
+                | models.Q(title__icontains='الدولار')
+                | models.Q(title__icontains='البنك')
+            )
+            .select_related('source', 'topic')
+            .prefetch_related('categories')
+            .distinct()
+            .order_by('-published_at')
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from apps.posts.services.portal_services import (
+            get_exchange_rates,
+            get_yemen_weather,
+            get_homepage_portal_widgets,
+        )
+        context['exchange_rates'] = get_exchange_rates()
+        context['yemen_weather'] = get_yemen_weather()
+        widgets = get_homepage_portal_widgets()
+        context['top_sources'] = widgets.get('top_sources', [])
+        return context
+
 
 class PostSearchView(PostListView):
     template_name = 'posts/post_search.html'

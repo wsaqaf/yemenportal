@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load arabic_time %}
+
+{% block title %}الأرشيف الإخباري - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <section class="lg:col-span-8 space-y-6">
+            <!-- Hero Header -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm space-y-5">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-slate-700 text-primary flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100">أرشيف الأخبار</h1>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400">استعرض الأخبار السابقة حسب السنة والشهر واليوم أو الكلمات المفتاحية</p>
+                    </div>
+                </div>
+
+                <!-- Archive Filter Form (Sahaafa Style) -->
+                <form method="get" action="{% url 'archive' %}" class="grid grid-cols-1 sm:grid-cols-5 gap-3 pt-2 border-t border-gray-100 dark:border-slate-700">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1">السنة</label>
+                        <select name="year" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                            <option value="">كل السنوات</option>
+                            {% for yr in archive_years %}
+                            <option value="{{ yr }}" {% if selected_year == yr|stringformat:"i" %}selected{% endif %}>{{ yr }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1">الشهر</label>
+                        <select name="month" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                            <option value="">كل الأشهر</option>
+                            {% for m_num, m_name in archive_months %}
+                            <option value="{{ m_num }}" {% if selected_month == m_num|stringformat:"i" %}selected{% endif %}>{{ m_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1">اليوم</label>
+                        <select name="day" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                            <option value="">كل الأيام</option>
+                            {% for d in archive_days %}
+                            <option value="{{ d }}" {% if selected_day == d|stringformat:"i" %}selected{% endif %}>{{ d }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1">كلمة مفتاحية</label>
+                        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="بحث في الأرشيف..." class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                    </div>
+
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full py-2 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl shadow-sm transition-colors text-sm">
+                            عرض الأرشيف
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results List -->
+            <div id="posts-container" class="space-y-4">
+                {% include "posts/partials/post_list_items.html" %}
+            </div>
+
+            {% if is_paginated %}
+            <div class="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200 dark:border-slate-700" dir="rtl">
+                {% if page_obj.has_previous %}
+                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    السابق
+                </a>
+                {% endif %}
+                <span class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-sm">
+                    صفحة {{ page_obj.number }} من {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                    التالي
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-4 space-y-6">
+            {% include "posts/partials/portal_sidebar_widgets.html" %}
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

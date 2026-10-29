@@ -3,8 +3,15 @@ from django.contrib import admin
 # Register your models here.
 
 
-from .models import NewsletterAnnouncement, NewsletterOptOut
+from .models import NewsletterAnnouncement, NewsletterOptOut, CurrencyRate
 from django.core.management import call_command
+
+@admin.register(CurrencyRate)
+class CurrencyRateAdmin(admin.ModelAdmin):
+    list_display = ('region', 'currency_code', 'buy_price', 'sell_price', 'updated_at')
+    list_filter = ('region', 'currency_code')
+    list_editable = ('buy_price', 'sell_price')
+
 
 @admin.register(NewsletterAnnouncement)
 class NewsletterAnnouncementAdmin(admin.ModelAdmin):

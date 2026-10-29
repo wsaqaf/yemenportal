@@ -29,3 +29,20 @@ def maintain_database_indexes():
     with connection.cursor() as cursor:
         cursor.execute("VACUUM ANALYZE posts_post;")
     return "Maintenance complete."
+
+@shared_task(name="apps.posts.tasks.refresh_portal_services_cache")
+def refresh_portal_services_cache():
+    """Refreshes Yemen weather, exchange rates, and homepage portal widgets in Redis."""
+    from apps.posts.services.portal_services import (
+        refresh_yemen_weather,
+        update_exchange_rates_from_recent_posts,
+        get_exchange_rates,
+        get_homepage_portal_widgets,
+    )
+    refresh_yemen_weather()
+    update_exchange_rates_from_recent_posts()
+    get_exchange_rates()
+    cache.delete("portal_homepage_widgets_v1")
+    get_homepage_portal_widgets()
+    return "Portal services cache refreshed."
+

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load arabic_time %}
+
+{% block title %}الأكثر قراءة - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <section class="lg:col-span-8 space-y-6">
+            <!-- Hero Header (Sahaafa Style) -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-orange-50 dark:bg-slate-700 text-orange-500 flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100">الأكثر قراءة</h1>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400">أكثر الأخبار قراءة ومتابعة في المشهد اليمني</p>
+                    </div>
+                </div>
+
+                <!-- Time Window Switcher -->
+                <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-slate-700 p-1 rounded-xl text-xs font-bold">
+                    <a href="?window=10h" class="px-3 py-1.5 rounded-lg transition-all {% if current_window == '10h' %}bg-primary text-white shadow-sm{% else %}text-gray-600 dark:text-slate-300 hover:text-primary{% endif %}">10 ساعات</a>
+                    <a href="?window=24h" class="px-3 py-1.5 rounded-lg transition-all {% if current_window == '24h' %}bg-primary text-white shadow-sm{% else %}text-gray-600 dark:text-slate-300 hover:text-primary{% endif %}">24 ساعة</a>
+                    <a href="?window=week" class="px-3 py-1.5 rounded-lg transition-all {% if current_window == 'week' %}bg-primary text-white shadow-sm{% else %}text-gray-600 dark:text-slate-300 hover:text-primary{% endif %}">أسبوع</a>
+                    <a href="?window=all" class="px-3 py-1.5 rounded-lg transition-all {% if current_window == 'all' %}bg-primary text-white shadow-sm{% else %}text-gray-600 dark:text-slate-300 hover:text-primary{% endif %}">الكل</a>
+                </div>
+            </div>
+
+            <!-- Ranked News List -->
+            <div class="space-y-3.5">
+                {% for post in posts %}
+                <article class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all flex items-start gap-4 group">
+                    <!-- Rank Number Badge -->
+                    <span class="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 {% if forloop.counter <= 3 %}bg-primary text-white shadow-sm{% else %}bg-blue-50 dark:bg-slate-700 text-primary{% endif %}">
+                        {{ forloop.counter }}
+                    </span>
+
+                    <div class="flex-grow min-w-0">
+                        <h2 class="text-base sm:text-lg font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary leading-snug mb-2 transition-colors">
+                            <a href="{% url 'posts:post_detail' post.pk %}">
+                                {{ post.title }}
+                            </a>
+                        </h2>
+                        <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-gray-500">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a href="{% url 'home' %}?sources={{ post.source.id }}" class="font-bold text-primary bg-blue-50 dark:bg-slate-700 px-2.5 py-0.5 rounded-lg">
+                                    {{ post.source.name }}
+                                </a>
+                                <span>·</span>
+                                <span>{{ post.published_at|arabic_timesince }}</span>
+                                <span>·</span>
+                                <span class="inline-flex items-center gap-1 font-semibold text-gray-600 dark:text-slate-300">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                    {{ post.post_views_count }} قراءة
+                                </span>
+                            </div>
+
+                            <div class="flex items-center gap-1.5">
+                                <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'posts:post_detail' post.pk %}" target="_blank" rel="noopener" title="واتساب" class="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-white flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.532 5.857L.073 23.927l6.275-1.435A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+                                </a>
+                                <button type="button" onclick="copyPostUrl('{% url 'posts:post_detail' post.pk %}')" title="نسخ الرابط" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-primary text-gray-600 hover:text-white flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-10 text-center text-gray-500">
+                    لا توجد أخبار حالياً في هذه الفترة.
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-4 space-y-6">
+            {% include "posts/partials/portal_sidebar_widgets.html" %}
+        </aside>
+
+    </div>
+</div>
+{% endblock %}

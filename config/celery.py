@@ -38,4 +38,8 @@ app.conf.beat_schedule = {
         'task': 'apps.posts.tasks.maintain_database_indexes',
         'schedule': crontab(minute='0', hour='3'),
     },
+    'refresh-portal-services-every-30m': {
+        'task': 'apps.posts.tasks.refresh_portal_services_cache',
+        'schedule': crontab(minute='*/30'),
+    },
 }

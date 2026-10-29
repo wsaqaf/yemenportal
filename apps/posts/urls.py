@@ -1,13 +1,16 @@
 from .newsletter import NewsletterUnsubscribeView
 from django.urls import path
 from django.views.generic import RedirectView
-from .views import PostListView, VoteView, PostSearchView, TopicListView, PostDetailView
+from .views import PostListView, VoteView, PostSearchView, TopicListView, PostDetailView, MostReadListView, ArchiveListView, CurrencyServiceView
 from . import views
 
 app_name = 'posts'
 
 urlpatterns = [
     path('', PostListView.as_view(), name='post_list'),
+    path('most-read/', MostReadListView.as_view(), name='most_read'),
+    path('archive/', ArchiveListView.as_view(), name='archive'),
+    path('currency/', CurrencyServiceView.as_view(), name='currency_service'),
     path('search/', PostSearchView.as_view(), name='post_search'),
     path('topic/<int:topic_id>/', views.TopicListView.as_view(), name='topic_detail'),
     

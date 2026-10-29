@@ -4,14 +4,17 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
-from apps.posts.views import PostListView
+from apps.posts.views import PostListView, MostReadListView, ArchiveListView, CurrencyServiceView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     
-    # Apps
+    # Apps & Portal Services
     path('', PostListView.as_view(), name='home'),
+    path('most-read/', MostReadListView.as_view(), name='most_read'),
+    path('archive/', ArchiveListView.as_view(), name='archive'),
+    path('services/currency/', CurrencyServiceView.as_view(), name='currency_service'),
     path('posts/', include('apps.posts.urls', namespace='posts')),
     path('moderation/', include('apps.moderation.urls', namespace='moderation')),
     path('sources/', include('apps.sources.urls')),

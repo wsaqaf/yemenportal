@@ -12,6 +12,11 @@ echo "======================================"
 echo "[1/3] Syncing files to server..."
 rsync -avz --delete \
     --exclude '.git' \
+    --exclude '.env' \
+    --exclude '.env.*' \
+    --exclude 'docker-compose.override.yml' \
+    --exclude 'local_seed.json' \
+    --exclude 'celerybeat-schedule' \
     --exclude 'venv' \
     --exclude '__pycache__' \
     --exclude '*.sqlite3' \

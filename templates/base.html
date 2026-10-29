@@ -6,14 +6,26 @@
     <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
     <link rel="apple-touch-icon" href="/static/images/favicon.ico">
 
-        <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}يمن بورتال - محرك بحث إخباري يمني مستقل{% endblock %}</title>
+
+    <!-- Early Theme Initialization (Zero Flash) -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('yp_theme') === 'dark') {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
@@ -33,9 +45,15 @@
     <style type="text/tailwindcss">
         @layer base {
             body {
-                @apply bg-[#f8fafc] text-gray-900 font-sans antialiased;
+                @apply bg-[#f8fafc] dark:bg-slate-900 text-gray-900 dark:text-slate-100 font-sans antialiased transition-colors duration-200;
             }
         }
+        .dark .bg-white { background-color: #1e293b !important; }
+        .dark .bg-gray-50 { background-color: #0f172a !important; }
+        .dark .border-gray-200, .dark .border-gray-200\/80, .dark .border-gray-100 { border-color: #334155 !important; }
+        .dark .text-gray-900, .dark .text-gray-800 { color: #f1f5f9 !important; }
+        .dark .text-gray-700, .dark .text-gray-600 { color: #cbd5e1 !important; }
+        .dark .text-gray-500 { color: #94a3b8 !important; }
     </style>
 
     {% block extra_head %}{% endblock %}
@@ -51,50 +69,98 @@
 <body class="flex flex-col min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm" x-data="{ mobileMenuOpen: false }">
+    <header class="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 shadow-sm" x-data="{ mobileMenuOpen: false, catDropdownOpen: false }">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between h-16 gap-3">
                 
                 <!-- Logo & Nav Links -->
-                <div class="flex items-center gap-8">
-                    <a href="{% url 'home' %}" class="flex items-center">
+                <div class="flex items-center gap-5 lg:gap-7">
+                    <a href="{% url 'home' %}" class="flex items-center flex-shrink-0">
                         <img referrerpolicy="no-referrer" src="{% static 'logo.png' %}" class="h-10 w-auto" alt="يمن بورتال" />
                     </a>
 
-                    <nav class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-700">
-                        <a href="{% url 'home' %}" class="hover:text-primary transition-colors">الرئيسية</a>
+                    <nav class="hidden lg:flex items-center gap-5 text-sm font-semibold text-gray-700 dark:text-slate-200">
+                        <a href="{% url 'home' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+                            <svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                            الرئيسية
+                        </a>
+
+                        <a href="{% url 'most_read' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+                            <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 24 24"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67z"/></svg>
+                            الأكثر قراءة
+                        </a>
+
+                        <!-- Categories Dropdown (صحافة نت style) -->
+                        <div class="relative" @mouseenter="catDropdownOpen = true" @mouseleave="catDropdownOpen = false">
+                            <button @click="catDropdownOpen = !catDropdownOpen" type="button" class="hover:text-primary transition-colors flex items-center gap-1 py-2">
+                                <span>الأقسام</span>
+                                <svg class="w-3.5 h-3.5 transition-transform duration-150" :class="catDropdownOpen ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div x-show="catDropdownOpen" x-transition style="display: none;" class="absolute right-0 mt-0 w-64 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl shadow-xl py-2.5 px-2 z-50 grid grid-cols-2 gap-1">
+                                {% for cat in all_categories %}
+                                <a href="{% url 'home' %}?categories={{ cat.id }}" class="px-3 py-1.5 text-xs font-bold text-gray-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-700 hover:text-primary rounded-lg transition-colors truncate">
+                                    {{ cat.name }}
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+
                         <a href="{% url 'sources:source_list' %}" class="hover:text-primary transition-colors">المصادر</a>
-                        <a href="https://docs.google.com/forms/d/1uY8hR7916-p7yTGPZKQ8KW5iJArfSKVHcAGTf6OXF4o/viewform?ts=5b082a4d&edit_requested=true" target="_blank" class="hover:text-primary transition-colors">إستبيان</a>
+                        <a href="{% url 'currency_service' %}" class="hover:text-primary transition-colors flex items-center gap-1">
+                            <span class="text-emerald-600 font-black">$</span>
+                            أسعار الصرف
+                        </a>
+                        <a href="{% url 'archive' %}" class="hover:text-primary transition-colors">الأرشيف</a>
                         <a href="{% url 'contact_us' %}" class="hover:text-primary transition-colors">إتصل بنا</a>
+
                         {% if user.is_staff %}
                         <a href="{% url 'moderation:dashboard' %}" class="text-brandPurple hover:underline">لوحة الإشراف</a>
                         <a href="{% url 'sources:manage_list' %}" class="text-brandPurple hover:underline">إدارة المصادر</a>
-                        <a href="{% url 'users:manage_list' %}" class="text-brandPurple hover:underline">المستخدمين</a>
                         {% endif %}
                     </nav>
                 </div>
 
-                <!-- User Controls -->
-                <div class="hidden md:flex items-center gap-4">
+                <!-- Header Search + Theme Toggle + User Controls -->
+                <div class="hidden md:flex items-center gap-3">
+                    <!-- Quick Header Search -->
+                    <form action="{% url 'home' %}" method="get" class="relative">
+                        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="ابحث في الأخبار..." autocomplete="off"
+                               class="w-44 xl:w-56 bg-gray-100 dark:bg-slate-700/80 border border-transparent focus:border-primary focus:bg-white dark:focus:bg-slate-800 rounded-xl text-xs py-2 pr-3 pl-8 text-gray-800 dark:text-slate-100 placeholder-gray-400 transition-all focus:outline-none">
+                        <button type="submit" aria-label="بحث" class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        </button>
+                    </form>
+
+                    <!-- Dark Mode Toggle -->
+                    <button type="button" onclick="togglePortalTheme()" title="الوضع الليلي / النهاري" aria-label="تبديل الوضع الليلي"
+                            class="p-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-amber-300 hover:text-primary transition-colors">
+                        <svg id="theme-icon-moon" class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        <svg id="theme-icon-sun" class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                    </button>
+
                     {% if user.is_authenticated %}
-                        <a href="{% url 'sources:source_suggest' %}" class="text-xs font-bold text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors border border-green-200">
+                        <a href="{% url 'sources:source_suggest' %}" class="text-xs font-bold text-green-700 bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg transition-colors border border-green-200 whitespace-nowrap">
                             + اقتراح مصدر
                         </a>
-                        <span class="text-sm font-medium text-gray-600">{{ user.email }}</span>
                         <form action="{% url 'account_logout' %}" method="post" class="inline">
                             {% csrf_token %}
-                            <button type="submit" class="text-sm text-red-600 hover:text-red-700 font-medium">تسجيل الخروج</button>
+                            <button type="submit" class="text-xs text-red-600 hover:text-red-700 font-bold whitespace-nowrap">خروج</button>
                         </form>
                     {% else %}
-                        <a href="{% url 'account_login' %}" class="px-4 py-2 bg-primary hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-colors shadow-sm">
-                            تسجيل الدخول
+                        <a href="{% url 'account_login' %}" class="px-3.5 py-2 bg-primary hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-colors shadow-sm whitespace-nowrap">
+                            دخول
                         </a>
                     {% endif %}
                 </div>
 
-                <!-- Mobile Menu Button -->
-                <div class="flex md:hidden">
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 hover:text-gray-900 focus:outline-none p-2">
+                <!-- Mobile Controls -->
+                <div class="flex lg:hidden items-center gap-2">
+                    <button type="button" onclick="togglePortalTheme()" aria-label="تبديل الوضع الليلي"
+                            class="p-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-amber-300">
+                        <svg class="w-4 h-4 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                        <svg class="w-4 h-4 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/></svg>
+                    </button>
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="text-gray-600 dark:text-slate-200 hover:text-gray-900 focus:outline-none p-2">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         </svg>
@@ -104,19 +170,48 @@
         </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div x-show="mobileMenuOpen" @click.away="mobileMenuOpen = false" class="md:hidden border-t border-gray-200 bg-white px-4 pt-2 pb-4 space-y-2">
-            <a href="{% url 'home' %}" class="block py-2 text-sm font-bold text-gray-700">الرئيسية</a>
-            <a href="{% url 'sources:source_list' %}" class="block py-2 text-sm font-bold text-gray-700">المصادر</a>
-            <a href="{% url 'contact_us' %}" class="block py-2 text-sm font-bold text-gray-700">إتصل بنا</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'sources:source_suggest' %}" class="block py-2 text-sm font-bold text-green-700">+ اقتراح مصدر</a>
-                <form action="{% url 'account_logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="block w-full text-right py-2 text-sm font-bold text-red-600">تسجيل الخروج</button>
-                </form>
-            {% else %}
-                <a href="{% url 'account_login' %}" class="block py-2 text-sm font-bold text-primary">تسجيل الدخول</a>
+        <div x-show="mobileMenuOpen" style="display: none;" @click.away="mobileMenuOpen = false" class="lg:hidden border-t border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 pt-3 pb-5 space-y-3">
+            <form action="{% url 'home' %}" method="get" class="relative">
+                <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="ابحث في أخبار اليمن..."
+                       class="w-full bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm py-2 pr-3 pl-9">
+                <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </button>
+            </form>
+
+            <div class="grid grid-cols-2 gap-2 pt-1">
+                <a href="{% url 'home' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">🏠 الرئيسية</a>
+                <a href="{% url 'most_read' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">🔥 الأكثر قراءة</a>
+                <a href="{% url 'currency_service' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">💱 أسعار الصرف</a>
+                <a href="{% url 'archive' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">📅 الأرشيف</a>
+                <a href="{% url 'sources:source_list' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">📰 المصادر</a>
+                <a href="{% url 'contact_us' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">✉️ إتصل بنا</a>
+            </div>
+
+            {% if all_categories %}
+            <div class="pt-2 border-t border-gray-100 dark:border-slate-700">
+                <div class="text-xs font-bold text-gray-400 mb-2">الأقسام الإخبارية</div>
+                <div class="flex flex-wrap gap-1.5">
+                    {% for cat in all_categories|slice:":12" %}
+                    <a href="{% url 'home' %}?categories={{ cat.id }}" class="px-2.5 py-1 bg-gray-100 dark:bg-slate-700 text-xs font-semibold text-gray-700 dark:text-slate-200 rounded-lg">
+                        {{ cat.name }}
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
             {% endif %}
+
+            <div class="pt-2 border-t border-gray-100 dark:border-slate-700 flex items-center justify-between">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'sources:source_suggest' %}" class="text-sm font-bold text-green-700">+ اقتراح مصدر</a>
+                    <form action="{% url 'account_logout' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="text-sm font-bold text-red-600">تسجيل الخروج</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'account_login' %}" class="text-sm font-bold text-primary">تسجيل الدخول</a>
+                {% endif %}
+            </div>
         </div>
     </header>
 
@@ -125,20 +220,82 @@
         {% block content %}{% endblock %}
     </main>
 
+    <!-- Copy Link Toast Notification -->
+    <div id="copy-toast" class="fixed bottom-6 left-6 z-50 hidden bg-gray-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2">
+        <span>✅ تم نسخ رابط الخبر بنجاح</span>
+    </div>
+
     <!-- Global Footer -->
-    <footer class="bg-white border-t border-gray-200 mt-16 py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
-            <div class="flex flex-wrap items-center gap-6">
-                <a href="{% url 'about_us' %}" class="hover:text-primary transition-colors">حول يمن بورتال</a>
-                <a href="{% url 'terms_of_use' %}" class="hover:text-primary transition-colors">شروط الاستخدام</a>
-                <a href="{% url 'qs_and_as' %}" class="hover:text-primary transition-colors">سؤال وجواب</a>
-                <a href="{% url 'contact_us' %}" class="hover:text-primary transition-colors">إتصل بنا</a>
+    <footer class="bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 mt-16 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-sm">
+                <div class="md:col-span-2 space-y-3">
+                    <a href="{% url 'home' %}" class="inline-block">
+                        <img referrerpolicy="no-referrer" src="{% static 'logo.png' %}" class="h-10 w-auto" alt="يمن بورتال" />
+                    </a>
+                    <p class="text-gray-500 dark:text-slate-400 text-xs leading-relaxed max-w-md">
+                        تابع أخبار اليمن على مدار الساعة عبر يمن بورتال الذي يجمع لك أخبار اليمن الآن من عشرات المصادر الإخبارية المستقلة في مكان واحد مع تجميع ذكي للأحداث وخدمات أسعار الصرف والطقس.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 dark:text-slate-100 mb-3 text-sm">روابط وخدمات سريعة</h4>
+                    <div class="grid grid-cols-2 gap-2 text-xs text-gray-600 dark:text-slate-300 font-medium">
+                        <a href="{% url 'home' %}" class="hover:text-primary">الرئيسية</a>
+                        <a href="{% url 'most_read' %}" class="hover:text-primary">الأكثر قراءة</a>
+                        <a href="{% url 'currency_service' %}" class="hover:text-primary">أسعار الصرف</a>
+                        <a href="{% url 'archive' %}" class="hover:text-primary">الأرشيف</a>
+                        <a href="{% url 'sources:source_list' %}" class="hover:text-primary">قائمة المصادر</a>
+                        <a href="https://docs.google.com/forms/d/1uY8hR7916-p7yTGPZKQ8KW5iJArfSKVHcAGTf6OXF4o/viewform?ts=5b082a4d&edit_requested=true" target="_blank" class="hover:text-primary">إستبيان القراء</a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-gray-900 dark:text-slate-100 mb-3 text-sm">عن البوابة</h4>
+                    <div class="flex flex-col space-y-2 text-xs text-gray-600 dark:text-slate-300 font-medium">
+                        <a href="{% url 'about_us' %}" class="hover:text-primary">حول يمن بورتال</a>
+                        <a href="{% url 'terms_of_use' %}" class="hover:text-primary">شروط الاستخدام</a>
+                        <a href="{% url 'qs_and_as' %}" class="hover:text-primary">سؤال وجواب</a>
+                        <a href="{% url 'contact_us' %}" class="hover:text-primary">إتصل بنا</a>
+                    </div>
+                </div>
             </div>
-            <p class="text-xs text-gray-400">© 2026 يمن بورتال. جميع الحقوق محفوظة.</p>
+
+            <div class="pt-6 border-t border-gray-100 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-400">
+                <p>يمن بورتال عبارة عن محرك بحث وقارئ أخبار آلي؛ المواد الواردة لا تعبر بالضرورة عن رأي الموقع.</p>
+                <p>© 2026 يمن بورتال. جميع الحقوق محفوظة.</p>
+            </div>
         </div>
     </footer>
 
+    <script>
+        function togglePortalTheme() {
+            const htmlEl = document.documentElement;
+            const isDark = htmlEl.classList.toggle('dark');
+            try {
+                localStorage.setItem('yp_theme', isDark ? 'dark' : 'light');
+            } catch (e) {}
+        }
+
+        function copyPostUrl(relOrAbsUrl) {
+            const fullUrl = relOrAbsUrl.startsWith('http') ? relOrAbsUrl : (window.location.origin + relOrAbsUrl);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(fullUrl);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = fullUrl;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            const toast = document.getElementById('copy-toast');
+            if (toast) {
+                toast.classList.remove('hidden');
+                setTimeout(() => toast.classList.add('hidden'), 2200);
+            }
+        }
+    </script>
+
     {% block extra_js %}{% endblock %}
-{% include 'moderation/partials/report_modal.html' %}
+    {% include 'moderation/partials/report_modal.html' %}
 </body>
 </html>

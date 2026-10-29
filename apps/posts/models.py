@@ -133,3 +133,31 @@ class NewsletterAnnouncement(models.Model):
 
     def __str__(self):
         return self.subject
+
+
+class CurrencyRate(models.Model):
+    REGION_CHOICES = [
+        ('sanaa', 'صنعاء'),
+        ('aden', 'عدن'),
+    ]
+    CURRENCY_CHOICES = [
+        ('USD', 'دولار أمريكي'),
+        ('SAR', 'ريال سعودي'),
+        ('AED', 'درهم إماراتي'),
+    ]
+    region = models.CharField(max_length=20, choices=REGION_CHOICES, verbose_name='المنطقة')
+    currency_code = models.CharField(max_length=10, choices=CURRENCY_CHOICES, verbose_name='العملة')
+    buy_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='سعر الشراء')
+    sell_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name='سعر البيع')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='آخر تحديث')
+
+    class Meta:
+        db_table = 'posts_currency_rates'
+        unique_together = ('region', 'currency_code')
+        verbose_name = 'سعر صرف العملة'
+        verbose_name_plural = 'أسعار صرف العملات'
+        ordering = ['region', '-currency_code']
+
+    def __str__(self):
+        return f"{self.get_region_display()} - {self.get_currency_code_display()}: {self.buy_price}/{self.sell_price}"
+

@@ -1,92 +1,153 @@
 {% extends "base.html" %}
+{% load arabic_time %}
 
 {% block title %}الرئيسية - يمن بورتال{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Right Column: Spotlight Filters -->
-        <aside class="lg:col-span-4 order-1 lg:order-2">
-            <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm sticky top-24 space-y-6">
-                <h2 class="text-base font-bold text-gray-900 border-b border-gray-100 pb-3">تصفية الأخبار</h2>
-                <form action="{% url 'home' %}" method="GET" class="space-y-4">
-                    <!-- Search Field -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">بحث</label>
-                        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="w-full bg-gray-50 border border-gray-200 rounded-xl text-sm p-2.5 focus:ring-primary focus:border-primary" placeholder="كلمات البحث...">
-                    </div>
+        <!-- Left Column: Main Portal Content & News Feed -->
+        <section class="lg:col-span-8 order-1 space-y-7">
 
-                    <!-- Order and Period -->
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">الترتيب</label>
-                            <select name="sort" class="w-full bg-gray-50 border border-gray-200 rounded-xl text-sm p-2">
-                                <option value="latest" {% if request.GET.sort == 'latest' %}selected{% endif %}>الأحدث</option>
-                                <option value="votes" {% if request.GET.sort == 'votes' %}selected{% endif %}>الأعلى تصويتاً</option>
-                                <option value="reads" {% if request.GET.sort == 'reads' %}selected{% endif %}>الأكثر قراءة</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-600 mb-1.5">الفترة</label>
-                            <select name="period" class="w-full bg-gray-50 border border-gray-200 rounded-xl text-sm p-2">
-                                <option value="">كل الوقت</option>
-                                <option value="1h" {% if request.GET.period == '1h' %}selected{% endif %}>ساعة</option>
-                                <option value="24h" {% if request.GET.period == '24h' %}selected{% endif %}>يوم</option>
-                                <option value="week" {% if request.GET.period == 'week' %}selected{% endif %}>أسبوع</option>
-                                <option value="month" {% if request.GET.period == 'month' %}selected{% endif %}>شهر</option>
-                                <option value="year" {% if request.GET.period == 'year' %}selected{% endif %}>سنة</option>
-                            </select>
+            {% if show_portal_hero and hero_post %}
+            <!-- 1. Hero Breaking / Featured Card (Sahaafa Style) -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                <div class="grid grid-cols-1 md:grid-cols-12">
+                    {% if hero_post.image_url %}
+                    <div class="md:col-span-5 relative h-56 md:h-auto bg-gray-100 dark:bg-slate-700 overflow-hidden">
+                        <a href="{% url 'posts:post_detail' hero_post.pk %}" class="block w-full h-full">
+                            <img referrerpolicy="no-referrer" src="{{ hero_post.image_url }}" alt="{{ hero_post.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.style.display='none';">
+                        </a>
+                        <div class="absolute top-3 right-3 inline-flex items-center gap-1.5 bg-red-600 text-white text-xs font-extrabold px-3 py-1 rounded-full shadow">
+                            <span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+                            <span>أبرز الأخبار</span>
                         </div>
                     </div>
-
-                    <!-- Categories -->
-                    {% if all_categories %}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">أقسام محددة</label>
-                        <select name="categories" multiple class="w-full h-28 bg-gray-50 border border-gray-200 rounded-xl text-sm p-2">
-                            {% for cat in all_categories %}
-                            <option value="{{ cat.id }}" {% if cat.id|stringformat:"i" in selected_categories %}selected{% endif %}>{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
                     {% endif %}
+                    <div class="{% if hero_post.image_url %}md:col-span-7{% else %}md:col-span-12{% endif %} p-5 sm:p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex flex-wrap items-center gap-2 text-xs text-gray-500 mb-3">
+                                {% if not hero_post.image_url %}
+                                <span class="inline-flex items-center gap-1 bg-red-600 text-white text-xs font-extrabold px-2.5 py-0.5 rounded-full">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                                    أبرز الأخبار
+                                </span>
+                                {% endif %}
+                                <a href="?sources={{ hero_post.source.id }}" class="font-bold text-primary bg-blue-50 dark:bg-blue-950/60 px-2.5 py-1 rounded-lg">
+                                    {{ hero_post.source.name }}
+                                </a>
+                                <span>·</span>
+                                <span>{{ hero_post.published_at|arabic_timesince }}</span>
+                                <span>·</span>
+                                <span>{{ hero_post.post_views_count }} قراءة</span>
+                            </div>
+                            <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100 leading-snug mb-3 hover:text-primary transition-colors">
+                                <a href="{% url 'posts:post_detail' hero_post.pk %}">
+                                    {{ hero_post.title }}
+                                </a>
+                            </h2>
+                            <p class="text-sm text-gray-600 dark:text-slate-300 line-clamp-2 leading-relaxed">
+                                {{ hero_post.description|striptags|truncatewords:32|default:"" }}
+                            </p>
+                        </div>
 
-                    <!-- Sources -->
-                    {% if all_sources %}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 mb-1.5">مصادر محددة</label>
-                        <select name="sources" multiple class="w-full h-28 bg-gray-50 border border-gray-200 rounded-xl text-sm p-2">
-                            {% for src in all_sources %}
-                            <option value="{{ src.id }}" {% if src.id|stringformat:"i" in selected_sources %}selected{% endif %}>{{ src.name }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="flex items-center justify-between mt-5 pt-3 border-t border-gray-100 dark:border-slate-700">
+                            <div class="flex items-center gap-2">
+                                {% if hero_post.topic and hero_post.topic.topic_size > 1 %}
+                                <a href="{% url 'posts:topic_detail' hero_post.topic.id %}" class="inline-flex items-center gap-1 text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200">
+                                    تغطية متعلقة ({{ hero_post.topic.topic_size|add:"-1" }})
+                                </a>
+                                {% else %}
+                                <a href="{% url 'posts:post_detail' hero_post.pk %}" class="text-xs font-bold text-primary hover:underline">اقرأ التفاصيل ←</a>
+                                {% endif %}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <a href="https://api.whatsapp.com/send?text={{ hero_post.title|urlencode }}%20{{ request.scheme }}://{{ request.get_host }}{% url 'posts:post_detail' hero_post.pk %}" target="_blank" rel="noopener" title="واتساب" class="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-white flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.532 5.857L.073 23.927l6.275-1.435A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0z"/></svg>
+                                </a>
+                                <button type="button" onclick="copyPostUrl('{% url 'posts:post_detail' hero_post.pk %}')" title="نسخ الرابط" class="w-7 h-7 rounded-full bg-gray-100 hover:bg-primary text-gray-600 hover:text-white flex items-center justify-center transition-colors">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
-
-                    <button type="submit" class="w-full py-2.5 bg-primary text-white font-bold rounded-xl shadow hover:bg-blue-700 transition-colors">
-                        تطبيق الفلترة
-                    </button>
-                </form>
+                </div>
             </div>
-        </aside>
+            {% endif %}
 
-        <!-- Left Column: News Feed -->
-        <section class="lg:col-span-8 order-2 lg:order-1 space-y-6">
-            <div class="flex items-center justify-between pb-4 border-b border-gray-200">
-                <h1 class="text-2xl font-black text-gray-900">آخر الأخبار</h1>
-                <span class="text-xs text-gray-500 font-medium">تحديث مباشر كل 10 دقائق</span>
+            {% if show_portal_hero and readers_picks %}
+            <!-- 2. Readers' Picks Grid (اختيارات القراء - Sahaafa Style) -->
+            <div class="space-y-3.5">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-orange-500 rounded-full"></span>
+                        <h2 class="text-lg font-black text-gray-900 dark:text-slate-100">اختيارات القراء</h2>
+                    </div>
+                    <a href="{% url 'most_read' %}" class="text-xs font-bold text-primary hover:underline">الأكثر قراءة اليوم ←</a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {% for pick in readers_picks %}
+                    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div>
+                            {% if pick.image_url %}
+                            <a href="{% url 'posts:post_detail' pick.pk %}" class="block h-36 bg-gray-100 dark:bg-slate-700 overflow-hidden">
+                                <img referrerpolicy="no-referrer" src="{{ pick.image_url }}" alt="{{ pick.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                            </a>
+                            {% endif %}
+                            <div class="p-4">
+                                <a href="{% url 'posts:post_detail' pick.pk %}" class="text-sm font-bold text-gray-900 dark:text-slate-100 group-hover:text-primary line-clamp-3 leading-snug transition-colors">
+                                    {{ pick.title }}
+                                </a>
+                            </div>
+                        </div>
+                        <div class="px-4 pb-3.5 pt-2 border-t border-gray-50 dark:border-slate-700/60 flex items-center justify-between text-[11px] text-gray-500">
+                            <a href="?sources={{ pick.source.id }}" class="font-bold text-primary truncate max-w-[110px]">{{ pick.source.name }}</a>
+                            <div class="flex items-center gap-1.5">
+                                <span>{{ pick.published_at|arabic_timesince }}</span>
+                                <span>·</span>
+                                <span>{{ pick.post_views_count }} قراءة</span>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
             </div>
+            {% endif %}
 
-            <div id="posts-container" class="space-y-4">
-                {% include "posts/partials/post_list_items.html" %}
+            <!-- 3. Chronological News Feed (آخر الأخبار) -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-slate-700">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-primary rounded-full"></span>
+                        <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100">
+                            {% if current_topic %}تغطية الحدث المجمعة{% else %}آخر الأخبار{% endif %}
+                        </h1>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="hidden sm:inline text-xs text-gray-500 font-medium">تحديث مباشر على مدار الساعة</span>
+                        <button type="button"
+                                hx-get="{{ request.get_full_path }}"
+                                hx-target="#posts-container"
+                                hx-swap="innerHTML"
+                                class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-blue-50 dark:bg-slate-700 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>تحديث</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="posts-container" class="space-y-4">
+                    {% include "posts/partials/post_list_items.html" %}
+                </div>
             </div>
 
             <!-- Pagination -->
             {% if is_paginated %}
-            <div class="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200" dir="rtl">
+            <div class="flex justify-center items-center gap-2 mt-8 pt-6 border-t border-gray-200 dark:border-slate-700" dir="rtl">
                 {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 transition-colors shadow-sm">
                     السابق
                 </a>
                 {% endif %}
@@ -100,7 +161,7 @@
                                 {% if page_num == page_obj.paginator.num_pages %}الأخيرة{% else %}{{ page_num }}{% endif %}
                             </span>
                         {% else %}
-                            <a href="?page={{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="min-w-[2.5rem] h-10 px-3.5 flex items-center justify-center rounded-xl bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm">
+                            <a href="?page={{ page_num }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="min-w-[2.5rem] h-10 px-3.5 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm">
                                 {% if page_num == page_obj.paginator.num_pages %}الأخيرة{% else %}{{ page_num }}{% endif %}
                             </a>
                         {% endif %}
@@ -108,13 +169,80 @@
                 </div>
 
                 {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white border border-gray-200 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors shadow-sm">
+                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="px-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-sm font-semibold text-gray-700 dark:text-slate-200 hover:bg-gray-50 transition-colors shadow-sm">
                     التالي
                 </a>
                 {% endif %}
             </div>
             {% endif %}
         </section>
+
+        <!-- Right Column: Portal Services & Filters Sidebar -->
+        <aside class="lg:col-span-4 order-2 space-y-6">
+            {% include "posts/partials/portal_sidebar_widgets.html" %}
+
+            <!-- Advanced Filter Form -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="flex items-center gap-2 border-b border-gray-100 dark:border-slate-700 pb-3">
+                    <span class="w-1.5 h-5 bg-gray-700 dark:bg-slate-300 rounded-full"></span>
+                    <h2 class="text-sm font-extrabold text-gray-900 dark:text-slate-100">تصفية متقدمة للأخبار</h2>
+                </div>
+                <form action="{% url 'home' %}" method="GET" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">بحث</label>
+                        <input type="text" name="q" value="{{ request.GET.q|default:'' }}" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2.5 focus:ring-primary focus:border-primary" placeholder="كلمات البحث...">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">الترتيب</label>
+                            <select name="sort" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                                <option value="latest" {% if request.GET.sort == 'latest' %}selected{% endif %}>الأحدث</option>
+                                <option value="votes" {% if request.GET.sort == 'votes' %}selected{% endif %}>الأعلى تصويتاً</option>
+                                <option value="reads" {% if request.GET.sort == 'reads' %}selected{% endif %}>الأكثر قراءة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">الفترة</label>
+                            <select name="period" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
+                                <option value="">كل الوقت</option>
+                                <option value="1h" {% if request.GET.period == '1h' %}selected{% endif %}>ساعة</option>
+                                <option value="24h" {% if request.GET.period == '24h' %}selected{% endif %}>يوم</option>
+                                <option value="week" {% if request.GET.period == 'week' %}selected{% endif %}>أسبوع</option>
+                                <option value="month" {% if request.GET.period == 'month' %}selected{% endif %}>شهر</option>
+                                <option value="year" {% if request.GET.period == 'year' %}selected{% endif %}>سنة</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    {% if all_categories %}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">أقسام محددة</label>
+                        <select name="categories" multiple class="w-full h-24 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-xs p-2">
+                            {% for cat in all_categories %}
+                            <option value="{{ cat.id }}" {% if cat.id|stringformat:"i" in selected_categories %}selected{% endif %}>{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    {% if all_sources %}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">مصادر محددة</label>
+                        <select name="sources" multiple class="w-full h-24 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-xs p-2">
+                            {% for src in all_sources %}
+                            <option value="{{ src.id }}" {% if src.id|stringformat:"i" in selected_sources %}selected{% endif %}>{{ src.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <button type="submit" class="w-full py-2.5 bg-primary text-white font-bold rounded-xl shadow hover:bg-blue-700 transition-colors text-sm">
+                        تطبيق الفلترة
+                    </button>
+                </form>
+            </div>
+        </aside>
 
     </div>
 </div>

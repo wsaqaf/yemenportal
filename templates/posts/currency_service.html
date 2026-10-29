@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% load arabic_time %}
+
+{% block title %}أسعار الصرف في اليمن (صنعاء وعدن) وأخبار الاقتصاد - يمن بورتال{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <section class="lg:col-span-8 space-y-7">
+            <!-- Hero Header -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-slate-700 text-emerald-600 flex items-center justify-center flex-shrink-0 font-black text-xl">
+                        $
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100">أسعار الصرف في اليمن — صنعاء وعدن</h1>
+                        <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400">متابعة مستمرة لأسعار صرف العملات الأجنبية مقابل الريال اليمني وحاسبة التحويل الفورية</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sanaa & Aden Rate Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Aden Table -->
+                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-4">
+                        <h2 class="text-base font-black text-gray-900 dark:text-slate-100">📍 أسعار الصرف في عدن</h2>
+                        <span class="text-xs bg-blue-50 text-primary font-bold px-2.5 py-0.5 rounded-lg">ريال يمني</span>
+                    </div>
+                    <div class="space-y-2.5">
+                        <div class="grid grid-cols-3 text-xs font-bold text-gray-400 px-3">
+                            <span>العملة</span>
+                            <span class="text-center">شراء</span>
+                            <span class="text-left">بيع</span>
+                        </div>
+                        {% for rate in exchange_rates.aden %}
+                        <div class="grid grid-cols-3 items-center bg-gray-50 dark:bg-slate-700/50 px-3.5 py-3 rounded-xl text-sm">
+                            <span class="font-bold text-gray-800 dark:text-slate-100">{{ rate.get_currency_code_display }} ({{ rate.currency_code }})</span>
+                            <span class="text-center font-black text-emerald-600">{{ rate.buy_price|floatformat:0 }}</span>
+                            <span class="text-left font-black text-rose-600">{{ rate.sell_price|floatformat:0 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Sanaa Table -->
+                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-4">
+                        <h2 class="text-base font-black text-gray-900 dark:text-slate-100">📍 أسعار الصرف في صنعاء</h2>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 font-bold px-2.5 py-0.5 rounded-lg">ريال يمني</span>
+                    </div>
+                    <div class="space-y-2.5">
+                        <div class="grid grid-cols-3 text-xs font-bold text-gray-400 px-3">
+                            <span>العملة</span>
+                            <span class="text-center">شراء</span>
+                            <span class="text-left">بيع</span>
+                        </div>
+                        {% for rate in exchange_rates.sanaa %}
+                        <div class="grid grid-cols-3 items-center bg-gray-50 dark:bg-slate-700/50 px-3.5 py-3 rounded-xl text-sm">
+                            <span class="font-bold text-gray-800 dark:text-slate-100">{{ rate.get_currency_code_display }} ({{ rate.currency_code }})</span>
+                            <span class="text-center font-black text-emerald-600">{{ rate.buy_price|floatformat:1 }}</span>
+                            <span class="text-left font-black text-rose-600">{{ rate.sell_price|floatformat:1 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Currency Converter Calculator -->
+            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-6 shadow-sm"
+                 x-data="{ amount: 100, rateType: '2055' }">
+                <h3 class="text-base font-black text-gray-900 dark:text-slate-100 mb-4">🧮 حاسبة تحويل العملات الفورية إلى الريال اليمني</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">المبلغ بالعملة الأجنبية</label>
+                        <input type="number" x-model="amount" min="1" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-2.5 text-sm font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">العملة والمنطقة</label>
+                        <select x-model="rateType" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl p-2.5 text-sm font-bold">
+                            {% for r in exchange_rates.aden %}
+                            <option value="{{ r.buy_price }}">عدن - {{ r.get_currency_code_display }} ({{ r.buy_price|floatformat:0 }})</option>
+                            {% endfor %}
+                            {% for r in exchange_rates.sanaa %}
+                            <option value="{{ r.buy_price }}">صنعاء - {{ r.get_currency_code_display }} ({{ r.buy_price|floatformat:1 }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="bg-emerald-50 dark:bg-slate-700 border border-emerald-200 dark:border-slate-600 rounded-xl p-2.5 text-center">
+                        <span class="block text-[11px] text-emerald-700 dark:text-emerald-300 font-bold">القيمة بالريال اليمني</span>
+                        <span class="text-lg font-black text-emerald-700 dark:text-emerald-300" x-text="(Number(amount || 0) * Number(rateType || 0)).toLocaleString('ar-YE') + ' ر.ي'"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Economic & Exchange Rate News Stream -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 pb-3 border-b border-gray-200 dark:border-slate-700">
+                    <span class="w-1.5 h-6 bg-emerald-500 rounded-full"></span>
+                    <h2 class="text-xl font-black text-gray-900 dark:text-slate-100">آخر أخبار الاقتصاد وأسعار الصرف</h2>
+                </div>
+                <div class="space-y-4">
+                    {% include "posts/partials/post_list_items.html" with posts=economic_posts %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Sidebar -->
+        <aside class="lg:col-span-4 space-y-6">
+            {% include "posts/partials/portal_sidebar_widgets.html" %}
+        </aside>
+
+    </div>
+</div>
+{% endblock %}
