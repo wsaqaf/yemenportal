@@ -57,11 +57,48 @@ class PortalServicesTests(TestCase):
         response = self.client.get(reverse("home"), HTTP_HOST="localhost")
         self.assertEqual(response.status_code, 200)
         content = response.content.decode("utf-8")
+        self.assertIn("أبرز الأخبار والتغطيات المجمعة", content)
         self.assertIn("اختيارات القراء", content)
+        self.assertIn("آخر الأخبار (مباشر)", content)
         self.assertIn("مقالات وآراء", content)
         self.assertIn("أسعار الصرف في اليمن", content)
         self.assertIn("حالة الطقس في اليمن", content)
         self.assertIn("دليل المواقع الأكثر متابعة", content)
+
+    def test_clusterer_groups_similar_arabic_headlines_and_sorts_sections(self):
+        from apps.posts.services.clusterer import PostClusterer
+        source2 = Source.objects.create(
+            name="عدن الغد",
+            link="https://adengad.net/rss",
+            website="https://adengad.net",
+            state=Source.State.VALID,
+            approve_state=Source.ApproveState.APPROVED,
+        )
+        p_a = Post.objects.create(
+            title="مجلس القيادة الرئاسي يعقد اجتماعا طارئا في العاصمة عدن لمناقشة الأوضاع الاقتصادية",
+            description="عقد مجلس القيادة الرئاسي اجتماعا في عدن",
+            link="https://almasdaronline.com/post/101",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=self.source,
+            post_views_count=50,
+        )
+        p_b = Post.objects.create(
+            title="القيادة الرئاسي يعقد اجتماعا استثنائيا في عدن لبحث الأوضاع الاقتصادية والخدمية",
+            description="تفاصيل اجتماع مجلس القيادة في عدن",
+            link="https://adengad.net/post/102",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=source2,
+            post_views_count=60,
+        )
+        clusterer = PostClusterer()
+        clusterer.clusterize_recent_posts(unclustered_hours=24, force_recluster=True)
+        p_a.refresh_from_db()
+        p_b.refresh_from_db()
+        self.assertIsNotNone(p_a.topic_id)
+        self.assertEqual(p_a.topic_id, p_b.topic_id)
+        self.assertGreaterEqual(p_a.topic.topic_size, 2)
 
     def test_most_read_page_orders_by_views(self):
         response = self.client.get(reverse("most_read") + "?window=24h", HTTP_HOST="localhost")

@@ -132,6 +132,7 @@ class PostListView(ListView):
         has_filters = any([
             self.request.GET.get('q'),
             self.request.GET.get('period'),
+            self.request.GET.get('view') == 'stream',
             self.request.GET.get('sort') and self.request.GET.get('sort') != 'latest',
             context['selected_categories'],
             context['selected_sources'],
@@ -178,6 +179,7 @@ class MostReadListView(ListView):
             get_yemen_weather,
         )
         widgets = get_homepage_portal_widgets()
+        context['latest_sidebar_posts'] = widgets.get('latest_sidebar_posts', [])
         context['opinion_posts'] = widgets.get('opinion_posts', [])
         context['top_sources'] = widgets.get('top_sources', [])
         context['exchange_rates'] = get_exchange_rates()
@@ -247,6 +249,7 @@ class CurrencyServiceView(View):
             'economic_posts': get_economic_posts(limit=15),
             'exchange_rates': get_exchange_rates(),
             'yemen_weather': get_yemen_weather(),
+            'latest_sidebar_posts': widgets.get('latest_sidebar_posts', []),
             'opinion_posts': widgets.get('opinion_posts', []),
             'top_sources': widgets.get('top_sources', []),
         }

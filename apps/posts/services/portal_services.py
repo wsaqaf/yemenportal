@@ -444,67 +444,284 @@ def get_yemen_weather() -> list[dict]:
     ]
 
 
+THEMATIC_SECTIONS_SPEC = [
+    {
+        "slug": "politics",
+        "title": "السياسة والحكومة",
+        "icon": "🏛️",
+        "accent": "bg-blue-600",
+        "category_names": ["محلي", "أخبار"],
+        "keywords": ["مجلس القيادة", "العليمي", "رئيس الوزراء", "الحكومة", "وزير", "وزارة", "البرلمان", "سفير", "المبعوث", "الأمم المتحدة", "الشرعية", "الانتقالي", "مشاورات", "الرياض", "جنيف", "قرار جمهوري"],
+    },
+    {
+        "slug": "conflict",
+        "title": "التطورات العسكرية والأمنية",
+        "icon": "🛡️",
+        "accent": "bg-red-600",
+        "category_names": ["عاجل", "محلي"],
+        "keywords": ["القوات المسلحة", "غارات", "قصف", "استهداف", "صاروخ", "طيران", "معارك", "جبهة", "جبهات", "الأمن", "شرطة", "انفجار", "مطار عدن", "البحر الأحمر", "باب المندب", "الحوثي", "مليشيا", "حصار"],
+    },
+    {
+        "slug": "local",
+        "title": "الشأن المحلي والمحافظات",
+        "icon": "📍",
+        "accent": "bg-emerald-600",
+        "category_names": ["محلي"],
+        "keywords": ["صنعاء", "عدن", "تعز", "مأرب", "حضرموت", "الحديدة", "شبوة", "صعدة", "المكلا", "الضالع", "لحج", "أبين", "المهرة", "سقطرى", "البيضاء", "الجوف", "ذمار", "إب", "حجة", "محافظ", "مديرية"],
+    },
+    {
+        "slug": "economy",
+        "title": "الاقتصاد وأسعار الصرف",
+        "icon": "📈",
+        "accent": "bg-amber-500",
+        "category_names": ["اقتصاد"],
+        "keywords": ["صرف", "الريال", "الدولار", "البنك المركزي", "الذهب", "النفط", "الوقود", "التجارة", "الجمارك", "الضرائب", "رواتب", "موازنة", "اقتصاد", "العملات"],
+    },
+    {
+        "slug": "reports",
+        "title": "تقارير وتحليلات",
+        "icon": "📋",
+        "accent": "bg-indigo-600",
+        "category_names": ["تقارير", "بانوراما", "حصاد الصحافة"],
+        "keywords": ["تقرير", "تحقيق", "دراسة", "مركز أبعاد", "مركز صنعاء", "هيومن رايتس", "قراءة في", "ملف"],
+    },
+    {
+        "slug": "opinion",
+        "title": "مقالات وآراء",
+        "icon": "✍️",
+        "accent": "bg-purple-600",
+        "category_names": ["آراء", "كتاب من اليمن"],
+        "keywords": ["بقلم", "مقال", "وجهة نظر", "رأي", "يكتب", "كتب:", "بين مطرقة", "ما وراء", "لماذا"],
+    },
+    {
+        "slug": "sports",
+        "title": "الرياضة",
+        "icon": "⚽",
+        "accent": "bg-green-600",
+        "category_names": ["رياضة"],
+        "keywords": ["منتخب", "كأس الخليج", "كأس العالم", "بطولة", "مباراة", "دوري", "نادي", "كرة القدم", "تأهل", "أولمبياد"],
+    },
+    {
+        "slug": "health_society",
+        "title": "الصحة والمجتمع وحقوق الإنسان",
+        "icon": "⚕️",
+        "accent": "bg-teal-600",
+        "category_names": ["صحة", "مجتمع", "المرأة"],
+        "keywords": ["صحة", "مستشفى", "الصحة العالمية", "اليونيسيف", "المرأة", "الطفل", "حقوق الإنسان", "الأوبئة", "تعليم", "جامعة", "مدارس", "إغاثة", "نازحين"],
+    },
+    {
+        "slug": "culture",
+        "title": "الثقافة والفن والتراث",
+        "icon": "🎭",
+        "accent": "bg-pink-600",
+        "category_names": ["ثقافة وفن"],
+        "keywords": ["ثقافة", "فنان", "تراث", "شاعر", "قصيدة", "رواية", "مسرح", "معرض", "سينما", "الدسمال", "إبداع", "أدب"],
+    },
+    {
+        "slug": "technology",
+        "title": "التكنولوجيا والعلوم",
+        "icon": "💻",
+        "accent": "bg-cyan-600",
+        "category_names": ["تكنولوجيا"],
+        "keywords": ["تكنولوجيا", "الذكاء الاصطناعي", "آيفون", "أندرويد", "تطبيق", "هاتف", "ستارلينك", "الإنترنت", "اتصالات", "رقمي", "إلكترونية"],
+    },
+    {
+        "slug": "arab_intl",
+        "title": "أخبار عربية ودولية",
+        "icon": "🌍",
+        "accent": "bg-slate-600",
+        "category_names": ["عربي", "دولي", "ترجمة", "ترجمات"],
+        "keywords": ["فلسطين", "غزة", "لبنان", "السعودية", "مصر", "السودان", "روسيا", "واشنطن", "الأمم المتحدة", "مجلس الأمن", "إيران", "أوروبا"],
+    },
+]
+
+
+def _section_three_tier_sort_key(post: Post, source_weights: dict[int, dict]) -> tuple:
+    """
+    Sorts articles inside each section strictly by:
+    1. Cluster size (topic_size if > 1, else 0)
+    2. Number of reads (post_views_count)
+    3. Reputation of the source (most relevant to Yemeni news)
+    4. Recency (published_at)
+    """
+    cluster_size = post.topic.topic_size if (post.topic_id and post.topic and post.topic.topic_size > 1) else 0
+    reads = post.post_views_count or 0
+    src_info = source_weights.get(post.source_id, {})
+    src_reputation = src_info.get("total_weight", 0.0) if isinstance(src_info, dict) else float(src_info or 0.0)
+    return (cluster_size, reads, src_reputation, post.published_at)
+
+
+def get_homepage_thematic_sections(source_weights: dict[int, dict], exclude_post_ids: set[int]) -> list[dict]:
+    """
+    Builds the 11 main thematic sections on the homepage, each sorted by:
+    Cluster Size -> Number of Reads -> Source Yemen Reputation.
+    """
+    now = timezone.now()
+    pool = list(
+        Post.objects.filter(
+            state=Post.State.APPROVED,
+            published_at__gte=now - timedelta(days=5),
+        )
+        .select_related("source", "topic")
+        .prefetch_related("categories")
+        .order_by("-published_at")[:1200]
+    )
+
+    # Map topic_id -> fallback image_url from sibling posts
+    topic_images: dict[int, str] = {}
+    for p in pool:
+        if p.topic_id and p.image_url and p.image_url.startswith("http") and p.topic_id not in topic_images:
+            topic_images[p.topic_id] = p.image_url
+
+    cat_name_to_id = {c.name: c.id for c in Category.objects.all()}
+    sections_output = []
+    global_used_post_ids = set(exclude_post_ids)
+    global_used_topics = set()
+    for p in pool:
+        if p.id in global_used_post_ids and p.topic_id:
+            global_used_topics.add(p.topic_id)
+
+    for spec in THEMATIC_SECTIONS_SPEC:
+        cat_set = set(spec["category_names"])
+        kw_list = spec["keywords"]
+        primary_cat_id = next((cat_name_to_id[cn] for cn in spec["category_names"] if cn in cat_name_to_id), None)
+
+        matched = []
+        for p in pool:
+            if p.id in global_used_post_ids:
+                continue
+            if p.topic_id and p.topic_id in global_used_topics:
+                continue
+            post_cat_names = {c.name for c in p.categories.all()}
+            title_text = p.title or ""
+
+            # For topical sections like Sports, Tech, Culture, Opinion, require category match or strong keyword
+            if spec["slug"] in ("sports", "culture", "technology", "opinion"):
+                if not (post_cat_names.intersection(cat_set) or any(kw in title_text for kw in kw_list)):
+                    continue
+            elif spec["slug"] in ("politics", "conflict", "local"):
+                if not is_yemen_relevant(p):
+                    continue
+                if not any(kw in title_text for kw in kw_list):
+                    continue
+            else:
+                if not (post_cat_names.intersection(cat_set) or any(kw in title_text for kw in kw_list)):
+                    continue
+
+            matched.append(p)
+
+        # Sort by 3-tier rule: 1. Cluster Size -> 2. Reads -> 3. Source Yemen Reputation
+        matched.sort(key=lambda p: _section_three_tier_sort_key(p, source_weights), reverse=True)
+
+        # Deduplicate by topic_id and title prefix
+        seen_topics = set()
+        seen_titles = set()
+        section_posts = []
+        for p in matched:
+            if p.topic_id and p.topic_id in seen_topics:
+                continue
+            t_key = (p.title or "").strip()[:45]
+            if t_key in seen_titles:
+                continue
+            if p.topic_id:
+                seen_topics.add(p.topic_id)
+                global_used_topics.add(p.topic_id)
+                if not p.image_url and p.topic_id in topic_images:
+                    p.image_url = topic_images[p.topic_id]
+            seen_titles.add(t_key)
+            global_used_post_ids.add(p.id)
+            section_posts.append(p)
+            if len(section_posts) >= 6:
+                break
+
+        if section_posts:
+            sections_output.append({
+                "slug": spec["slug"],
+                "title": spec["title"],
+                "icon": spec["icon"],
+                "accent": spec["accent"],
+                "category_id": primary_cat_id,
+                "posts": section_posts,
+            })
+
+    return sections_output
+
+
 def get_homepage_portal_widgets() -> dict:
     """
-    Returns Sahaafa-style portal blocks cached in Redis:
-    - hero_post: Top breaking / major Yemen story (with cluster size & source activity weighting)
-    - readers_picks: Top 3 important/most-read Yemen stories
-    - opinion_posts: Latest 6 opinion / columnist articles
-    - top_sources: Top 12 active sources ranked by total reads
+    Returns Yemen Portal homepage blocks cached in Redis:
+    - hero_post: #1 Top Clustered Story
+    - top_clusters: Next 6 Top Clustered Stories under 'أبرز الأخبار'
+    - readers_picks: Next 3 stories under 'اختيارات القراء'
+    - thematic_sections: 11 attractive thematic sections sorted by Cluster Size -> Reads -> Source Reputation
+    - latest_sidebar_posts: Latest 18 chronological posts for the 'آخر الأخبار' sidebar column
+    - top_sources: Top 12 active Yemen-focused sources
     """
-    cached = cache.get("portal_homepage_widgets_v4")
+    cached = cache.get("portal_homepage_widgets_v5")
     if cached:
         return cached
 
     now = timezone.now()
+    source_weights = get_source_activity_weights()
     base_qs = (
         Post.objects.filter(state=Post.State.APPROVED)
         .select_related("source", "topic")
         .prefetch_related("categories")
     )
 
-    ranked_yemen = get_ranked_yemen_posts(hours=24, limit=15)
+    ranked_yemen = get_ranked_yemen_posts(hours=36, limit=25)
 
-    # 1. Hero Post: Prefer the #1 ranked Yemen breaking cluster/story
-    hero_post = ranked_yemen[0] if ranked_yemen else base_qs.order_by("-published_at").first()
-
-    # 2. Readers' Picks (اختيارات القراء - next 3 top Yemen stories)
-    readers_picks = ranked_yemen[1:4] if len(ranked_yemen) >= 4 else ranked_yemen[1:]
-
-    # 3. Opinion & Columnists (مقالات وآراء) - bounded to recent 30 days for index speed
-    opinion_cat_ids = list(
-        Category.objects.filter(
-            name__in=["آراء", "كتاب من اليمن", "مقالات", "تقارير", "بانوراما"]
-        ).values_list("id", flat=True)
+    # Sort top clustered stories primarily by Cluster Size -> Score -> Reads -> Source Reputation
+    clustered_candidates = [
+        p for p in ranked_yemen
+        if p.topic_id and p.topic and p.topic.topic_size > 1
+    ]
+    clustered_candidates.sort(
+        key=lambda p: (
+            p.topic.topic_size if (p.topic and "أسعار صرف" not in (p.title or "")) else min(p.topic.topic_size, 6),
+            p.post_views_count or 0,
+            source_weights.get(p.source_id, {}).get("total_weight", 0.0),
+        ),
+        reverse=True,
     )
-    raw_opinions = list(
-        base_qs.filter(
-            published_at__gte=now - timedelta(days=30),
-            categories__id__in=opinion_cat_ids,
-        )
-        .order_by("-published_at")[:18]
-    )
-    seen_op_ids = set()
-    opinion_posts = []
-    for p in raw_opinions:
-        if p.id not in seen_op_ids and is_yemen_relevant(p):
-            seen_op_ids.add(p.id)
-            opinion_posts.append(p)
-            if len(opinion_posts) >= 6:
-                break
 
-    if len(opinion_posts) < 4:
-        for p in ranked_yemen[4:]:
-            if p.id not in seen_op_ids:
-                seen_op_ids.add(p.id)
-                opinion_posts.append(p)
-                if len(opinion_posts) >= 6:
+    if len(clustered_candidates) < 7:
+        used_c_ids = {p.id for p in clustered_candidates}
+        for p in ranked_yemen:
+            if p.id not in used_c_ids:
+                clustered_candidates.append(p)
+                if len(clustered_candidates) >= 7:
                     break
 
-    # 4. Top Sources Directory (دليل المواقع / المصادر النشطة) - weighted by on-the-fly Yemen Focus Ratio
+    # 1. Hero Post + 6 More Top Clustered Stories under 'أبرز الأخبار' (7 items total!)
+    hero_post = clustered_candidates[0] if clustered_candidates else base_qs.order_by("-published_at").first()
+    top_clusters = clustered_candidates[1:7]
+
+    used_top_ids = {hero_post.id} if hero_post else set()
+    used_top_ids.update(p.id for p in top_clusters)
+
+    # 2. Readers' Picks (اختيارات القراء)
+    readers_picks = [p for p in ranked_yemen if p.id not in used_top_ids][:3]
+    if not readers_picks and len(ranked_yemen) > 1:
+        readers_picks = ranked_yemen[1:4]
+
+    # 3. Latest Chronological News for Sidebar ('آخر الأخبار' column replacing 'مقالات وآراء' in sidebar)
+    latest_sidebar_posts = list(
+        base_qs.order_by("-published_at")[:18]
+    )
+
+    # 4. 11 Main Thematic Sections for Main Body (sorted by Cluster Size -> Reads -> Source Reputation)
+    thematic_sections = get_homepage_thematic_sections(
+        source_weights=source_weights,
+        exclude_post_ids={hero_post.id} if hero_post else set(),
+    )
+
+    # Keep opinion_posts for subpages that reference it
+    opinion_sec = next((s["posts"] for s in thematic_sections if s["slug"] == "opinion"), [])
+
+    # 5. Top Sources Directory (دليل المواقع / المصادر النشطة) - weighted by on-the-fly Yemen Focus Ratio
     top_sources = cache.get("portal_top_sources_v3")
     if not top_sources:
-        source_weights = get_source_activity_weights()
         recent_cutoff = now - timedelta(days=14)
         candidate_sources = list(
             Source.objects.filter(
@@ -520,7 +737,6 @@ def get_homepage_portal_widgets() -> dict:
             )
             .order_by("-total_reads", "-posts_total")[:30]
         )
-        # Filter to sources with >= 35% Yemen focus ratio and sort by Yemen-weighted readership
         yemen_sources = [
             s for s in candidate_sources
             if source_weights.get(s.id, {}).get("yemen_ratio", 0.5) >= 0.35
@@ -537,11 +753,14 @@ def get_homepage_portal_widgets() -> dict:
 
     data = {
         "hero_post": hero_post,
+        "top_clusters": top_clusters,
         "readers_picks": readers_picks,
-        "opinion_posts": opinion_posts,
+        "latest_sidebar_posts": latest_sidebar_posts,
+        "thematic_sections": thematic_sections,
+        "opinion_posts": opinion_sec,
         "top_sources": top_sources,
     }
-    cache.set("portal_homepage_widgets_v4", data, timeout=600)
+    cache.set("portal_homepage_widgets_v5", data, timeout=600)
     return data
 
 

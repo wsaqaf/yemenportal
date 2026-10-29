@@ -1,6 +1,44 @@
 {% load arabic_time %}
 
-<!-- 1. Yemen Currency Exchange Rates Widget (أسعار الصرف في صنعاء وعدن) -->
+<!-- 1. Latest News Stream Widget in Sidebar (آخر الأخبار - Replaces مقالات وآراء in Sidebar) -->
+{% if latest_sidebar_posts %}
+<div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-3.5">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+            <h2 class="text-sm font-extrabold text-gray-900 dark:text-slate-100">آخر الأخبار (مباشر)</h2>
+        </div>
+        <a href="{% url 'home' %}?view=stream" class="text-xs font-bold text-primary hover:underline">الشريط الكامل ←</a>
+    </div>
+    <div class="divide-y divide-gray-100 dark:divide-slate-700 max-h-[540px] overflow-y-auto pl-1">
+        {% for item in latest_sidebar_posts %}
+        <div class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 group">
+            <time datetime="{{ item.published_at|date:'c' }}" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono font-bold rounded text-[11px] flex-shrink-0 mt-0.5">
+                {{ item.published_at|date:"H:i" }}
+            </time>
+            <div class="flex-grow min-w-0">
+                <a href="{% url 'posts:post_detail' item.pk %}" class="text-xs font-bold text-gray-800 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-relaxed transition-colors">
+                    {{ item.title }}
+                </a>
+                <div class="flex flex-wrap items-center gap-1.5 mt-1 text-[11px] text-gray-400">
+                    <a href="{% url 'home' %}?sources={{ item.source.id }}" class="text-primary font-semibold hover:underline">{{ item.source.name }}</a>
+                    <span>·</span>
+                    <span>{{ item.published_at|arabic_timesince }}</span>
+                    {% if item.topic and item.topic.topic_size > 1 %}
+                    <span>·</span>
+                    <a href="{% url 'posts:topic_detail' item.topic.id %}" class="text-indigo-600 dark:text-indigo-400 font-bold">
+                        ({{ item.topic.topic_size }} مصادر)
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- 2. Yemen Currency Exchange Rates Widget (أسعار الصرف في صنعاء وعدن) -->
 {% if exchange_rates %}
 <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm" x-data="{ fxTab: 'aden' }">
     <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-3.5">
@@ -59,7 +97,7 @@
 </div>
 {% endif %}
 
-<!-- 2. Yemen Weather Widget (حالة الطقس في المحافظات) -->
+<!-- 3. Yemen Weather Widget (حالة الطقس في المحافظات) -->
 {% if yemen_weather %}
 <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
     <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-3.5">
@@ -84,45 +122,7 @@
 </div>
 {% endif %}
 
-<!-- 3. Opinion & Articles Widget (مقالات عامة / كتاب من اليمن - Sahaafa Style) -->
-{% if opinion_posts %}
-<div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
-    <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-4">
-        <div class="flex items-center gap-2">
-            <span class="w-1.5 h-5 bg-primary rounded-full"></span>
-            <h2 class="text-sm font-extrabold text-gray-900 dark:text-slate-100">مقالات وآراء</h2>
-        </div>
-        <a href="{% url 'home' %}?categories=11" class="text-xs font-bold text-primary hover:underline">المزيد ←</a>
-    </div>
-    <div class="divide-y divide-gray-100 dark:divide-slate-700">
-        {% for art in opinion_posts %}
-        <div class="py-3 first:pt-0 last:pb-0 flex items-start gap-3 group">
-            {% if art.image_url %}
-            <a href="{% url 'posts:post_detail' art.pk %}" class="flex-shrink-0 w-12 h-12 rounded-xl overflow-hidden bg-gray-100 border border-gray-200">
-                <img referrerpolicy="no-referrer" src="{{ art.image_url }}" alt="{{ art.title }}" loading="lazy" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.style.display='none';">
-            </a>
-            {% else %}
-            <div class="flex-shrink-0 w-10 h-10 rounded-xl bg-blue-50 dark:bg-slate-700 text-primary flex items-center justify-center font-bold text-sm">
-                ✍️
-            </div>
-            {% endif %}
-            <div class="flex-grow min-w-0">
-                <a href="{% url 'posts:post_detail' art.pk %}" class="text-xs font-bold text-gray-800 dark:text-slate-100 group-hover:text-primary line-clamp-2 leading-relaxed transition-colors">
-                    {{ art.title }}
-                </a>
-                <div class="flex items-center gap-1.5 mt-1 text-[11px] text-gray-400">
-                    <a href="{% url 'home' %}?sources={{ art.source.id }}" class="text-primary font-semibold hover:underline">{{ art.source.name }}</a>
-                    <span>·</span>
-                    <span>{{ art.published_at|arabic_timesince }}</span>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-</div>
-{% endif %}
-
-<!-- 4. Active Sources Directory Widget (دليل المواقع - Sahaafa Style) -->
+<!-- 4. Active Sources Directory Widget (دليل المواقع الأكثر متابعة) -->
 {% if top_sources %}
 <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm">
     <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3 mb-3.5">
