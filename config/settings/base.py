@@ -34,7 +34,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
     'django_celery_results',
     'django_celery_beat',
     
@@ -129,11 +128,9 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Allauth Social Account Settings (Google & Facebook)
+# Allauth Social Account Settings (Google)
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
 GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET', default='')
-FACEBOOK_CLIENT_ID = env('FACEBOOK_CLIENT_ID', default='')
-FACEBOOK_CLIENT_SECRET = env('FACEBOOK_CLIENT_SECRET', default='')
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -144,20 +141,6 @@ SOCIALACCOUNT_PROVIDERS = {
         }],
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {'access_type': 'online'},
-    },
-    'facebook': {
-        'APPS': [{
-            'client_id': FACEBOOK_CLIENT_ID or 'FACEBOOK_CLIENT_ID',
-            'secret': FACEBOOK_CLIENT_SECRET or 'FACEBOOK_CLIENT_SECRET',
-            'key': '',
-        }],
-        'METHOD': 'oauth2',
-        'SCOPE': ['email', 'public_profile'],
-        'FIELDS': [
-            'id', 'first_name', 'last_name', 'name', 'name_format',
-            'picture', 'short_name', 'email',
-        ],
-        'EXCHANGE_TOKEN': True,
     }
 }
 
