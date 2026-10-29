@@ -17,3 +17,6 @@ yemenportal-master/
 local_seed.json
 local_seed.json
 .env
+
+docker-compose.override.yml
+local_seed.json

@@ -4,7 +4,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-# Additional development apps
+# Local development tooling
 INSTALLED_APPS += [
     'debug_toolbar',
 ]
@@ -15,15 +15,10 @@ MIDDLEWARE += [
 
 INTERNAL_IPS = [
     '127.0.0.1',
+    'localhost',
 ]
 
-# Email backend for development
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# Use SQLite for easy local testing
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Development toolbar Docker compatibility
+import socket
+hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+INTERNAL_IPS += [ip[:-1] + '1' for ip in ips]
