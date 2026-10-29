@@ -147,41 +147,25 @@ class MostReadListView(ListView):
     context_object_name = 'posts'
 
     def get_queryset(self):
-        from django.utils import timezone
-        from datetime import timedelta
         from django.core.cache import cache
+        from apps.posts.services.portal_services import get_ranked_yemen_posts
 
         window = self.request.GET.get('window', '24h')
         if window not in ('10h', '24h', 'week', 'all'):
             window = '24h'
 
-        cache_key = f"portal_most_read_{window}"
+        cache_key = f"portal_most_read_v3_{window}"
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
 
-        now = timezone.now()
-        base_qs = (
-            Post.objects.filter(state=Post.State.APPROVED)
-            .select_related('source', 'topic')
-            .prefetch_related('categories')
-        )
-
-        if window == '10h':
-            qs = base_qs.filter(published_at__gte=now - timedelta(hours=10))
-        elif window == 'week':
-            qs = base_qs.filter(published_at__gte=now - timedelta(days=7))
-        elif window == 'all':
-            qs = base_qs.filter(published_at__gte=now - timedelta(days=30))
-        else:
-            qs = base_qs.filter(published_at__gte=now - timedelta(hours=24))
-
-        posts = list(qs.order_by('-post_views_count', '-voting_result', '-published_at')[:30])
-        if len(posts) < 5 and window in ('10h', '24h'):
-            posts = list(
-                base_qs.filter(published_at__gte=now - timedelta(days=7))
-                .order_by('-post_views_count', '-voting_result', '-published_at')[:30]
-            )
+        hours_map = {
+            '10h': 10,
+            '24h': 24,
+            'week': 168,
+            'all': 720,
+        }
+        posts = get_ranked_yemen_posts(hours=hours_map[window], limit=30)
         cache.set(cache_key, posts, timeout=300)
         return posts
 

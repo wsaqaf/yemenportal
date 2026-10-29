@@ -49,6 +49,11 @@
                                 <a href="{% url 'home' %}?sources={{ post.source.id }}" class="font-bold text-primary bg-blue-50 dark:bg-slate-700 px-2.5 py-0.5 rounded-lg">
                                     {{ post.source.name }}
                                 </a>
+                                {% if post.topic and post.topic.topic_size > 1 %}
+                                <a href="{% url 'posts:topic_detail' post.topic.id %}" class="font-bold text-indigo-700 bg-indigo-50 dark:bg-slate-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg">
+                                    تغطية متعلقة ({{ post.topic.topic_size }})
+                                </a>
+                                {% endif %}
                                 <span>·</span>
                                 <span>{{ post.published_at|arabic_timesince }}</span>
                                 <span>·</span>

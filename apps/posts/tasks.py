@@ -43,7 +43,7 @@ def refresh_portal_services_cache():
     refresh_yemen_weather()
     update_exchange_rates_from_recent_posts()
     get_exchange_rates()
-    cache.delete("portal_homepage_widgets_v1")
+    cache.delete("portal_homepage_widgets_v3")
     cache.delete("portal_economic_posts_15")
     get_homepage_portal_widgets()
     get_economic_posts(limit=15)
