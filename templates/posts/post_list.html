@@ -51,7 +51,7 @@
                                     </a>
                                     {% if hero_post.topic and hero_post.topic.topic_size > 1 %}
                                     <a href="{% url 'posts:topic_detail' hero_post.topic.id %}" class="inline-flex items-center gap-1 font-extrabold text-indigo-700 bg-indigo-50 dark:bg-slate-700 dark:text-indigo-300 px-2.5 py-1 rounded-lg border border-indigo-200 dark:border-slate-600">
-                                        🔥 تغطية من {{ hero_post.topic.topic_size }} مصادر
+                                        🔥 تغطية من {{ hero_post.topic.topic_size|arabic_sources }}
                                     </a>
                                     {% endif %}
                                     <span>·</span>
@@ -109,7 +109,7 @@
                                 </a>
                                 {% if item.topic and item.topic.topic_size > 1 %}
                                 <a href="{% url 'posts:topic_detail' item.topic.id %}" class="font-extrabold text-red-700 bg-red-50 dark:bg-red-950/60 dark:text-red-300 px-2 py-0.5 rounded-md border border-red-200 dark:border-red-800">
-                                    تغطية ({{ item.topic.topic_size }} مصادر)
+                                    تغطية ({{ item.topic.topic_size|arabic_sources }})
                                 </a>
                                 {% endif %}
                             </div>
@@ -159,7 +159,7 @@
                             <a href="?sources={{ pick.source.id }}" title="{{ pick.source.name }}" class="font-bold text-primary truncate max-w-[110px]">{{ pick.source.name }}</a>
                             <div class="flex items-center gap-1.5">
                                 {% if pick.topic and pick.topic.topic_size > 1 %}
-                                <a href="{% url 'posts:topic_detail' pick.topic.id %}" class="font-bold text-indigo-600">({{ pick.topic.topic_size }})</a>
+                                <a href="{% url 'posts:topic_detail' pick.topic.id %}" class="font-bold text-indigo-600">({{ pick.topic.topic_size|arabic_sources }})</a>
                                 <span>·</span>
                                 {% endif %}
                                 <span>{{ pick.post_views_count }} قراءة</span>
@@ -204,7 +204,7 @@
                                     {% if post.topic and post.topic.topic_size > 1 %}
                                     <span>·</span>
                                     <a href="{% url 'posts:topic_detail' post.topic.id %}" class="font-extrabold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-slate-600 px-1.5 py-0.5 rounded">
-                                        تغطية ({{ post.topic.topic_size }})
+                                        تغطية ({{ post.topic.topic_size|arabic_sources }})
                                     </a>
                                     {% endif %}
                                     <span>·</span>
@@ -234,7 +234,7 @@
                     <div class="flex items-center gap-2">
                         <span class="w-1.5 h-6 bg-primary rounded-full"></span>
                         <h1 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100">
-                            {% if current_topic %}تغطية الحدث المجمعة ({{ current_topic.topic_size }} مصادر){% else %}الشريط الإخباري ونتائج التصفية{% endif %}
+                            {% if current_topic %}تغطية الحدث المجمعة ({{ current_topic.topic_size|arabic_sources }}){% else %}الشريط الإخباري ونتائج التصفية{% endif %}
                         </h1>
                     </div>
                     <a href="{% url 'home' %}" class="text-xs font-bold text-primary hover:underline">العودة لأقسام الرئيسية ←</a>

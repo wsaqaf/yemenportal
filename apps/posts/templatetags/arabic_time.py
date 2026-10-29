@@ -9,9 +9,18 @@ def get_arabic_plural(value, singular, dual, plural_3_10):
         return singular
     if value == 2:
         return dual
-    if 3 <= value <= 10:
+    if 3 <= (value % 100) <= 10:
         return f"{value} {plural_3_10}"
     return f"{value} {singular}"
+
+
+@register.filter
+def arabic_sources(value):
+    try:
+        n = int(value)
+    except (TypeError, ValueError):
+        return ""
+    return get_arabic_plural(n, "مصدر", "مصدرين", "مصادر")
 
 @register.filter
 def arabic_timesince(value):

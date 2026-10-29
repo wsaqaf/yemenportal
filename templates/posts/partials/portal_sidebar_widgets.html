@@ -27,7 +27,7 @@
                     {% if item.topic and item.topic.topic_size > 1 %}
                     <span>·</span>
                     <a href="{% url 'posts:topic_detail' item.topic.id %}" class="text-indigo-600 dark:text-indigo-400 font-bold">
-                        ({{ item.topic.topic_size }} مصادر)
+                        ({{ item.topic.topic_size|arabic_sources }})
                     </a>
                     {% endif %}
                 </div>

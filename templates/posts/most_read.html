@@ -51,7 +51,7 @@
                                 </a>
                                 {% if post.topic and post.topic.topic_size > 1 %}
                                 <a href="{% url 'posts:topic_detail' post.topic.id %}" class="font-bold text-indigo-700 bg-indigo-50 dark:bg-slate-700 dark:text-indigo-300 px-2 py-0.5 rounded-lg">
-                                    تغطية متعلقة ({{ post.topic.topic_size }})
+                                    تغطية ({{ post.topic.topic_size|arabic_sources }})
                                 </a>
                                 {% endif %}
                                 <span>·</span>

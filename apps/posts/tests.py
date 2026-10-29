@@ -154,3 +154,13 @@ class PortalServicesTests(TestCase):
         self.assertIn(cat_local.id, military_ids)
         self.assertNotIn(cat_sports.id, military_ids)
 
+    def test_arabic_sources_pluralization(self):
+        from apps.posts.templatetags.arabic_time import arabic_sources
+        self.assertEqual(arabic_sources(1), "مصدر")
+        self.assertEqual(arabic_sources(2), "مصدرين")
+        self.assertEqual(arabic_sources(3), "3 مصادر")
+        self.assertEqual(arabic_sources(10), "10 مصادر")
+        self.assertEqual(arabic_sources(11), "11 مصدر")
+        self.assertEqual(arabic_sources(12), "12 مصدر")
+        self.assertEqual(arabic_sources(39), "39 مصدر")
+
