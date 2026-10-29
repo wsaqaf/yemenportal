@@ -1,3 +1,4 @@
+from .utils import is_iframe_allowed
 import re
 
 def normalize_arabic_search_variants(term: str) -> list[str]:
@@ -185,6 +186,22 @@ class PostDetailView(DetailView):
     template_name = 'posts/post_detail.html'
     context_object_name = 'post'
 
+    def get(self, request, *args, **kwargs):
+        post_id = self.kwargs.get(self.pk_url_kwarg or 'pk')
+        ua = request.META.get('HTTP_USER_AGENT', '').lower()
+        is_bot = any(bot in ua for bot in ['bot', 'crawl', 'spider', 'slurp', 'facebookexternalhit'])
+        
+        # تجنب احتساب البوتات وتجنب تكرار احتساب الزائر عند عمل Refresh
+        session_key = f'viewed_post_{post_id}'
+        if not is_bot and not request.session.get(session_key, False):
+            Post.objects.filter(pk=post_id).update(post_views_count=models.F('post_views_count') + 1)
+            try:
+                request.session[session_key] = True
+            except Exception:
+                pass
+
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         # Allow viewing approved posts, using select_related to eliminate extra queries
         return Post.objects.select_related('source', 'topic').prefetch_related('categories')
@@ -192,6 +209,7 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         post = self.object
+        context['allows_iframe'] = is_iframe_allowed(post.link or (post.source.website if post.source else ''), post.source)
         # If part of an event cluster/topic, load up to 5 other related articles
         if post.topic_id:
             context['related_posts'] = (
