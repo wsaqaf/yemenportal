@@ -22,6 +22,14 @@ def arabic_sources(value):
         return ""
     return get_arabic_plural(n, "مصدر", "مصدرين", "مصادر")
 
+
+@register.filter
+def intcomma(value):
+    try:
+        return f"{int(value):,}"
+    except (TypeError, ValueError):
+        return value or "0"
+
 @register.filter
 def arabic_timesince(value):
     if not value:

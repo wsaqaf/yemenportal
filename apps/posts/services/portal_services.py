@@ -6,7 +6,7 @@ import requests
 from django.core.cache import cache
 from django.db.models import Sum, Count, Q
 from django.utils import timezone
-from apps.posts.models import Post, Category, CurrencyRate
+from apps.posts.models import Post, Category, CurrencyRate, Topic
 from apps.sources.models import Source
 
 logger = logging.getLogger(__name__)
@@ -651,6 +651,56 @@ def get_homepage_thematic_sections(source_weights: dict[int, dict], exclude_post
     return sections_output
 
 
+def get_portal_stats() -> dict:
+    """
+    Returns cached statistics for news items, clusters, and active sources
+    over the last 24 hours, last 7 days, and in total.
+    """
+    cached = cache.get("portal_stats_v1")
+    if cached is not None:
+        return cached
+
+    now = timezone.now()
+    cutoff_24h = now - timedelta(hours=24)
+    cutoff_7d = now - timedelta(days=7)
+
+    agg_7d = Post.objects.filter(
+        state=Post.State.APPROVED,
+        published_at__gte=cutoff_7d,
+    ).aggregate(
+        posts_24h=Count("id", filter=Q(published_at__gte=cutoff_24h)),
+        clusters_24h=Count("topic_id", distinct=True, filter=Q(published_at__gte=cutoff_24h, topic__topic_size__gt=1)),
+        sources_24h=Count("source_id", distinct=True, filter=Q(published_at__gte=cutoff_24h)),
+        posts_7d=Count("id"),
+        clusters_7d=Count("topic_id", distinct=True, filter=Q(topic__topic_size__gt=1)),
+        sources_7d=Count("source_id", distinct=True),
+    )
+
+    totals = cache.get("portal_stats_totals_v1")
+    if totals is None:
+        totals = {
+            "posts_total": Post.objects.filter(state=Post.State.APPROVED).count(),
+            "clusters_total": Topic.objects.filter(topic_size__gt=1).count(),
+            "sources_total": Source.objects.filter(
+                approve_state=Source.ApproveState.APPROVED,
+                state=Source.State.VALID,
+            ).count(),
+        }
+        cache.set("portal_stats_totals_v1", totals, timeout=21600)
+
+    stats = {
+        "posts_24h": agg_7d.get("posts_24h") or 0,
+        "clusters_24h": agg_7d.get("clusters_24h") or 0,
+        "sources_24h": agg_7d.get("sources_24h") or 0,
+        "posts_7d": agg_7d.get("posts_7d") or 0,
+        "clusters_7d": agg_7d.get("clusters_7d") or 0,
+        "sources_7d": agg_7d.get("sources_7d") or 0,
+        **totals,
+    }
+    cache.set("portal_stats_v1", stats, timeout=900)
+    return stats
+
+
 def get_homepage_portal_widgets() -> dict:
     """
     Returns Yemen Portal homepage blocks cached in Redis:
@@ -660,8 +710,9 @@ def get_homepage_portal_widgets() -> dict:
     - thematic_sections: 11 attractive thematic sections sorted by Cluster Size -> Reads -> Source Reputation
     - latest_sidebar_posts: Latest 18 chronological posts for the 'آخر الأخبار' sidebar column
     - top_sources: Top 12 active Yemen-focused sources
+    - portal_stats: 24h / 7d / Total counts of news items, clusters, and active sources
     """
-    cached = cache.get("portal_homepage_widgets_v5")
+    cached = cache.get("portal_homepage_widgets_v6")
     if cached:
         return cached
 
@@ -764,8 +815,9 @@ def get_homepage_portal_widgets() -> dict:
         "thematic_sections": thematic_sections,
         "opinion_posts": opinion_sec,
         "top_sources": top_sources,
+        "portal_stats": get_portal_stats(),
     }
-    cache.set("portal_homepage_widgets_v5", data, timeout=600)
+    cache.set("portal_homepage_widgets_v6", data, timeout=600)
     return data
 
 

@@ -60,6 +60,7 @@ class PortalServicesTests(TestCase):
         self.assertIn("أبرز الأخبار والتغطيات المجمعة", content)
         self.assertIn("اختيارات القراء", content)
         self.assertIn("آخر الأخبار (مباشر)", content)
+        self.assertIn("إحصائيات الرصد والأرشفة", content)
         self.assertIn("مقالات وآراء", content)
         self.assertIn("أسعار الصرف في اليمن", content)
         self.assertIn("حالة الطقس في اليمن", content)

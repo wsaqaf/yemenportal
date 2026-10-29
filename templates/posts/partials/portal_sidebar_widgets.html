@@ -38,6 +38,48 @@
 </div>
 {% endif %}
 
+<!-- 1b. Brief Portal Statistics Note (إحصائيات الرصد الإخباري - Just Over Exchange Rates Box) -->
+{% if portal_stats %}
+<div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm">
+    <div class="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-2.5 mb-3">
+        <div class="flex items-center gap-2">
+            <span class="w-1.5 h-5 bg-primary rounded-full"></span>
+            <h2 class="text-sm font-extrabold text-gray-900 dark:text-slate-100">إحصائيات الرصد والأرشفة</h2>
+        </div>
+        <span class="text-[11px] font-semibold text-gray-400">تحديث تلقائي</span>
+    </div>
+
+    <div class="overflow-hidden rounded-xl border border-gray-100 dark:border-slate-700 text-xs">
+        <div class="grid grid-cols-4 bg-gray-50 dark:bg-slate-700/70 px-3 py-2 font-bold text-gray-500 dark:text-slate-300 text-[11px]">
+            <span>الفترة</span>
+            <span class="text-center">الأخبار</span>
+            <span class="text-center">التغطيات</span>
+            <span class="text-left">المصادر</span>
+        </div>
+        <div class="divide-y divide-gray-100 dark:divide-slate-700/70">
+            <div class="grid grid-cols-4 items-center px-3 py-2 bg-white dark:bg-slate-800">
+                <span class="font-bold text-gray-700 dark:text-slate-200 text-[11px]">آخر 24 ساعة</span>
+                <span class="text-center font-extrabold text-primary" dir="ltr">{{ portal_stats.posts_24h|intcomma }}</span>
+                <span class="text-center font-extrabold text-indigo-600 dark:text-indigo-400" dir="ltr">{{ portal_stats.clusters_24h|intcomma }}</span>
+                <span class="text-left font-extrabold text-emerald-600 dark:text-emerald-400" dir="ltr">{{ portal_stats.sources_24h|intcomma }}</span>
+            </div>
+            <div class="grid grid-cols-4 items-center px-3 py-2 bg-gray-50/50 dark:bg-slate-800/60">
+                <span class="font-bold text-gray-700 dark:text-slate-200 text-[11px]">آخر 7 أيام</span>
+                <span class="text-center font-extrabold text-primary" dir="ltr">{{ portal_stats.posts_7d|intcomma }}</span>
+                <span class="text-center font-extrabold text-indigo-600 dark:text-indigo-400" dir="ltr">{{ portal_stats.clusters_7d|intcomma }}</span>
+                <span class="text-left font-extrabold text-emerald-600 dark:text-emerald-400" dir="ltr">{{ portal_stats.sources_7d|intcomma }}</span>
+            </div>
+            <div class="grid grid-cols-4 items-center px-3 py-2 bg-white dark:bg-slate-800">
+                <span class="font-bold text-gray-700 dark:text-slate-200 text-[11px]">الإجمالي</span>
+                <span class="text-center font-extrabold text-gray-900 dark:text-slate-100" dir="ltr">{{ portal_stats.posts_total|intcomma }}</span>
+                <span class="text-center font-extrabold text-indigo-600 dark:text-indigo-400" dir="ltr">{{ portal_stats.clusters_total|intcomma }}</span>
+                <span class="text-left font-extrabold text-emerald-600 dark:text-emerald-400" dir="ltr">{{ portal_stats.sources_total|intcomma }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <!-- 2. Yemen Currency Exchange Rates Widget (أسعار الصرف في صنعاء وعدن) -->
 {% if exchange_rates %}
 <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm" x-data="{ fxTab: 'aden' }">

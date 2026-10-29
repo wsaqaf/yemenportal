@@ -182,6 +182,7 @@ class MostReadListView(ListView):
         context['latest_sidebar_posts'] = widgets.get('latest_sidebar_posts', [])
         context['opinion_posts'] = widgets.get('opinion_posts', [])
         context['top_sources'] = widgets.get('top_sources', [])
+        context['portal_stats'] = widgets.get('portal_stats', {})
         context['exchange_rates'] = get_exchange_rates()
         context['yemen_weather'] = get_yemen_weather()
         return context
@@ -254,6 +255,7 @@ class CurrencyServiceView(View):
             'latest_sidebar_posts': widgets.get('latest_sidebar_posts', []),
             'opinion_posts': widgets.get('opinion_posts', []),
             'top_sources': widgets.get('top_sources', []),
+            'portal_stats': widgets.get('portal_stats', {}),
         }
         return render(request, self.template_name, context)
 
