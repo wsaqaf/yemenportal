@@ -11,7 +11,12 @@
         </div>
         
         <div class="flex items-center gap-3 bg-white p-2 rounded-2xl border border-gray-100 shadow-sm">
-            <div class="px-4 py-2 text-center">
+            <a href="?state=reported" class="px-4 py-2 text-center transition rounded-xl {% if current_state == 'reported' %}bg-red-50 ring-2 ring-red-400{% else %}hover:bg-red-50/60{% endif %}">
+                <span class="block text-2xl font-bold text-red-600">{{ reported_count|default:0 }}</span>
+                <span class="text-xs text-red-600 font-bold uppercase tracking-wider">بلاغات جديدة</span>
+            </a>
+            <div class="w-px h-8 bg-gray-100"></div>
+            <a href="?state=pending" class="px-4 py-2 text-center transition rounded-xl {% if current_state == 'pending' %}bg-yellow-50 ring-2 ring-yellow-400{% else %}hover:bg-gray-50{% endif %}">
                 <span class="block text-2xl font-bold text-yellow-600">{{ pending_count }}</span>
                 <span class="text-xs text-gray-400 uppercase tracking-wider">قيد الانتظار</span>
             </div>
@@ -30,10 +35,11 @@
 
     <!-- Filters -->
     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8">
-        <form method="get" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <form method="get" class="grid grid-cols-1 md:grid-cols-4 gap-6">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">الحالة</label>
                 <select name="state" class="w-full rounded-xl border-gray-200 focus:border-primary focus:ring-primary">
+                    <option value="reported" {% if current_state == 'reported' %}selected{% endif %}>بلاغات جديدة (المحتوى المُبلّغ عنه)</option>
                     <option value="pending" {% if current_state == 'pending' %}selected{% endif %}>قيد الانتظار</option>
                     <option value="approved" {% if current_state == 'approved' %}selected{% endif %}>تمت الموافقة</option>
                     <option value="rejected" {% if current_state == 'rejected' %}selected{% endif %}>مرفوض</option>
@@ -72,7 +78,7 @@
                     <td class="px-6 py-4">
                         <div class="flex items-center gap-4">
                             {% if post.image_url %}
-                            <img src="{{ post.image_url }}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+                            <img referrerpolicy="no-referrer" src="{{ post.image_url }}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" onerror="this.style.display='none'; this.parentElement.style.display='none';">
                             {% endif %}
                             <div>
                                 <h3 class="font-bold text-gray-900 leading-tight mb-1">{{ post.title }}</h3>
@@ -100,6 +106,17 @@
                             </button>
                             {% endif %}
                             
+                            <!-- زر إلغاء البلاغ (إبقاء الخبر) -->
+                            {% if current_state == 'reported' or post.reports.all %}
+                            <button hx-post="{% url 'moderation:unflag_post' post.id %}" 
+                                    hx-target="#post-row-{{ post.id }}" 
+                                    hx-swap="outerHTML"
+                                    title="إلغاء البلاغ (إبقاء الخبر)"
+                                    class="p-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-600 hover:text-white transition-all flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            </button>
+                            {% endif %}
+
                             {% if post.state == 'pending' or post.state == 'approved' %}
                             <button hx-post="{% url 'moderation:reject_post' post.id %}" 
                                     hx-target="#post-row-{{ post.id }}" 

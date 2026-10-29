@@ -1,105 +1,172 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ post.title }} - {{ post.source.name|default:"بوابة اليمن الإخبارية" }}</title>
+    
+    <!-- Meta & OpenGraph -->
+    <meta name="description" content="{{ post.description|default:post.title|striptags|truncatewords:30 }}">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{ post.title }}">
+    <meta property="og:description" content="{{ post.description|default:post.title|striptags|truncatewords:30 }}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% if post.image_url %}<meta property="og:image" content="{{ post.image_url }}">{% endif %}
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-gray-100 overflow-hidden text-gray-800">
 
-{% block title %}{{ post.title }} - {{ post.source.name|default:"المصدر" }} | يمن بورتال{% endblock %}
-
-{% block extra_head %}
-<meta name="description" content="{{ post.description|default:post.title|striptags|truncatewords:30 }}">
-<link rel="canonical" href="{{ request.build_absolute_uri }}">
-
-<!-- Open Graph / Social Meta -->
-<meta property="og:type" content="article">
-<meta property="og:title" content="{{ post.title }}">
-<meta property="og:description" content="{{ post.description|default:post.title|striptags|truncatewords:30 }}">
-<meta property="og:url" content="{{ request.build_absolute_uri }}">
-{% if post.image_url %}
-<meta property="og:image" content="{{ post.image_url }}">
-{% endif %}
-<meta property="article:published_time" content="{{ post.published_at|date:'c' }}">
-{% endblock %}
-
-{% block content %}
-<div class="container mx-auto px-4 py-6 max-w-4xl" dir="rtl">
-    <!-- Breadcrumb -->
-    <nav class="flex items-center text-sm text-gray-500 mb-4 space-x-reverse space-x-2">
-        <a href="{% url 'posts:post_list' %}" class="hover:text-blue-600">الرئيسية</a>
-        <span>/</span>
-        {% if post.source %}
-        <span class="text-gray-700 font-medium">{{ post.source.name }}</span>
-        <span>/</span>
-        {% endif %}
-        <span class="text-gray-400 truncate max-w-xs">{{ post.title }}</span>
-    </nav>
-
-    <!-- Post Article Header -->
-    <article class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
-        <h1 class="text-2xl md:text-3xl font-bold text-gray-900 leading-snug mb-4">
-            {{ post.title }}
-        </h1>
-
-        <!-- Meta info -->
-        <div class="flex flex-wrap items-center justify-between text-sm text-gray-500 border-b border-gray-100 pb-4 mb-6">
-            <div class="flex items-center space-x-reverse space-x-3">
-                {% if post.source %}
-                <span class="font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded">
-                    {{ post.source.name }}
-                </span>
-                {% endif %}
-                <span>{{ post.published_at|date:"Y/m/d - H:i" }}</span>
-            </div>
-            
-            <div class="mt-2 sm:mt-0">
-                <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-medium transition">
-                    زيارة المصدر الأصلي
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                </a>
-            </div>
-        </div>
-
-        {% if post.image_url %}
-        <div class="mb-6 rounded-lg overflow-hidden max-h-96 flex items-center justify-center bg-gray-50">
-            <img src="{{ post.image_url }}" alt="{{ post.title }}" class="object-cover w-full max-h-96" loading="lazy">
-        </div>
-        {% endif %}
-
-        <!-- Excerpt / Body -->
-        <div class="prose max-w-none text-gray-800 text-lg leading-relaxed mb-8">
-            {{ post.description|safe|linebreaks }}
-        </div>
-
-        <div class="border-t border-gray-100 pt-4 text-center">
-            <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-               class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
-                لقراءة الخبر كاملاً من المصدر ({{ post.source.name }}) انقر هنا
-                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+    <!-- Top Navigation / Reader Header -->
+    <header class="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-3 sm:px-6 z-30 flex-shrink-0">
+        <!-- Right: Brand Logo & Source Info -->
+        <div class="flex items-center gap-3 overflow-hidden">
+            <a href="{% url 'home' %}" class="flex items-center flex-shrink-0 hover:opacity-90 transition pl-1" title="يمن بورتال">
+                <img referrerpolicy="no-referrer" src="{% static 'logo.png' %}" class="h-8 sm:h-9 w-auto object-contain" alt="يمن بورتال">
             </a>
-        </div>
-    </article>
 
-    <!-- Clustered / Related Posts -->
-    {% if related_posts %}
-    <section class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">أخبار ذات صلة بهذا الموضوع</h2>
-        <div class="space-y-4">
-            {% for rel in related_posts %}
-            <div class="flex items-start justify-between border-b border-gray-200 pb-3 last:border-0 last:pb-0">
-                <div>
-                    <a href="{% url 'posts:post_detail' rel.id %}" class="text-gray-900 hover:text-blue-600 font-medium text-base">
-                        {{ rel.title }}
-                    </a>
-                    <div class="text-xs text-gray-500 mt-1">
-                        <span>{{ rel.source.name }}</span> • <span>{{ rel.published_at|date:"Y/m/d" }}</span>
-                    </div>
+            <div class="h-6 w-px bg-gray-200 flex-shrink-0"></div>
+
+            <div class="flex items-center gap-2 overflow-hidden">
+                {% if post.source.logo_url %}
+                <img referrerpolicy="no-referrer" src="{{ post.source.logo_url }}" class="w-7 h-7 rounded-lg object-cover flex-shrink-0 border border-gray-100" alt="{{ post.source.name }}" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                {% endif %}
+                <div class="overflow-hidden">
+                    <span class="text-xs font-bold text-blue-700 block truncate">{{ post.source.name }}</span>
+                    <h1 class="text-xs sm:text-sm font-bold text-gray-900 truncate max-w-[200px] sm:max-w-md md:max-w-lg lg:max-w-xl" title="{{ post.title }}">
+                        {{ post.title }}
+                    </h1>
                 </div>
             </div>
-            {% endfor %}
         </div>
-    </section>
-    {% endif %}
-</div>
-{% endblock %}
+
+        <!-- Left: Action Controls -->
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <!-- View Mode Switcher -->
+            {% if allows_iframe %}<button id="toggle-view-btn" onclick="toggleView()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 transition">
+                <svg id="view-icon-summary" class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span id="view-text">عرض الملخص</span>
+            </button>{% else %}<span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-[11px] font-medium">عرض الملخص (المصدر يمنع التضمين)</span>{% endif %}
+
+            <!-- Direct Original Link Button -->
+            <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
+               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition">
+                <span>المصدر الأصلي</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 relative w-full h-[calc(100vh-4rem)] overflow-hidden">
+        
+        <!-- 1. Iframe Container -->
+        <div id="iframe-container" class="w-full h-full {% if not allows_iframe %}hidden{% endif %}">
+            <!-- Fallback helper banner (shows if iframe is blocked by X-Frame-Options) -->
+            <div id="iframe-fallback-bar" class="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-between">
+                <span>إذا لم تظهر صفحة المصدر في الإطار أدناه، فقد يمنع موقع المصدر التضمين المباشر.</span>
+                <div class="flex items-center gap-3">
+                    <button onclick="showSummaryView()" class="font-bold underline hover:text-amber-900">قراءة الملخص داخل البوابة</button>
+                    <a href="{{ post.link }}" target="_blank" class="font-bold underline hover:text-amber-900">فتح في لسان مستقل ↗</a>
+                </div>
+            </div>
+
+            <iframe id="article-frame" 
+                    src="{{ post.link }}" 
+                    class="w-full h-full border-0 bg-white" 
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-top-navigation-by-user-activation"
+                    loading="lazy" referrerpolicy="no-referrer">
+            </iframe>
+        </div>
+
+        <!-- 2. Rich Summary View Container -->
+        <div id="summary-container" class="w-full h-full overflow-y-auto p-4 sm:p-8 {% if allows_iframe %}hidden{% endif %} bg-gray-50">
+            <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+                
+                <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+                    <span class="bg-blue-50 text-blue-700 font-bold px-2.5 py-1 rounded-lg">{{ post.source.name }}</span>
+                    <span>•</span>
+                    <span>{{ post.published_at|date:"Y/m/d - H:i" }}</span>
+                </div>
+
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 leading-snug mb-5">
+                    {{ post.title }}
+                </h2>
+
+                {% if post.image_url %}
+                <div class="mb-6 rounded-xl overflow-hidden max-h-96 bg-gray-100 border border-gray-100 flex items-center justify-center">
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}" class="object-cover w-full max-h-96" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'; this.parentElement.style.display='none';">
+                </div>
+                {% endif %}
+
+                <div class="text-gray-700 text-base sm:text-lg leading-relaxed space-y-4 mb-8">
+                    {{ post.description|safe|linebreaks }}
+                </div>
+
+                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <span class="text-xs text-gray-500">تم جلب هذا الخبر آلياً عبر خلاصة المصدر. لقراءة التفاصيل الكاملة:</span>
+                    <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
+                       class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm transition inline-flex items-center gap-2">
+                        <span>قراءة الخبر كاملاً من المصدر الأصلي</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    </a>
+                </div>
+
+                {% if related_posts %}
+                <div class="mt-8 pt-6 border-t border-gray-100">
+                    <h3 class="text-base font-bold text-gray-900 mb-4">أخبار وتغطيات ذات صلة بالموضوع</h3>
+                    <div class="divide-y divide-gray-100">
+                        {% for rel in related_posts %}
+                        <div class="py-3 flex items-start justify-between gap-4">
+                            <a href="{% url 'posts:post_detail' rel.id %}" class="text-sm font-bold text-gray-800 hover:text-blue-600 transition">
+                                {{ rel.title }}
+                            </a>
+                            <span class="text-xs text-gray-400 whitespace-nowrap">{{ rel.source.name }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Interactive Toggling Script -->
+    <script>
+        let currentMode = "{% if allows_iframe %}iframe{% else %}summary{% endif %}";
+
+        function updateUI() {
+            const iframeBox = document.getElementById('iframe-container');
+            const summaryBox = document.getElementById('summary-container');
+            const btnText = document.getElementById('view-text');
+
+            if (currentMode === 'iframe') {
+                iframeBox.classList.remove('hidden');
+                summaryBox.classList.add('hidden');
+                btnText.textContent = 'عرض الملخص';
+            } else {
+                iframeBox.classList.add('hidden');
+                summaryBox.classList.remove('hidden');
+                btnText.textContent = 'عرض الإطار (الموقع)';
+            }
+        }
+
+        function toggleView() {
+            currentMode = (currentMode === 'iframe') ? 'summary' : 'iframe';
+            updateUI();
+        }
+
+        function showSummaryView() {
+            currentMode = 'summary';
+            updateUI();
+        }
+    </script>
+</body>
+</html>

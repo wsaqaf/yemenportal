@@ -27,7 +27,7 @@
             <div class="flex items-center gap-4">
                 <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-100">
                     {% if source.logo_url %}
-                    <img src="{{ source.logo_url }}" class="w-full h-full object-cover" alt="{{ source.name }}">
+                    <img referrerpolicy="no-referrer" src="{{ source.logo_url }}" class="w-full h-full object-cover" alt="{{ source.name }}">
                     {% else %}
                     <span class="text-gray-400 font-extrabold text-2xl">{{ source.name|slice:":1" }}</span>
                     {% endif %}

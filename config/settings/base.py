@@ -152,8 +152,24 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL', default='webmaster@localhost')
 
 # Celery Beat Schedule
 CELERY_BEAT_SCHEDULE = {
+    'crawl-all-sources-every-5m': {
+        'task': 'apps.crawler.tasks.crawl_all_sources',
+        'schedule': 300,  # Every 5 minutes (matching legacy Rails rss_parser)
+    },
+    'cluster-recent-posts-every-15m': {
+        'task': 'apps.posts.tasks.cluster_recent_posts',
+        'schedule': 900,  # Every 15 minutes
+    },
     'prewarm-category-counts-every-6h': {
         'task': 'apps.posts.tasks.prewarm_category_counts',
         'schedule': 3600 * 6,  # Every 6 hours
+    },
+    'maintain-database-vacuum-daily-3am': {
+        'task': 'apps.posts.tasks.maintain_database_indexes',
+        'schedule': 86400,  # Daily maintenance
+    },
+    'audit-sources-daily-2am': {
+        'task': 'apps.sources.tasks.audit_and_cleanup_sources',
+        'schedule': 86400,  # Daily cleanup
     },
 }

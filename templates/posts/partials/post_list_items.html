@@ -7,7 +7,7 @@
         <!-- Thumbnail -->
         {% if post.image_url %}
         <div class="flex-shrink-0 w-full md:w-44 h-32 overflow-hidden rounded-xl bg-gray-100 border border-gray-100">
-            <img src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+            <img referrerpolicy="no-referrer" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.style.display='none'; this.parentElement.style.display='none';">
         </div>
         {% endif %}
 
@@ -42,14 +42,14 @@
 
                 <!-- Title -->
                 <h2 class="text-lg sm:text-xl font-bold text-gray-900 mb-2 leading-snug group-hover:text-primary transition-colors">
-                    <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer">
+                    <a href="{% url 'posts:post_detail' post.pk %}">
                         {{ post.title }}
                     </a>
                 </h2>
 
                 <!-- Description -->
                 <p class="text-gray-600 text-sm leading-relaxed line-clamp-2">
-                    {{ post.description|truncatewords:32|default:"لا يوجد وصف متاح لهذا الخبر حالياً." }}
+                    {{ post.description|striptags|truncatewords:30|default:"لا يوجد وصف متاح لهذا الخبر حالياً." }}
                 </p>
             </div>
 
@@ -57,10 +57,10 @@
             <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
                 {% include "posts/partials/vote_buttons.html" %}
 
-                {% if post.topic %}
-                <a href="{% url 'posts:topic_detail' post.topic.id %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-primary bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 transition-colors">
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                    عرض المزيد من التغطية المتعلقة ({{ post.topic.topic_size }})
+                {% if post.topic and post.topic.topic_size > 1 %}
+                <a href="{% url 'posts:topic_detail' post.topic.id %}" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg border border-blue-200 transition-colors">
+                    <svg class="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    تغطية متعلقة ({{ post.topic.topic_size|add:"-1" }})
                 </a>
                 {% endif %}
             </div>

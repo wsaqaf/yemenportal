@@ -41,3 +41,25 @@ class ReviewComment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.author.email} on {self.post.title}"
+
+class PostReport(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reports')
+    reporter = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='submitted_reports'
+    )
+    flag = models.ForeignKey(Flag, on_delete=models.SET_NULL, null=True, blank=True)
+    custom_reason = models.TextField(blank=True, null=True, verbose_name="توضيح الشكوى")
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    is_resolved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        flag_name = self.flag.name if self.flag else "مخصص"
+        return f"Report on Post #{self.post_id} - {flag_name}"
