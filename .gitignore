@@ -20,3 +20,7 @@ local_seed.json
 
 docker-compose.override.yml
 local_seed.json
+
+docker-compose.override.yml
+local_seed.json
+*.log
