@@ -3,31 +3,39 @@
  * PWA Offline support, smart caching, and background sync.
  */
 
-const CACHE_VERSION = 'yp-pwa-v1.0.0';
+const CACHE_VERSION = 'yp-pwa-v1.0.1';
 const STATIC_CACHE = `yp-static-${CACHE_VERSION}`;
 const PAGES_CACHE = `yp-pages-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline/';
 
-const PRECACHE_ASSETS = [
+const CORE_ASSETS = [
     '/',
     OFFLINE_URL,
     '/static/images/favicon.ico',
     '/static/logo.png',
     '/static/images/pwa/icon-192x192.png',
     '/static/images/pwa/icon-512x512.png',
-    '/static/images/pwa/apple-touch-icon.png',
-    'https://cdn.tailwindcss.com',
-    'https://unpkg.com/htmx.org@1.9.10',
-    'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js'
+    '/static/images/pwa/apple-touch-icon.png'
 ];
 
-// 1. Install Event: Precache Core Assets
+// 1. Install Event: Precache Core Assets safely
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(STATIC_CACHE).then((cache) => {
-            return cache.addAll(PRECACHE_ASSETS).catch((err) => {
-                console.warn('[PWA SW] Precache partial error:', err);
-            });
+            // Cache each asset independently so one failure never blocks the others
+            return Promise.allSettled(
+                CORE_ASSETS.map((url) =>
+                    fetch(url, { cache: 'no-cache' })
+                        .then((res) => {
+                            if (res.ok) {
+                                return cache.put(url, res);
+                            }
+                        })
+                        .catch((err) => {
+                            console.warn('[PWA SW] Precache failed for:', url, err);
+                        })
+                )
+            );
         }).then(() => self.skipWaiting())
     );
 });
@@ -53,11 +61,12 @@ function isNavigationRequest(request) {
            (request.method === 'GET' && request.headers.get('accept')?.includes('text/html'));
 }
 
-// Helper: Check if request is for admin or auth
+// Helper: Check if request is for admin, moderation, or auth
 function isBypassUrl(url) {
     const pathname = new URL(url).pathname;
     return pathname.startsWith('/admin/') || 
            pathname.startsWith('/accounts/') ||
+           pathname.startsWith('/moderation/') ||
            pathname.startsWith('/__debug__/');
 }
 
@@ -71,10 +80,11 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // A. Navigation Requests (HTML Pages): Network-First with Offline Fallback
+    // A. Navigation Requests (HTML Pages): True Network-First with Offline Fallback
+    // Never abort healthy requests with artificial short timeouts!
     if (isNavigationRequest(request)) {
         event.respondWith(
-            fetchWithTimeout(request, 3500)
+            fetch(request)
                 .then((networkResponse) => {
                     if (networkResponse && networkResponse.status === 200) {
                         const copy = networkResponse.clone();
@@ -83,14 +93,22 @@ self.addEventListener('fetch', (event) => {
                     return networkResponse;
                 })
                 .catch(async () => {
-                    // Try cached page
+                    // Network failed (device is offline or connection dropped)
+                    // 1. Try cached page first
                     const cachedResponse = await caches.match(request);
                     if (cachedResponse) {
                         return cachedResponse;
                     }
-                    // If not in cache, return the offline fallback page
+                    // 2. If not in cache, return the styled offline fallback page
                     const offlinePage = await caches.match(OFFLINE_URL);
-                    return offlinePage || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
+                    if (offlinePage) {
+                        return offlinePage;
+                    }
+                    // 3. Final safety net with styled Arabic message (never raw plain text 'Offline')
+                    return new Response(
+                        `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>غير متصل</title></head><body style="font-family:sans-serif;text-align:center;padding:50px;"><h2>تعذر الاتصال بالإنترنت</h2><p>يرجى التحقق من اتصال الشبكة وإعادة المحاولة.</p><button onclick="location.reload()" style="padding:10px 20px;border-radius:8px;background:#1779ba;color:#fff;border:none;cursor:pointer;">إعادة المحاولة</button></body></html>`,
+                        { headers: { 'Content-Type': 'text/html; charset=utf-8' }, status: 503 }
+                    );
                 })
         );
         return;
@@ -127,23 +145,3 @@ self.addEventListener('fetch', (event) => {
         fetch(request).catch(() => caches.match(request))
     );
 });
-
-// Helper for fetch timeout
-function fetchWithTimeout(request, timeoutMs) {
-    return new Promise((resolve, reject) => {
-        const timer = setTimeout(() => {
-            reject(new Error('Network timeout'));
-        }, timeoutMs);
-
-        fetch(request).then(
-            (response) => {
-                clearTimeout(timer);
-                resolve(response);
-            },
-            (err) => {
-                clearTimeout(timer);
-                reject(err);
-            }
-        );
-    });
-}
