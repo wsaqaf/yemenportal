@@ -554,36 +554,54 @@ THEMATIC_SECTIONS_SPEC = [
 ]
 
 
-def _section_three_tier_sort_key(post: Post, source_weights: dict[int, dict]) -> tuple:
+def _section_three_tier_sort_key(post: Post, source_weights: dict[int, dict], now=None) -> tuple:
     """
     Sorts articles inside each section strictly by:
-    1. Cluster size (topic_size if > 1, else 0)
+    1. Cluster velocity (topic_size with freshness decay if > 1, else 0)
     2. Number of reads (post_views_count)
     3. Reputation of the source (most relevant to Yemeni news)
     4. Recency (published_at)
     """
-    cluster_size = post.topic.topic_size if (post.topic_id and post.topic and post.topic.topic_size > 1) else 0
+    if now is None:
+        now = timezone.now()
+    age_hours = max(0.0, (now - post.published_at).total_seconds() / 3600.0)
+    recency_decay = 1.0 / (1.0 + (age_hours / 4.0) ** 1.5)
+    raw_cluster_size = post.topic.topic_size if (post.topic_id and post.topic and post.topic.topic_size > 1) else 0
+    cluster_score = (raw_cluster_size * 10.0) * recency_decay
     reads = post.post_views_count or 0
     src_info = source_weights.get(post.source_id, {})
     src_reputation = src_info.get("total_weight", 0.0) if isinstance(src_info, dict) else float(src_info or 0.0)
-    return (cluster_size, reads, src_reputation, post.published_at)
+    return (cluster_score, reads, src_reputation, post.published_at)
 
 
 def get_homepage_thematic_sections(source_weights: dict[int, dict], exclude_post_ids: set[int]) -> list[dict]:
     """
-    Builds the 11 main thematic sections on the homepage, each sorted by:
-    Cluster Size -> Number of Reads -> Source Yemen Reputation.
+    Builds the 11 main thematic sections on the homepage strictly within the last 12 hours,
+    each sorted by:
+    Cluster Velocity (with freshness decay) -> Number of Reads -> Source Yemen Reputation.
     """
     now = timezone.now()
     pool = list(
         Post.objects.filter(
             state=Post.State.APPROVED,
-            published_at__gte=now - timedelta(days=5),
+            published_at__gte=now - timedelta(hours=12),
         )
         .select_related("source", "topic")
         .prefetch_related("categories")
-        .order_by("-published_at")[:1200]
+        .order_by("-published_at")[:1500]
     )
+
+    # Fallback to 48 hours only if the whole pool is sparse (< 50 items)
+    if len(pool) < 50:
+        pool = list(
+            Post.objects.filter(
+                state=Post.State.APPROVED,
+                published_at__gte=now - timedelta(days=2),
+            )
+            .select_related("source", "topic")
+            .prefetch_related("categories")
+            .order_by("-published_at")[:1500]
+        )
 
     # Map topic_id -> fallback image_url from sibling posts
     topic_images: dict[int, str] = {}
@@ -632,8 +650,8 @@ def get_homepage_thematic_sections(source_weights: dict[int, dict], exclude_post
 
             matched.append(p)
 
-        # Sort by 3-tier rule: 1. Cluster Size -> 2. Reads -> 3. Source Yemen Reputation
-        matched.sort(key=lambda p: _section_three_tier_sort_key(p, source_weights), reverse=True)
+        # Sort by 3-tier rule: 1. Cluster Velocity (freshness-decayed) -> 2. Reads -> 3. Source Yemen Reputation
+        matched.sort(key=lambda p: _section_three_tier_sort_key(p, source_weights, now=now), reverse=True)
 
         # Deduplicate by topic_id and title prefix
         seen_topics = set()
