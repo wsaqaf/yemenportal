@@ -17,9 +17,15 @@
                     {{ subject }}
                 </h2>
                 
-                <div style="font-size: 15px; color: #374151; white-space: pre-line;">
-                    {% if is_html %}{{ body|safe }}{% else %}{{ body }}{% endif %}
+                {% if is_html %}
+                <div style="font-size: 15px; color: #374151; line-height: 1.6;">
+                    {{ body|safe }}
                 </div>
+                {% else %}
+                <div style="font-size: 15px; color: #374151; white-space: pre-line; line-height: 1.8;">
+                    {{ body }}
+                </div>
+                {% endif %}
             </td>
         </tr>
         <tr>
