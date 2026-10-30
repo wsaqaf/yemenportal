@@ -5,10 +5,17 @@ from django.conf.urls.static import static
 from django.views.generic import TemplateView
 
 from apps.posts.views import PostListView, MostReadListView, ArchiveListView, CurrencyServiceView
+from apps.posts.pwa_views import pwa_manifest, pwa_service_worker, pwa_offline
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
+
+    # Progressive Web App (PWA)
+    path('manifest.json', pwa_manifest, name='pwa_manifest_json'),
+    path('manifest.webmanifest', pwa_manifest, name='pwa_manifest'),
+    path('sw.js', pwa_service_worker, name='pwa_service_worker'),
+    path('offline/', pwa_offline, name='pwa_offline'),
     
     # Apps & Portal Services
     path('', PostListView.as_view(), name='home'),

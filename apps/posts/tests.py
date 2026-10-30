@@ -165,3 +165,24 @@ class PortalServicesTests(TestCase):
         self.assertEqual(arabic_sources(12), "12 مصدر")
         self.assertEqual(arabic_sources(39), "39 مصدر")
 
+    def test_pwa_endpoints(self):
+        # 1. Manifest
+        manifest_res = self.client.get("/manifest.json")
+        self.assertEqual(manifest_res.status_code, 200)
+        self.assertIn("application/manifest+json", manifest_res["Content-Type"])
+        data = manifest_res.json()
+        self.assertEqual(data.get("short_name"), "يمن بورتال")
+        self.assertEqual(data.get("display"), "standalone")
+
+        # 2. Service Worker
+        sw_res = self.client.get("/sw.js")
+        self.assertEqual(sw_res.status_code, 200)
+        self.assertIn("application/javascript", sw_res["Content-Type"])
+        self.assertEqual(sw_res["Service-Worker-Allowed"], "/")
+        self.assertIn("yp-pwa", sw_res.content.decode("utf-8"))
+
+        # 3. Offline fallback page
+        offline_res = self.client.get("/offline/")
+        self.assertEqual(offline_res.status_code, 200)
+        self.assertIn("أنت تتصفح دون اتصال", offline_res.content.decode("utf-8"))
+

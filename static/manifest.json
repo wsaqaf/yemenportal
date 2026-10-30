@@ -1,0 +1,63 @@
+{
+  "name": "يمن بورتال - محرك بحث إخباري يمني",
+  "short_name": "يمن بورتال",
+  "description": "أول محرك بحث إخباري يمني يرصد أخبار اليمن من مئات المصادر على مدار الساعة مع تصنيف وتجميع ذكي للأحداث.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f172a",
+  "theme_color": "#1779ba",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["news", "magazines", "politics"],
+  "icons": [
+    {
+      "src": "/static/images/pwa/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/images/pwa/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/images/pwa/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/images/pwa/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "الأكثر قراءة",
+      "short_name": "الأكثر قراءة",
+      "description": "الأخبار الأكثر قراءة ومتابعة في اليمن",
+      "url": "/most-read/?source=pwa",
+      "icons": [{ "src": "/static/images/pwa/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "أسعار الصرف",
+      "short_name": "أسعار الصرف",
+      "description": "أسعار صرف العملات في صنعاء وعدن",
+      "url": "/services/currency/?source=pwa",
+      "icons": [{ "src": "/static/images/pwa/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "الأرشيف الإخباري",
+      "short_name": "الأرشيف",
+      "description": "أرشيف الأخبار التاريخي منذ 2007",
+      "url": "/archive/?source=pwa",
+      "icons": [{ "src": "/static/images/pwa/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}

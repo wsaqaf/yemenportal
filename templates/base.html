@@ -2,13 +2,27 @@
 {% load static %}
 <html lang="ar" dir="rtl">
 <head>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="/static/images/favicon.ico">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}يمن بورتال - محرك بحث إخباري يمني مستقل{% endblock %}</title>
+
+    <!-- PWA Web App Manifest & App Meta -->
+    <link rel="manifest" href="{% url 'pwa_manifest_json' %}">
+    <meta name="theme-color" content="#1779ba" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="يمن بورتال">
+    <meta name="application-name" content="يمن بورتال">
+
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" href="/static/images/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" href="/static/images/pwa/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/pwa/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="/static/images/pwa/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="/static/images/pwa/icon-512x512.png">
 
     <!-- Early Theme Initialization (Zero Flash) -->
     <script>
@@ -393,5 +407,101 @@
 
     {% block extra_js %}{% endblock %}
     {% include 'moderation/partials/report_modal.html' %}
+
+    <!-- PWA Install Prompt Banner -->
+    <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
+        <div class="flex items-start gap-3">
+            <img src="/static/images/pwa/icon-192x192.png" alt="يمن بورتال" class="w-12 h-12 rounded-2xl object-contain bg-blue-50 dark:bg-slate-700 p-1 flex-shrink-0 shadow-sm">
+            <div class="flex-grow min-w-0">
+                <h4 class="text-sm font-black text-gray-900 dark:text-white leading-tight">تطبيق يمن بورتال</h4>
+                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    تصفح أسرع، وصول فوري لآخر الأخبار، وتصفح سلس حتى بدون إنترنت!
+                </p>
+                <div class="flex items-center gap-2 mt-3">
+                    <button id="pwa-install-btn" class="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer">
+                        تثبيت الآن
+                    </button>
+                    <button id="pwa-dismiss-btn" class="px-3 py-1.5 rounded-xl text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 text-xs font-semibold cursor-pointer">
+                        لاحقاً
+                    </button>
+                </div>
+            </div>
+            <button id="pwa-close-btn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1" aria-label="إغلاق">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- PWA Service Worker & Install Handler -->
+    <script>
+        (function() {
+            // 1. Service Worker Registration
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+                        .then(function(reg) {
+                            console.log('[PWA] ServiceWorker registered with scope:', reg.scope);
+                        })
+                        .catch(function(err) {
+                            console.warn('[PWA] ServiceWorker registration error:', err);
+                        });
+                });
+            }
+
+            // 2. Before Install Prompt Handling
+            var deferredPrompt = null;
+            var banner = document.getElementById('pwa-install-banner');
+            var installBtn = document.getElementById('pwa-install-btn');
+            var dismissBtn = document.getElementById('pwa-dismiss-btn');
+            var closeBtn = document.getElementById('pwa-close-btn');
+
+            function dismissBanner() {
+                if (banner) banner.classList.add('hidden');
+                try {
+                    localStorage.setItem('yp_pwa_dismissed', Date.now().toString());
+                } catch(e) {}
+            }
+
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                
+                var dismissedAt = null;
+                try {
+                    dismissedAt = localStorage.getItem('yp_pwa_dismissed');
+                } catch(e) {}
+
+                // If dismissed within the last 5 days, don't show
+                if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < 5 * 86400 * 1000) {
+                    return;
+                }
+
+                if (banner) {
+                    banner.classList.remove('hidden');
+                }
+            });
+
+            if (installBtn) {
+                installBtn.addEventListener('click', function() {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(function(choiceResult) {
+                            deferredPrompt = null;
+                            if (banner) banner.classList.add('hidden');
+                        });
+                    }
+                });
+            }
+
+            if (dismissBtn) dismissBtn.addEventListener('click', dismissBanner);
+            if (closeBtn) closeBtn.addEventListener('click', dismissBanner);
+
+            window.addEventListener('appinstalled', function() {
+                console.log('[PWA] Yemen Portal successfully installed!');
+                if (banner) banner.classList.add('hidden');
+                deferredPrompt = null;
+            });
+        })();
+    </script>
 </body>
 </html>
