@@ -117,10 +117,33 @@ class NewsletterOptOut(models.Model):
 
 class NewsletterAnnouncement(models.Model):
     STATUS_CHOICES = [('draft', 'مسودة'), ('sent', 'تم الإرسال')]
+    TARGET_CHOICES = [
+        ('all', 'جميع الأعضاء المشتركين'),
+        ('active_only', 'الأعضاء المتفاعلون فقط (من قام بالتصويت أو تسجيل الدخول)'),
+        ('staff_only', 'فريق الإدارة والمشرفين فقط'),
+        ('custom', 'قائمة عناوين بريد محددة يدوياً'),
+    ]
+
     subject = models.CharField(max_length=255, verbose_name='عنوان الرسالة')
     body = models.TextField(verbose_name='نص الرسالة / الإعلان')
     is_html = models.BooleanField(default=False, verbose_name='تفعيل كود HTML المباشر')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft', verbose_name='الحالة')
+    target_group = models.CharField(
+        max_length=30,
+        choices=TARGET_CHOICES,
+        default='all',
+        verbose_name='الفئة المستهدفة'
+    )
+    custom_recipients = models.TextField(
+        blank=True,
+        verbose_name='عناوين بريد مخصصة (اختياري)',
+        help_text='إذا اخترت "قائمة مخصصة"، أدخل العناوين هنا مفصولة بفواصل أو أسطر جديدة.'
+    )
+    test_email = models.EmailField(
+        blank=True,
+        verbose_name='بريد للاختبار السريع (اختياري)',
+        help_text='أدخل بريدك هنا لإرسال تجربة والتأكد من شكل الرسالة قبل الإرسال الفعلي.'
+    )
     recipients_count = models.PositiveIntegerField(default=0, verbose_name='عدد المستلمين')
     sent_at = models.DateTimeField(null=True, blank=True, verbose_name='تاريخ الإرسال')
     created_at = models.DateTimeField(auto_now_add=True)

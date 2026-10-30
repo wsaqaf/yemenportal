@@ -16,6 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('--subject', type=str, help='Custom subject')
         parser.add_argument('--body', type=str, help='Custom body text')
         parser.add_argument('--test-email', type=str, help='Send only to this test email address')
+        parser.add_argument('--is-test', action='store_true', help='Send only to announcement.test_email')
         parser.add_argument('--tier1-only', action='store_true', help='Send strictly to Tier 1 verified genuine subscribers')
         parser.add_argument('--batch-size', type=int, default=0, help='Max number of emails to send in this batch (0 = all)')
         parser.add_argument('--delay', type=float, default=1.5, help='Delay in seconds between emails to respect SMTP rate limits')
@@ -23,11 +24,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         import time
+        import re
         from apps.posts.services.subscriber_cleaner import classify_subscribers
+        from apps.posts.models import Vote
         announcement_id = options.get('id')
         subject = options.get('subject')
         body = options.get('body')
         test_email = options.get('test_email')
+        is_test = options.get('is_test', False)
         confirm = options.get('confirm', False)
         is_html = False
         announcement = None
@@ -38,6 +42,8 @@ class Command(BaseCommand):
                 subject = announcement.subject
                 body = announcement.body
                 is_html = announcement.is_html
+                if is_test and announcement.test_email:
+                    test_email = announcement.test_email
             except NewsletterAnnouncement.DoesNotExist:
                 self.stdout.write(self.style.ERROR(f'Announcement #{announcement_id} not found.'))
                 return
@@ -49,9 +55,9 @@ class Command(BaseCommand):
         # 🔒 صمام الأمان: منع الإرسال الجماعي دون تأكيد صريح
         if not test_email and not confirm:
             self.stdout.write(self.style.WARNING(
-                "\n⚠️  تنبيه أمان: أنت على وشك الإرسال الجماعي لأكثر من 4,600 عضو!\n"
-                "• للتجربة على بريدك الشخصي فقط، استخدم: --test-email=your@email.com\n"
-                "• للموافقة على الإرسال الجماعي الفعلي لجميع الأعضاء، أضف الراية: --confirm\n"
+                "\n⚠️  تنبيه أمان: أنت على وشك الإرسال الجماعي للأعضاء!\n"
+                "• للتجربة على بريدك الشخصي فقط، استخدم: --test-email=your@email.com أو --is-test\n"
+                "• للموافقة على الإرسال الفعلي، أضف الراية: --confirm\n"
             ))
             return
 
@@ -65,6 +71,22 @@ class Command(BaseCommand):
 
         if test_email:
             recipients = [test_email]
+        elif announcement and announcement.target_group == 'staff_only':
+            all_users = User.objects.filter(is_active=True, is_staff=True).exclude(email='').values_list('email', flat=True)
+            recipients = [e for e in set(all_users) if e.lower() not in opted_out]
+            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} staff/admin recipients."))
+        elif announcement and announcement.target_group == 'active_only':
+            voter_ids = set(Vote.objects.values_list('user_id', flat=True))
+            login_ids = set(User.objects.exclude(last_login=None).values_list('id', flat=True))
+            active_ids = voter_ids | login_ids
+            all_users = User.objects.filter(id__in=active_ids, is_active=True).exclude(email='').values_list('email', flat=True)
+            recipients = [e for e in set(all_users) if e.lower() not in opted_out]
+            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} active (voters/login) recipients."))
+        elif announcement and announcement.target_group == 'custom':
+            raw = announcement.custom_recipients or ''
+            custom_list = [e.strip() for e in re.split(r'[\r\n,;]+', raw) if e.strip() and '@' in e]
+            recipients = [e for e in set(custom_list) if e.lower() not in opted_out]
+            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} custom specified recipients."))
         elif tier1_only:
             classified = classify_subscribers()
             recipients = [item['email'] for item in classified['tier1'] if item['email'].lower() not in opted_out]
