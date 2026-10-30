@@ -180,9 +180,21 @@ class SourceSuggestView(LoginRequiredMixin, CreateView):
                 feed_valid = False
                 verification_error = str(e2)
 
-        # 2. Save suggestion with state based on verification results
+        # 2. Dynamic AI-driven classification (Yemeni / Arab / International)
+        from apps.sources.classifier import classify_source_scope
+        feed_entries = getattr(feed, 'entries', []) if feed_valid and 'feed' in locals() else None
+        source_scope = classify_source_scope(
+            name=form.cleaned_data.get('name', ''),
+            website_url=form.cleaned_data.get('website', ''),
+            feed_url=feed_url,
+            brief_info=form.cleaned_data.get('brief_info', ''),
+            feed_entries=feed_entries,
+        )
+
+        # 3. Save suggestion with state based on verification results
         source = form.save(commit=False)
         source.user = self.request.user
+        source.source_type = source_scope
         source.approve_state = Source.ApproveState.SUGGESTED
         source.state = Source.State.VALID if feed_valid else Source.State.INVALID
         source.save()

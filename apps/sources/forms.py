@@ -56,26 +56,11 @@ class SourceForm(forms.ModelForm):
 
 
 class SourceSuggestionForm(forms.ModelForm):
-    SOURCE_TYPE_CHOICES = [
-        ('', 'اختر التصنيف...'),
-        ('أخبار عامة', 'أخبار عامة'),
-        ('رياضة', 'رياضة'),
-        ('اقتصاد', 'اقتصاد'),
-        ('تقنية', 'تقنية'),
-        ('ثقافة وفنون', 'ثقافة وفنون'),
-    ]
-    source_type = forms.ChoiceField(
-        choices=SOURCE_TYPE_CHOICES,
-        label='التصنيف',
-        widget=forms.Select(attrs={'class': SELECT_CLASSES})
-    )
-
     class Meta:
         model = Source
         fields = [
             'name',
             'link',
-            'source_type',
             'iframe_flag',
             'website',
             'logo_url',

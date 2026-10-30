@@ -19,7 +19,7 @@
     <!-- Alert / Message -->
     <div class="bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/60 text-blue-900 dark:text-blue-300 rounded-2xl p-4 mb-6 text-sm leading-relaxed">
         <strong>ملاحظة:</strong>
-        سيقوم النظام بالتحقق التلقائي من أن رابط الـ RSS المقترح يعمل بشكل صحيح وأنه موقع إخباري صالح. بعد الاقتراح، سيتم إخطار إدارة الموقع لمراجعته وتفعيله.
+        سيقوم النظام تلقائياً بالتحقق من رابط الـ RSS وتحليل وتصنيف نطاق الموقع (يمني، عربي، دولي) دون الحاجة لتحديد تصنيف يدوي، ثم إرسال الاقتراح لإدارة الموقع للمراجعة والتفعيل.
     </div>
 
     <!-- Form Card -->
@@ -41,14 +41,6 @@
                     {{ form.link }}
                     {% if form.link.errors %}
                         <p class="text-red-500 text-xs mt-1">{{ form.link.errors.0 }}</p>
-                    {% endif %}
-                </div>
-
-                <div>
-                    <label class="block text-sm font-bold text-gray-700 dark:text-slate-200 mb-1.5">* التصنيف</label>
-                    {{ form.source_type }}
-                    {% if form.source_type.errors %}
-                        <p class="text-red-500 text-xs mt-1">{{ form.source_type.errors.0 }}</p>
                     {% endif %}
                 </div>
 

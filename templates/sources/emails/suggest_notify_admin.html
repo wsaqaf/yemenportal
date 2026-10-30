@@ -18,7 +18,7 @@
                     <tr><td style="padding: 6px 0;"><strong>اسم المصدر:</strong> {{ source.name }}</td></tr>
                     <tr><td style="padding: 6px 0;"><strong>رابط الـ RSS:</strong> <a href="{{ source.link }}" style="direction: ltr; unicode-bidi: embed; color: #1a56db;">{{ source.link }}</a></td></tr>
                     <tr><td style="padding: 6px 0;"><strong>الموقع الرسمي:</strong> <a href="{{ source.website }}" style="direction: ltr; unicode-bidi: embed; color: #1a56db;">{{ source.website }}</a></td></tr>
-                    <tr><td style="padding: 6px 0;"><strong>التصنيف:</strong> {{ source.source_type|default:"أخبار عامة" }}</td></tr>
+                    <tr><td style="padding: 6px 0;"><strong>التصنيف الذكي للنطاق:</strong> <span style="background-color: #e0e7ff; color: #3730a3; padding: 2px 8px; border-radius: 6px; font-weight: bold;">{{ source.source_type|default:"موقع يمني" }}</span></td></tr>
                     <tr><td style="padding: 6px 0;"><strong>حالة الفحص الأولي:</strong> {% if feed_valid %}<span style="color: #16a34a; font-weight: bold;">سليم (Valid)</span>{% else %}<span style="color: #dc2626; font-weight: bold;">غير مستقر ({{ verification_error }})</span>{% endif %}</td></tr>
                 </table>
                 <div style="text-align: center; margin: 28px 0 16px 0;">
