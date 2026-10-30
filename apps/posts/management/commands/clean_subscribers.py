@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from apps.posts.services.subscriber_cleaner import classify_subscribers, sync_tier3_to_optout
+from apps.posts.services.subscriber_cleaner import classify_subscribers, sync_tier3_to_optout, purge_tier3_accounts
 from apps.posts.models import NewsletterOptOut
 
 
@@ -11,6 +11,11 @@ class Command(BaseCommand):
             '--apply',
             action='store_true',
             help='Add Tier 3 spam/bot/defunct emails to NewsletterOptOut table',
+        )
+        parser.add_argument(
+            '--purge-tier3',
+            action='store_true',
+            help='Permanently delete Tier 3 spam bots from User and EmailAddress database tables',
         )
         parser.add_argument(
             '--show-tier1',
@@ -55,5 +60,11 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"\n[APPLIED] Successfully added {count} Tier 3 emails to NewsletterOptOut exclusion list."))
             total_opted_out = NewsletterOptOut.objects.count()
             self.stdout.write(self.style.SUCCESS(f"Total emails now permanently shielded from mailings: {total_opted_out}"))
+        elif options.get('purge_tier3'):
+            ea_del, u_del = purge_tier3_accounts()
+            self.stdout.write(self.style.SUCCESS(f"\n[PURGED] Successfully deleted {ea_del} EmailAddress records and {u_del} User records from the database."))
+            total_opted_out = NewsletterOptOut.objects.count()
+            self.stdout.write(self.style.SUCCESS(f"Total emails preserved in NewsletterOptOut exclusion list: {total_opted_out}"))
         else:
-            self.stdout.write(self.style.NOTICE("\nRun with '--apply' to automatically shield Amazon SES by adding Tier 3 emails to NewsletterOptOut."))
+            self.stdout.write(self.style.NOTICE("\nRun with '--apply' to shield Amazon SES by adding Tier 3 emails to NewsletterOptOut."))
+            self.stdout.write(self.style.NOTICE("Run with '--purge-tier3' to permanently delete Tier 3 spam bots from User and EmailAddress tables."))

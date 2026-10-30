@@ -188,3 +188,28 @@ def sync_tier3_to_optout() -> int:
     if to_create:
         NewsletterOptOut.objects.bulk_create(to_create, ignore_conflicts=True)
     return len(to_create)
+
+
+def purge_tier3_accounts() -> Tuple[int, int]:
+    """
+    Permanently deletes all Tier 3 spam bot User and EmailAddress records
+    from the database.
+    """
+    from allauth.account.models import EmailAddress
+    User = get_user_model()
+    classified = classify_subscribers()
+    tier3_user_ids = [item['user'].id for item in classified['tier3'] if item['user'] and item['user'].id]
+    tier3_emails = {item['email'].lower() for item in classified['tier3'] if item['email']}
+
+    # First add them to optout as a safety record so they never re-enter
+    sync_tier3_to_optout()
+
+    # 1. Delete associated EmailAddress records by user_id and email
+    ea_deleted, _ = EmailAddress.objects.filter(user_id__in=tier3_user_ids).delete()
+    ea_extra, _ = EmailAddress.objects.filter(email__in=tier3_emails).delete()
+    total_ea_deleted = ea_deleted + ea_extra
+
+    # 2. Delete the User records
+    u_deleted, _ = User.objects.filter(id__in=tier3_user_ids).delete()
+
+    return total_ea_deleted, u_deleted
