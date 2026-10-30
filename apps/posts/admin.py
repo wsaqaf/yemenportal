@@ -38,14 +38,18 @@ class NewsletterAnnouncementAdmin(admin.ModelAdmin):
     @admin.action(description='🚀 إرسال الإعلان للفئة المستهدفة المحددة')
     def send_to_target_action(self, request, queryset):
         for item in queryset:
+            if item.target_group == 'custom' and not item.custom_recipients and not item.test_email:
+                self.message_user(request, f'الإعلان #{item.id}: اخترت "قائمة مخصصة" لكن الحقل فارغ! يرجى إدخال عناوين البريد.', level='ERROR')
+                continue
             call_command('send_announcement', id=item.id, confirm=True)
-        self.message_user(request, 'تم إرسال الإعلان/الإعلانات للفئة المستهدفة بنجاح.')
+            item.refresh_from_db()
+            self.message_user(request, f'تم إرسال الإعلان #{item.id} بنجاح إلى {item.recipients_count} مستلم.')
 
     @admin.action(description='🧪 إرسال تجريبي سريع إلى بريد الاختبار (Test Email)')
     def send_test_action(self, request, queryset):
         for item in queryset:
             if not item.test_email:
-                self.message_user(request, f'الإعلان #{item.id} لا يحتوي على بريد اختبار محدد.', level='WARNING')
+                self.message_user(request, f'الإعلان #{item.id}: لا يوجد بريد اختبار محدد في حقل (بريد للاختبار السريع).', level='WARNING')
                 continue
             call_command('send_announcement', id=item.id, is_test=True, confirm=True)
             self.message_user(request, f'تم إرسال تجربة الإعلان بنجاح إلى: {item.test_email}')

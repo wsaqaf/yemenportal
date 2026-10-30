@@ -85,6 +85,8 @@ class Command(BaseCommand):
         elif announcement and announcement.target_group == 'custom':
             raw = announcement.custom_recipients or ''
             custom_list = [e.strip() for e in re.split(r'[\r\n,;]+', raw) if e.strip() and '@' in e]
+            if not custom_list and announcement.test_email:
+                custom_list = [announcement.test_email.strip()]
             recipients = [e for e in set(custom_list) if e.lower() not in opted_out]
             self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} custom specified recipients."))
         elif tier1_only:
@@ -94,6 +96,10 @@ class Command(BaseCommand):
         else:
             all_users = User.objects.filter(is_active=True).exclude(email='').values_list('email', flat=True)
             recipients = [e for e in set(all_users) if e.lower() not in opted_out]
+
+        if not recipients:
+            self.stdout.write(self.style.WARNING("No recipients found for this announcement. No emails were sent."))
+            return
 
         if batch_size > 0:
             recipients = recipients[:batch_size]
