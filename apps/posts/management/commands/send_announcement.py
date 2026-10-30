@@ -72,9 +72,13 @@ class Command(BaseCommand):
         if test_email:
             recipients = [test_email]
         elif announcement and announcement.target_group == 'staff_only':
-            all_users = User.objects.filter(is_active=True, is_staff=True).exclude(email='').values_list('email', flat=True)
+            from django.db.models import Q
+            all_users = User.objects.filter(
+                Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=[User.Role.ADMIN, User.Role.MODERATOR]),
+                is_active=True
+            ).exclude(email='').values_list('email', flat=True)
             recipients = [e for e in set(all_users) if e.lower() not in opted_out]
-            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} staff/admin recipients."))
+            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} staff/admin/moderator recipients."))
         elif announcement and announcement.target_group == 'active_only':
             voter_ids = set(Vote.objects.values_list('user_id', flat=True))
             login_ids = set(User.objects.exclude(last_login=None).values_list('id', flat=True))
