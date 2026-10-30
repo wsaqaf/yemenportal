@@ -71,6 +71,18 @@ class Command(BaseCommand):
 
         if test_email:
             recipients = [test_email]
+        elif announcement and announcement.target_group == 'active_and_staff':
+            from django.db.models import Q
+            staff_ids = set(User.objects.filter(
+                Q(is_staff=True) | Q(is_superuser=True) | Q(role__in=[User.Role.ADMIN, User.Role.MODERATOR]),
+                is_active=True
+            ).values_list('id', flat=True))
+            voter_ids = set(Vote.objects.values_list('user_id', flat=True))
+            login_ids = set(User.objects.exclude(last_login=None).values_list('id', flat=True))
+            combined_ids = staff_ids | voter_ids | login_ids
+            all_users = User.objects.filter(id__in=combined_ids, is_active=True).exclude(email='').values_list('email', flat=True)
+            recipients = [e for e in set(all_users) if e.lower() not in opted_out]
+            self.stdout.write(self.style.SUCCESS(f"Selected {len(recipients)} unique combined active & staff recipients (no duplicates)."))
         elif announcement and announcement.target_group == 'staff_only':
             from django.db.models import Q
             all_users = User.objects.filter(

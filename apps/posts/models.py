@@ -118,9 +118,10 @@ class NewsletterOptOut(models.Model):
 class NewsletterAnnouncement(models.Model):
     STATUS_CHOICES = [('draft', 'مسودة'), ('sent', 'تم الإرسال')]
     TARGET_CHOICES = [
-        ('all', 'جميع الأعضاء المشتركين'),
-        ('active_only', 'الأعضاء المتفاعلون فقط (من قام بالتصويت أو تسجيل الدخول)'),
-        ('staff_only', 'فريق الإدارة والمشرفين فقط'),
+        ('all', 'جميع الأعضاء المشتركين (147 عضواً)'),
+        ('active_and_staff', 'المتفاعلون وفريق الإدارة معاً - بدون تكرار (36 عضواً)'),
+        ('active_only', 'الأعضاء المتفاعلون فقط (29 عضواً)'),
+        ('staff_only', 'فريق الإدارة والمشرفين فقط (23 عضواً)'),
         ('custom', 'قائمة عناوين بريد محددة يدوياً'),
     ]
 
