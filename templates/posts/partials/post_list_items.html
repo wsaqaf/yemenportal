@@ -1,7 +1,7 @@
 {% load arabic_time %}
 
 {% for post in posts %}
-<article class="p-5 sm:p-6 bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 mb-4 group">
+<article class="p-5 sm:p-6 bg-white dark:bg-slate-800 border border-gray-200/80 dark:border-slate-700 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 mb-4 group" data-post-card data-post-id="{{ post.pk }}">
     <div class="flex flex-col md:flex-row gap-5">
         
         <!-- Thumbnail -->

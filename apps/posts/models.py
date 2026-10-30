@@ -57,7 +57,8 @@ class Post(models.Model):
     
     # Metrics
     voting_result = models.IntegerField(default=0)
-    post_views_count = models.IntegerField(default=0)
+    post_views_count = models.IntegerField(default=0, verbose_name='عدد القراءات')
+    impressions_count = models.IntegerField(default=0, db_index=True, verbose_name='مرات الظهور الفعلي (VI)')
     review_rating = models.IntegerField(default=0)
     
     # For search/NLP
@@ -71,6 +72,13 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+    @property
+    def ctr(self) -> float:
+        """Click-through rate (قراءات ÷ مرات الظهور الفعلي %)"""
+        if not self.impressions_count or self.impressions_count <= 0:
+            return 0.0
+        return round(((self.post_views_count or 0) / self.impressions_count) * 100, 2)
 
     @property
     def upvoted_by_user(self):

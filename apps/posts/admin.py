@@ -3,8 +3,9 @@ from django.contrib import admin
 # Register your models here.
 
 
-from .models import NewsletterAnnouncement, NewsletterOptOut, CurrencyRate
+from .models import NewsletterAnnouncement, NewsletterOptOut, CurrencyRate, Post
 from django.core.management import call_command
+from django.utils.html import format_html
 
 @admin.register(CurrencyRate)
 class CurrencyRateAdmin(admin.ModelAdmin):
@@ -58,3 +59,27 @@ class NewsletterAnnouncementAdmin(admin.ModelAdmin):
 class NewsletterOptOutAdmin(admin.ModelAdmin):
     list_display = ('email', 'created_at')
     search_fields = ('email',)
+
+
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title_short', 'source', 'published_at', 'post_views_count', 'impressions_count', 'ctr_display', 'state')
+    list_filter = ('state', 'source', 'published_at')
+    search_fields = ('title', 'description')
+    readonly_fields = ('post_views_count', 'impressions_count', 'ctr_display', 'created_at', 'updated_at')
+    list_per_page = 30
+
+    @admin.display(description='عنوان الخبر')
+    def title_short(self, obj):
+        return (obj.title[:65] + '...') if len(obj.title) > 65 else obj.title
+
+    @admin.display(description='نسبة التفاعل (CTR%)')
+    def ctr_display(self, obj):
+        val = obj.ctr
+        if val >= 5.0:
+            color = 'green'
+        elif val >= 1.5:
+            color = '#2563eb'
+        else:
+            color = '#6b7280'
+        return format_html('<span style="font-weight: bold; color: {};">{}%</span>', color, val)

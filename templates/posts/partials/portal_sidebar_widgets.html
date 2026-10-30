@@ -12,7 +12,7 @@
     </div>
     <div class="divide-y divide-gray-100 dark:divide-slate-700 max-h-[540px] overflow-y-auto pl-1">
         {% for item in latest_sidebar_posts %}
-        <div class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 group">
+        <div class="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 group" data-post-card data-post-id="{{ item.pk }}">
             <time datetime="{{ item.published_at|date:'c' }}" class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-mono font-bold rounded text-[11px] flex-shrink-0 mt-0.5">
                 {{ item.published_at|date:"H:i" }}
             </time>

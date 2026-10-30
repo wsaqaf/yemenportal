@@ -12,6 +12,8 @@ urlpatterns = [
     path('archive/', ArchiveListView.as_view(), name='archive'),
     path('currency/', CurrencyServiceView.as_view(), name='currency_service'),
     path('search/', PostSearchView.as_view(), name='post_search'),
+    path('record-impressions/', views.RecordImpressionsView.as_view(), name='record_impressions'),
+    path('check-top-story/', views.CheckTopStoryView.as_view(), name='check_top_story'),
     path('topic/<int:topic_id>/', views.TopicListView.as_view(), name='topic_detail'),
     
     # Core Post Detail Route (Matches /posts/<pk>/)

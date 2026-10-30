@@ -34,7 +34,11 @@ from django.db import models
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+from django.core.cache import cache
+import json
 from apps.posts.models import Post, Vote
 
 class PostListView(ListView):
@@ -402,3 +406,80 @@ class PostDetailView(DetailView):
         else:
             context['related_posts'] = []
         return context
+
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RecordImpressionsView(View):
+    """
+    Records viewable impressions (VI) sent in batches from the client
+    using the IntersectionObserver API (50%+ visible for >= 1s).
+    Includes deduplication and rate limiting via cache.
+    """
+    def post(self, request, *args, **kwargs):
+        ua = request.META.get('HTTP_USER_AGENT', '').lower()
+        if any(bot in ua for bot in ['bot', 'crawl', 'spider', 'slurp', 'facebookexternalhit', 'headless']):
+            return JsonResponse({'status': 'ignored_bot'}, status=200)
+
+        post_ids = []
+        try:
+            if request.content_type == 'application/json' or request.body.startswith(b'{') or request.body.startswith(b'['):
+                data = json.loads(request.body.decode('utf-8'))
+                if isinstance(data, dict):
+                    post_ids = data.get('post_ids', [])
+                elif isinstance(data, list):
+                    post_ids = data
+            else:
+                raw_ids = request.POST.getlist('post_ids') or request.POST.get('post_ids', '').split(',')
+                post_ids = [int(x.strip()) for x in raw_ids if x.strip().isdigit()]
+        except Exception:
+            return JsonResponse({'status': 'invalid_payload'}, status=400)
+
+        # Sanitize list of IDs (max 100 per request)
+        valid_ids = []
+        for pid in post_ids[:100]:
+            try:
+                valid_ids.append(int(pid))
+            except (ValueError, TypeError):
+                continue
+
+        if not valid_ids:
+            return JsonResponse({'status': 'empty'}, status=200)
+
+        # Deduplicate per session/IP using Redis cache to prevent spam
+        session_id = request.session.session_key or request.META.get('REMOTE_ADDR', 'anon')
+        cache_keys = [f"vi_{session_id}_{pid}" for pid in valid_ids]
+        existing = cache.get_many(cache_keys)
+        new_ids = [pid for pid in valid_ids if f"vi_{session_id}_{pid}" not in existing]
+
+        if new_ids:
+            Post.objects.filter(id__in=new_ids).update(impressions_count=models.F('impressions_count') + 1)
+            # Store in cache for 15 minutes (900s)
+            cache.set_many({f"vi_{session_id}_{pid}": True for pid in new_ids}, timeout=900)
+
+        return JsonResponse({'status': 'ok', 'recorded': len(new_ids)})
+
+
+class CheckTopStoryView(View):
+    """
+    Lightweight endpoint polled by the homepage to detect if the lead top story has changed.
+    """
+    def get(self, request, *args, **kwargs):
+        from apps.posts.services.portal_services import get_homepage_portal_widgets
+        try:
+            widgets = get_homepage_portal_widgets()
+            hero_post = widgets.get('hero_post')
+            if hero_post:
+                return JsonResponse({
+                    'status': 'ok',
+                    'top_story': {
+                        'id': hero_post.id,
+                        'title': hero_post.title,
+                        'source_name': hero_post.source.name if hero_post.source else '',
+                        'published_at': hero_post.published_at.isoformat(),
+                    }
+                })
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+        return JsonResponse({'status': 'empty'})
+

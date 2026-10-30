@@ -32,7 +32,7 @@
             <!-- Ranked News List -->
             <div class="space-y-3.5">
                 {% for post in posts %}
-                <article class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all flex items-start gap-4 group">
+                <article class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-md transition-all flex items-start gap-4 group" data-post-card data-post-id="{{ post.pk }}">
                     <!-- Rank Number Badge -->
                     <span class="w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm flex-shrink-0 {% if forloop.counter <= 3 %}bg-primary text-white shadow-sm{% else %}bg-blue-50 dark:bg-slate-700 text-primary{% endif %}">
                         {{ forloop.counter }}

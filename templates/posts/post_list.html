@@ -11,6 +11,24 @@
         <section class="lg:col-span-8 order-1 space-y-8">
 
             {% if show_portal_hero and hero_post %}
+            <!-- Floating Pill for New Top Story Auto-Refresh -->
+            <div id="floating-top-story-pill" 
+                 class="hidden fixed top-20 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform -translate-y-4 opacity-0 pointer-events-none"
+                 data-initial-top-id="{{ hero_post.id }}">
+                <div class="flex items-center gap-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 text-white px-4 py-2.5 rounded-full shadow-2xl border border-white/20 hover:scale-105 transition-transform cursor-pointer">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                    </span>
+                    <span id="floating-pill-text" class="text-xs sm:text-sm font-black">
+                        خبر رئيسي جديد متوفر — اضغط لتحديث القائمة ⬆
+                    </span>
+                    <button type="button" id="floating-pill-close" class="text-white/70 hover:text-white mr-1 text-sm font-bold p-0.5" title="إغلاق">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
             <!-- 1. أبرز الأخبار والتغطيات المجمعة (Lead Hero Cluster + 6 Top Clustered Stories) -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
@@ -22,7 +40,7 @@
                 </div>
 
                 <!-- Lead Hero Cluster Card -->
-                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all" data-post-card data-post-id="{{ hero_post.pk }}">
                     <div class="grid grid-cols-1 md:grid-cols-12">
                         {% if hero_post.image_url %}
                         <div id="hero-img-col" class="md:col-span-5 relative h-56 md:h-auto bg-gray-100 dark:bg-slate-700 overflow-hidden">
@@ -96,7 +114,7 @@
                 {% if top_clusters %}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {% for item in top_clusters %}
-                    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex gap-3.5 items-start group">
+                    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex gap-3.5 items-start group" data-post-card data-post-id="{{ item.pk }}">
                         {% if item.image_url %}
                         <a href="{% url 'posts:post_detail' item.pk %}" class="w-24 h-20 rounded-xl overflow-hidden bg-gray-100 dark:bg-slate-700 flex-shrink-0 border border-gray-100 dark:border-slate-700">
                             <img referrerpolicy="no-referrer" src="{{ item.image_url }}" alt="{{ item.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.parentElement.style.display='none';">
@@ -189,7 +207,7 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                         {% for post in sec.posts %}
-                        <article class="p-3.5 rounded-xl bg-gray-50/70 dark:bg-slate-700/40 border border-gray-100 dark:border-slate-700 hover:border-blue-200 transition-all flex gap-3 items-start group">
+                        <article class="p-3.5 rounded-xl bg-gray-50/70 dark:bg-slate-700/40 border border-gray-100 dark:border-slate-700 hover:border-blue-200 transition-all flex gap-3 items-start group" data-post-card data-post-id="{{ post.pk }}">
                             {% if post.image_url %}
                             <a href="{% url 'posts:post_detail' post.pk %}" class="w-20 h-16 rounded-lg overflow-hidden bg-gray-200 dark:bg-slate-600 flex-shrink-0">
                                 <img referrerpolicy="no-referrer" src="{{ post.image_url }}" alt="{{ post.title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="this.parentElement.style.display='none';">
@@ -349,4 +367,72 @@
 
     </div>
 </div>
+
+<script>
+    // Floating Pill Auto-Refresh for Front-page Top Story
+    (function() {
+        var pill = document.getElementById('floating-top-story-pill');
+        if (!pill) return;
+
+        var initialTopId = parseInt(pill.getAttribute('data-initial-top-id'), 10);
+        if (!initialTopId) return;
+
+        var pillText = document.getElementById('floating-pill-text');
+        var pillClose = document.getElementById('floating-pill-close');
+        var checkInterval = null;
+        var isChecking = false;
+
+        function showPill(newTitle) {
+            if (!pill) return;
+            if (newTitle && pillText) {
+                pillText.textContent = 'تطور في أبرز الأخبار: اضغط لتحديث القائمة ⬆';
+            }
+            pill.classList.remove('hidden', 'pointer-events-none', '-translate-y-4', 'opacity-0');
+            pill.classList.add('translate-y-0', 'opacity-100');
+        }
+
+        function checkLatestStory() {
+            if (isChecking) return;
+            if (document.visibilityState !== 'visible' || !navigator.onLine) return;
+
+            isChecking = true;
+            fetch('{% url "posts:check_top_story" %}')
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    isChecking = false;
+                    if (data && data.status === 'ok' && data.top_story) {
+                        var latestId = parseInt(data.top_story.id, 10);
+                        if (latestId && latestId !== initialTopId) {
+                            showPill(data.top_story.title);
+                            if (checkInterval) {
+                                clearInterval(checkInterval);
+                                checkInterval = null;
+                            }
+                        }
+                    }
+                })
+                .catch(function() {
+                    isChecking = false;
+                });
+        }
+
+        // Poll every 60 seconds
+        checkInterval = setInterval(checkLatestStory, 60000);
+
+        pill.addEventListener('click', function(e) {
+            if (e.target === pillClose) return;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(function() {
+                window.location.reload();
+            }, 300);
+        });
+
+        if (pillClose) {
+            pillClose.addEventListener('click', function(e) {
+                e.stopPropagation();
+                pill.classList.add('hidden', 'pointer-events-none');
+            });
+        }
+    })();
+</script>
 {% endblock %}

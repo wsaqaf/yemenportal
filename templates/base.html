@@ -503,5 +503,111 @@
             });
         })();
     </script>
+
+    <!-- Viewable Impressions (VI) Tracking (50%+ visible for >= 1s) -->
+    <script>
+        (function() {
+            if (!('IntersectionObserver' in window)) return;
+
+            var pendingPostIds = new Set();
+            var sentPostIds = new Set();
+            var visibleTimers = new Map();
+            var batchTimeout = null;
+
+            function flushImpressions() {
+                if (pendingPostIds.size === 0) return;
+                var idsToSend = Array.from(pendingPostIds);
+                pendingPostIds.clear();
+
+                var payload = JSON.stringify({ post_ids: idsToSend });
+                var endpoint = '{% url "posts:record_impressions" %}';
+
+                if (navigator.sendBeacon) {
+                    try {
+                        var blob = new Blob([payload], { type: 'application/json' });
+                        navigator.sendBeacon(endpoint, blob);
+                        return;
+                    } catch(e) {}
+                }
+
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: payload,
+                    keepalive: true
+                }).catch(function() {});
+            }
+
+            function queueImpression(postId) {
+                if (sentPostIds.has(postId)) return;
+                sentPostIds.add(postId);
+                pendingPostIds.add(postId);
+
+                if (!batchTimeout) {
+                    batchTimeout = setTimeout(function() {
+                        batchTimeout = null;
+                        flushImpressions();
+                    }, 3000);
+                }
+            }
+
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    var el = entry.target;
+                    var postId = el.getAttribute('data-post-id');
+                    if (!postId || sentPostIds.has(postId)) {
+                        if (postId) observer.unobserve(el);
+                        return;
+                    }
+
+                    if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+                        if (!visibleTimers.has(postId)) {
+                            visibleTimers.set(postId, setTimeout(function() {
+                                visibleTimers.delete(postId);
+                                if (document.visibilityState === 'visible') {
+                                    queueImpression(postId);
+                                    observer.unobserve(el);
+                                }
+                            }, 1000));
+                        }
+                    } else {
+                        if (visibleTimers.has(postId)) {
+                            clearTimeout(visibleTimers.get(postId));
+                            visibleTimers.delete(postId);
+                        }
+                    }
+                });
+            }, {
+                threshold: [0.5]
+            });
+
+            function observeCards() {
+                var cards = document.querySelectorAll('[data-post-card][data-post-id]');
+                cards.forEach(function(card) {
+                    var pid = card.getAttribute('data-post-id');
+                    if (pid && !sentPostIds.has(pid)) {
+                        observer.observe(card);
+                    }
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', observeCards);
+            } else {
+                observeCards();
+            }
+
+            window.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'hidden') {
+                    flushImpressions();
+                }
+            });
+            window.addEventListener('pagehide', flushImpressions);
+            document.addEventListener('htmx:afterSwap', observeCards);
+        })();
+    </script>
 </body>
 </html>
