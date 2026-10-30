@@ -210,13 +210,17 @@ def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> f
     elif any(kw in desc for kw in YEMEN_CORE_KEYWORDS):
         score += 30.0
 
-    # 2. Cluster size (multi-source coverage is a primary signal of national importance)
+    # Age of the post in hours & freshness decay factor (half-life of ~3 hours)
+    age_hours = max(0.0, (now - post.published_at).total_seconds() / 3600.0)
+    recency_decay = 1.0 / (1.0 + (age_hours / 3.0) ** 1.8)
+
+    # 2. Cluster size (multi-source coverage weighted by freshness velocity)
     topic_size = post.topic.topic_size if post.topic_id and post.topic else 1
     if topic_size and topic_size > 1:
         if "أسعار صرف العملات" in title:
-            score += min(topic_size, 4) * 8.0
+            score += min(topic_size, 4) * 8.0 * recency_decay
         else:
-            score += min(topic_size, 15) * 18.0
+            score += min(topic_size, 12) * 16.0 * recency_decay
 
     # 3. Dynamic Source Yemen-Focus Ratio + Activity + Section Weight
     src_info = source_weights.get(post.source_id, {})
@@ -241,18 +245,17 @@ def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> f
     if post.image_url and post.image_url.startswith("http"):
         score += 10.0
 
-    # 8. Recency bonus (up to +24 points for stories in the last 8 hours)
-    age_hours = max(0.0, (now - post.published_at).total_seconds() / 3600.0)
-    score += max(0.0, 24.0 - (age_hours * 2.5))
+    # 8. Recency bonus (up to +35 points for fresh stories in the last 4 hours)
+    score += max(0.0, 35.0 - (age_hours * 6.0))
 
     return score
 
 
-def get_ranked_yemen_posts(hours: int = 24, limit: int = 30) -> list[Post]:
+def get_ranked_yemen_posts(hours: int = 4, limit: int = 30) -> list[Post]:
     """
     Returns top Yemen-focused & breaking news stories ordered by composite importance score
     (Yemen relevance + Cluster size + Source activity + Breaking keywords + Views/Votes)
-    and deduplicated by topic_id.
+    and deduplicated by topic_id, using the freshest headline per topic.
     """
     now = timezone.now()
     source_weights = get_source_activity_weights()
@@ -266,9 +269,14 @@ def get_ranked_yemen_posts(hours: int = 24, limit: int = 30) -> list[Post]:
         base_qs.filter(published_at__gte=now - timedelta(hours=hours))
         .order_by("-published_at")[:450]
     )
+    if len(candidates) < 15:
+        candidates = list(
+            base_qs.filter(published_at__gte=now - timedelta(hours=8))
+            .order_by("-published_at")[:450]
+        )
     if len(candidates) < 10:
         candidates = list(
-            base_qs.filter(published_at__gte=now - timedelta(days=7))
+            base_qs.filter(published_at__gte=now - timedelta(days=2))
             .order_by("-published_at")[:450]
         )
 
@@ -276,11 +284,15 @@ def get_ranked_yemen_posts(hours: int = 24, limit: int = 30) -> list[Post]:
     if not yemen_candidates:
         yemen_candidates = candidates
 
-    # Map topic_id -> fallback image_url from any sibling post in the same cluster
+    # Map topic_id -> fallback image_url and latest post in cluster
     topic_images: dict[int, str] = {}
+    topic_latest: dict[int, Post] = {}
     for p in yemen_candidates:
-        if p.topic_id and p.image_url and p.image_url.startswith("http") and p.topic_id not in topic_images:
-            topic_images[p.topic_id] = p.image_url
+        if p.topic_id:
+            if p.image_url and p.image_url.startswith("http") and p.topic_id not in topic_images:
+                topic_images[p.topic_id] = p.image_url
+            if p.topic_id not in topic_latest or p.published_at > topic_latest[p.topic_id].published_at:
+                topic_latest[p.topic_id] = p
 
     scored = sorted(
         yemen_candidates,
@@ -298,17 +310,23 @@ def get_ranked_yemen_posts(hours: int = 24, limit: int = 30) -> list[Post]:
     seen_titles = set()
     unique_posts = []
     for post in scored:
-        if post.topic_id and post.topic_id in seen_topics:
-            continue
-        title_key = (post.title or "").strip()[:45]
+        rep_post = post
+        if post.topic_id:
+            if post.topic_id in seen_topics:
+                continue
+            seen_topics.add(post.topic_id)
+            latest_p = topic_latest.get(post.topic_id)
+            # If there is a newer update in this topic (> 15 mins later), use the newest post for headline & image
+            if latest_p and (latest_p.published_at - post.published_at).total_seconds() > 900:
+                rep_post = latest_p
+            if not rep_post.image_url and post.topic_id in topic_images:
+                rep_post.image_url = topic_images[post.topic_id]
+
+        title_key = (rep_post.title or "").strip()[:45]
         if title_key in seen_titles:
             continue
-        if post.topic_id:
-            seen_topics.add(post.topic_id)
-            if not post.image_url and post.topic_id in topic_images:
-                post.image_url = topic_images[post.topic_id]
         seen_titles.add(title_key)
-        unique_posts.append(post)
+        unique_posts.append(rep_post)
         if len(unique_posts) >= limit:
             break
 
@@ -724,19 +742,27 @@ def get_homepage_portal_widgets() -> dict:
         .prefetch_related("categories")
     )
 
-    ranked_yemen = get_ranked_yemen_posts(hours=36, limit=25)
+    ranked_yemen = get_ranked_yemen_posts(hours=4, limit=30)
 
-    # Sort top clustered stories primarily by Cluster Size -> Score -> Reads -> Source Reputation
+    # Sort top clustered stories by velocity (cluster size * freshness decay) -> reads -> source reputation
+    def cluster_velocity_score(p):
+        age_hours = max(0.0, (now - p.published_at).total_seconds() / 3600.0)
+        decay = 1.0 / (1.0 + (age_hours / 3.0) ** 1.8)
+        raw_size = p.topic.topic_size if (p.topic and "أسعار صرف" not in (p.title or "")) else min(p.topic.topic_size, 4)
+        v_score = (raw_size * 15.0) * decay
+        return (
+            v_score,
+            p.post_views_count or 0,
+            source_weights.get(p.source_id, {}).get("total_weight", 0.0),
+            p.published_at,
+        )
+
     clustered_candidates = [
         p for p in ranked_yemen
         if p.topic_id and p.topic and p.topic.topic_size > 1
     ]
     clustered_candidates.sort(
-        key=lambda p: (
-            p.topic.topic_size if (p.topic and "أسعار صرف" not in (p.title or "")) else min(p.topic.topic_size, 6),
-            p.post_views_count or 0,
-            source_weights.get(p.source_id, {}).get("total_weight", 0.0),
-        ),
+        key=cluster_velocity_score,
         reverse=True,
     )
 

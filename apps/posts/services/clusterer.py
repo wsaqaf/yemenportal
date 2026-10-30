@@ -110,9 +110,9 @@ def extract_entities(norm_text: str) -> set[str]:
 
 class PostClusterer:
     RELATED_THRESHOLD = 0.22       # Optimized with light Arabic stemming & entity boost
-    LOOKBACK_HOURS = 36            # Time window for matching related news
+    LOOKBACK_HOURS = 4             # Optimized 4-hour window to keep topics fresh and active
 
-    def clusterize_recent_posts(self, unclustered_hours: int = 12, force_recluster: bool = False):
+    def clusterize_recent_posts(self, unclustered_hours: int = 4, force_recluster: bool = False):
         now = timezone.now()
         since = now - timedelta(hours=self.LOOKBACK_HOURS)
 
