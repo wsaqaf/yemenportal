@@ -149,30 +149,69 @@ class MostReadListView(ListView):
 
     def get_queryset(self):
         from django.core.cache import cache
-        from apps.posts.services.portal_services import get_ranked_yemen_posts
+        from django.utils import timezone
+        from datetime import timedelta
+        from apps.posts.services.portal_services import is_yemen_relevant
 
         window = self.request.GET.get('window', '24h')
         if window not in ('10h', '24h', 'week', 'all'):
             window = '24h'
 
-        cache_key = f"portal_most_read_v4_{window}"
+        cache_key = f"portal_most_read_v7_{window}"
         cached = cache.get(cache_key)
         if cached is not None:
             return cached
 
-        hours_map = {
-            '10h': 10,
-            '24h': 24,
-            'week': 168,
-            'all': 720,
-        }
-        posts = get_ranked_yemen_posts(hours=hours_map[window], limit=30)
-        cache.set(cache_key, posts, timeout=300)
-        return posts
+        now = timezone.now()
+        base_qs = (
+            Post.objects.filter(state=Post.State.APPROVED)
+            .select_related("source", "topic")
+            .prefetch_related("categories")
+        )
+
+        if window == '10h':
+            qs = base_qs.filter(published_at__gte=now - timedelta(hours=10))
+        elif window == '24h':
+            qs = base_qs.filter(published_at__gte=now - timedelta(hours=24))
+        elif window == 'week':
+            qs = base_qs.filter(published_at__gte=now - timedelta(days=7))
+        else:  # 'all'
+            qs = base_qs
+
+        # Fetch candidates strictly ordered by page views count descending, then recency
+        candidates = list(qs.order_by('-post_views_count', '-published_at')[:250])
+
+        # Filter for Yemen relevance
+        yemen_candidates = [p for p in candidates if is_yemen_relevant(p)]
+        if len(yemen_candidates) >= 15:
+            candidates = yemen_candidates
+
+        # Deduplicate by topic_id and title prefix so identical stories don't repeat
+        seen_topics = set()
+        seen_titles = set()
+        unique_posts = []
+        for post in candidates:
+            if post.topic_id and post.topic_id in seen_topics:
+                continue
+            title_key = (post.title or "").strip()[:40]
+            if title_key in seen_titles:
+                continue
+            if post.topic_id:
+                seen_topics.add(post.topic_id)
+            seen_titles.add(title_key)
+            unique_posts.append(post)
+            if len(unique_posts) >= 30:
+                break
+
+        cache.set(cache_key, unique_posts, timeout=300)
+        return unique_posts
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_window'] = self.request.GET.get('window', '24h')
+        window = self.request.GET.get('window', '24h')
+        if window not in ('10h', '24h', 'week', 'all'):
+            window = '24h'
+        context['current_window'] = window
         from apps.posts.services.portal_services import (
             get_homepage_portal_widgets,
             get_exchange_rates,
