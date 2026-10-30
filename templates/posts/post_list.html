@@ -75,7 +75,7 @@
                                     <span>·</span>
                                     <span>{{ hero_post.published_at|arabic_timesince }}</span>
                                     <span>·</span>
-                                    <span>{{ hero_post.post_views_count }} قراءة</span>
+                                    <span>{{ hero_post.post_views_count|arabic_reads }}</span>
                                 </div>
                                 <h2 class="text-xl sm:text-2xl font-black text-gray-900 dark:text-slate-100 leading-snug mb-3 hover:text-primary transition-colors">
                                     <a href="{% url 'posts:post_detail' hero_post.pk %}" title="{{ hero_post.title }}" data-full-title="{{ hero_post.title }}">
@@ -137,7 +137,7 @@
                             <div class="flex items-center gap-2 text-[11px] text-gray-400">
                                 <span>{{ item.published_at|arabic_timesince }}</span>
                                 <span>·</span>
-                                <span>{{ item.post_views_count }} قراءة</span>
+                                <span>{{ item.post_views_count|arabic_reads }}</span>
                             </div>
                         </div>
                     </div>
@@ -180,7 +180,7 @@
                                 <a href="{% url 'posts:topic_detail' pick.topic.id %}" class="font-bold text-indigo-600">({{ pick.topic.topic_size|arabic_sources }})</a>
                                 <span>·</span>
                                 {% endif %}
-                                <span>{{ pick.post_views_count }} قراءة</span>
+                                <span>{{ pick.post_views_count|arabic_reads }}</span>
                             </div>
                         </div>
                     </div>
@@ -226,7 +226,7 @@
                                     </a>
                                     {% endif %}
                                     <span>·</span>
-                                    <span>{{ post.post_views_count }} قراءة</span>
+                                    <span>{{ post.post_views_count|arabic_reads }}</span>
                                     <span>·</span>
                                     <span>{{ post.published_at|arabic_timesince }}</span>
                                 </div>

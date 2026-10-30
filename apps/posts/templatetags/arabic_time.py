@@ -24,6 +24,28 @@ def arabic_sources(value):
 
 
 @register.filter
+def arabic_reads(value):
+    try:
+        n = int(value or 0)
+    except (TypeError, ValueError):
+        return ""
+    if n == 0:
+        return "0 قراءة"
+    if n == 1:
+        return "قراءة واحدة"
+    if n == 2:
+        return "قراءتان"
+    if 3 <= (n % 100) <= 10:
+        return f"{n:,} قراءات"
+    return f"{n:,} قراءة"
+
+
+@register.filter
+def arabic_views(value):
+    return arabic_reads(value)
+
+
+@register.filter
 def intcomma(value):
     try:
         return f"{int(value):,}"
