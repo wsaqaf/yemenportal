@@ -19,7 +19,7 @@ US_ISP_DOMAINS = {
     'earthlink.net', 'roadrunner.com', 'frontier.com', 'centurylink.net', 'suddenlink.net'
 }
 
-# 3. Known Arabic / Yemeni names and roots (checked as words or distinct parts)
+# 3. Known Arabic / Yemeni names, family roots, and regions
 ARABIC_NAME_ROOTS = [
     'ahmed', 'ahmad', 'moham', 'mham', 'saleh', 'abdo', 'abdu', 'abdel', 'abdul',
     'yemen', 'aden', 'sanaa', 'taiz', 'hassan', 'hasan', 'hussein', 'hussain',
@@ -33,8 +33,38 @@ ARABIC_NAME_ROOTS = [
     'ziad', 'zeyad', 'munir', 'muneer', 'marwan', 'hamza', 'bilal', 'badr',
     'basem', 'basim', 'ayman', 'wael', 'ammar', 'sami', 'sameh', 'faris',
     'fares', 'rashid', 'rasheed', 'hakim', 'hakeem', 'hadi', 'majed', 'majid',
-    'qasim', 'kasim', 'habib', 'akram', 'mokhtar', 'mukhtar', 'alwan'
+    'qasim', 'kasim', 'habib', 'akram', 'mokhtar', 'mukhtar', 'alwan',
+    'batheeb', 'aulaqi', 'ulaqi', 'sabaei', 'hanbse', 'karar', 'rahaal', 'alhadad',
+    'haddad', 'ansari', 'zubairi', 'shami', 'jarash', 'mutawakil', 'alwazir',
+    'matar', 'khawlani', 'hamdani', 'ansi', 'dhamari', 'mahweet', 'lahji', 'abyani',
+    'hadhrami', 'hadramout', 'shabwani', 'mahri', 'socotra', 'alhaimi', 'barak',
+    'barakat', 'marwani', 'sharaf', 'shurafi', 'khateeb', 'khatib', 'sabahi',
+    'maswari', 'sayani', 'qershi', 'qurashi', 'sharabi', 'sabri', 'suwaidi',
+    'qubati', 'hujari', 'zabeedi', 'tuhaita', 'hodeidah', 'marib', 'jawf',
+    'saada', 'amran', 'hajjah', 'raymah', 'dhalie', 'bayda', 'mukalla', 'shihr',
+    'sayun', 'tarim', 'ghaydah', 'ataq', 'zinjibar', 'mokha',
+    'suhaib', 'sohaib', 'khuzam', 'qubati', 'barh', 'yafei', 'yousefi', 'yousifi',
+    'kawkabani', 'harazi', 'manakhi', 'arhabi', 'hashidi', 'bakili', 'radfani',
+    'yemen', 'yamani', 'yemeni', 'bilqis', 'balqis', 'arwa', 'safaa', 'marwa',
+    'khadija', 'aisha', 'fatima', 'fatma', 'zainab', 'asma', 'shaimaa', 'shimaa',
+    'samira', 'salwa', 'naglaa', 'nagat', 'najwa', 'nawal', 'amal', 'iman',
+    'eman', 'wafa', 'wafaa', 'bushra', 'bushrah', 'reem', 'rim', 'rana',
+    'ranya', 'rania', 'huda', 'houda', 'nada', 'maram', 'marwah', 'abeer',
+    'abir', 'siham', 'seham', 'manal', 'dalal', 'faten', 'fatin', 'soha',
+    'suha', 'maha', 'mona', 'muna', 'ghada', 'ghadah', 'hala', 'hannah',
+    'rayan', 'abseim', 'hatim', 'soltan', 'asobhy', 'nashwan', 'alsahwa',
+    'shohra', 'almuhtadi', 'baeshen', 'ba-eshen', 'alashwal', 'ashwal',
+    'alsharif', 'sharif', 'alwosabi', 'wosabi', 'wasabi', 'al-wasabi',
+    'alghamdi', 'ghamdi', 'alharbi', 'harbi', 'otaibi', 'dosari', 'shehri',
+    'qarni', 'amri', 'zahrani', 'omari', 'mutairi', 'subaie', 'qahtani',
+    'hazmi', 'sulami', 'rowaishan', 'alrowaishan', 'ruwaishan', 'al-ruwaishan',
+    'tagheer', 'tihama', 'azizalialslwi', 'shihabi', 'slwi', 'alimi', 'al-alimi'
 ]
+
+TRUSTED_DOMAINS = {
+    'internews.eu', 'mecodify.org', 'yemenportal.net', 'yementimes.com',
+    'alkasir.com', 'yodet.org', 'sh.se'
+}
 
 ARABIC_CHAR_REGEX = re.compile(r'[\u0600-\u06FF]')
 COMMON_BUSINESS_KEYWORDS = ['plumbing', 'lawncare', 'heating', 'carpet', 'dentist', 'roofing', 'contractor']
@@ -101,67 +131,38 @@ def classify_subscribers() -> Dict[str, list]:
         last = (u.last_name or '').strip()
         full_name = f'{first} {last}'.strip()
 
-        # 1. Tier 1 Signals: Active Interaction / Human Name / Staff
+        # 1. Tier 1 Signals: Active Interaction / Human Name / Staff / Trusted Domain / Arabic Identity
         has_activity = (u.id in voter_ids or u.id in suggestor_ids or u.is_staff or u.is_superuser or u.last_login is not None)
         has_arabic_name = bool(ARABIC_CHAR_REGEX.search(full_name))
         has_name = bool(first or last)
-        is_arabic_email = matches_arabic_name(lp)
+        is_arabic_email = matches_arabic_name(lp) or matches_arabic_name(full_name)
+        is_trusted_domain = (domain in TRUSTED_DOMAINS or domain.endswith('.ye'))
 
-        if has_activity or has_arabic_name or (has_name and is_arabic_email) or (has_name and not is_gibberish_username(lp) and domain in ('gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com')):
+        if has_activity or has_arabic_name or has_name or is_trusted_domain or is_arabic_email:
             tier1.append({
                 'user': u,
                 'email': email,
                 'full_name': full_name,
-                'reason': 'Active interaction / Real name / Verified Arabic profile'
+                'reason': 'Genuine subscriber (Active / Real Name / Verified Arabic Profile / Trusted Domain)'
             })
             continue
 
-        # If email itself has a clear Arabic/Yemeni name and is not on dead or spam domains
-        if is_arabic_email and domain not in DEAD_DOMAINS and domain not in US_ISP_DOMAINS and not is_gibberish_username(lp):
-            tier1.append({
-                'user': u,
-                'email': email,
-                'full_name': full_name,
-                'reason': 'Recognized Arabic/Yemeni name root'
-            })
-            continue
-
-        # 2. Tier 3 Signals: Dead domains, Spambots, Scraper lists
-        is_tier3 = False
-        reason = ''
-
+        # 2. Tier 3: All inactive legacy bot accounts without names or activity
+        reason = 'Automated legacy spam bot / inactive unverified account'
         if domain in DEAD_DOMAINS:
-            is_tier3 = True
             reason = f'Dead/Unroutable domain ({domain})'
-        elif 'datarockets.com' in domain or '_twitter@' in email or '_facebook@' in email or (domain == 'yemenportal.net' and lp not in ('support', 'admin', 'contact')):
-            is_tier3 = True
-            reason = 'Developer test account or legacy OAuth dummy placeholder'
-        elif len(lp) <= 2:
-            is_tier3 = True
-            reason = f'Placeholder/dummy username ({lp})'
         elif domain in US_ISP_DOMAINS:
-            is_tier3 = True
             reason = f'US residential broadband scraper bot ({domain})'
         elif is_gibberish_username(lp):
-            is_tier3 = True
             reason = f'Algorithmic bot gibberish string ({lp})'
         elif any(k in lp for k in COMMON_BUSINESS_KEYWORDS):
-            is_tier3 = True
             reason = 'US commercial business scraper'
 
-        if is_tier3:
-            tier3.append({
-                'user': u,
-                'email': email,
-                'reason': reason
-            })
-        else:
-            # 3. Tier 2: Unconfirmed legacy subscribers
-            tier2.append({
-                'user': u,
-                'email': email,
-                'reason': 'Unconfirmed legacy user'
-            })
+        tier3.append({
+            'user': u,
+            'email': email,
+            'reason': reason
+        })
 
     return {
         'tier1': tier1,
@@ -211,5 +212,9 @@ def purge_tier3_accounts() -> Tuple[int, int]:
 
     # 2. Delete the User records
     u_deleted, _ = User.objects.filter(id__in=tier3_user_ids).delete()
+
+    # 3. Clean up any orphan EmailAddress records
+    orphan_deleted, _ = EmailAddress.objects.exclude(user__in=User.objects.all()).delete()
+    total_ea_deleted += orphan_deleted
 
     return total_ea_deleted, u_deleted
