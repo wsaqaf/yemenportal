@@ -123,15 +123,17 @@ class PostListView(ListView):
             elif period == 'year': queryset = queryset.filter(published_at__gte=now - timedelta(days=365))
 
         # 3. Filtering by Source/Category
-        sources = self.request.GET.getlist('sources')
-        if not sources and self.request.GET.get('source'):
-            sources = [self.request.GET.get('source')]
+        raw_sources = self.request.GET.getlist('sources')
+        if not raw_sources and self.request.GET.get('source'):
+            raw_sources = [self.request.GET.get('source')]
+        sources = [s for s in raw_sources if str(s).isdigit()]
         if sources:
             queryset = queryset.filter(source_id__in=sources)
         
-        categories = self.request.GET.getlist('categories')
-        if not categories and self.request.GET.get('category'):
-            categories = [self.request.GET.get('category')]
+        raw_categories = self.request.GET.getlist('categories')
+        if not raw_categories and self.request.GET.get('category'):
+            raw_categories = [self.request.GET.get('category')]
+        categories = [c for c in raw_categories if str(c).isdigit()]
         if categories:
             queryset = queryset.filter(categories__id__in=categories)
 
@@ -161,13 +163,13 @@ class PostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        selected_cats = self.request.GET.getlist('categories')
-        if not selected_cats and self.request.GET.get('category'):
+        selected_cats = [c for c in self.request.GET.getlist('categories') if str(c).isdigit()]
+        if not selected_cats and str(self.request.GET.get('category', '')).isdigit():
             selected_cats = [self.request.GET.get('category')]
         context['selected_categories'] = selected_cats
 
-        selected_srcs = self.request.GET.getlist('sources')
-        if not selected_srcs and self.request.GET.get('source'):
+        selected_srcs = [s for s in self.request.GET.getlist('sources') if str(s).isdigit()]
+        if not selected_srcs and str(self.request.GET.get('source', '')).isdigit():
             selected_srcs = [self.request.GET.get('source')]
         context['selected_sources'] = selected_srcs
 

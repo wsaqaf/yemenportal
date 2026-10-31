@@ -60,7 +60,7 @@ class ModerationDashboardView(LoginRequiredMixin, StaffRequiredMixin, ListView):
         else:
             queryset = Post.objects.all().select_related('source')
 
-        if source:
+        if source and str(source).isdigit():
             queryset = queryset.filter(source_id=source)
 
         return queryset.order_by('-created_at')
