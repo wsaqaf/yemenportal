@@ -187,6 +187,51 @@ def is_yemen_relevant(post: Post) -> bool:
     return False
 
 
+ROUTINE_SERVICE_PATTERNS = [
+    # Weather bulletins
+    r"حالة\s+الطقس",
+    r"توقعات\s+الطقس",
+    r"أحوال\s+الطقس",
+    r"الطقس\s+المتوقع",
+    r"النشرة\s+الجوية",
+    r"درجات\s+الحرارة",
+    r"نشرة\s+الأرصاد",
+    r"الأرصاد\s+الجوية",
+    r"الطقس\s+في\s+المحافظات",
+    r"الأرصاد\s+يتوقع",
+    r"الأرصاد\s+تحذر",
+    # Currency / commodity routine bulletins
+    r"أسعار\s+صرف\s+العملات",
+    r"أسعار\s+الصرف\s+اليوم",
+    r"أسعار\s+الذهب",
+    r"سعر\s+الذهب\s+اليوم",
+    r"أسعار\s+الخضار",
+    # Astrological / Prayer times
+    r"حظك\s+اليوم",
+    r"توقعات\s+الأبراج",
+    r"مواقيت\s+الصلاة",
+    r"أوقات\s+الصلاة",
+    r"مواقيت\s+الأذان",
+]
+
+DISASTER_WEATHER_KEYWORDS = [
+    "إعصار", "فيضانات", "كارثة", "ضحايا", "غرق", "تهدم", "وفاة", "مصرع", "سيول جارفة", "قتلى", "انهيار جبلي", "خسائر بشرية"
+]
+
+
+def is_routine_service_bulletin(title: str, desc: str = "") -> bool:
+    """
+    Detects routine syndicated service bulletins (daily weather forecasts, gold rates, horoscopes, prayer times).
+    These should never headline as the portal's main hero or top clustered stories over major conflict/political news.
+    """
+    text = f"{title or ''} {desc or ''}".strip()
+    if not text:
+        return False
+    if any(k in (title or "") for k in DISASTER_WEATHER_KEYWORDS):
+        return False
+    return any(re.search(pat, text, re.IGNORECASE) for pat in ROUTINE_SERVICE_PATTERNS)
+
+
 def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> float:
     """
     Scores a post prioritizing:
@@ -205,6 +250,10 @@ def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> f
 
     score = 0.0
 
+    # Routine service bulletins (daily weather, daily exchange rates, horoscopes) are deprioritized
+    if is_routine_service_bulletin(title, desc):
+        score -= 150.0
+
     # 1. Explicit Yemen keyword in title (+65) or description (+30)
     if any(kw in title for kw in YEMEN_CORE_KEYWORDS):
         score += 65.0
@@ -218,7 +267,9 @@ def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> f
     # 2. Cluster size (multi-source coverage weighted by freshness velocity)
     topic_size = post.topic.topic_size if post.topic_id and post.topic else 1
     if topic_size and topic_size > 1:
-        if "أسعار صرف العملات" in title:
+        if is_routine_service_bulletin(title, desc):
+            score += min(topic_size, 3) * 3.0 * recency_decay
+        elif "أسعار صرف العملات" in title:
             score += min(topic_size, 4) * 8.0 * recency_decay
         else:
             score += min(topic_size, 12) * 16.0 * recency_decay
@@ -738,10 +789,13 @@ def get_portal_stats() -> dict:
     return stats
 
 
+HOMEPAGE_WIDGETS_CACHE_KEY = "portal_homepage_widgets_v7"
+
+
 def get_homepage_portal_widgets() -> dict:
     """
     Returns Yemen Portal homepage blocks cached in Redis:
-    - hero_post: #1 Top Clustered Story
+    - hero_post: #1 Top Clustered Story (never routine weather/rates bulletin)
     - top_clusters: Next 6 Top Clustered Stories under 'أبرز الأخبار'
     - readers_picks: Next 3 stories under 'اختيارات القراء'
     - thematic_sections: 11 attractive thematic sections sorted by Cluster Size -> Reads -> Source Reputation
@@ -749,7 +803,7 @@ def get_homepage_portal_widgets() -> dict:
     - top_sources: Top 12 active Yemen-focused sources
     - portal_stats: 24h / 7d / Total counts of news items, clusters, and active sources
     """
-    cached = cache.get("portal_homepage_widgets_v6")
+    cached = cache.get(HOMEPAGE_WIDGETS_CACHE_KEY)
     if cached:
         return cached
 
@@ -765,6 +819,8 @@ def get_homepage_portal_widgets() -> dict:
 
     # Sort top clustered stories by velocity (cluster size * freshness decay) -> reads -> source reputation
     def cluster_velocity_score(p):
+        if is_routine_service_bulletin(p.title or "", p.description or ""):
+            return (-1000.0, 0, 0, p.published_at)
         age_hours = max(0.0, (now - p.published_at).total_seconds() / 3600.0)
         decay = 1.0 / (1.0 + (age_hours / 3.0) ** 1.8)
         raw_size = p.topic.topic_size if (p.topic and "أسعار صرف" not in (p.title or "")) else min(p.topic.topic_size, 4)
@@ -776,9 +832,12 @@ def get_homepage_portal_widgets() -> dict:
             p.published_at,
         )
 
+    # Filter out routine service bulletins (weather forecasts, daily exchange/gold rates, horoscopes, prayer times)
+    # so they NEVER take over as Lead Hero or Top Clustered Stories over major conflict/politics news
     clustered_candidates = [
         p for p in ranked_yemen
         if p.topic_id and p.topic and p.topic.topic_size > 1
+        and not is_routine_service_bulletin(p.title or "", p.description or "")
     ]
     clustered_candidates.sort(
         key=cluster_velocity_score,
@@ -788,14 +847,20 @@ def get_homepage_portal_widgets() -> dict:
     if len(clustered_candidates) < 7:
         used_c_ids = {p.id for p in clustered_candidates}
         for p in ranked_yemen:
-            if p.id not in used_c_ids:
+            if p.id not in used_c_ids and not is_routine_service_bulletin(p.title or "", p.description or ""):
                 clustered_candidates.append(p)
                 if len(clustered_candidates) >= 7:
                     break
 
     # 1. Hero Post + 6 More Top Clustered Stories under 'أبرز الأخبار' (7 items total!)
-    hero_post = clustered_candidates[0] if clustered_candidates else base_qs.order_by("-published_at").first()
-    top_clusters = clustered_candidates[1:7]
+    hero_candidates = [
+        p for p in clustered_candidates
+        if not is_routine_service_bulletin(p.title or "", p.description or "")
+    ]
+    hero_post = hero_candidates[0] if hero_candidates else (
+        clustered_candidates[0] if clustered_candidates else base_qs.order_by("-published_at").first()
+    )
+    top_clusters = [p for p in clustered_candidates if p.id != (hero_post.id if hero_post else None)][:6]
 
     used_top_ids = {hero_post.id} if hero_post else set()
     used_top_ids.update(p.id for p in top_clusters)
@@ -862,7 +927,7 @@ def get_homepage_portal_widgets() -> dict:
         "top_sources": top_sources,
         "portal_stats": get_portal_stats(),
     }
-    cache.set("portal_homepage_widgets_v6", data, timeout=600)
+    cache.set(HOMEPAGE_WIDGETS_CACHE_KEY, data, timeout=600)
     return data
 
 

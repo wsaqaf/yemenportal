@@ -39,11 +39,13 @@ def refresh_portal_services_cache():
         get_exchange_rates,
         get_homepage_portal_widgets,
         get_economic_posts,
+        HOMEPAGE_WIDGETS_CACHE_KEY,
     )
     refresh_yemen_weather()
     update_exchange_rates_from_recent_posts()
     get_exchange_rates()
-    cache.delete("portal_homepage_widgets_v5")
+    cache.delete(HOMEPAGE_WIDGETS_CACHE_KEY)
+    cache.delete("portal_homepage_widgets_v6")
     cache.delete("portal_economic_posts_15")
     get_homepage_portal_widgets()
     get_economic_posts(limit=15)
