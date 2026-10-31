@@ -135,8 +135,8 @@ GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET', default='')
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APPS': [{
-            'client_id': GOOGLE_CLIENT_ID or 'yemenportal-google-oauth-client',
-            'secret': GOOGLE_CLIENT_SECRET or 'yemenportal-google-oauth-secret',
+            'client_id': GOOGLE_CLIENT_ID,
+            'secret': GOOGLE_CLIENT_SECRET,
             'key': '',
         }],
         'SCOPE': ['profile', 'email'],
