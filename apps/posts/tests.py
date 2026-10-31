@@ -101,6 +101,61 @@ class PortalServicesTests(TestCase):
         self.assertEqual(p_a.topic_id, p_b.topic_id)
         self.assertGreaterEqual(p_a.topic.topic_size, 2)
 
+    def test_clusterer_prevents_false_grouping_and_chaining(self):
+        """Verifies that generic boilerplate (e.g. 'داخل سجون الحوثيين') does NOT cluster unrelated events."""
+        from apps.posts.services.clusterer import PostClusterer
+        source2 = Source.objects.create(
+            name="عدن تايم",
+            link="https://aden-tm.net/rss",
+            website="https://aden-tm.net",
+            state=Source.State.VALID,
+            approve_state=Source.ApproveState.APPROVED,
+        )
+        source3 = Source.objects.create(
+            name="الوطن العدنية",
+            link="https://alwatan.net/rss",
+            website="https://alwatan.net",
+            state=Source.State.VALID,
+            approve_state=Source.ApproveState.APPROVED,
+        )
+        p_un1 = Post.objects.create(
+            title="وفاة موظف أممي داخل أحد معتقلات الحوثيين بعد عامين من اعتقاله في صنعاء",
+            description="تفاصيل وفاة موظف الأمم المتحدة",
+            link="https://almasdaronline.com/post/201",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=self.source,
+        )
+        p_un2 = Post.objects.create(
+            title="مفوضية حقوق الإنسان تدين وفاة موظف أممي في سجون الحوثيين وتطالب بتحقيق مستقل",
+            description="بيان مفوضية حقوق الإنسان",
+            link="https://aden-tm.net/post/202",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=source2,
+        )
+        p_boy = Post.objects.create(
+            title="مقتل فتى في ظروف غامضة داخل سجون الحوثيين عقب فراره من جبهات تعز",
+            description="مقتل فتى داخل قسم شرطة",
+            link="https://alwatan.net/post/203",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=source3,
+        )
+
+        clusterer = PostClusterer()
+        clusterer.clusterize_recent_posts(unclustered_hours=24, force_recluster=True)
+        p_un1.refresh_from_db()
+        p_un2.refresh_from_db()
+        p_boy.refresh_from_db()
+
+        # The two UN employee posts must be clustered together
+        self.assertIsNotNone(p_un1.topic_id)
+        self.assertEqual(p_un1.topic_id, p_un2.topic_id)
+
+        # The unrelated boy post must NOT be grouped into the UN topic
+        self.assertNotEqual(p_boy.topic_id, p_un1.topic_id)
+
     def test_most_read_page_orders_by_views(self):
         response = self.client.get(reverse("most_read") + "?window=24h", HTTP_HOST="localhost")
         self.assertEqual(response.status_code, 200)

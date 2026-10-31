@@ -16,14 +16,21 @@ ARABIC_STOPWORDS = {
     'حول', 'ضد', 'نحو', 'عقب', 'جراء', 'بسبب', 'تحت', 'فوق', 'امام', 'أمام',
     'لدى', 'منذ', 'عند', 'غير', 'دون', 'سوى', 'كشف', 'يكشف', 'تكشف', 'أعلن',
     'يعلن', 'تعلن', 'أكد', 'يؤكد', 'تؤكد', 'قال', 'يقول', 'تقول', 'مصدر', 'بيان',
+    'داخل', 'احد', 'أحد', 'احدى', 'إحدى', 'بشكل', 'بصورة',
 }
 
-YEMEN_ENTITIES = [
-    'صنعاء', 'عدن', 'تعز', 'مارب', 'حضرموت', 'الحديده', 'شبوه', 'صعده', 'المكلا',
-    'الضالع', 'لحج', 'ابين', 'المهره', 'سقطري', 'البيضاء', 'الجوف', 'ذمار', 'عمران',
-    'حجه', 'المحويت', 'ريمه', 'المخا', 'رداع', 'بيحان', 'يافع', 'حوثي', 'انتقالي',
-    'عليمي', 'مطار عدن', 'البنك المركزي', 'مجلس القياده', 'الامم المتحده', 'مجلس الامن',
-    'كاس الخليج', 'منتخب الناشئين', 'هيومن رايتس', 'الصحه العالميه', 'اليونيسيف',
+# Distinctive proper nouns, institutions, and specific event anchors.
+# Generic city/governorate names (صنعاء، عدن، تعز) and factions (حوثي، انتقالي) are EXCLUDED
+# because they occur in almost every Yemeni headline and cause unrelated events to bleed together.
+DISTINCTIVE_ENTITIES = [
+    'الأمم المتحدة', 'مجلس الأمن', 'مفوضية حقوق الإنسان', 'العفو الدولية',
+    'هيومن رايتس', 'الصحة العالمية', 'اليونيسيف', 'البنك المركزي',
+    'مجلس القيادة', 'جامعة تعز', 'مطار عدن', 'مطار صنعاء', 'مطار سيئون',
+    'ميناء الحديدة', 'ميناء عدن', 'سفينة صافر', 'ناقلة صافر',
+    'كأس الخليج', 'منتخب الناشئين', 'موظف أممي',
+    'خالد بحاح', 'رشاد العليمي', 'طارق صالح', 'عيدروس الزبيدي',
+    'أحمد بن مبارك', 'معين عبدالملك', 'فولكر تورك', 'هانس غروندبرغ',
+    'محمد الشامي', 'إبراهيم الشامي',
 ]
 
 
@@ -43,6 +50,8 @@ def _light_stem_word(word: str) -> str:
         elif word[0] in ('و', 'ب', 'ف', 'ل') and len(word) >= 5:
             if word[1:3] == 'ال' and len(word) >= 6:
                 word = word[3:]
+            elif word.startswith('ل') and len(word) >= 5:
+                word = word[1:]
 
     # Strip common plural/feminine/possessive suffixes (ون, ين, ات, ان, ية, يه, هم, ها, كم)
     for suffix in ('يون', 'يين', 'يات', 'ون', 'ين', 'ات', 'ان', 'يه', 'هم', 'ها'):
@@ -53,7 +62,7 @@ def _light_stem_word(word: str) -> str:
     if word.endswith('ه') and len(word) >= 5:
         word = word[:-1]
 
-    # Common irregular plurals in Yemeni news
+    # Common irregular plurals and synonyms in Yemeni news
     synonyms = {
         'صواريخ': 'صاروخ',
         'غارات': 'غاره',
@@ -61,11 +70,19 @@ def _light_stem_word(word: str) -> str:
         'مليشيا': 'حوثي',
         'حوثيين': 'حوثي',
         'حوثيون': 'حوثي',
+        'حوث': 'حوثي',
         'انتهاكات': 'انتهاك',
         'عمليات': 'عمليه',
         'قوات': 'قوه',
         'اسعار': 'سعر',
         'عملات': 'عمله',
+        'امميه': 'اممي',
+        'اممية': 'اممي',
+        'معتقلات': 'معتقل',
+        'سجون': 'سجن',
+        'شهداء': 'شهيد',
+        'قتلى': 'قتيل',
+        'جرحى': 'جريح',
     }
     return synonyms.get(word, word)
 
@@ -95,21 +112,26 @@ def normalize_arabic(text: str) -> str:
     return " ".join(tokens)
 
 
+# Pre-normalize distinctive entities using the same pipeline for exact substring matching
+DISTINCTIVE_ENTITIES_NORM = [normalize_arabic(e) for e in DISTINCTIVE_ENTITIES if normalize_arabic(e)]
+
+
 def extract_entities(norm_text: str) -> set[str]:
-    """Extracts key Yemeni locations/entities from normalized text for entity overlap boost."""
+    """Extracts distinctive institutions, proper nouns, and unique event numbers."""
     found = set()
-    for ent in YEMEN_ENTITIES:
+    for ent in DISTINCTIVE_ENTITIES_NORM:
         if ent in norm_text:
             found.add(ent)
-    # Also extract numbers >= 2 digits (e.g. "982", "324", "2026", "17") as strong event anchors
+    # Also extract distinctive event numbers >= 2 digits (e.g. "982", "324", "427")
     for num in re.findall(r'\b\d{2,5}\b', norm_text):
-        if num not in ('2026', '2025', '24', '100'):
+        if num not in ('2024', '2025', '2026', '24', '100', '10'):
             found.add(f"num_{num}")
     return found
 
 
 class PostClusterer:
-    RELATED_THRESHOLD = 0.22       # Optimized with light Arabic stemming & entity boost
+    RELATED_THRESHOLD = 0.28       # Tuned to capture real coverage while eliminating loose semantic bleed
+    TOPIC_COHERENCE_MIN = 0.16     # Minimum similarity required with topic's main_post to prevent drift
     LOOKBACK_HOURS = 4             # Optimized 4-hour window to keep topics fresh and active
 
     def clusterize_recent_posts(self, unclustered_hours: int = 4, force_recluster: bool = False):
@@ -169,6 +191,13 @@ class PostClusterer:
         except ValueError:
             return 0
 
+        existing_topic_ids = {c.topic_id for c in candidates if c.topic_id}
+        topic_main_map = {
+            t.id: t.main_post
+            for t in Topic.objects.filter(id__in=existing_topic_ids).select_related('main_post')
+            if t.main_post
+        }
+
         clustered_count = 0
         affected_topic_ids = set()
 
@@ -192,19 +221,44 @@ class PostClusterer:
                     if cand.id == post.id or cand.source_id == post.source_id:
                         sims[idx] = 0.0
                         continue
-                    # Boost similarity if both headlines share specific Yemeni entities or numbers
+                    # Boost similarity if both headlines share specific distinctive entities or numbers
                     if post_ents and candidate_entities[idx]:
                         shared = post_ents.intersection(candidate_entities[idx])
                         if shared:
-                            sims[idx] += min(0.14, len(shared) * 0.05)
+                            sims[idx] += min(0.14, len(shared) * 0.08)
 
-                max_idx = int(sims.argmax())
-                max_score = float(sims[max_idx])
+                # Sort candidate indices by descending similarity
+                sorted_indices = (-sims).argsort()
+                matched_cand = None
 
-                # Cluster any match >= RELATED_THRESHOLD (including identical syndicated headlines >= 0.95!)
-                if max_score >= self.RELATED_THRESHOLD:
-                    matched_post = candidate_map[candidate_ids[max_idx]]
-                    topic_id = matched_post.topic_id
+                for s_idx in sorted_indices:
+                    score = float(sims[s_idx])
+                    if score < self.RELATED_THRESHOLD:
+                        break  # No more candidates meet the similarity threshold
+
+                    cand = candidate_map[candidate_ids[s_idx]]
+
+                    # If candidate already belongs to a topic, verify coherence with that topic's main post
+                    if cand.topic_id:
+                        topic_main = topic_main_map.get(cand.topic_id)
+                        if topic_main and topic_main.id != post.id:
+                            norm_main = normalize_arabic(topic_main.title)
+                            main_vec = vectorizer.transform([norm_main])
+                            coherence_sim = float(cosine_similarity(post_vec, main_vec)[0, 0])
+                            main_ents = extract_entities(norm_main)
+                            if post_ents and main_ents:
+                                shared_m = post_ents.intersection(main_ents)
+                                if shared_m:
+                                    coherence_sim += min(0.14, len(shared_m) * 0.08)
+                            if coherence_sim < self.TOPIC_COHERENCE_MIN:
+                                # Semantic drift / chaining detected; reject this candidate and check next
+                                continue
+
+                    matched_cand = cand
+                    break
+
+                if matched_cand:
+                    topic_id = matched_cand.topic_id
 
                     if topic_id:
                         post.topic_id = topic_id
@@ -214,15 +268,16 @@ class PostClusterer:
                         affected_topic_ids.add(topic_id)
                     else:
                         new_topic, _ = Topic.objects.get_or_create(
-                            main_post=matched_post,
+                            main_post=matched_cand,
                             defaults={'topic_size': 2},
                         )
-                        matched_post.topic_id = new_topic.id
-                        matched_post.save(update_fields=['topic_id'])
+                        matched_cand.topic_id = new_topic.id
+                        matched_cand.save(update_fields=['topic_id'])
                         post.topic_id = new_topic.id
                         post.save(update_fields=['topic_id'])
                         if post.id in candidate_map:
                             candidate_map[post.id].topic_id = new_topic.id
+                        topic_main_map[new_topic.id] = matched_cand
                         affected_topic_ids.add(new_topic.id)
 
                     clustered_count += 1
@@ -271,8 +326,8 @@ class PostClusterer:
                 if ents[i] and ents[j]:
                     shared = ents[i].intersection(ents[j])
                     if shared:
-                        sim += min(0.14, len(shared) * 0.05)
-                if sim >= 0.30:
+                        sim += min(0.14, len(shared) * 0.08)
+                if sim >= 0.40:
                     target_tid = topics[i].id
                     source_tid = topics[j].id
                     Post.objects.filter(topic_id=source_tid).update(topic_id=target_tid)
