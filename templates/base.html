@@ -408,8 +408,8 @@
     {% block extra_js %}{% endblock %}
     {% include 'moderation/partials/report_modal.html' %}
 
-    <!-- PWA Install Prompt Banner -->
-    <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
+    <!-- PWA Install Prompt Banner (Mobile Only) -->
+    <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden md:hidden fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
         <div class="flex items-start gap-3">
             <img src="/static/images/pwa/icon-192x192.png" alt="يمن بورتال" class="w-12 h-12 rounded-2xl object-contain bg-blue-50 dark:bg-slate-700 p-1 flex-shrink-0 shadow-sm">
             <div class="flex-grow min-w-0">
@@ -465,14 +465,20 @@
             window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 deferredPrompt = e;
+
+                // Completely disable/suppress the install popup on Desktop browsers
+                var isDesktop = !(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) || (window.innerWidth >= 768);
+                if (isDesktop) {
+                    return;
+                }
                 
                 var dismissedAt = null;
                 try {
                     dismissedAt = localStorage.getItem('yp_pwa_dismissed');
                 } catch(e) {}
 
-                // If dismissed within the last 5 days, don't show
-                if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < 5 * 86400 * 1000) {
+                // If dismissed within the last 14 days, don't show
+                if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < 14 * 86400 * 1000) {
                     return;
                 }
 
