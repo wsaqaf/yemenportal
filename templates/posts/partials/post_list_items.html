@@ -101,7 +101,27 @@
     </div>
 </article>
 {% empty %}
-<div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-10 text-center text-gray-500">
-    لا توجد أخبار مطابقة لخيارات البحث الحالية.
+<div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-8 sm:p-12 text-center">
+    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-400 rounded-full flex items-center justify-center text-2xl">
+        🔍
+    </div>
+    <h3 class="text-base sm:text-lg font-bold text-gray-800 dark:text-slate-200 mb-2">
+        {% if request.GET.q %}
+        لم نجد نتائج مطابقة لـ «{{ request.GET.q }}»
+        {% else %}
+        لا توجد أخبار مطابقة لخيارات التصفية الحالية
+        {% endif %}
+    </h3>
+    <p class="text-xs sm:text-sm text-gray-500 dark:text-slate-400 max-w-md mx-auto mb-5 leading-relaxed">
+        {% if request.GET.q %}
+        جرب تقليل عدد الكلمات، أو البحث بمرادفات أخرى، أو توسيع الفترة الزمنية باختيار «كل الأوقات».
+        {% else %}
+        جرب تغيير أو إزالة بعض الفلاتر المحددة لعرض المزيد من الأخبار.
+        {% endif %}
+    </p>
+    <a href="{% url 'home' %}" class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-colors shadow-sm">
+        <span>عرض كل الأخبار</span>
+        <span>←</span>
+    </a>
 </div>
 {% endfor %}

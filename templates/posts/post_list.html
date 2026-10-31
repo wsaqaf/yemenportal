@@ -247,7 +247,126 @@
             </div>
             {% else %}
             <!-- Filtered / Paginated / Topic / Stream View -->
-            <div class="space-y-4">
+            <div class="space-y-5">
+                {% if request.GET.q %}
+                <!-- Dedicated Search Results & Quick Filter Bar -->
+                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl p-5 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 dark:border-slate-700/80 pb-3.5">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-2.5 h-7 bg-primary rounded-full"></span>
+                            <div>
+                                <h1 class="text-lg sm:text-xl font-black text-gray-900 dark:text-slate-100 flex flex-wrap items-center gap-2">
+                                    <span>نتائج البحث عن:</span>
+                                    <span class="text-primary underline decoration-primary/30 underline-offset-4 font-black">«{{ request.GET.q }}»</span>
+                                </h1>
+                                <p class="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                                    {% if page_obj.paginator.count %}
+                                    تم العثور على حوالي {{ page_obj.paginator.count }} خبر
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        <a href="{% url 'home' %}" class="self-start sm:self-auto inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-red-50 dark:bg-slate-700 dark:hover:bg-red-950/40 dark:text-slate-300 dark:hover:text-red-400 px-3 py-1.5 rounded-xl transition-colors">
+                            <span>إلغاء البحث</span>
+                            <span>✕</span>
+                        </a>
+                    </div>
+
+                    <!-- Search Input & Quick Filter Controls -->
+                    <form id="search-filter-form" action="{% url 'home' %}" method="GET" class="space-y-3">
+                        <div class="flex gap-2">
+                            <div class="relative flex-grow">
+                                <input type="text" name="q" value="{{ request.GET.q }}" placeholder="تعديل كلمات البحث..." class="w-full bg-gray-50 dark:bg-slate-700/60 border border-gray-200 dark:border-slate-600 rounded-xl text-sm py-2.5 px-3.5 pr-10 font-medium text-gray-900 dark:text-slate-100 focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                                <svg class="w-4 h-4 text-gray-400 absolute right-3.5 top-3.5 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            </div>
+                            <button type="submit" class="px-5 py-2.5 bg-primary hover:bg-blue-700 text-white font-bold text-sm rounded-xl transition-colors shadow-sm flex items-center gap-1.5 flex-shrink-0">
+                                <span>تحديث</span>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                            <!-- Sort Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg>
+                                    <span>الترتيب حسب:</span>
+                                </label>
+                                <select name="sort" onchange="this.form.submit()" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-xs sm:text-sm p-2.5 font-medium text-gray-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer transition-all">
+                                    <option value="latest" {% if sort == 'latest' or not sort %}selected{% endif %}>⏱️ الأحدث أولاً</option>
+                                    <option value="reads" {% if sort == 'reads' or sort == 'views' %}selected{% endif %}>👁️ الأكثر قراءة</option>
+                                    <option value="oldest" {% if sort == 'oldest' %}selected{% endif %}>⏳ الأقدم أولاً</option>
+                                    <option value="clusters" {% if sort == 'clusters' %}selected{% endif %}>🔥 أكبر تغطية إعلامية (تعدد المصادر)</option>
+                                    <option value="votes" {% if sort == 'votes' %}selected{% endif %}>⭐ الأعلى تصويتاً وتقييماً</option>
+                                </select>
+                            </div>
+
+                            <!-- Time / Period Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span>الفترة الزمنية:</span>
+                                </label>
+                                <select name="period" onchange="this.form.submit()" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-xs sm:text-sm p-2.5 font-medium text-gray-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer transition-all">
+                                    <option value="" {% if not period %}selected{% endif %}>🌐 كل الأوقات</option>
+                                    <option value="1h" {% if period == '1h' %}selected{% endif %}>⚡ آخر ساعة</option>
+                                    <option value="24h" {% if period == '24h' %}selected{% endif %}>📅 آخر 24 ساعة (اليوم)</option>
+                                    <option value="week" {% if period == 'week' %}selected{% endif %}>🗓️ آخر أسبوع</option>
+                                    <option value="month" {% if period == 'month' %}selected{% endif %}>🌕 آخر شهر</option>
+                                    <option value="year" {% if period == 'year' %}selected{% endif %}>🏛️ آخر سنة</option>
+                                </select>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div>
+                                <label class="block text-xs font-bold text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                    <span>القسم:</span>
+                                </label>
+                                <select name="category" onchange="this.form.submit()" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-xs sm:text-sm p-2.5 font-medium text-gray-800 dark:text-slate-200 focus:ring-2 focus:ring-primary focus:border-primary cursor-pointer transition-all">
+                                    <option value="" {% if not current_category %}selected{% endif %}>📂 جميع الأقسام</option>
+                                    {% for cat in all_categories %}
+                                    <option value="{{ cat.id }}" {% if current_category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Active Filter Badges -->
+                        {% if period or sort != 'latest' or current_category %}
+                        <div class="flex flex-wrap items-center gap-1.5 pt-2 border-t border-gray-100 dark:border-slate-700/60 text-xs">
+                            <span class="text-gray-500 font-bold ml-1">تصفية نشطة:</span>
+                            {% if sort and sort != 'latest' %}
+                            <a href="?q={{ request.GET.q }}{% if period %}&period={{ period }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 dark:bg-blue-900/40 text-primary dark:text-blue-300 rounded-lg font-bold border border-blue-200 dark:border-blue-800 hover:bg-blue-100 transition-colors">
+                                <span>الترتيب: 
+                                    {% if sort == 'reads' or sort == 'views' %}الأكثر قراءة{% elif sort == 'oldest' %}الأقدم{% elif sort == 'clusters' %}أكبر تغطية{% elif sort == 'votes' %}الأعلى تصويتاً{% endif %}
+                                </span>
+                                <span class="text-blue-500 font-black">✕</span>
+                            </a>
+                            {% endif %}
+                            {% if period %}
+                            <a href="?q={{ request.GET.q }}{% if sort %}&sort={{ sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-50 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-lg font-bold border border-amber-200 dark:border-amber-800 hover:bg-amber-100 transition-colors">
+                                <span>الفترة: 
+                                    {% if period == '1h' %}آخر ساعة{% elif period == '24h' %}آخر 24 ساعة{% elif period == 'week' %}آخر أسبوع{% elif period == 'month' %}آخر شهر{% elif period == 'year' %}آخر سنة{% endif %}
+                                </span>
+                                <span class="text-amber-600 font-black">✕</span>
+                            </a>
+                            {% endif %}
+                            {% if current_category %}
+                            <a href="?q={{ request.GET.q }}{% if sort %}&sort={{ sort }}{% endif %}{% if period %}&period={{ period }}{% endif %}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300 rounded-lg font-bold border border-emerald-200 dark:border-emerald-800 hover:bg-emerald-100 transition-colors">
+                                <span>القسم: 
+                                    {% for cat in all_categories %}{% if cat.id|stringformat:"i" == current_category %}{{ cat.name }}{% endif %}{% endfor %}
+                                </span>
+                                <span class="text-emerald-600 font-black">✕</span>
+                            </a>
+                            {% endif %}
+                            <a href="?q={{ request.GET.q }}" class="text-gray-400 hover:text-red-600 underline font-semibold mr-2 transition-colors">
+                                إعادة ضبط الفلاتر
+                            </a>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+                {% else %}
                 <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-slate-700">
                     <div class="flex items-center gap-2">
                         <span class="w-1.5 h-6 bg-primary rounded-full"></span>
@@ -257,6 +376,7 @@
                     </div>
                     <a href="{% url 'home' %}" class="text-xs font-bold text-primary hover:underline">العودة لأقسام الرئيسية ←</a>
                 </div>
+                {% endif %}
 
                 <div id="posts-container" class="space-y-4">
                     {% include "posts/partials/post_list_items.html" %}
@@ -318,9 +438,11 @@
                         <div>
                             <label class="block text-xs font-bold text-gray-600 dark:text-slate-300 mb-1.5">الترتيب</label>
                             <select name="sort" class="w-full bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl text-sm p-2">
-                                <option value="latest" {% if request.GET.sort == 'latest' %}selected{% endif %}>الأحدث</option>
+                                <option value="latest" {% if request.GET.sort == 'latest' or not request.GET.sort %}selected{% endif %}>الأحدث</option>
+                                <option value="reads" {% if request.GET.sort == 'reads' or request.GET.sort == 'views' %}selected{% endif %}>الأكثر قراءة</option>
+                                <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>الأقدم</option>
+                                <option value="clusters" {% if request.GET.sort == 'clusters' %}selected{% endif %}>أكبر تغطية</option>
                                 <option value="votes" {% if request.GET.sort == 'votes' %}selected{% endif %}>الأعلى تصويتاً</option>
-                                <option value="reads" {% if request.GET.sort == 'reads' %}selected{% endif %}>الأكثر قراءة</option>
                             </select>
                         </div>
                         <div>

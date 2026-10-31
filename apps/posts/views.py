@@ -124,16 +124,31 @@ class PostListView(ListView):
 
         # 3. Filtering by Source/Category
         sources = self.request.GET.getlist('sources')
-        if sources: queryset = queryset.filter(source_id__in=sources)
+        if not sources and self.request.GET.get('source'):
+            sources = [self.request.GET.get('source')]
+        if sources:
+            queryset = queryset.filter(source_id__in=sources)
         
         categories = self.request.GET.getlist('categories')
-        if categories: queryset = queryset.filter(categories__id__in=categories)
+        if not categories and self.request.GET.get('category'):
+            categories = [self.request.GET.get('category')]
+        if categories:
+            queryset = queryset.filter(categories__id__in=categories)
 
         # 4. Sorting
         sort = self.request.GET.get('sort', 'latest')
-        if sort == 'votes': queryset = queryset.order_by('-voting_result', '-published_at')
-        elif sort == 'reads': queryset = queryset.order_by('-post_views_count', '-published_at')
-        else: queryset = queryset.order_by('-published_at')
+        if sort in ('votes', 'top'):
+            queryset = queryset.order_by('-voting_result', '-published_at')
+        elif sort in ('reads', 'views'):
+            queryset = queryset.order_by('-post_views_count', '-published_at')
+        elif sort in ('oldest', 'date_asc'):
+            queryset = queryset.order_by('published_at')
+        elif sort in ('clusters', 'sources'):
+            queryset = queryset.order_by('-topic__topic_size', '-published_at')
+        elif sort == 'impressions':
+            queryset = queryset.order_by('-impressions_count', '-published_at')
+        else:
+            queryset = queryset.order_by('-published_at')
 
         if user.is_authenticated:
             from django.db.models import Exists, OuterRef
@@ -145,8 +160,22 @@ class PostListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['selected_categories'] = self.request.GET.getlist('categories')
-        context['selected_sources'] = self.request.GET.getlist('sources')
+        
+        selected_cats = self.request.GET.getlist('categories')
+        if not selected_cats and self.request.GET.get('category'):
+            selected_cats = [self.request.GET.get('category')]
+        context['selected_categories'] = selected_cats
+
+        selected_srcs = self.request.GET.getlist('sources')
+        if not selected_srcs and self.request.GET.get('source'):
+            selected_srcs = [self.request.GET.get('source')]
+        context['selected_sources'] = selected_srcs
+
+        context['q'] = self.request.GET.get('q', '').strip()
+        context['sort'] = self.request.GET.get('sort', 'latest')
+        context['period'] = self.request.GET.get('period', '')
+        context['current_category'] = selected_cats[0] if len(selected_cats) == 1 else ''
+        context['current_source'] = selected_srcs[0] if len(selected_srcs) == 1 else ''
 
         from apps.posts.services.portal_services import (
             get_homepage_portal_widgets,
