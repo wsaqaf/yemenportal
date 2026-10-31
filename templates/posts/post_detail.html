@@ -47,16 +47,95 @@
         </div>
 
         <!-- Left: Action Controls -->
-        <div class="flex items-center gap-2 flex-shrink-0">
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+            
+            <!-- Quick WhatsApp Share (Desktop & Mobile) -->
+            <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" 
+               target="_blank" rel="noopener noreferrer" title="مشاركة سريعة عبر واتساب"
+               class="inline-flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-emerald-50 hover:bg-emerald-500 text-emerald-600 hover:text-white transition-colors border border-emerald-100 shadow-sm">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.532 5.857L.073 23.927l6.275-1.435A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.011-1.377l-.36-.214-3.727.853.884-3.631-.235-.373A9.818 9.818 0 1 1 12 21.818z"/></svg>
+            </a>
+
+            <!-- Share Menu Dropdown Container -->
+            <div class="relative" id="share-menu-container">
+                <button type="button" id="share-menu-btn" onclick="toggleShareDropdown(event)" 
+                        class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 transition shadow-sm"
+                        title="مشاركة الخبر">
+                    <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                    </svg>
+                    <span>مشاركة</span>
+                </button>
+
+                <!-- Dropdown Menu -->
+                <div id="share-dropdown" class="hidden absolute left-0 mt-2 w-52 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 transition-all text-right">
+                    <div class="px-3.5 py-1.5 border-b border-gray-100 text-[11px] font-bold text-gray-400">مشاركة الخبر عبر:</div>
+                    
+                    <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" 
+                       class="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 transition">
+                        <span class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.532 5.857L.073 23.927l6.275-1.435A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.011-1.377l-.36-.214-3.727.853.884-3.631-.235-.373A9.818 9.818 0 1 1 12 21.818z"/></svg>
+                        </span>
+                        <span>واتساب</span>
+                    </a>
+
+                    <a href="https://x.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition">
+                        <span class="w-6 h-6 rounded-lg bg-gray-100 text-gray-800 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </span>
+                        <span>منصة X (تويتر)</span>
+                    </a>
+
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition">
+                        <span class="w-6 h-6 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </span>
+                        <span>فيسبوك</span>
+                    </a>
+
+                    <a href="https://t.me/share/url?url={{ request.build_absolute_uri|urlencode }}&text={{ post.title|urlencode }}" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-sky-50 hover:text-sky-700 transition">
+                        <span class="w-6 h-6 rounded-lg bg-sky-100 text-sky-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/></svg>
+                        </span>
+                        <span>تيليجرام</span>
+                    </a>
+
+                    <button type="button" id="native-share-btn" onclick="triggerNativeShare()" 
+                            class="hidden w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition text-right">
+                        <span class="w-6 h-6 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                        </span>
+                        <span>مشاركة عبر تطبيقات أخرى...</span>
+                    </button>
+
+                    <div class="h-px bg-gray-100 my-1"></div>
+
+                    <button type="button" onclick="copyArticleUrl()" 
+                            class="w-full flex items-center gap-2.5 px-3.5 py-2 text-xs font-bold text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition text-right">
+                        <span class="w-6 h-6 rounded-lg bg-gray-100 text-gray-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        </span>
+                        <span>نسخ رابط الخبر</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- View Mode Switcher -->
-            {% if allows_iframe %}<button id="toggle-view-btn" onclick="toggleView()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 transition">
+            {% if allows_iframe %}
+            <button id="toggle-view-btn" onclick="toggleView()" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 transition shadow-sm">
                 <svg id="view-icon-summary" class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
                 <span id="view-text">عرض الملخص</span>
-            </button>{% else %}<span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-[11px] font-medium">عرض الملخص (المصدر يمنع التضمين)</span>{% endif %}
+            </button>
+            {% else %}
+            <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-lg bg-gray-100 text-gray-600 text-[11px] font-medium">عرض الملخص (المصدر يمنع التضمين)</span>
+            {% endif %}
 
             <!-- Direct Original Link Button -->
             <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-               class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition">
+               class="inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition">
                 <span>المصدر الأصلي</span>
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
             </a>
@@ -95,9 +174,51 @@
                     <span>{{ post.published_at|date:"Y/m/d - H:i" }}</span>
                 </div>
 
-                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 leading-snug mb-5">
+                <h2 class="text-xl sm:text-2xl font-extrabold text-gray-900 leading-snug mb-4">
                     {{ post.title }}
                 </h2>
+
+                <!-- Social Share Bar (Top of article) -->
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-6 p-3 sm:p-3.5 bg-gray-50/90 rounded-2xl border border-gray-100">
+                    <span class="text-xs font-bold text-gray-600 flex items-center gap-1.5">
+                        <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                        <span>مشاركة الخبر:</span>
+                    </span>
+
+                    <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        <!-- WhatsApp -->
+                        <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" 
+                           class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-sm" title="مشاركة عبر واتساب">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.557 4.125 1.532 5.857L.073 23.927l6.275-1.435A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.011-1.377l-.36-.214-3.727.853.884-3.631-.235-.373A9.818 9.818 0 1 1 12 21.818z"/></svg>
+                            <span>واتساب</span>
+                        </a>
+
+                        <!-- X / Twitter -->
+                        <a href="https://x.com/intent/tweet?text={{ post.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" 
+                           class="w-8 h-8 rounded-xl bg-gray-900 hover:bg-black text-white flex items-center justify-center transition shadow-sm" title="مشاركة عبر X">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                        </a>
+
+                        <!-- Facebook -->
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" 
+                           class="w-8 h-8 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition shadow-sm" title="مشاركة عبر فيسبوك">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+
+                        <!-- Telegram -->
+                        <a href="https://t.me/share/url?url={{ request.build_absolute_uri|urlencode }}&text={{ post.title|urlencode }}" target="_blank" rel="noopener noreferrer" 
+                           class="w-8 h-8 rounded-xl bg-sky-500 hover:bg-sky-600 text-white flex items-center justify-center transition shadow-sm" title="مشاركة عبر تيليجرام">
+                            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/></svg>
+                        </a>
+
+                        <!-- Copy Link -->
+                        <button type="button" onclick="copyArticleUrl()" 
+                                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-gray-100 text-gray-700 text-xs font-bold border border-gray-200 transition shadow-sm" title="نسخ رابط الخبر">
+                            <svg class="w-3.5 h-3.5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span>نسخ</span>
+                        </button>
+                    </div>
+                </div>
 
                 {% if post.image_url %}
                 <div class="mb-6 rounded-xl overflow-hidden max-h-96 bg-gray-100 border border-gray-100 flex items-center justify-center">
@@ -109,13 +230,23 @@
                     {{ post.description|safe|linebreaks }}
                 </div>
 
-                <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <span class="text-xs text-gray-500">تم جلب هذا الخبر آلياً عبر خلاصة المصدر. لقراءة التفاصيل الكاملة:</span>
-                    <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
-                       class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm transition inline-flex items-center gap-2">
-                        <span>قراءة الخبر كاملاً من المصدر الأصلي</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                    </a>
+                <div class="p-5 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-gray-700 block mb-0.5">تم جلب هذا الخبر آلياً عبر خلاصة المصدر.</span>
+                        <span class="text-xs text-gray-500">لقراءة التغطية الكاملة على موقع المصدر، أو مشاركة الرابط مع الآخرين.</span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 flex-shrink-0">
+                        <button type="button" onclick="toggleShareDropdown(event)" 
+                                class="px-3.5 py-2.5 bg-white hover:bg-gray-100 text-gray-700 border border-gray-200 rounded-xl text-xs sm:text-sm font-bold shadow-sm transition inline-flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+                            <span>مشاركة الخبر</span>
+                        </button>
+                        <a href="{{ post.link }}" target="_blank" rel="noopener noreferrer" 
+                           class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-sm transition inline-flex items-center gap-2">
+                            <span>قراءة من المصدر الأصلي</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
                 </div>
 
                 {% if related_posts %}
@@ -138,9 +269,23 @@
         </div>
     </main>
 
-    <!-- Interactive Toggling Script -->
+    <!-- Copied Toast Notification -->
+    <div id="copied-toast" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-gray-900 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none flex items-center gap-2">
+        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+        <span>تم نسخ رابط الخبر بنجاح!</span>
+    </div>
+
+    <!-- Interactive Toggling & Sharing Script -->
     <script>
         let currentMode = "{% if allows_iframe %}iframe{% else %}summary{% endif %}";
+        const postTitle = "{{ post.title|escapejs }}";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (navigator.share) {
+                const nativeBtn = document.getElementById('native-share-btn');
+                if (nativeBtn) nativeBtn.classList.remove('hidden');
+            }
+        });
 
         function updateUI() {
             const iframeBox = document.getElementById('iframe-container');
@@ -167,6 +312,78 @@
             currentMode = 'summary';
             updateUI();
         }
+
+        function toggleShareDropdown(e) {
+            if (e) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+            const dropdown = document.getElementById('share-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
+        }
+
+        function triggerNativeShare() {
+            if (navigator.share) {
+                navigator.share({
+                    title: postTitle,
+                    text: postTitle,
+                    url: window.location.href
+                }).catch(() => {});
+            }
+            const dropdown = document.getElementById('share-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+        }
+
+        function copyArticleUrl() {
+            const url = window.location.href;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(showCopiedToast).catch(() => fallbackCopy(url));
+            } else {
+                fallbackCopy(url);
+            }
+            const dropdown = document.getElementById('share-dropdown');
+            if (dropdown) dropdown.classList.add('hidden');
+        }
+
+        function fallbackCopy(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                showCopiedToast();
+            } catch (e) {
+                alert('تعذر نسخ الرابط');
+            }
+            document.body.removeChild(ta);
+        }
+
+        function showCopiedToast() {
+            const toast = document.getElementById('copied-toast');
+            if (toast) {
+                toast.classList.remove('hidden', 'opacity-0');
+                toast.classList.add('opacity-100');
+                setTimeout(() => {
+                    toast.classList.remove('opacity-100');
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => toast.classList.add('hidden'), 300);
+                }, 2200);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const container = document.getElementById('share-menu-container');
+            const dropdown = document.getElementById('share-dropdown');
+            if (container && dropdown && !container.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
