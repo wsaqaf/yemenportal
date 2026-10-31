@@ -356,7 +356,7 @@ def update_exchange_rates_from_recent_posts() -> int:
     ensure_exchange_rates_seeded()
     recent_posts = Post.objects.filter(
         state=Post.State.APPROVED,
-        title__icontains="صرف",
+        title__contains="صرف",
     ).order_by("-published_at")[:15]
 
     updated_count = 0
@@ -883,12 +883,12 @@ def get_economic_posts(limit: int = 15) -> list[Post]:
             published_at__gte=now - timedelta(days=30),
         )
         .filter(
-            Q(title__icontains="صرف")
-            | Q(title__icontains="الريال")
-            | Q(title__icontains="الدولار")
-            | Q(title__icontains="البنك")
-            | Q(title__icontains="اقتصاد")
-            | Q(title__icontains="العملات")
+            Q(title__contains="صرف")
+            | Q(title__contains="الريال")
+            | Q(title__contains="الدولار")
+            | Q(title__contains="البنك")
+            | Q(title__contains="اقتصاد")
+            | Q(title__contains="العملات")
         )
         .select_related("source", "topic")
         .prefetch_related("categories")

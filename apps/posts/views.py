@@ -10,8 +10,12 @@ def normalize_arabic_search_variants(term: str) -> list[str]:
     # 1. Alif / Hamza normalization (أ, إ, آ <-> ا)
     alif_unified = re.sub(r'[أإآ]', 'ا', term)
     variants.add(alif_unified)
-    # If term uses plain alif, test common hamza forms
-    if 'ا' in term:
+    # If term uses plain alif at start, test common hamza forms
+    if term.startswith('ا'):
+        variants.add('أ' + term[1:])
+        variants.add('إ' + term[1:])
+        variants.add('آ' + term[1:])
+    elif 'ا' in term:
         variants.add(term.replace('ا', 'أ', 1))
         variants.add(term.replace('ا', 'إ', 1))
     
@@ -27,7 +31,13 @@ def normalize_arabic_search_variants(term: str) -> list[str]:
     elif term.endswith('ى'):
         variants.add(term[:-1] + 'ي')
 
-    return [v for v in variants if v][:4]
+    # 4. Definite article 'ال' prefix strip (e.g. 'السقاف' -> 'سقاف')
+    if term.startswith('ال') and len(term) > 4:
+        stripped = term[2:]
+        variants.add(stripped)
+        variants.add(re.sub(r'[أإآ]', 'ا', stripped))
+
+    return [v for v in variants if v][:6]
 
 from apps.posts.paginator import CachedCountPaginator
 from django.db import models
@@ -78,11 +88,27 @@ class PostListView(ListView):
         if q:
             q_clean = q.strip()
             if q_clean:
-                variants = normalize_arabic_search_variants(q_clean)
-                q_filter = models.Q()
-                for var in variants:
-                    q_filter |= models.Q(title__icontains=var)
-                queryset = queryset.filter(q_filter)
+                # Check for exact phrase search (e.g. "طارق صالح")
+                is_exact = (q_clean.startswith('"') and q_clean.endswith('"')) or (q_clean.startswith("'") and q_clean.endswith("'"))
+                if is_exact and len(q_clean) > 2:
+                    phrase = q_clean[1:-1].strip()
+                    phrase_variants = normalize_arabic_search_variants(phrase)
+                    q_filter = models.Q()
+                    for var in phrase_variants:
+                        q_filter |= models.Q(title__contains=var)
+                    queryset = queryset.filter(q_filter)
+                else:
+                    raw_words = [w.strip() for w in q_clean.split() if w.strip()]
+                    words = [w for w in raw_words if len(w) >= 2] if len(raw_words) > 1 else raw_words
+                    if words:
+                        q_and_filter = models.Q()
+                        for word in words:
+                            word_variants = normalize_arabic_search_variants(word)
+                            word_q = models.Q()
+                            for var in word_variants:
+                                word_q |= models.Q(title__contains=var)
+                            q_and_filter &= word_q
+                        queryset = queryset.filter(q_and_filter)
 
         # 2. Filtering by Period
         period = self.request.GET.get('period')
