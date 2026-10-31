@@ -408,22 +408,42 @@
     {% block extra_js %}{% endblock %}
     {% include 'moderation/partials/report_modal.html' %}
 
-    <!-- PWA Install Prompt Banner (Mobile Only) -->
-    <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden md:hidden fixed bottom-4 left-4 right-4 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
+    <!-- PWA Install Prompt Banner (Mobile, iPad & iPhone) -->
+    <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
         <div class="flex items-start gap-3">
             <img src="/static/images/pwa/icon-192x192.png" alt="يمن بورتال" class="w-12 h-12 rounded-2xl object-contain bg-blue-50 dark:bg-slate-700 p-1 flex-shrink-0 shadow-sm">
             <div class="flex-grow min-w-0">
                 <h4 class="text-sm font-black text-gray-900 dark:text-white leading-tight">تطبيق يمن بورتال</h4>
-                <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
-                    تصفح أسرع، وصول فوري لآخر الأخبار، وتصفح سلس حتى بدون إنترنت!
-                </p>
-                <div class="flex items-center gap-2 mt-3">
-                    <button id="pwa-install-btn" class="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer">
-                        تثبيت الآن
-                    </button>
-                    <button id="pwa-dismiss-btn" class="px-3 py-1.5 rounded-xl text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 text-xs font-semibold cursor-pointer">
-                        لاحقاً
-                    </button>
+                
+                <!-- Android: 1-Click Native Install -->
+                <div id="pwa-android-section">
+                    <p class="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
+                        تصفح أسرع، وصول فوري لآخر الأخبار، وتصفح سلس حتى بدون إنترنت!
+                    </p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <button id="pwa-install-btn" class="px-3.5 py-1.5 rounded-xl bg-primary hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 active:scale-95 transition-all cursor-pointer">
+                            تثبيت الآن
+                        </button>
+                        <button id="pwa-dismiss-btn" class="px-3 py-1.5 rounded-xl text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 text-xs font-semibold cursor-pointer">
+                            لاحقاً
+                        </button>
+                    </div>
+                </div>
+
+                <!-- iOS & iPad: Safari Share -> Add to Home Screen Guidance -->
+                <div id="pwa-ios-section" class="hidden">
+                    <p class="text-xs text-gray-600 dark:text-slate-300 mt-1 leading-relaxed">
+                        لتثبيت التطبيق على جهازك: اضغط على زر المشاركة 
+                        <span class="inline-flex items-center justify-center w-5 h-5 mx-0.5 rounded bg-blue-50 dark:bg-slate-700 text-primary align-middle">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                        </span>
+                        في المتصفح، ثم اختر <span class="font-bold text-gray-900 dark:text-white">«إضافة إلى الصفحة الرئيسية ⊞»</span>.
+                    </p>
+                    <div class="flex items-center gap-2 mt-3">
+                        <button id="pwa-ios-dismiss-btn" class="px-3.5 py-1.5 rounded-xl bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-200 text-xs font-bold transition-all cursor-pointer">
+                            حسناً، فهمت
+                        </button>
+                    </div>
                 </div>
             </div>
             <button id="pwa-close-btn" class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 p-1" aria-label="إغلاق">
@@ -432,7 +452,7 @@
         </div>
     </aside>
 
-    <!-- PWA Service Worker & Install Handler -->
+    <!-- PWA Service Worker & Multi-Device Install Handler -->
     <script>
         (function() {
             // 1. Service Worker Registration
@@ -448,11 +468,27 @@
                 });
             }
 
-            // 2. Before Install Prompt Handling
+            // 2. Multi-Device Detection
+            var isIOS = (/iPhone|iPod/.test(navigator.userAgent) || 
+                        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) || 
+                        (/iPad/.test(navigator.userAgent))) && !window.MSStream;
+            
+            var isAndroid = /Android/i.test(navigator.userAgent);
+            var isMobileOrTablet = isIOS || isAndroid || /Mobile/i.test(navigator.userAgent);
+            var isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+
+            // If on a desktop computer, or already installed in standalone mode: do nothing
+            if (!isMobileOrTablet || isStandalone) {
+                return;
+            }
+
             var deferredPrompt = null;
             var banner = document.getElementById('pwa-install-banner');
+            var androidSection = document.getElementById('pwa-android-section');
+            var iosSection = document.getElementById('pwa-ios-section');
             var installBtn = document.getElementById('pwa-install-btn');
             var dismissBtn = document.getElementById('pwa-dismiss-btn');
+            var iosDismissBtn = document.getElementById('pwa-ios-dismiss-btn');
             var closeBtn = document.getElementById('pwa-close-btn');
 
             function dismissBanner() {
@@ -462,31 +498,34 @@
                 } catch(e) {}
             }
 
+            var dismissedAt = null;
+            try {
+                dismissedAt = localStorage.getItem('yp_pwa_dismissed');
+            } catch(e) {}
+            var isDismissedRecently = dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < 14 * 86400 * 1000;
+
+            // 3. Android: Standard BeforeInstallPrompt Flow
             window.addEventListener('beforeinstallprompt', function(e) {
                 e.preventDefault();
                 deferredPrompt = e;
 
-                // Completely disable/suppress the install popup on Desktop browsers
-                var isDesktop = !(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) || (window.innerWidth >= 768);
-                if (isDesktop) {
-                    return;
-                }
-                
-                var dismissedAt = null;
-                try {
-                    dismissedAt = localStorage.getItem('yp_pwa_dismissed');
-                } catch(e) {}
+                if (isDismissedRecently || isIOS) return;
 
-                // If dismissed within the last 14 days, don't show
-                if (dismissedAt && (Date.now() - parseInt(dismissedAt, 10)) < 14 * 86400 * 1000) {
-                    return;
-                }
-
-                if (banner) {
-                    banner.classList.remove('hidden');
-                }
+                if (androidSection) androidSection.classList.remove('hidden');
+                if (iosSection) iosSection.classList.add('hidden');
+                if (banner) banner.classList.remove('hidden');
             });
 
+            // 4. iOS & iPadOS: Guided Tooltip Flow (since Apple prohibits beforeinstallprompt)
+            if (isIOS && !isDismissedRecently) {
+                if (androidSection) androidSection.classList.add('hidden');
+                if (iosSection) iosSection.classList.remove('hidden');
+                setTimeout(function() {
+                    if (banner) banner.classList.remove('hidden');
+                }, 2500);
+            }
+
+            // Button handlers
             if (installBtn) {
                 installBtn.addEventListener('click', function() {
                     if (deferredPrompt) {
@@ -500,6 +539,7 @@
             }
 
             if (dismissBtn) dismissBtn.addEventListener('click', dismissBanner);
+            if (iosDismissBtn) iosDismissBtn.addEventListener('click', dismissBanner);
             if (closeBtn) closeBtn.addEventListener('click', dismissBanner);
 
             window.addEventListener('appinstalled', function() {
