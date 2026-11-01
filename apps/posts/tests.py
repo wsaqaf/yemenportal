@@ -295,6 +295,14 @@ class PortalServicesTests(TestCase):
         self.assertEqual(arabic_sources(12), "12 مصدر")
         self.assertEqual(arabic_sources(39), "39 مصدر")
 
+    def test_report_iframe_blocked_view_disables_source_iframe(self):
+        """Verifies reporting an iframe as blocked disables iframe_flag for that source."""
+        self.assertTrue(self.source.iframe_flag)
+        res = self.client.post(reverse('posts:report_iframe_blocked', kwargs={'pk': self.post1.pk}))
+        self.assertEqual(res.status_code, 200)
+        self.source.refresh_from_db()
+        self.assertFalse(self.source.iframe_flag)
+
     def test_pwa_endpoints(self):
         # 1. Manifest
         manifest_res = self.client.get("/manifest.json")

@@ -19,6 +19,7 @@ urlpatterns = [
     # Core Post Detail Route (Matches /posts/<pk>/)
     path('newsletter/unsubscribe/<str:token>/', NewsletterUnsubscribeView.as_view(), name='newsletter_unsubscribe'),
     path('<int:pk>/', PostDetailView.as_view(), name='post_detail'),
+    path('<int:pk>/report-iframe-blocked/', views.ReportIframeBlockedView.as_view(), name='report_iframe_blocked'),
     
     # 301 Permanent Redirects for legacy Rails sub-routes
     path('<int:pk>/header', RedirectView.as_view(pattern_name='posts:post_detail', permanent=True)),

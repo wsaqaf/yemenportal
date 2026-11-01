@@ -1,4 +1,5 @@
 from .utils import is_iframe_allowed
+from urllib.parse import urlparse
 import re
 
 def normalize_arabic_search_variants(term: str) -> list[str]:
@@ -539,4 +540,24 @@ class CheckTopStoryView(View):
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
 
         return JsonResponse({'status': 'empty'})
+
+
+class ReportIframeBlockedView(View):
+    """
+    Receives feedback when an iframe fails to load or user switches to summary,
+    and automatically disables iframe_flag for that source in the database.
+    """
+    def post(self, request, pk, *args, **kwargs):
+        try:
+            post = Post.objects.select_related('source').get(pk=pk)
+            if post.source and post.source.iframe_flag:
+                post.source.iframe_flag = False
+                post.source.save(update_fields=['iframe_flag'])
+                if post.link:
+                    domain = urlparse(post.link).netloc.lower()
+                    cache.delete(f'iframe_ok_{domain}')
+                return JsonResponse({'status': 'ok', 'source': post.source.name, 'iframe_flag': False})
+        except Post.DoesNotExist:
+            pass
+        return JsonResponse({'status': 'ignored'}, status=200)
 

@@ -151,7 +151,7 @@
             <div id="iframe-fallback-bar" class="bg-amber-50 border-b border-amber-200 px-4 py-2 text-xs text-amber-800 flex items-center justify-between">
                 <span>إذا لم تظهر صفحة المصدر في الإطار أدناه، فقد يمنع موقع المصدر التضمين المباشر.</span>
                 <div class="flex items-center gap-3">
-                    <button onclick="showSummaryView()" class="font-bold underline hover:text-amber-900">قراءة الملخص داخل البوابة</button>
+                    <button onclick="showSummaryView(true)" class="font-bold underline hover:text-amber-900">قراءة الملخص داخل البوابة</button>
                     <a href="{{ post.link }}" target="_blank" class="font-bold underline hover:text-amber-900">فتح في لسان مستقل ↗</a>
                 </div>
             </div>
@@ -308,9 +308,18 @@
             updateUI();
         }
 
-        function showSummaryView() {
+        function showSummaryView(reportBlocked = false) {
             currentMode = 'summary';
             updateUI();
+            if (reportBlocked) {
+                fetch("{% url 'posts:report_iframe_blocked' post.id %}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                }).catch(() => {});
+            }
         }
 
         function toggleShareDropdown(e) {
