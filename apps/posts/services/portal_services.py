@@ -32,13 +32,14 @@ YEMEN_CORE_KEYWORDS = [
     "حضرموت", "الحديدة", "شبوة", "صعدة", "المكلا", "الضالع", "لحج", "أبين", "ابين",
     "المهرة", "سقطرى", "البيضاء", "الجوف", "ذمار", "عمران", "حجة", "المحويت", "ريمة",
     "الحوثي", "الحوثيين", "الحوثية", "الانتقالي", "الشرعية", "مجلس القيادة", "العليمي",
-    "الحكومة اليمنية", "القوات المسلحة", "مطار عدن", "باب المندب", "البحر الأحمر",
-    "الريال اليمني", "البنك المركزي", "سبأ", "تهامة", "يافع", "رداع", "بيحان", "المخا",
+    "الحكومة اليمنية", "القوات المسلحة اليمنية", "مطار عدن", "باب المندب", "البحر الأحمر",
+    "الريال اليمني", "البنك المركزي اليمني", "مركزي عدن", "مركزي صنعاء", "بنك عدن المركزي",
+    "سبأ", "تهامة", "يافع", "رداع", "بيحان", "المخا",
 ]
 
 BREAKING_KEYWORDS = [
     "عاجل", "انفجار", "استهداف", "قصف", "مطار عدن", "معارك", "القوات المسلحة",
-    "تحرير", "هجوم", "غارات", "مجلس الأمن", "قرار جمهوري", "البنك المركزي",
+    "تحرير", "هجوم", "غارات", "مجلس الأمن", "قرار جمهوري", "البنك المركزي اليمني",
     "انهيار", "قتيل", "ضحايا", "تحذير", "حصار", "انتصارات", "طيران", "صاروخ",
 ]
 
@@ -51,6 +52,38 @@ OFF_TOPIC_KEYWORDS = [
 
 NON_YEMEN_GENERAL_SOURCES = [
     "البوابة نيوز", "روسيا اليوم", "سبوتنيك", "اليوم السابع", "المصري اليوم",
+]
+
+# Markers of internal domestic affairs in other countries (Egypt, Jordan, Gulf, etc.)
+# Stories with these markers are disqualified unless they explicitly mention Yemen/Yemenis
+FOREIGN_DOMESTIC_MARKERS = [
+    # Egypt domestic affairs & markets
+    "الجنيه المصري", "البنوك المصرية", "السوق المصرية", "البنك المركزي المصري", "البورصة المصرية",
+    "الحكومة المصرية", "التموين المصرية", "دار الإفتاء المصرية", "مجلس النواب المصري", "مجلس الشيوخ المصري",
+    "محافظة الجيزة", "محافظة الإسكندرية", "محافظة الدقهلية", "محافظة الشرقية", "محافظة القليوبية",
+    "محافظة الغربية", "محافظة المنوفية", "محافظة البحيرة", "محافظة أسيوط", "محافظة سوهاج",
+    "مدينة نصر", "التجمع الخامس", "وزارة الداخلية المصرية", "وزارة التضامن الاجتماعي", "محكمة جنايات القاهرة",
+    "الأزهر الشريف", "التوقيت الشتوي في مصر", "السوق السوداء في مصر",
+    # Routine domestic commodity/service in other countries
+    "أسعار الدواجن", "أسعار الفراخ", "بورصة الدواجن", "أسعار اللحوم", "أسعار الخضار والفاكهة", "سعر الدولار في البنوك",
+    "سعر الدولار مقابل الجنيه", "سعر الذهب في مصر", "سعر جرام الذهب", "سعر كرتونة البيض", "أسعار السجائر",
+    # Other countries' local domestic affairs
+    "الدينار الأردني", "الدينار الكويتي", "الدرهم المغربي", "الليرة اللبنانية", "الليرة السورية", "الليرة التركية",
+    "أمانة عمان", "محافظة أربيل", "محافظة البصرة", "مجلس الأمة الكويتي", "البرلمان اللبناني",
+]
+
+# Major regional and international conflict/geopolitical event anchors
+MAJOR_REGIONAL_EVENT_KEYWORDS = [
+    # Major regional conflicts, Gaza war, Lebanon front, Red Sea
+    "غزة", "طوفان الأقصى", "كتائب القسام", "سرايا القدس", "حماس", "الجهاد الإسلامي",
+    "رفح", "خان يونس", "جباليا", "شمال غزة", "الضفة الغربية", "المسجد الأقصى", "القدس",
+    "الاحتلال الإسرائيلي", "جيش الاحتلال", "نتنياهو", "غالانت",
+    "حزب الله", "جنوب لبنان", "الضاحية الجنوبية", "البقاع", "غارات إسرائيلية على لبنان",
+    "طهران", "الحرس الثوري", "النووي الإيراني", "الضربات الأمريكية", "مضيق هرمز",
+    # Global diplomacy & major geopolitical events
+    "مجلس الأمن الدولي", "الجمعية العامة للأمم المتحدة", "محكمة العدل الدولية", "المحكمة الجنائية الدولية",
+    "قمة عربية", "قمة إسلامية", "حرب أوكرانيا", "البيت الأبيض", "البنتاغون", "الكرملين",
+    "زلزال مدمر", "كارثة إنسانية كبرى", "اغتيال",
 ]
 
 
@@ -160,17 +193,120 @@ def get_category_section_weight(post: Post) -> float:
     return max(-25.0, min(30.0, bonus))
 
 
+def is_foreign_domestic_story(title: str, desc: str = "") -> bool:
+    """
+    Detects internal domestic stories of foreign countries (Egypt, Jordan, Gulf, etc.)
+    that have no relevance to Yemen (e.g. Egyptian pound rates, Egyptian local crimes, local commodities).
+    """
+    combined = f"{title or ''} {desc or ''}"
+    if not any(m in combined for m in FOREIGN_DOMESTIC_MARKERS):
+        return False
+    # If the story explicitly mentions core Yemen identities, it may be relevant (e.g. Yemeni community in Egypt)
+    has_explicit_yemen = any(kw in combined for kw in [
+        "اليمن", "يمني", "اليمنية", "اليمنيين", "الحوثي", "الحوثيين", "صنعاء", "عدن", "تعز", "مأرب", "حضرموت", "باب المندب"
+    ])
+    return not has_explicit_yemen
+
+
+def is_major_regional_event(post: Post) -> bool:
+    """
+    Identifies major regional and international events (Middle East war, Gaza, Lebanon,
+    Red Sea naval combat, Iran/Israel, UN Security Council) while excluding foreign domestic news and routine service bulletins.
+    """
+    title = post.title or ""
+    desc = post.description or ""
+    if is_routine_service_bulletin(title, desc):
+        return False
+    if is_foreign_domestic_story(title, desc):
+        return False
+
+    combined = f"{title} {desc}"
+    has_major_kw = any(kw in combined for kw in MAJOR_REGIONAL_EVENT_KEYWORDS)
+    if not has_major_kw:
+        return False
+
+    is_breaking = any(bkw in title for bkw in BREAKING_KEYWORDS)
+    has_multi_source = bool(post.topic_id and post.topic and post.topic.topic_size >= 2)
+    return is_breaking or has_multi_source
+
+
+def has_genuine_yemen_focus(post: Post) -> bool:
+    """Returns True if the story has an authentic, primary Yemen focus."""
+    title = post.title or ""
+    desc = post.description or ""
+    if is_foreign_domestic_story(title, desc):
+        return False
+    combined = f"{title} {desc}"
+    if any(bad in combined for bad in OFF_TOPIC_KEYWORDS):
+        return False
+    if any(kw in title for kw in YEMEN_CORE_KEYWORDS):
+        return True
+    if any(kw in desc for kw in YEMEN_CORE_KEYWORDS):
+        return True
+
+    source_name = post.source.name if post.source else ""
+    if any(src in source_name for src in NON_YEMEN_GENERAL_SOURCES):
+        return False
+
+    yemen_source_markers = [
+        "يمن", "عدن", "تعز", "سبأ", "صحوة", "مأرب", "حضرموت", "المصدر",
+        "كريتر", "المهرية", "بلقيس", "الحدث", "حشد", "المنتصف", "الأمناء", "يافع",
+    ]
+    return any(m in source_name for m in yemen_source_markers)
+
+
+def is_eligible_for_top_news(post: Post) -> bool:
+    """
+    Strict gatekeeper for Top News ('أبرز الأخبار والتغطيات المجمعة' and Lead Hero story).
+    MUST be either:
+    1. Genuine Yemen News (conflict, politics, economy, humanitarian, national sports/culture).
+    2. Major Regional/International Breaking Event (Gaza war, Lebanon front, Red Sea, Iran/Israel, UN Security Council).
+    
+    STRICTLY FORBIDDEN:
+    - Routine service bulletins (daily weather, daily currency/gold/poultry/vegetable tables, horoscopes).
+    - Foreign domestic news (domestic affairs, local prices, crimes, or municipalities in Egypt, Jordan, Gulf, etc.).
+    - Minor celebrity/sports/entertainment gossip.
+    """
+    title = post.title or ""
+    desc = post.description or ""
+
+    if is_routine_service_bulletin(title, desc):
+        return False
+
+    if is_foreign_domestic_story(title, desc):
+        return False
+
+    combined = f"{title} {desc}"
+    if any(bad in combined for bad in OFF_TOPIC_KEYWORDS):
+        return False
+
+    if has_genuine_yemen_focus(post):
+        return True
+
+    if is_major_regional_event(post):
+        return True
+
+    return False
+
+
 def is_yemen_relevant(post: Post) -> bool:
     """Returns True if a post is genuinely about Yemen or major regional events affecting Yemen."""
     title = post.title or ""
     desc = post.description or ""
-    combined = f"{title} {desc}"
 
+    if is_foreign_domestic_story(title, desc):
+        return False
+
+    combined = f"{title} {desc}"
     if any(bad in combined for bad in OFF_TOPIC_KEYWORDS):
         return False
 
     has_yemen_kw = any(kw in combined for kw in YEMEN_CORE_KEYWORDS)
     if has_yemen_kw:
+        return True
+
+    # Major regional / international geopolitical or conflict events
+    if is_major_regional_event(post):
         return True
 
     source_name = post.source.name if post.source else ""
@@ -202,10 +338,25 @@ ROUTINE_SERVICE_PATTERNS = [
     r"الأرصاد\s+تحذر",
     # Currency / commodity routine bulletins
     r"أسعار\s+صرف\s+العملات",
-    r"أسعار\s+الصرف\s+اليوم",
+    r"أسعار\s+الصرف",
+    r"سعر\s+الصرف",
+    r"أسعار\s+الدولار",
+    r"سعر\s+الدولار",
+    r"أسعار\s+العملات",
     r"أسعار\s+الذهب",
-    r"سعر\s+الذهب\s+اليوم",
+    r"سعر\s+الذهب",
+    r"جرام\s+الذهب",
+    r"عيار\s+(21|18|24)",
     r"أسعار\s+الخضار",
+    r"أسعار\s+الخضراوات",
+    r"أسعار\s+الفاكهة",
+    r"أسعار\s+الدواجن",
+    r"أسعار\s+الفراخ",
+    r"أسعار\s+اللحوم",
+    r"أسعار\s+المحروقات",
+    r"أسعار\s+البنزين",
+    r"أسعار\s+الوقود",
+    r"أسعار\s+المواد\s+الغذائية",
     # Astrological / Prayer times
     r"حظك\s+اليوم",
     r"توقعات\s+الأبراج",
@@ -249,6 +400,10 @@ def score_yemen_post(post: Post, source_weights: dict[int, dict], now=None) -> f
     desc = post.description or ""
 
     score = 0.0
+
+    # Foreign domestic stories (Egypt local, Gulf local, etc.) are strictly penalized
+    if is_foreign_domestic_story(title, desc):
+        score -= 500.0
 
     # Routine service bulletins (daily weather, daily exchange rates, horoscopes) are deprioritized
     if is_routine_service_bulletin(title, desc):
@@ -832,12 +987,13 @@ def get_homepage_portal_widgets() -> dict:
             p.published_at,
         )
 
-    # Filter out routine service bulletins (weather forecasts, daily exchange/gold rates, horoscopes, prayer times)
-    # so they NEVER take over as Lead Hero or Top Clustered Stories over major conflict/politics news
+    # Filter candidates for 'أبرز الأخبار والتغطيات المجمعة':
+    # Must strictly pass is_eligible_for_top_news (Genuine Yemen OR Major Regional/International).
+    # Routine service bulletins and minor foreign domestic news are strictly forbidden.
     clustered_candidates = [
         p for p in ranked_yemen
         if p.topic_id and p.topic and p.topic.topic_size > 1
-        and not is_routine_service_bulletin(p.title or "", p.description or "")
+        and is_eligible_for_top_news(p)
     ]
     clustered_candidates.sort(
         key=cluster_velocity_score,
@@ -847,7 +1003,7 @@ def get_homepage_portal_widgets() -> dict:
     if len(clustered_candidates) < 7:
         used_c_ids = {p.id for p in clustered_candidates}
         for p in ranked_yemen:
-            if p.id not in used_c_ids and not is_routine_service_bulletin(p.title or "", p.description or ""):
+            if p.id not in used_c_ids and is_eligible_for_top_news(p):
                 clustered_candidates.append(p)
                 if len(clustered_candidates) >= 7:
                     break
@@ -855,11 +1011,12 @@ def get_homepage_portal_widgets() -> dict:
     # 1. Hero Post + 6 More Top Clustered Stories under 'أبرز الأخبار' (7 items total!)
     hero_candidates = [
         p for p in clustered_candidates
-        if not is_routine_service_bulletin(p.title or "", p.description or "")
+        if is_eligible_for_top_news(p)
     ]
-    hero_post = hero_candidates[0] if hero_candidates else (
-        clustered_candidates[0] if clustered_candidates else base_qs.order_by("-published_at").first()
-    )
+    hero_post = hero_candidates[0] if hero_candidates else next((p for p in ranked_yemen if is_eligible_for_top_news(p)), None)
+    if hero_post is None:
+        hero_post = base_qs.order_by("-published_at").first()
+
     top_clusters = [p for p in clustered_candidates if p.id != (hero_post.id if hero_post else None)][:6]
 
     used_top_ids = {hero_post.id} if hero_post else set()

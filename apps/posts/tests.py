@@ -156,6 +156,81 @@ class PortalServicesTests(TestCase):
         # The unrelated boy post must NOT be grouped into the UN topic
         self.assertNotEqual(p_boy.topic_id, p_un1.topic_id)
 
+    def test_clusterer_does_not_group_unrelated_articles_sharing_calendar_dates(self):
+        """Verifies that commodity/bulletin articles sharing identical calendar dates ('اليوم الأحد 1 نوفمبر 2026') do NOT cluster."""
+        from apps.posts.services.clusterer import PostClusterer
+        source2 = Source.objects.create(
+            name="المشهد اليمني",
+            link="https://almashhad.net/rss",
+            website="https://almashhad.net",
+            state=Source.State.VALID,
+            approve_state=Source.ApproveState.APPROVED,
+        )
+        p_poultry = Post.objects.create(
+            title="أسعار الدواجن اليوم الأحد 1 نوفمبر 2026",
+            description="نشرة أسعار الدواجن والبيض اليوم الأحد 1 نوفمبر 2026",
+            link="https://almasdaronline.com/post/301",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=self.source,
+        )
+        p_gold = Post.objects.create(
+            title="أسعار الذهب اليوم الأحد 1 نوفمبر 2026",
+            description="تعرف على أسعار الذهب اليوم الأحد 1 نوفمبر 2026",
+            link="https://almashhad.net/post/302",
+            published_at=timezone.now(),
+            state=Post.State.APPROVED,
+            source=source2,
+        )
+
+        clusterer = PostClusterer()
+        clusterer.clusterize_recent_posts(unclustered_hours=24, force_recluster=True)
+        p_poultry.refresh_from_db()
+        p_gold.refresh_from_db()
+
+        # Poultry prices and Gold prices must NEVER be clustered together
+        if p_poultry.topic_id and p_gold.topic_id:
+            self.assertNotEqual(p_poultry.topic_id, p_gold.topic_id)
+
+    def test_foreign_domestic_news_blocked_from_top_news(self):
+        """Verifies foreign domestic news is barred from Top News, while major regional events qualify."""
+        from apps.posts.services.portal_services import (
+            is_foreign_domestic_story,
+            is_eligible_for_top_news,
+            is_yemen_relevant,
+            is_major_regional_event,
+        )
+
+        # 1. Foreign domestic commodity / currency article -> BLOCKED
+        p_egypt_dollar = Post(
+            title="أسعار الدولار اليوم الأحد 1 نوفمبر 2026",
+            description="تباينت أسعار الدولار مقابل الجنيه المصري في البنوك المصرية وسجل في البنك المركزي المصري 55 جنيها",
+            source=self.source,
+        )
+        self.assertTrue(is_foreign_domestic_story(p_egypt_dollar.title, p_egypt_dollar.description))
+        self.assertFalse(is_eligible_for_top_news(p_egypt_dollar))
+        self.assertFalse(is_yemen_relevant(p_egypt_dollar))
+
+        # 2. Major regional/international breaking event -> ALLOWED
+        p_gaza = Post(
+            title="عاجل: غارات إسرائيلية عنيفة تستهدف مخيم جباليا شمال قطاع غزة",
+            description="قصف مكثف لقوات الاحتلال الإسرائيلي على شمال غزة وسقوط شهداء وجرحى",
+            source=self.source,
+        )
+        self.assertFalse(is_foreign_domestic_story(p_gaza.title, p_gaza.description))
+        self.assertTrue(is_major_regional_event(p_gaza))
+        self.assertTrue(is_eligible_for_top_news(p_gaza))
+
+        # 3. Genuine Yemen political/conflict news -> ALLOWED
+        p_yemen = Post(
+            title="رئيس مجلس القيادة الرئاسي رشاد العليمي يصل العاصمة عدن",
+            description="وصل الدكتور رشاد العليمي رئيس مجلس القيادة الرئاسي إلى العاصمة المؤقتة عدن",
+            source=self.source,
+        )
+        self.assertFalse(is_foreign_domestic_story(p_yemen.title, p_yemen.description))
+        self.assertTrue(is_eligible_for_top_news(p_yemen))
+        self.assertTrue(is_yemen_relevant(p_yemen))
+
     def test_most_read_page_orders_by_views(self):
         response = self.client.get(reverse("most_read") + "?window=24h", HTTP_HOST="localhost")
         self.assertEqual(response.status_code, 200)

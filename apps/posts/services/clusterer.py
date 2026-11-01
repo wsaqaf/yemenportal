@@ -17,6 +17,16 @@ ARABIC_STOPWORDS = {
     'لدى', 'منذ', 'عند', 'غير', 'دون', 'سوى', 'كشف', 'يكشف', 'تكشف', 'أعلن',
     'يعلن', 'تعلن', 'أكد', 'يؤكد', 'تؤكد', 'قال', 'يقول', 'تقول', 'مصدر', 'بيان',
     'داخل', 'احد', 'أحد', 'احدى', 'إحدى', 'بشكل', 'بصورة',
+    # Days of the week (preventing calendar-based false clustering)
+    'الاحد', 'الأحد', 'الاثنين', 'الإثنين', 'الثلاثاء', 'الاربعاء', 'الأربعاء',
+    'الخميس', 'الجمعه', 'الجمعة', 'السبت',
+    # Gregorian and Hijri months
+    'يناير', 'فبراير', 'مارس', 'ابريل', 'أبريل', 'مايو', 'يونيو', 'يوليو',
+    'اغسطس', 'أغسطس', 'سبتمبر', 'اكتوبر', 'أكتوبر', 'نوفمبر', 'ديسمبر',
+    'محرم', 'صفر', 'ربيع', 'جمادى', 'رجب', 'شعبان', 'رمضان', 'شوال',
+    # Routine calendar template terms
+    'امس', 'أمس', 'غدا', 'غداً', 'تاريخ', 'الموافق', 'موافق', 'صباح', 'مساء',
+    'ليلا', 'ليلة', 'ليله',
 }
 
 # Distinctive proper nouns, institutions, and specific event anchors.
@@ -106,6 +116,11 @@ def normalize_arabic(text: str) -> str:
     for raw_w in text.split():
         if raw_w in ARABIC_STOPWORDS or len(raw_w) < 2:
             continue
+        # Exclude calendar years (2020..2030, 1440..1450) and day numbers (1..31) from vector text
+        if raw_w.isdigit():
+            n = int(raw_w)
+            if (1 <= n <= 31) or (2020 <= n <= 2030) or (1440 <= n <= 1450):
+                continue
         stemmed = _light_stem_word(raw_w)
         if stemmed and stemmed not in ARABIC_STOPWORDS and len(stemmed) >= 2:
             tokens.append(stemmed)
@@ -122,10 +137,13 @@ def extract_entities(norm_text: str) -> set[str]:
     for ent in DISTINCTIVE_ENTITIES_NORM:
         if ent in norm_text:
             found.add(ent)
-    # Also extract distinctive event numbers >= 2 digits (e.g. "982", "324", "427")
+    # Extract distinctive event numbers (e.g. military unit "982", resolution "2216", case numbers)
+    # Ignore calendar days (1..31), calendar years (2020..2030, 1440..1450), and generic numbers (10, 24, 100)
     for num in re.findall(r'\b\d{2,5}\b', norm_text):
-        if num not in ('2024', '2025', '2026', '24', '100', '10'):
-            found.add(f"num_{num}")
+        n = int(num)
+        if (1 <= n <= 31) or (2020 <= n <= 2030) or (1440 <= n <= 1450) or num in ('100', '10', '24'):
+            continue
+        found.add(f"num_{num}")
     return found
 
 
