@@ -26,7 +26,15 @@
     <!-- Top Navigation / Reader Header -->
     <header class="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-3 sm:px-6 z-30 flex-shrink-0">
         <!-- Right: Brand Logo & Source Info -->
-        <div class="flex items-center gap-3 overflow-hidden">
+        <div class="flex items-center gap-2 sm:gap-3 overflow-hidden">
+            <!-- Back to Previous Page Button -->
+            <button type="button" onclick="handleGoBack()" title="العودة للصفحة السابقة" aria-label="العودة للصفحة السابقة"
+                    class="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 transition flex-shrink-0 shadow-xs cursor-pointer group">
+                <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover:text-gray-900 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+                </svg>
+            </button>
+
             <a href="{% url 'home' %}" class="flex items-center flex-shrink-0 hover:opacity-90 transition pl-1" title="يمن بورتال">
                 <img referrerpolicy="no-referrer" src="{% static 'logo.png' %}" class="h-8 sm:h-9 w-auto object-contain" alt="يمن بورتال">
             </a>
@@ -300,6 +308,14 @@
                 iframeBox.classList.add('hidden');
                 summaryBox.classList.remove('hidden');
                 btnText.textContent = 'عرض الإطار (الموقع)';
+            }
+        }
+
+        function handleGoBack() {
+            if (document.referrer && document.referrer.includes(window.location.host)) {
+                window.history.back();
+            } else {
+                window.location.href = "{% url 'home' %}";
             }
         }
 
