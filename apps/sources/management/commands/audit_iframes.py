@@ -25,23 +25,15 @@ class Command(BaseCommand):
         sources = list(qs)
         self.stdout.write(f"Auditing iframe permissions for {len(sources)} sources...")
 
-        # Map each source to a test URL (prefer a recent article link, fallback to website)
-        recent_post_links = dict(
-            Post.objects.filter(source__in=sources)
-            .order_by('source_id', '-published_at')
-            .distinct('source_id')
-            .values_list('source_id', 'link')
-        )
-
         disabled_count = 0
         allowed_count = 0
 
         def check_source(src):
-            test_url = recent_post_links.get(src.id) or src.website or src.link
+            test_url = src.website or src.link
             if not test_url:
                 return src, True, "No URL"
             
-            # Clear domain cache before audit if auditing
+            # Clear domain cache before audit
             import urllib.parse
             domain = urllib.parse.urlparse(test_url).netloc.lower()
             cache.delete(f'iframe_ok_{domain}')
