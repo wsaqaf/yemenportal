@@ -338,6 +338,21 @@
             }
         }
 
+        function sharePostItem(postId, title, relOrAbsUrl) {
+            const fullUrl = relOrAbsUrl.startsWith('http') ? relOrAbsUrl : (window.location.origin + relOrAbsUrl);
+            if (navigator.share) {
+                navigator.share({
+                    title: title || 'يمن بورتال',
+                    text: title || 'يمن بورتال',
+                    url: fullUrl
+                }).then(() => {
+                    recordPostShare(postId, 'native');
+                }).catch(() => {});
+            } else {
+                copyPostUrl(fullUrl, postId);
+            }
+        }
+
         // Global listener for social sharing clicks across all post cards
         document.addEventListener('click', function(e) {
             const shareAnchor = e.target.closest('a[href*="whatsapp.com"], a[href*="facebook.com/sharer"], a[href*="x.com/intent"], a[href*="twitter.com/intent"], a[href*="t.me/share"]');

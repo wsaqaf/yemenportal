@@ -27,10 +27,11 @@ class EmailAddressInline(admin.TabularInline):
 class UserAdmin(BaseUserAdmin):
     form = CustomUserChangeForm
     add_form = CustomUserCreationForm
-    ordering = ('email',)
-    list_display = ('email', 'first_name', 'last_name', 'role', 'is_staff', 'is_active')
-    list_filter = ('role', 'is_staff', 'is_superuser', 'is_active')
+    ordering = ('-last_login',)
+    list_display = ('email', 'first_name', 'last_name', 'role', 'last_login', 'date_joined', 'is_staff', 'is_active')
+    list_filter = ('role', 'is_staff', 'is_superuser', 'is_active', 'last_login', 'date_joined')
     search_fields = ('email', 'first_name', 'last_name')
+    readonly_fields = ('last_login', 'date_joined')
     inlines = [EmailAddressInline]
 
     fieldsets = (

@@ -195,4 +195,9 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.sources.tasks.audit_and_cleanup_sources',
         'schedule': 86400,  # Daily cleanup
     },
+    'send-daily-login-report-daily': {
+        'task': 'apps.users.tasks.send_daily_login_report',
+        'schedule': 86400,  # Once every 24 hours
+        'kwargs': {'recipient': 'admin@yemenportal.net', 'hours': 24},
+    },
 }

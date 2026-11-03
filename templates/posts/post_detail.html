@@ -397,6 +397,26 @@
             if (dropdown) dropdown.classList.add('hidden');
         }
 
+        function sharePostItem(postId, title, relOrAbsUrl) {
+            const fullUrl = relOrAbsUrl.startsWith('http') ? relOrAbsUrl : (window.location.origin + relOrAbsUrl);
+            if (navigator.share) {
+                navigator.share({
+                    title: title || 'يمن بورتال',
+                    text: title || 'يمن بورتال',
+                    url: fullUrl
+                }).then(() => {
+                    recordPostShare(postId, 'native');
+                }).catch(() => {});
+            } else {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(fullUrl).then(showCopiedToast).catch(() => fallbackCopy(fullUrl));
+                } else {
+                    fallbackCopy(fullUrl);
+                }
+                recordPostShare(postId, 'copy_link');
+            }
+        }
+
         function fallbackCopy(text) {
             const ta = document.createElement('textarea');
             ta.value = text;

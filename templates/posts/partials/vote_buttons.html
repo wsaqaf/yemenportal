@@ -24,6 +24,16 @@
         <svg class="{% if compact %}w-3 h-3{% else %}w-3.5 h-3.5 sm:w-4 sm:h-4{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
     </button>
 
+    <!-- Share Button (مشاركة الخبر) -->
+    <button type="button" 
+            onclick="sharePostItem('{{ post.id }}', '{{ post.title|escapejs }}', '{% url 'posts:post_detail' post.id %}')"
+            class="{% if compact %}p-1 rounded-md{% else %}p-1.5 rounded-lg{% endif %} border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/80 text-gray-500 dark:text-slate-300 hover:text-primary hover:bg-blue-50 hover:border-blue-200 dark:hover:bg-slate-600 transition-colors flex items-center justify-center"
+            title="مشاركة الخبر">
+        <svg class="{% if compact %}w-3 h-3{% else %}w-3.5 h-3.5 sm:w-4 sm:h-4{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+    </button>
+
     {% if not hide_report %}
     <!-- Report Button (إبلاغ) -->
     <button type="button" 
