@@ -292,7 +292,26 @@
             } catch (e) {}
         }
 
-        function copyPostUrl(relOrAbsUrl) {
+        function recordPostShare(postId, platform) {
+            if (!postId) return;
+            try {
+                const url = '/posts/' + postId + '/record-share/';
+                const payload = JSON.stringify({ platform: platform || 'general' });
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([payload], { type: 'application/json' });
+                    navigator.sendBeacon(url, blob);
+                } else {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: payload,
+                        keepalive: true
+                    }).catch(function() {});
+                }
+            } catch (e) {}
+        }
+
+        function copyPostUrl(relOrAbsUrl, postId) {
             const fullUrl = relOrAbsUrl.startsWith('http') ? relOrAbsUrl : (window.location.origin + relOrAbsUrl);
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(fullUrl);
@@ -309,7 +328,36 @@
                 toast.classList.remove('hidden');
                 setTimeout(() => toast.classList.add('hidden'), 2200);
             }
+            if (postId) {
+                recordPostShare(postId, 'copy_link');
+            } else {
+                const match = relOrAbsUrl.match(/\/posts\/(\d+)/);
+                if (match) {
+                    recordPostShare(match[1], 'copy_link');
+                }
+            }
         }
+
+        // Global listener for social sharing clicks across all post cards
+        document.addEventListener('click', function(e) {
+            const shareAnchor = e.target.closest('a[href*="whatsapp.com"], a[href*="facebook.com/sharer"], a[href*="x.com/intent"], a[href*="twitter.com/intent"], a[href*="t.me/share"]');
+            if (shareAnchor) {
+                let platform = 'general';
+                const href = shareAnchor.getAttribute('href') || '';
+                if (href.includes('whatsapp.com')) platform = 'whatsapp';
+                else if (href.includes('facebook.com')) platform = 'facebook';
+                else if (href.includes('x.com') || href.includes('twitter.com')) platform = 'twitter';
+                else if (href.includes('t.me')) platform = 'telegram';
+
+                const postContainer = shareAnchor.closest('[data-post-id]');
+                if (postContainer) {
+                    const postId = postContainer.getAttribute('data-post-id');
+                    if (postId) {
+                        recordPostShare(postId, platform);
+                    }
+                }
+            }
+        }, { capture: true });
 
         // Instant tooltip when hovering over truncated titles (line-clamp-* or truncate)
         (function() {

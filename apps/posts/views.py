@@ -561,3 +561,44 @@ class ReportIframeBlockedView(View):
             pass
         return JsonResponse({'status': 'ignored'}, status=200)
 
+
+@method_decorator(csrf_exempt, name='dispatch')
+class RecordShareView(View):
+    """
+    Records a user share action (WhatsApp, Twitter/X, Facebook, Telegram, Copy Link).
+    Uses atomic F('shares_count') + 1 with IP/session rate-limiting via cache
+    to prevent spamming.
+    """
+    def post(self, request, pk, *args, **kwargs):
+        ua = request.META.get('HTTP_USER_AGENT', '').lower()
+        if any(bot in ua for bot in ['bot', 'crawl', 'spider', 'slurp', 'facebookexternalhit', 'headless']):
+            return JsonResponse({'status': 'ignored_bot'}, status=200)
+
+        platform = 'general'
+        try:
+            if request.content_type == 'application/json' or (request.body and (request.body.startswith(b'{') or request.body.startswith(b'['))):
+                data = json.loads(request.body.decode('utf-8'))
+                if isinstance(data, dict):
+                    platform = data.get('platform') or platform
+            else:
+                platform = request.POST.get('platform') or platform
+        except Exception:
+            pass
+
+        client_id = request.session.session_key or request.META.get('REMOTE_ADDR', 'anon')
+        cache_key = f"share_cooldown_{client_id}_{pk}"
+
+        # Cooldown: 300 seconds (5 minutes) per client per post to avoid artificial click manipulation
+        if cache.get(cache_key):
+            return JsonResponse({'status': 'already_recorded'}, status=200)
+
+        updated = Post.objects.filter(pk=pk).update(shares_count=models.F('shares_count') + 1)
+        if updated:
+            cache.set(cache_key, True, timeout=300)
+            # Invalidate homepage widgets cache so top shared updates promptly
+            cache.delete("portal_homepage_widgets_v8")
+            return JsonResponse({'status': 'ok', 'recorded': True, 'platform': platform})
+
+        return JsonResponse({'status': 'not_found'}, status=404)
+
+

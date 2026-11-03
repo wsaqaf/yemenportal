@@ -944,7 +944,7 @@ def get_portal_stats() -> dict:
     return stats
 
 
-HOMEPAGE_WIDGETS_CACHE_KEY = "portal_homepage_widgets_v7"
+HOMEPAGE_WIDGETS_CACHE_KEY = "portal_homepage_widgets_v8"
 
 
 def get_homepage_portal_widgets() -> dict:
@@ -1032,6 +1032,27 @@ def get_homepage_portal_widgets() -> dict:
         base_qs.order_by("-published_at")[:18]
     )
 
+    # 3b. Most Shared & Top Voted Posts for Sidebar
+    most_shared_posts = list(
+        base_qs.filter(published_at__gte=now - timedelta(days=7), shares_count__gt=0)
+        .order_by("-shares_count", "-published_at")[:5]
+    )
+    if not most_shared_posts:
+        most_shared_posts = list(
+            base_qs.filter(published_at__gte=now - timedelta(days=2))
+            .order_by("-post_views_count", "-published_at")[:5]
+        )
+
+    top_voted_posts = list(
+        base_qs.filter(published_at__gte=now - timedelta(days=30), voting_result__gt=0)
+        .order_by("-voting_result", "-published_at")[:5]
+    )
+    if not top_voted_posts:
+        top_voted_posts = list(
+            base_qs.filter(published_at__gte=now - timedelta(days=7))
+            .order_by("-post_views_count", "-published_at")[:5]
+        )
+
     # 4. 11 Main Thematic Sections for Main Body (sorted by Cluster Size -> Reads -> Source Reputation)
     section_excludes = used_top_ids if len(ranked_yemen) > 10 else ({hero_post.id} if hero_post else set())
     thematic_sections = get_homepage_thematic_sections(
@@ -1079,6 +1100,8 @@ def get_homepage_portal_widgets() -> dict:
         "top_clusters": top_clusters,
         "readers_picks": readers_picks,
         "latest_sidebar_posts": latest_sidebar_posts,
+        "most_shared_posts": most_shared_posts,
+        "top_voted_posts": top_voted_posts,
         "thematic_sections": thematic_sections,
         "opinion_posts": opinion_sec,
         "top_sources": top_sources,

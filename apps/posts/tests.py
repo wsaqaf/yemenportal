@@ -60,6 +60,7 @@ class PortalServicesTests(TestCase):
         self.assertIn("أبرز الأخبار والتغطيات المجمعة", content)
         self.assertIn("اختيارات القراء", content)
         self.assertIn("آخر الأخبار (مباشر)", content)
+        self.assertIn("الأكثر تفاعلاً", content)
         self.assertIn("إحصائيات الرصد والأرشفة", content)
         self.assertIn("مقالات وآراء", content)
         self.assertIn("أسعار الصرف في اليمن", content)
@@ -323,4 +324,44 @@ class PortalServicesTests(TestCase):
         offline_res = self.client.get("/offline/")
         self.assertEqual(offline_res.status_code, 200)
         self.assertIn("أنت تتصفح دون اتصال", offline_res.content.decode("utf-8"))
+
+    def test_record_share_view(self):
+        """Test recording shares increments shares_count and enforces rate-limiting."""
+        self.assertEqual(self.post1.shares_count, 0)
+        url = reverse('posts:record_share', kwargs={'pk': self.post1.pk})
+
+        # 1. Successful record
+        res = self.client.post(url, data='{"platform":"whatsapp"}', content_type='application/json')
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json().get('status'), 'ok')
+        self.post1.refresh_from_db()
+        self.assertEqual(self.post1.shares_count, 1)
+
+        # 2. Cooldown deduplication within 5 minutes
+        res2 = self.client.post(url, data='{"platform":"whatsapp"}', content_type='application/json')
+        self.assertEqual(res2.status_code, 200)
+        self.assertEqual(res2.json().get('status'), 'already_recorded')
+        self.post1.refresh_from_db()
+        self.assertEqual(self.post1.shares_count, 1)
+
+        # 3. Unknown post returns 404
+        res404 = self.client.post(reverse('posts:record_share', kwargs={'pk': 999999}))
+        self.assertEqual(res404.status_code, 404)
+
+    def test_homepage_widgets_contain_most_shared_and_top_voted(self):
+        """Verifies get_homepage_portal_widgets includes most_shared_posts and top_voted_posts."""
+        from apps.posts.services.portal_services import get_homepage_portal_widgets
+        cache.clear()
+        self.post1.shares_count = 15
+        self.post1.save(update_fields=['shares_count'])
+        self.post1.voting_result = 8
+        self.post1.save(update_fields=['voting_result'])
+
+        widgets = get_homepage_portal_widgets()
+        self.assertIn("most_shared_posts", widgets)
+        self.assertIn("top_voted_posts", widgets)
+        self.assertTrue(len(widgets["most_shared_posts"]) > 0)
+        self.assertTrue(len(widgets["top_voted_posts"]) > 0)
+        self.assertEqual(widgets["most_shared_posts"][0].id, self.post1.id)
+        self.assertEqual(widgets["top_voted_posts"][0].id, self.post1.id)
 

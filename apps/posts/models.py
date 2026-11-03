@@ -59,6 +59,7 @@ class Post(models.Model):
     voting_result = models.IntegerField(default=0)
     post_views_count = models.IntegerField(default=0, verbose_name='عدد القراءات')
     impressions_count = models.IntegerField(default=0, db_index=True, verbose_name='مرات الظهور الفعلي (VI)')
+    shares_count = models.PositiveIntegerField(default=0, db_index=True, verbose_name='عدد المشاركات')
     review_rating = models.IntegerField(default=0)
     
     # For search/NLP

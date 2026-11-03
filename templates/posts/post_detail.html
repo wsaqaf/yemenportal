@@ -21,7 +21,7 @@
         body { font-family: 'Tajawal', sans-serif; }
     </style>
 </head>
-<body class="h-full flex flex-col bg-gray-100 overflow-hidden text-gray-800">
+<body class="h-full flex flex-col bg-gray-100 overflow-hidden text-gray-800" data-post-id="{{ post.pk }}">
 
     <!-- Top Navigation / Reader Header -->
     <header class="h-16 bg-white border-b border-gray-200 shadow-sm flex items-center justify-between px-3 sm:px-6 z-30 flex-shrink-0">
@@ -349,7 +349,27 @@
             }
         }
 
+        function recordPostShare(postId, platform) {
+            if (!postId) return;
+            try {
+                const url = '/posts/' + postId + '/record-share/';
+                const payload = JSON.stringify({ platform: platform || 'general' });
+                if (navigator.sendBeacon) {
+                    const blob = new Blob([payload], { type: 'application/json' });
+                    navigator.sendBeacon(url, blob);
+                } else {
+                    fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: payload,
+                        keepalive: true
+                    }).catch(function() {});
+                }
+            } catch (e) {}
+        }
+
         function triggerNativeShare() {
+            recordPostShare('{{ post.pk }}', 'native');
             if (navigator.share) {
                 navigator.share({
                     title: postTitle,
@@ -362,6 +382,7 @@
         }
 
         function copyArticleUrl() {
+            recordPostShare('{{ post.pk }}', 'copy_link');
             const url = window.location.href;
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(url).then(showCopiedToast).catch(() => fallbackCopy(url));
@@ -400,6 +421,20 @@
                 }, 2200);
             }
         }
+
+        // Auto-track social share link clicks
+        document.addEventListener('click', function(e) {
+            const shareAnchor = e.target.closest('a[href*="whatsapp.com"], a[href*="facebook.com/sharer"], a[href*="x.com/intent"], a[href*="twitter.com/intent"], a[href*="t.me/share"]');
+            if (shareAnchor) {
+                let platform = 'general';
+                const href = shareAnchor.getAttribute('href') || '';
+                if (href.includes('whatsapp.com')) platform = 'whatsapp';
+                else if (href.includes('facebook.com')) platform = 'facebook';
+                else if (href.includes('x.com') || href.includes('twitter.com')) platform = 'twitter';
+                else if (href.includes('t.me')) platform = 'telegram';
+                recordPostShare('{{ post.pk }}', platform);
+            }
+        }, { capture: true });
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
