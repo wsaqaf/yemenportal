@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.core.cache import cache
 from apps.sources.models import Source
 from apps.posts.models import Category
@@ -20,4 +21,5 @@ def global_filters(request):
     return {
         'all_categories': categories,
         'all_sources': sources,
+        'google_client_id': getattr(settings, 'GOOGLE_CLIENT_ID', ''),
     }

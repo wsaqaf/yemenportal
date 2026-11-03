@@ -45,7 +45,7 @@ from django.db import models
 from django.shortcuts import render, get_object_or_404
 from django.views import View
 from django.views.generic import ListView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.core.cache import cache
@@ -382,9 +382,13 @@ class TopicListView(PostListView):
 class VoteView(View):
     def post(self, request, pk):
         if not request.user.is_authenticated:
-            response = HttpResponse(status=200)
-            response['HX-Redirect'] = f'/accounts/login/?next={request.META.get("HTTP_REFERER", "/")}'
-            return response
+            # If HTMX request, trigger the non-obstructive Google login prompt/modal without reloading
+            if getattr(request, 'htmx', False) or request.headers.get('HX-Request'):
+                response = HttpResponse(status=200)
+                response['HX-Trigger'] = json.dumps({'yp-prompt-google-login': {'postId': pk}})
+                return response
+            next_url = request.META.get("HTTP_REFERER", "/")
+            return HttpResponseRedirect(f'/accounts/google/login/?next={next_url}')
 
         from django.db import transaction
         from django.db.models import Sum

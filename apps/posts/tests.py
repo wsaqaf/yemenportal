@@ -385,3 +385,20 @@ class PortalServicesTests(TestCase):
         self.post1.refresh_from_db()
         self.assertEqual(self.post1.voting_result, 1)
 
+    def test_unauthenticated_vote_triggers_google_login_prompt(self):
+        """Test that unauthenticated HTMX vote requests return HX-Trigger for Google login prompt."""
+        url = reverse('posts:vote', kwargs={'pk': self.post1.pk})
+        res = self.client.post(url, data={'value': '1'}, HTTP_HX_REQUEST='true')
+        self.assertEqual(res.status_code, 200)
+        self.assertIn('HX-Trigger', res.headers)
+        self.assertIn('yp-prompt-google-login', res.headers['HX-Trigger'])
+
+    def test_google_one_tap_renders_for_anonymous_user(self):
+        """Test Google One Tap and modal render for unauthenticated visitors."""
+        res = self.client.get(reverse('home'), HTTP_HOST="localhost")
+        self.assertEqual(res.status_code, 200)
+        content = res.content.decode('utf-8')
+        self.assertIn('g_id_onload', content)
+        self.assertIn('yp-google-login-modal', content)
+        self.assertIn('accounts/google/login', content)
+
