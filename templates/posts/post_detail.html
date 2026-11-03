@@ -16,6 +16,7 @@
     {% if post.image_url %}<meta property="og:image" content="{{ post.image_url }}">{% endif %}
     
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Tajawal', sans-serif; }
@@ -56,7 +57,8 @@
 
         <!-- Left: Action Controls -->
         <div class="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-            
+            {% include "posts/partials/vote_buttons.html" with post=post %}
+            <div class="h-6 w-px bg-gray-200"></div>
             <!-- Quick WhatsApp Share (Desktop & Mobile) -->
             <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" 
                target="_blank" rel="noopener noreferrer" title="مشاركة سريعة عبر واتساب"
@@ -194,6 +196,8 @@
                     </span>
 
                     <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                        {% include "posts/partials/vote_buttons.html" with post=post %}
+                        <div class="h-5 w-px bg-gray-200 mx-1"></div>
                         <!-- WhatsApp -->
                         <a href="https://api.whatsapp.com/send?text={{ post.title|urlencode }}%20{{ request.build_absolute_uri|urlencode }}" target="_blank" rel="noopener noreferrer" 
                            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition shadow-sm" title="مشاركة عبر واتساب">

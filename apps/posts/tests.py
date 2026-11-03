@@ -66,6 +66,8 @@ class PortalServicesTests(TestCase):
         self.assertIn("أسعار الصرف في اليمن", content)
         self.assertIn("حالة الطقس في اليمن", content)
         self.assertIn("دليل المواقع الأكثر متابعة", content)
+        self.assertIn(f"vote-controls-{self.post1.id}", content)
+        self.assertIn("أؤيد الخبر", content)
 
     def test_clusterer_groups_similar_arabic_headlines_and_sorts_sections(self):
         from apps.posts.services.clusterer import PostClusterer
@@ -364,4 +366,22 @@ class PortalServicesTests(TestCase):
         self.assertTrue(len(widgets["top_voted_posts"]) > 0)
         self.assertEqual(widgets["most_shared_posts"][0].id, self.post1.id)
         self.assertEqual(widgets["top_voted_posts"][0].id, self.post1.id)
+
+    def test_vote_view_compact_and_toggle(self):
+        """Test voting as authenticated user with compact and hide_report params."""
+        from apps.users.models import User
+        user = User(email="voter@example.com")
+        user.set_password("password123")
+        user.save()
+        self.client.force_login(user)
+
+        url = reverse('posts:vote', kwargs={'pk': self.post1.pk})
+        res = self.client.post(url, data={'value': '1', 'compact': '1', 'hide_report': '1'})
+        self.assertEqual(res.status_code, 200)
+        content = res.content.decode('utf-8')
+        self.assertIn('w-3 h-3', content)
+        self.assertNotIn('triggerReportModal', content)
+
+        self.post1.refresh_from_db()
+        self.assertEqual(self.post1.voting_result, 1)
 

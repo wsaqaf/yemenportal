@@ -397,6 +397,9 @@ class VoteView(View):
         except (ValueError, TypeError):
             return HttpResponse(status=400)
 
+        compact = str(request.POST.get('compact', '')).lower() in ('1', 'true')
+        hide_report = str(request.POST.get('hide_report', '')).lower() in ('1', 'true')
+
         with transaction.atomic():
             vote = Vote.objects.filter(user=request.user, post=post).first()
             if vote:
@@ -415,9 +418,13 @@ class VoteView(View):
             post.voting_result = total
             post.save(update_fields=['voting_result'])
 
+        cache.delete("portal_homepage_widgets_v8")
+
         return render(request, 'posts/partials/vote_buttons.html', {
             'post': post,
-            'user_voted': user_voted
+            'user_voted': user_voted,
+            'compact': compact,
+            'hide_report': hide_report,
         })
 
 from django.views.generic import DetailView

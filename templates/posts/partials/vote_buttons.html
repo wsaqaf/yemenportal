@@ -1,36 +1,38 @@
-<div class="flex items-center gap-1.5" id="vote-controls-{{ post.id }}">
+<div class="inline-flex items-center gap-1 flex-shrink-0" id="vote-controls-{{ post.id }}">
     <!-- Upvote -->
-    <button class="p-1.5 rounded-lg border transition-colors flex items-center justify-center {% if post.is_upvoted or user_voted == 1 %}bg-green-50 text-green-600 border-green-200{% else %}bg-gray-50 text-gray-500 border-gray-200 hover:text-green-600 hover:bg-green-50{% endif %}"
+    <button class="{% if compact %}p-1 text-[11px] rounded-md{% else %}p-1.5 rounded-lg{% endif %} border transition-colors flex items-center justify-center {% if post.is_upvoted or user_voted == 1 %}bg-green-50 text-green-600 border-green-200 dark:bg-green-950/60 dark:text-green-400 dark:border-green-800{% else %}bg-gray-50 dark:bg-slate-700/80 text-gray-500 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:text-green-600 hover:bg-green-50 dark:hover:bg-slate-600{% endif %}"
             hx-post="{% url 'posts:vote' post.id %}" 
-            hx-vals='{"value": 1}' 
+            hx-vals='{"value": 1, "compact": "{% if compact %}1{% else %}0{% endif %}", "hide_report": "{% if hide_report %}1{% else %}0{% endif %}"}' 
             hx-target="#vote-controls-{{ post.id }}" 
             hx-swap="outerHTML"
-            title="أؤيد الخبر">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
+            title="أؤيد الخبر (تصويت إيجابي)">
+        <svg class="{% if compact %}w-3 h-3{% else %}w-3.5 h-3.5 sm:w-4 sm:h-4{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"></path></svg>
     </button>
 
     <!-- Score -->
-    <span class="px-2 text-xs font-bold {% if post.voting_result > 0 %}text-green-600{% elif post.voting_result < 0 %}text-red-600{% else %}text-gray-600{% endif %}" dir="ltr">
-        {{ post.voting_result }}
+    <span class="{% if compact %}px-1 text-[11px]{% else %}px-1.5 text-xs{% endif %} font-bold {% if post.voting_result > 0 %}text-green-600 dark:text-green-400{% elif post.voting_result < 0 %}text-red-600 dark:text-red-400{% else %}text-gray-500 dark:text-slate-400{% endif %}" dir="ltr" title="مجموع الأصوات">
+        {{ post.voting_result|default:0 }}
     </span>
 
     <!-- Downvote -->
-    <button class="p-1.5 rounded-lg border transition-colors flex items-center justify-center {% if post.is_downvoted or user_voted == -1 %}bg-red-50 text-red-600 border-red-200{% else %}bg-gray-50 text-gray-500 border-gray-200 hover:text-red-600 hover:bg-red-50{% endif %}"
+    <button class="{% if compact %}p-1 text-[11px] rounded-md{% else %}p-1.5 rounded-lg{% endif %} border transition-colors flex items-center justify-center {% if post.is_downvoted or user_voted == -1 %}bg-red-50 text-red-600 border-red-200 dark:bg-red-950/60 dark:text-red-400 dark:border-red-800{% else %}bg-gray-50 dark:bg-slate-700/80 text-gray-500 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:text-red-600 hover:bg-red-50 dark:hover:bg-slate-600{% endif %}"
             hx-post="{% url 'posts:vote' post.id %}" 
-            hx-vals='{"value": -1}' 
+            hx-vals='{"value": -1, "compact": "{% if compact %}1{% else %}0{% endif %}", "hide_report": "{% if hide_report %}1{% else %}0{% endif %}"}' 
             hx-target="#vote-controls-{{ post.id }}" 
             hx-swap="outerHTML"
-            title="أعارض الخبر">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            title="أعارض الخبر (تصويت سلبي)">
+        <svg class="{% if compact %}w-3 h-3{% else %}w-3.5 h-3.5 sm:w-4 sm:h-4{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path></svg>
     </button>
 
+    {% if not hide_report %}
     <!-- Report Button (إبلاغ) -->
     <button type="button" 
             onclick="triggerReportModal('{{ post.id }}', '{{ post.title|escapejs }}')"
-            class="p-1.5 rounded-lg border border-gray-200 bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors flex items-center justify-center"
+            class="{% if compact %}p-1 rounded-md{% else %}p-1.5 rounded-lg{% endif %} border border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/80 text-gray-400 hover:text-red-600 hover:bg-red-50 hover:border-red-200 transition-colors flex items-center justify-center"
             title="إبلاغ عن محتوى مخالف">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="{% if compact %}w-3 h-3{% else %}w-3.5 h-3.5 sm:w-4 sm:h-4{% endif %}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"></path>
         </svg>
     </button>
+    {% endif %}
 </div>
