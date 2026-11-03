@@ -338,20 +338,188 @@
             }
         }
 
+        function isMobileDevice() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+            const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|CriOS/i;
+            if (mobileRegex.test(ua)) {
+                return true;
+            }
+            if (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) {
+                return true; // iPad with iPadOS
+            }
+            return false;
+        }
+
+        let currentShareContext = { postId: null, title: '', url: '' };
+
         function sharePostItem(postId, title, relOrAbsUrl) {
             const fullUrl = relOrAbsUrl.startsWith('http') ? relOrAbsUrl : (window.location.origin + relOrAbsUrl);
-            if (navigator.share) {
+            const postTitle = title || 'يمن بورتال';
+
+            // Mobile devices: keep using the native OS share sheet directly (WhatsApp, Telegram apps, etc.)
+            if (isMobileDevice() && navigator.share) {
                 navigator.share({
-                    title: title || 'يمن بورتال',
-                    text: title || 'يمن بورتال',
+                    title: postTitle,
+                    text: postTitle,
                     url: fullUrl
                 }).then(() => {
                     recordPostShare(postId, 'native');
-                }).catch(() => {});
-            } else {
+                }).catch((err) => {
+                    if (err && err.name !== 'AbortError') {
+                        openSocialShareModal(postId, postTitle, fullUrl);
+                    }
+                });
+                return;
+            }
+
+            // Desktop devices (or devices without native share): open the desktop social share modal
+            openSocialShareModal(postId, postTitle, fullUrl);
+        }
+
+        function openSocialShareModal(postId, title, fullUrl) {
+            currentShareContext = { postId: postId, title: title, url: fullUrl };
+
+            const modal = document.getElementById('yp-social-share-modal');
+            if (!modal) {
                 copyPostUrl(fullUrl, postId);
+                return;
+            }
+
+            // Update modal title preview
+            const titleEl = document.getElementById('yp-share-modal-title');
+            if (titleEl) {
+                titleEl.textContent = title;
+            }
+
+            // Update social share URLs
+            const encodedTitle = encodeURIComponent(title);
+            const encodedUrl = encodeURIComponent(fullUrl);
+
+            const waBtn = document.getElementById('yp-share-whatsapp');
+            if (waBtn) {
+                waBtn.href = 'https://api.whatsapp.com/send?text=' + encodedTitle + '%20' + encodedUrl;
+            }
+
+            const xBtn = document.getElementById('yp-share-twitter');
+            if (xBtn) {
+                xBtn.href = 'https://x.com/intent/tweet?text=' + encodedTitle + '&url=' + encodedUrl;
+            }
+
+            const fbBtn = document.getElementById('yp-share-facebook');
+            if (fbBtn) {
+                fbBtn.href = 'https://www.facebook.com/sharer/sharer.php?u=' + encodedUrl;
+            }
+
+            const tgBtn = document.getElementById('yp-share-telegram');
+            if (tgBtn) {
+                tgBtn.href = 'https://t.me/share/url?url=' + encodedUrl + '&text=' + encodedTitle;
+            }
+
+            // Update URL input
+            const urlInput = document.getElementById('yp-share-modal-url-input');
+            if (urlInput) {
+                urlInput.value = fullUrl;
+            }
+
+            // Reset copy button state
+            const copyBtnText = document.getElementById('yp-share-copy-btn-text');
+            if (copyBtnText) copyBtnText.textContent = 'نسخ الرابط';
+            const copyBtn = document.getElementById('yp-share-copy-btn');
+            if (copyBtn) {
+                copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                copyBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            }
+
+            // Native desktop OS share button (macOS/Windows)
+            const nativeBtnContainer = document.getElementById('yp-share-desktop-native');
+            if (nativeBtnContainer) {
+                if (navigator.share) {
+                    nativeBtnContainer.classList.remove('hidden');
+                } else {
+                    nativeBtnContainer.classList.add('hidden');
+                }
+            }
+
+            modal.classList.remove('hidden');
+            document.body.classList.add('overflow-hidden');
+        }
+
+        function closeSocialShareModal() {
+            const modal = document.getElementById('yp-social-share-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            document.body.classList.remove('overflow-hidden');
+        }
+
+        function handleSocialShareClick(platform) {
+            if (currentShareContext.postId) {
+                recordPostShare(currentShareContext.postId, platform);
             }
         }
+
+        function copyShareModalUrl() {
+            if (!currentShareContext.url) return;
+
+            const onCopied = () => {
+                const copyBtnText = document.getElementById('yp-share-copy-btn-text');
+                if (copyBtnText) copyBtnText.textContent = 'تم النسخ ✓';
+                const copyBtn = document.getElementById('yp-share-copy-btn');
+                if (copyBtn) {
+                    copyBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    copyBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    setTimeout(() => {
+                        if (copyBtnText) copyBtnText.textContent = 'نسخ الرابط';
+                        copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        copyBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                    }, 2200);
+                }
+                if (currentShareContext.postId) {
+                    recordPostShare(currentShareContext.postId, 'copy_link');
+                }
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(currentShareContext.url).then(onCopied).catch(() => {
+                    const urlInput = document.getElementById('yp-share-modal-url-input');
+                    if (urlInput) {
+                        urlInput.select();
+                        document.execCommand('copy');
+                        onCopied();
+                    }
+                });
+            } else {
+                const urlInput = document.getElementById('yp-share-modal-url-input');
+                if (urlInput) {
+                    urlInput.select();
+                    document.execCommand('copy');
+                    onCopied();
+                }
+            }
+        }
+
+        function triggerDesktopNativeShare() {
+            if (navigator.share && currentShareContext.url) {
+                const postId = currentShareContext.postId;
+                const title = currentShareContext.title || 'يمن بورتال';
+                const url = currentShareContext.url;
+                closeSocialShareModal();
+                navigator.share({
+                    title: title,
+                    text: title,
+                    url: url
+                }).then(() => {
+                    if (postId) recordPostShare(postId, 'native');
+                }).catch(() => {});
+            }
+        }
+
+        // Close share modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeSocialShareModal();
+            }
+        });
 
         // Global listener for social sharing clicks across all post cards
         document.addEventListener('click', function(e) {
@@ -470,6 +638,7 @@
 
     {% block extra_js %}{% endblock %}
     {% include 'moderation/partials/report_modal.html' %}
+    {% include 'partials/social_share_modal.html' %}
 
     <!-- PWA Install Prompt Banner (Mobile, iPad & iPhone) -->
     <aside id="pwa-install-banner" aria-label="تثبيت تطبيق يمن بورتال" class="hidden fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:w-96 z-50 bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-slate-700 p-4 transition-all animate-bounce-short">
