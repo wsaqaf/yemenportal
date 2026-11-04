@@ -145,6 +145,13 @@
                         </button>
                     </form>
 
+                    <!-- Telegram Channel Link -->
+                    <a href="https://t.me/yemen_portal" target="_blank" rel="noopener noreferrer"
+                       title="قناة يمن بورتال الرسمية على تيليجرام" aria-label="قناة تيليجرام"
+                       class="p-2 rounded-xl border border-sky-200 dark:border-slate-700 bg-sky-50 dark:bg-slate-700 text-sky-600 dark:text-sky-400 hover:bg-sky-100 dark:hover:bg-slate-600 transition-colors flex items-center justify-center">
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/></svg>
+                    </a>
+
                     <!-- Dark Mode Toggle -->
                     <button type="button" onclick="togglePortalTheme()" title="الوضع الليلي / النهاري" aria-label="تبديل الوضع الليلي"
                             class="p-2 rounded-xl border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-amber-300 hover:text-primary transition-colors">
@@ -200,6 +207,10 @@
                 <a href="{% url 'archive' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">📅 الأرشيف</a>
                 <a href="{% url 'sources:source_list' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">📰 المصادر</a>
                 <a href="{% url 'contact_us' %}" class="px-3 py-2 rounded-xl bg-gray-50 dark:bg-slate-700 text-sm font-bold text-gray-700 dark:text-slate-200">✉️ إتصل بنا</a>
+                <a href="https://t.me/yemen_portal" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/40 text-sm font-bold text-sky-700 dark:text-sky-300 flex items-center gap-1.5">
+                    <svg class="w-4 h-4 fill-current flex-shrink-0" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/></svg>
+                    <span>قناة تيليجرام</span>
+                </a>
             </div>
 
             {% if all_categories %}
