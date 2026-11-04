@@ -201,9 +201,9 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 86400,  # Once every 24 hours
         'kwargs': {'recipient': 'admin@yemenportal.net', 'hours': 24},
     },
-    'broadcast-telegram-hot-clusters-every-20m': {
+    'broadcast-telegram-hot-clusters-every-5m': {
         'task': 'apps.growth.tasks.broadcast_telegram_hot_clusters',
-        'schedule': 1200,  # Every 20 minutes
+        'schedule': 300,  # Every 5 minutes (checks for newly formed breaking clusters)
         'kwargs': {'min_sources': 3, 'max_per_run': 1},
     },
     'broadcast-telegram-morning-exchange-rates-daily': {

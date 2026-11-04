@@ -28,6 +28,12 @@ class Command(BaseCommand):
             help='Minimum number of sources in cluster (default: 3)'
         )
         parser.add_argument(
+            '--limit',
+            type=int,
+            default=1,
+            help='Maximum number of clusters to publish in this run (default: 1)'
+        )
+        parser.add_argument(
             '--hours',
             type=int,
             default=72,
@@ -39,6 +45,7 @@ class Command(BaseCommand):
         force = options['force']
         min_sources = options['min_sources']
         hours = options['hours']
+        limit = options['limit']
 
         if b_type in ['rates', 'all']:
             self.stdout.write("Publishing morning exchange rates...")
@@ -46,8 +53,8 @@ class Command(BaseCommand):
             self.stdout.write(f"Exchange Rates result: {res}")
 
         if b_type in ['clusters', 'all']:
-            self.stdout.write(f"Publishing hot clusters (min {min_sources} sources)...")
-            res = publish_next_hot_cluster(min_sources=min_sources, max_per_run=1, hours=hours)
+            self.stdout.write(f"Publishing up to {limit} hot clusters (min {min_sources} sources)...")
+            res = publish_next_hot_cluster(min_sources=min_sources, max_per_run=limit, hours=hours)
             self.stdout.write(f"Clusters result: {res}")
 
         self.stdout.write(self.style.SUCCESS("Broadcast operation completed."))

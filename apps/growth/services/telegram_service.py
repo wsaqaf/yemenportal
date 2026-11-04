@@ -2,6 +2,7 @@ import json
 import logging
 import urllib.request
 import urllib.error
+import time
 from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
@@ -142,6 +143,9 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
     """
     cutoff = timezone.now() - timedelta(hours=hours)
 
+    # Routine phrases to skip in news clusters (handled separately or low editorial value)
+    routine_phrases = ['أسعار الصرف', 'صرف العملات', 'أسعار العملات', 'حالة الطقس', 'درجات الحرارة']
+
     # Get topics already successfully published to Telegram
     already_published_ids = set(
         PublishedChannelPost.objects.filter(
@@ -159,17 +163,24 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
         )
         .exclude(id__in=already_published_ids)
         .select_related('main_post', 'main_post__source')
-        .order_by('-topic_size', '-updated_at')[:max_per_run]
+        .order_by('-created_at', '-topic_size')[:max_per_run * 4]
     )
 
     results = []
 
     for topic in candidate_topics:
+        if len(results) >= max_per_run:
+            break
+
         lead_post = topic.main_post or topic.posts.order_by('-published_at').first()
-        if not lead_post:
+        if not lead_post or not lead_post.title:
             continue
 
         title = lead_post.title.strip()
+        # Skip routine exchange rates or weather summaries from news cluster feed
+        if any(phrase in title for phrase in routine_phrases):
+            continue
+
         cluster_size = topic.topic_size
 
         # Extract distinct top source names
@@ -220,5 +231,8 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
             'message_id': msg_id,
             'error': err,
         })
+
+        if len(results) < max_per_run:
+            time.sleep(1.5)
 
     return results
