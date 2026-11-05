@@ -7,7 +7,11 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 from django.db.models import Q
-from apps.posts.services.portal_services import get_exchange_rates
+from apps.posts.services.portal_services import (
+    get_exchange_rates,
+    is_eligible_for_top_news,
+    has_genuine_yemen_focus,
+)
 from apps.posts.models import Topic
 from apps.growth.models import PublishedChannelPost
 
@@ -156,22 +160,20 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
         ).values_list('topic_id', flat=True)
     )
 
-    candidate_topics = (
+    raw_candidates = list(
         Topic.objects.filter(
             Q(created_at__gte=cutoff) | Q(updated_at__gte=cutoff),
             topic_size__gte=min_sources
         )
         .exclude(id__in=already_published_ids)
         .select_related('main_post', 'main_post__source')
-        .order_by('-created_at', '-topic_size')[:max_per_run * 4]
+        .order_by('-created_at', '-topic_size')[:max_per_run * 25]
     )
 
-    results = []
+    yemen_candidates = []
+    major_intl_candidates = []
 
-    for topic in candidate_topics:
-        if len(results) >= max_per_run:
-            break
-
+    for topic in raw_candidates:
         lead_post = topic.main_post or topic.posts.order_by('-published_at').first()
         if not lead_post or not lead_post.title:
             continue
@@ -181,6 +183,25 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
         if any(phrase in title for phrase in routine_phrases):
             continue
 
+        # Strict editorial gatekeeper: must be genuine Yemen news or major geopolitical event
+        if not is_eligible_for_top_news(lead_post):
+            continue
+
+        # Prioritize genuine Yemen focus; major international events (US elections, regional wars) secondary
+        if has_genuine_yemen_focus(lead_post):
+            yemen_candidates.append((topic, lead_post))
+        else:
+            major_intl_candidates.append((topic, lead_post))
+
+    eligible_candidates = yemen_candidates + major_intl_candidates
+
+    results = []
+
+    for topic, lead_post in eligible_candidates:
+        if len(results) >= max_per_run:
+            break
+
+        title = lead_post.title.strip()
         cluster_size = topic.topic_size
 
         # Extract distinct top source names

@@ -18,21 +18,21 @@ class TelegramGrowthTests(TestCase):
         self.source3 = Source.objects.create(name="المصدر الثالث", website="https://s3.ye", link="https://s3.ye/rss")
 
         self.post1 = Post.objects.create(
-            title="خبر عاجل ومهم حول التطورات",
+            title="خبر عاجل ومهم حول التطورات في اليمن وصنعاء",
             link="https://s1.ye/news/1",
             published_at=timezone.now(),
             source=self.source1,
             state=Post.State.APPROVED,
         )
         self.post2 = Post.objects.create(
-            title="تطورات عاجلة في نفس الحدث",
+            title="تطورات عاجلة في نفس الحدث باليمن",
             link="https://s2.ye/news/2",
             published_at=timezone.now(),
             source=self.source2,
             state=Post.State.APPROVED,
         )
         self.post3 = Post.objects.create(
-            title="تغطية موسعة لنفس الحدث",
+            title="تغطية موسعة لنفس الحدث في عدن",
             link="https://s3.ye/news/3",
             published_at=timezone.now(),
             source=self.source3,
