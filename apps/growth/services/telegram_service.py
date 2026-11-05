@@ -194,16 +194,9 @@ def publish_next_hot_cluster(min_sources: int = 3, max_per_run: int = 1, hours: 
         utm_link = f"https://yemenportal.net/posts/topic/{topic.id}/?utm_source=telegram&utm_medium=channel&utm_campaign=hot_cluster"
 
         msg_lines = [
-            f"🔥 <b>تغطية مجمعة ({cluster_size} مصادر إخبارية):</b>",
+            f"<a href=\"{utm_link}\"><b>{title}</b></a>",
             "",
-            f"<b>{title}</b>",
-            "",
-            "📌 <b>أبرز المصادر المواكبة للحدث:</b>",
-            f"<i>{sources_str}</i>",
-            "",
-            "━━━━━━━━━━━━━━━━━━━━",
-            "📊 <b>قارن بين روايات وتغطيات كافة المصادر في صفحة واحدة:</b>",
-            f"👉 <a href=\"{utm_link}\">اضغط هنا لقراءة ومقارنة التغطية الكاملة على يمن بورتال</a>",
+            f"📌 <b>المصادر ({cluster_size}):</b> {sources_str}",
         ]
 
         message_text = "\n".join(msg_lines)

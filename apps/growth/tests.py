@@ -61,7 +61,9 @@ class TelegramGrowthTests(TestCase):
         self.assertEqual(pub.channel, PublishedChannelPost.Channel.TELEGRAM)
         self.assertEqual(pub.post_type, PublishedChannelPost.PostType.HOT_CLUSTER)
         self.assertIn("utm_source=telegram", pub.message_text)
-        self.assertIn("3 مصادر إخبارية", pub.message_text)
+        self.assertIn("المصادر (3)", pub.message_text)
+        self.assertIn(f"<a href=\"https://yemenportal.net/posts/topic/{self.topic.id}/", pub.message_text)
+        self.assertIn(self.topic.main_post.title, pub.message_text)
 
         # Should not publish the same topic again
         results_again = publish_next_hot_cluster(min_sources=3, max_per_run=1)

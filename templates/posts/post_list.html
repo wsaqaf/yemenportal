@@ -5,9 +5,15 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-7">
+
+    <!-- Mobile-Only Telegram Channel Box (Always at the very top of the page on Mobile) -->
+    <div class="block lg:hidden mb-4">
+        {% include "posts/partials/telegram_invite_box.html" %}
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Left Column: Main Portal Content (Top Clusters + 11 Thematic Sections) -->
+        <!-- Main Portal Content (Top Clusters + 11 Thematic Sections) -->
         <section class="lg:col-span-8 order-1 space-y-8">
 
             {% if show_portal_hero and hero_post %}
@@ -424,51 +430,10 @@
 
         <!-- Sidebar Column: آخر الأخبار (Live Stream) + FX Rates + Weather + Sources + Filters -->
         <aside class="lg:col-span-4 order-2 space-y-6">
-            <!-- Compact Clickable Telegram Channel Box (Top of Left Column above Latest News) -->
-            <div id="yp-telegram-invite-bar" class="relative group">
-                <a href="https://t.me/yemen_portal" target="_blank" rel="noopener noreferrer" 
-                   class="flex items-center justify-between gap-2.5 px-3.5 py-2.5 rounded-2xl bg-gradient-to-r from-sky-500/10 via-sky-50/80 to-blue-50/50 dark:from-sky-950/40 dark:via-slate-800 dark:to-slate-800/90 border border-sky-200/80 dark:border-sky-900/60 hover:border-sky-400 dark:hover:border-sky-700 shadow-2xs hover:shadow-xs transition-all duration-200">
-                    <div class="flex items-center gap-2 min-w-0">
-                        <div class="w-7 h-7 rounded-xl bg-sky-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs group-hover:scale-105 transition-transform">
-                            <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-black text-sky-900 dark:text-sky-200 group-hover:text-sky-600 dark:group-hover:text-sky-300 transition-colors truncate">
-                            إنضم لقناة يمن بورتال على تيليجرام
-                        </span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 flex-shrink-0">
-                        <span class="inline-flex items-center gap-1 text-[11px] font-bold text-sky-600 dark:text-sky-400 group-hover:-translate-x-0.5 transition-transform">
-                            <span>اشتراك</span>
-                            <svg class="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.121l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.832.942z"/></svg>
-                        </span>
-                        <button type="button" 
-                                onclick="event.preventDefault(); event.stopPropagation(); dismissTelegramInviteBar()" 
-                                class="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 p-1 rounded-lg text-xs" 
-                                title="إخفاء">
-                            ✕
-                        </button>
-                    </div>
-                </a>
+            <!-- Desktop-Only Telegram Channel Box (Top of Left Column on Desktop above Latest News) -->
+            <div class="hidden lg:block">
+                {% include "posts/partials/telegram_invite_box.html" %}
             </div>
-            <script>
-                function dismissTelegramInviteBar() {
-                    const bar = document.getElementById('yp-telegram-invite-bar');
-                    if (bar) bar.style.display = 'none';
-                    try { localStorage.setItem('yp_dismiss_tg_invite', Date.now()); } catch(e) {}
-                }
-                (function() {
-                    try {
-                        const ts = localStorage.getItem('yp_dismiss_tg_invite');
-                        if (ts && (Date.now() - parseInt(ts, 10) < 7 * 86400 * 1000)) {
-                            const bar = document.getElementById('yp-telegram-invite-bar');
-                            if (bar) bar.style.display = 'none';
-                        }
-                    } catch(e) {}
-                })();
-            </script>
 
             {% include "posts/partials/portal_sidebar_widgets.html" %}
 
