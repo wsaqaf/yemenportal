@@ -28,22 +28,6 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            database_operations=[
-                migrations.RunSQL(
-                    sql="""
-                    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_posts_approved_source_pub 
-                    ON posts_post (source_id, published_at DESC) 
-                    WHERE state = 'approved';
-
-                    CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_posts_approved_topic_pub 
-                    ON posts_post (topic_id, published_at DESC) 
-                    WHERE state = 'approved';
-                    """,
-                    reverse_sql="""
-                    DROP INDEX CONCURRENTLY IF EXISTS idx_posts_approved_source_pub;
-                    DROP INDEX CONCURRENTLY IF EXISTS idx_posts_approved_topic_pub;
-                    """
-                ),
-            ],
+            database_operations=[],
         ),
     ]
