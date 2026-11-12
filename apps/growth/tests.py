@@ -113,7 +113,7 @@ class BotProtectionAndPerformanceTests(TestCase):
             '/posts/record-impressions/',
             data='{"post_ids": [1, 2]}',
             content_type='application/json',
-            HTTP_USER_AGENT='Mozilla/5.0 (compatible; Baiduspider-render/2.0)'
+            HTTP_USER_AGENT='Mozilla/5.0 (compatible; SomeSearchBot/1.0)'
         )
         self.assertEqual(resp.status_code, 200)
         data = resp.json()
