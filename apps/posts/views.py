@@ -613,3 +613,54 @@ class RecordShareView(View):
         return JsonResponse({'status': 'not_found'}, status=404)
 
 
+def robots_txt_view(request):
+    """
+    Serves a standardized robots.txt to restrict abusive scrapers
+    and prioritize search engine indexing.
+    """
+    from django.http import HttpResponse
+
+    rules = [
+        "# YemenPortal Robots Exclusion Standard",
+        "# Block aggressive scrapers and commercial AI crawlers",
+        "User-agent: Amazonbot",
+        "User-agent: ClaudeBot",
+        "User-agent: Baiduspider",
+        "User-agent: Baiduspider-render",
+        "User-agent: DotBot",
+        "User-agent: SemrushBot",
+        "User-agent: SERankingBacklinksBot",
+        "User-agent: Bytespider",
+        "User-agent: KeenableBot",
+        "User-agent: Reflectionbot",
+        "User-agent: PetalBot",
+        "User-agent: MJ12bot",
+        "User-agent: AhrefsBot",
+        "User-agent: DataForSeoBot",
+        "User-agent: BLEXBot",
+        "User-agent: SeekportBot",
+        "User-agent: ZoominfoBot",
+        "Disallow: /",
+        "",
+        "# Polite Crawlers (Googlebot, Bingbot, Yandex, Applebot)",
+        "User-agent: *",
+        "Disallow: /*?*sources=",
+        "Disallow: /*?*categories=",
+        "Disallow: /*?*sort=",
+        "Disallow: /*?*window=",
+        "Disallow: /*?*page=",
+        "Disallow: /*/comments",
+        "Disallow: /*/reviews",
+        "Disallow: /accounts/",
+        "Disallow: /admin/",
+        "Disallow: /moderation/",
+        "Disallow: /api/",
+        "Disallow: /posts/record-impressions/",
+        "Crawl-delay: 2",
+        "",
+        "Sitemap: https://yemenportal.net/sitemap.xml",
+    ]
+    return HttpResponse("\n".join(rules), content_type="text/plain; charset=utf-8")
+
+
+

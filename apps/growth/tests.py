@@ -83,3 +83,40 @@ class TelegramGrowthTests(TestCase):
         self.assertIn("أسعار الصرف في اليمن", pub.message_text)
         self.assertIn("صنعاء", pub.message_text)
         self.assertIn("عدن", pub.message_text)
+
+
+class BotProtectionAndPerformanceTests(TestCase):
+    def test_robots_txt_view(self):
+        resp = self.client.get('/robots.txt')
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp['Content-Type'], 'text/plain; charset=utf-8')
+        content = resp.content.decode('utf-8')
+        self.assertIn("User-agent: Amazonbot", content)
+        self.assertIn("User-agent: Baiduspider", content)
+        self.assertIn("Disallow: /*?*sources=", content)
+
+    def test_middleware_blocks_abusive_scrapers(self):
+        # Baiduspider blocked
+        resp = self.client.get('/', HTTP_USER_AGENT='Baiduspider/2.0 (+http://www.baidu.com/search/spider.html)')
+        self.assertEqual(resp.status_code, 403)
+
+        # Amazonbot blocked
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (compatible; Amazonbot/0.1)')
+        self.assertEqual(resp.status_code, 403)
+
+        # Normal browser allowed
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36')
+        self.assertEqual(resp.status_code, 200)
+
+    def test_middleware_blocks_bot_impressions(self):
+        resp = self.client.post(
+            '/posts/record-impressions/',
+            data='{"post_ids": [1, 2]}',
+            content_type='application/json',
+            HTTP_USER_AGENT='Mozilla/5.0 (compatible; Baiduspider-render/2.0)'
+        )
+        self.assertEqual(resp.status_code, 200)
+        data = resp.json()
+        self.assertEqual(data.get('status'), 'ignored')
+        self.assertEqual(data.get('reason'), 'bot')
+

@@ -70,6 +70,18 @@ class Post(models.Model):
 
     class Meta:
         ordering = ['-published_at']
+        indexes = [
+            models.Index(
+                fields=['source', '-published_at'],
+                name='idx_posts_approved_source_pub',
+                condition=models.Q(state='approved'),
+            ),
+            models.Index(
+                fields=['topic', '-published_at'],
+                name='idx_posts_approved_topic_pub',
+                condition=models.Q(state='approved'),
+            ),
+        ]
 
     def __str__(self):
         return self.title
