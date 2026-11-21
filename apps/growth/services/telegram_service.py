@@ -81,24 +81,45 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
         pass
 
     rates_data = get_exchange_rates()
-    sanaa_list = rates_data.get('sanaa', [])
-    aden_list = rates_data.get('aden', [])
-
-    def get_rate(items, code):
-        for r in items:
-            if getattr(r, 'currency_code', '') == code:
-                return r
-        return None
+    regions = rates_data.get('regions', [])
 
     def fmt_price(val):
         text = f"{val:,.1f}"
         return text[:-2] if text.endswith('.0') else text
 
-    sanaa_usd = get_rate(sanaa_list, 'USD')
-    sanaa_sar = get_rate(sanaa_list, 'SAR')
-    sanaa_aed = get_rate(sanaa_list, 'AED')
-    aden_usd = get_rate(aden_list, 'USD')
-    aden_sar = get_rate(aden_list, 'SAR')
+    def rates_signature(items):
+        return tuple(
+            (r.currency_code, fmt_price(r.buy_price), fmt_price(r.sell_price))
+            for r in items
+        )
+
+    def format_rate_lines(items):
+        labels = {
+            'USD': '🇺🇸 <b>الدولار الأمريكي:</b>',
+            'SAR': '🇸🇦 <b>الريال السعودي:</b>',
+            'AED': '🇦🇪 <b>الدرهم الإماراتي:</b>',
+        }
+        lines = []
+        for r in items:
+            lbl = labels.get(r.currency_code, f"💱 <b>{r.get_currency_code_display()}:</b>")
+            lines.append(f"{lbl} شراء: {fmt_price(r.buy_price)} | بيع: {fmt_price(r.sell_price)} ريال")
+        return lines
+
+    # Group regions sharing identical rates to keep the bulletin concise while
+    # automatically surfacing any regional divergence if Kuraimi publishes one.
+    grouped = []
+    sig_to_group = {}
+    for reg in regions:
+        reg_rates = reg.get('rates', [])
+        if not reg_rates:
+            continue
+        sig = rates_signature(reg_rates)
+        if sig in sig_to_group:
+            sig_to_group[sig]['names'].append(reg['name'])
+        else:
+            entry = {'names': [reg['name']], 'rates': reg_rates}
+            sig_to_group[sig] = entry
+            grouped.append(entry)
 
     date_str = now.strftime('%Y-%m-%d')
 
@@ -106,33 +127,23 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
         "📊 <b>نشرة أسعار الصرف في اليمن — يمن بورتال</b>",
         f"🗓 <i>تحديث مباشر: {date_str}</i>",
         "━━━━━━━━━━━━━━━━━━━━",
-        "",
-        "📍 <b>أسعار الصرف في عدن:</b>",
     ]
 
-    if aden_usd:
-        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {fmt_price(aden_usd.buy_price)} | بيع: {fmt_price(aden_usd.sell_price)} ريال")
-    if aden_sar:
-        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {fmt_price(aden_sar.buy_price)} | بيع: {fmt_price(aden_sar.sell_price)} ريال")
-
-    msg_lines.extend([
-        "",
-        "────────────────────",
-        "📍 <b>أسعار الصرف في صنعاء:</b>",
-    ])
-
-    if sanaa_usd:
-        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {fmt_price(sanaa_usd.buy_price)} | بيع: {fmt_price(sanaa_usd.sell_price)} ريال")
-    if sanaa_sar:
-        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {fmt_price(sanaa_sar.buy_price)} | بيع: {fmt_price(sanaa_sar.sell_price)} ريال")
-    if sanaa_aed:
-        msg_lines.append(f"🇦🇪 <b>الدرهم الإماراتي:</b> شراء: {fmt_price(sanaa_aed.buy_price)} | بيع: {fmt_price(sanaa_aed.sell_price)} ريال")
+    for idx, grp in enumerate(grouped):
+        if idx > 0:
+            msg_lines.append("")
+            msg_lines.append("────────────────────")
+        else:
+            msg_lines.append("")
+        region_title = "، ".join(grp['names'])
+        msg_lines.append(f"📍 <b>أسعار الصرف في {region_title}:</b>")
+        msg_lines.extend(format_rate_lines(grp['rates']))
 
     msg_lines.extend([
         "",
         "🏦 <i>المصدر: بنك الكريمي للتمويل الأصغر الإسلامي</i>",
         "━━━━━━━━━━━━━━━━━━━━",
-        "🔗 <a href=\"https://yemenportal.net/posts/currency/?utm_source=telegram&utm_medium=channel&utm_campaign=morning_rates\">تابع التحديث اللحظي لأسعار الصرف والذهب على الموقع</a>",
+        "🔗 <a href=\"https://yemenportal.net/posts/currency/?utm_source=telegram&utm_medium=channel&utm_campaign=morning_rates\">تابع التحديث اللحظي لأسعار الصرف والمحافظات على الموقع</a>",
     ])
 
     message_text = "\n".join(msg_lines)

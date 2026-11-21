@@ -22,6 +22,16 @@ YEMEN_CITIES = [
 
 KURAIMI_HOME_API_URL = "https://kuraimibank.com/api/en/home"
 KURAIMI_SITE_URL = "https://kuraimibank.com/ar"
+EXCHANGE_RATES_CACHE_KEY = "portal_exchange_rates_v2"
+
+CURRENCY_REGIONS_META = [
+    {"slug": "aden", "name": "عدن", "zone": "new", "zone_label": "العملة الجديدة"},
+    {"slug": "sanaa", "name": "صنعاء", "zone": "old", "zone_label": "العملة القديمة"},
+    {"slug": "hadhramaut", "name": "حضرموت", "zone": "new", "zone_label": "العملة الجديدة"},
+    {"slug": "marib", "name": "مأرب", "zone": "new", "zone_label": "العملة الجديدة"},
+    {"slug": "hodeidah", "name": "الحديدة", "zone": "old", "zone_label": "العملة القديمة"},
+    {"slug": "ibb", "name": "إب", "zone": "old", "zone_label": "العملة القديمة"},
+]
 
 DEFAULT_EXCHANGE_RATES = [
     {"region": "aden", "currency_code": "USD", "buy_price": Decimal("1553.00"), "sell_price": Decimal("1570.00")},
@@ -29,6 +39,16 @@ DEFAULT_EXCHANGE_RATES = [
     {"region": "sanaa", "currency_code": "USD", "buy_price": Decimal("534.00"), "sell_price": Decimal("536.50")},
     {"region": "sanaa", "currency_code": "SAR", "buy_price": Decimal("140.00"), "sell_price": Decimal("140.60")},
     {"region": "sanaa", "currency_code": "AED", "buy_price": Decimal("141.50"), "sell_price": Decimal("143.50")},
+    {"region": "hadhramaut", "currency_code": "USD", "buy_price": Decimal("1553.00"), "sell_price": Decimal("1570.00")},
+    {"region": "hadhramaut", "currency_code": "SAR", "buy_price": Decimal("410.00"), "sell_price": Decimal("413.00")},
+    {"region": "marib", "currency_code": "USD", "buy_price": Decimal("1553.00"), "sell_price": Decimal("1570.00")},
+    {"region": "marib", "currency_code": "SAR", "buy_price": Decimal("410.00"), "sell_price": Decimal("413.00")},
+    {"region": "hodeidah", "currency_code": "USD", "buy_price": Decimal("534.00"), "sell_price": Decimal("536.50")},
+    {"region": "hodeidah", "currency_code": "SAR", "buy_price": Decimal("140.00"), "sell_price": Decimal("140.60")},
+    {"region": "hodeidah", "currency_code": "AED", "buy_price": Decimal("141.50"), "sell_price": Decimal("143.50")},
+    {"region": "ibb", "currency_code": "USD", "buy_price": Decimal("534.00"), "sell_price": Decimal("536.50")},
+    {"region": "ibb", "currency_code": "SAR", "buy_price": Decimal("140.00"), "sell_price": Decimal("140.60")},
+    {"region": "ibb", "currency_code": "AED", "buy_price": Decimal("141.50"), "sell_price": Decimal("143.50")},
 ]
 
 YEMEN_CORE_KEYWORDS = [
@@ -565,6 +585,14 @@ def _parse_kuraimi_region(item: dict) -> str | None:
         return "sanaa"
     if any(k in name for k in ("aden", "عدن")):
         return "aden"
+    if any(k in name for k in ("hadhram", "hadram", "حضرموت")):
+        return "hadhramaut"
+    if any(k in name for k in ("marib", "ma'rib", "مأرب", "مارب")):
+        return "marib"
+    if any(k in name for k in ("hudaydah", "hodeidah", "الحديدة", "حديدة")):
+        return "hodeidah"
+    if name in ("ibb", "إب", "اب") or " ibb" in name:
+        return "ibb"
     return None
 
 
@@ -582,15 +610,20 @@ def _parse_kuraimi_currency(rate_item: dict) -> str | None:
 def _is_plausible_rate(region: str, currency_code: str, buy: Decimal, sell: Decimal) -> bool:
     if buy <= 0 or sell <= 0 or buy > sell * Decimal("1.15"):
         return False
-    bounds = {
-        ("sanaa", "USD"): (Decimal("200"), Decimal("1500")),
-        ("sanaa", "SAR"): (Decimal("50"), Decimal("500")),
-        ("sanaa", "AED"): (Decimal("50"), Decimal("500")),
-        ("aden", "USD"): (Decimal("500"), Decimal("10000")),
-        ("aden", "SAR"): (Decimal("100"), Decimal("3000")),
-        ("aden", "AED"): (Decimal("100"), Decimal("3000")),
-    }
-    low, high = bounds.get((region, currency_code), (Decimal("1"), Decimal("100000")))
+    old_zone = region in ("sanaa", "hodeidah", "ibb")
+    if old_zone:
+        bounds = {
+            "USD": (Decimal("200"), Decimal("1500")),
+            "SAR": (Decimal("50"), Decimal("500")),
+            "AED": (Decimal("50"), Decimal("500")),
+        }
+    else:
+        bounds = {
+            "USD": (Decimal("500"), Decimal("10000")),
+            "SAR": (Decimal("100"), Decimal("3000")),
+            "AED": (Decimal("100"), Decimal("3000")),
+        }
+    low, high = bounds.get(currency_code, (Decimal("1"), Decimal("100000")))
     return low <= buy <= high and low <= sell <= high
 
 
@@ -671,6 +704,7 @@ def update_exchange_rates_from_kuraimi(timeout: float = 10.0) -> int:
         updated_count += 1
 
     cache.delete("portal_exchange_rates")
+    cache.delete(EXCHANGE_RATES_CACHE_KEY)
     return updated_count
 
 
@@ -683,23 +717,42 @@ def update_exchange_rates_from_recent_posts() -> int:
 
 
 def get_exchange_rates() -> dict:
-    """Returns cached Sana'a and Aden currency exchange rates."""
-    cached = cache.get("portal_exchange_rates")
+    """Returns cached exchange rates across Yemeni regions (Aden, Sana'a, Hadhramaut, Marib, Hodeidah, Ibb)."""
+    cached = cache.get(EXCHANGE_RATES_CACHE_KEY)
     if cached:
         return cached
 
     ensure_exchange_rates_seeded()
     rates = list(CurrencyRate.objects.all())
-    sanaa_rates = [r for r in rates if r.region == "sanaa"]
-    aden_rates = [r for r in rates if r.region == "aden"]
+    by_region = {}
+    for r in rates:
+        by_region.setdefault(r.region, []).append(r)
+
+    regions = []
+    for meta in CURRENCY_REGIONS_META:
+        reg_rates = by_region.get(meta["slug"], [])
+        if reg_rates:
+            regions.append({
+                "slug": meta["slug"],
+                "name": meta["name"],
+                "zone": meta["zone"],
+                "zone_label": meta["zone_label"],
+                "rates": reg_rates,
+            })
+
     latest_update = max((r.updated_at for r in rates), default=timezone.now())
 
     data = {
-        "sanaa": sanaa_rates,
-        "aden": aden_rates,
+        "sanaa": by_region.get("sanaa", []),
+        "aden": by_region.get("aden", []),
+        "hadhramaut": by_region.get("hadhramaut", []),
+        "marib": by_region.get("marib", []),
+        "hodeidah": by_region.get("hodeidah", []),
+        "ibb": by_region.get("ibb", []),
+        "regions": regions,
         "updated_at": latest_update,
     }
-    cache.set("portal_exchange_rates", data, timeout=900)
+    cache.set(EXCHANGE_RATES_CACHE_KEY, data, timeout=900)
     return data
 
 

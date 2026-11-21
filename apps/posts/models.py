@@ -182,8 +182,12 @@ class NewsletterAnnouncement(models.Model):
 
 class CurrencyRate(models.Model):
     REGION_CHOICES = [
-        ('sanaa', 'صنعاء'),
         ('aden', 'عدن'),
+        ('sanaa', 'صنعاء'),
+        ('hadhramaut', 'حضرموت'),
+        ('marib', 'مأرب'),
+        ('hodeidah', 'الحديدة'),
+        ('ibb', 'إب'),
     ]
     CURRENCY_CHOICES = [
         ('USD', 'دولار أمريكي'),
