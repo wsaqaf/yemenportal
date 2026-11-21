@@ -75,12 +75,15 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
             return {'status': 'skipped', 'reason': 'already published today'}
 
     from apps.posts.services.portal_services import update_exchange_rates_from_kuraimi
-    try:
-        update_exchange_rates_from_kuraimi()
-    except Exception:
-        pass
-
     rates_data = get_exchange_rates()
+    latest_update = rates_data.get('updated_at')
+    if not latest_update or (now - latest_update).total_seconds() > 6 * 3600:
+        try:
+            if update_exchange_rates_from_kuraimi() > 0:
+                rates_data = get_exchange_rates()
+        except Exception:
+            pass
+
     regions = rates_data.get('regions', [])
 
     def fmt_price(val):

@@ -30,19 +30,29 @@ def maintain_database_indexes():
         cursor.execute("VACUUM ANALYZE posts_post;")
     return "Maintenance complete."
 
+@shared_task(name="apps.posts.tasks.refresh_exchange_rates_daily")
+def refresh_exchange_rates_daily():
+    """Fetches daily live exchange rates across Yemeni regions from Kuraimi Bank."""
+    from apps.posts.services.portal_services import (
+        update_exchange_rates_from_kuraimi,
+        get_exchange_rates,
+    )
+    updated = update_exchange_rates_from_kuraimi()
+    get_exchange_rates()
+    return f"Updated {updated} exchange rate rows from Kuraimi Bank."
+
+
 @shared_task(name="apps.posts.tasks.refresh_portal_services_cache")
 def refresh_portal_services_cache():
-    """Refreshes Yemen weather, exchange rates, and homepage portal widgets in Redis."""
+    """Refreshes Yemen weather and homepage portal widgets in Redis."""
     from apps.posts.services.portal_services import (
         refresh_yemen_weather,
-        update_exchange_rates_from_kuraimi,
         get_exchange_rates,
         get_homepage_portal_widgets,
         get_economic_posts,
         HOMEPAGE_WIDGETS_CACHE_KEY,
     )
     refresh_yemen_weather()
-    update_exchange_rates_from_kuraimi()
     get_exchange_rates()
     cache.delete(HOMEPAGE_WIDGETS_CACHE_KEY)
     cache.delete("portal_homepage_widgets_v6")

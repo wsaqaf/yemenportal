@@ -38,6 +38,10 @@ app.conf.beat_schedule = {
         'task': 'apps.posts.tasks.maintain_database_indexes',
         'schedule': crontab(minute='0', hour='3'),
     },
+    'refresh-exchange-rates-daily': {
+        'task': 'apps.posts.tasks.refresh_exchange_rates_daily',
+        'schedule': crontab(minute='0', hour='6'),  # Once daily at 06:00 UTC (09:00 Yemen time)
+    },
     'refresh-portal-services-every-30m': {
         'task': 'apps.posts.tasks.refresh_portal_services_cache',
         'schedule': crontab(minute='*/30'),

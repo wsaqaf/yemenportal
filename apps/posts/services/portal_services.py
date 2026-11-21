@@ -752,7 +752,7 @@ def get_exchange_rates() -> dict:
         "regions": regions,
         "updated_at": latest_update,
     }
-    cache.set(EXCHANGE_RATES_CACHE_KEY, data, timeout=900)
+    cache.set(EXCHANGE_RATES_CACHE_KEY, data, timeout=21600)
     return data
 
 
