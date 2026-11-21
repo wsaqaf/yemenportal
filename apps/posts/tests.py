@@ -265,6 +265,63 @@ class PortalServicesTests(TestCase):
         self.assertTrue(CurrencyRate.objects.filter(region="sanaa", currency_code="USD").exists())
         content = response.content.decode("utf-8")
         self.assertIn("حاسبة تحويل العملات الفورية", content)
+        self.assertIn("بنك الكريمي", content)
+
+    def test_update_exchange_rates_from_kuraimi_api(self):
+        from decimal import Decimal
+        from unittest.mock import MagicMock, patch
+        from apps.posts.services.portal_services import update_exchange_rates_from_kuraimi
+
+        sample_payload = {
+            "data": {
+                "exchange_rates": [
+                    {
+                        "id": 1,
+                        "name": "Sana'a",
+                        "exchange_rate": [
+                            {"id": 6, "name": "USD", "buy": "534", "sale": "536.5"},
+                            {"id": 7, "name": "SAR", "buy": "140", "sale": "140.6"},
+                            {"id": 5, "name": "AED", "buy": "141.5", "sale": "143.5"},
+                        ],
+                    },
+                    {
+                        "id": 2,
+                        "name": "Aden",
+                        "exchange_rate": [
+                            {"id": 19, "name": "USD", "buy": "1553", "sale": "1570"},
+                            {"id": 20, "name": "SAR", "buy": "410", "sale": "413"},
+                            {"id": 99, "name": "USD", "buy": "5", "sale": "6"},  # Implausible -> skipped
+                        ],
+                    },
+                    {
+                        "id": 3,
+                        "name": "Al Hudaydah",
+                        "exchange_rate": [
+                            {"id": 16, "name": "USD", "buy": "534", "sale": "536.5"},
+                        ],
+                    },
+                ]
+            }
+        }
+        mock_resp = MagicMock()
+        mock_resp.json.return_value = sample_payload
+        mock_resp.raise_for_status.return_value = None
+
+        with patch("apps.posts.services.portal_services.requests.get", return_value=mock_resp):
+            updated = update_exchange_rates_from_kuraimi()
+
+        self.assertEqual(updated, 5)
+        aden_usd = CurrencyRate.objects.get(region="aden", currency_code="USD")
+        aden_sar = CurrencyRate.objects.get(region="aden", currency_code="SAR")
+        sanaa_usd = CurrencyRate.objects.get(region="sanaa", currency_code="USD")
+        sanaa_sar = CurrencyRate.objects.get(region="sanaa", currency_code="SAR")
+        sanaa_aed = CurrencyRate.objects.get(region="sanaa", currency_code="AED")
+
+        self.assertEqual((aden_usd.buy_price, aden_usd.sell_price), (Decimal("1553.00"), Decimal("1570.00")))
+        self.assertEqual((aden_sar.buy_price, aden_sar.sell_price), (Decimal("410.00"), Decimal("413.00")))
+        self.assertEqual((sanaa_usd.buy_price, sanaa_usd.sell_price), (Decimal("534.00"), Decimal("536.50")))
+        self.assertEqual((sanaa_sar.buy_price, sanaa_sar.sell_price), (Decimal("140.00"), Decimal("140.60")))
+        self.assertEqual((sanaa_aed.buy_price, sanaa_aed.sell_price), (Decimal("141.50"), Decimal("143.50")))
 
     def test_intelligent_categorizer_prevents_false_sports_tagging(self):
         from apps.posts.services.categorizer import classify_post_categories

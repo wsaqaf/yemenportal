@@ -1,6 +1,6 @@
 import re
 import logging
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from datetime import timedelta
 import requests
 from django.core.cache import cache
@@ -20,11 +20,15 @@ YEMEN_CITIES = [
     {"name": "الحديدة", "slug": "hodeidah", "lat": 14.7979, "lon": 42.9540, "default_temp": 32, "icon": "🌤️", "desc": "دافئ ورطب"},
 ]
 
+KURAIMI_HOME_API_URL = "https://kuraimibank.com/api/en/home"
+KURAIMI_SITE_URL = "https://kuraimibank.com/ar"
+
 DEFAULT_EXCHANGE_RATES = [
-    {"region": "aden", "currency_code": "USD", "buy_price": Decimal("2055.00"), "sell_price": Decimal("2068.00")},
-    {"region": "aden", "currency_code": "SAR", "buy_price": Decimal("538.00"), "sell_price": Decimal("541.00")},
-    {"region": "sanaa", "currency_code": "USD", "buy_price": Decimal("535.00"), "sell_price": Decimal("538.00")},
-    {"region": "sanaa", "currency_code": "SAR", "buy_price": Decimal("140.00"), "sell_price": Decimal("140.50")},
+    {"region": "aden", "currency_code": "USD", "buy_price": Decimal("1553.00"), "sell_price": Decimal("1570.00")},
+    {"region": "aden", "currency_code": "SAR", "buy_price": Decimal("410.00"), "sell_price": Decimal("413.00")},
+    {"region": "sanaa", "currency_code": "USD", "buy_price": Decimal("534.00"), "sell_price": Decimal("536.50")},
+    {"region": "sanaa", "currency_code": "SAR", "buy_price": Decimal("140.00"), "sell_price": Decimal("140.60")},
+    {"region": "sanaa", "currency_code": "AED", "buy_price": Decimal("141.50"), "sell_price": Decimal("143.50")},
 ]
 
 YEMEN_CORE_KEYWORDS = [
@@ -555,35 +559,127 @@ def ensure_exchange_rates_seeded() -> None:
             )
 
 
-def update_exchange_rates_from_recent_posts() -> int:
+def _parse_kuraimi_region(item: dict) -> str | None:
+    name = (item.get("name") or "").strip().lower()
+    if any(k in name for k in ("sana", "صنعاء")):
+        return "sanaa"
+    if any(k in name for k in ("aden", "عدن")):
+        return "aden"
+    return None
+
+
+def _parse_kuraimi_currency(rate_item: dict) -> str | None:
+    name = (rate_item.get("name") or "").strip().upper()
+    if name == "USD" or "دولار" in name:
+        return "USD"
+    if name == "SAR" or "سعودي" in name:
+        return "SAR"
+    if name == "AED" or "درهم" in name or "إماراتي" in name or "اماراتي" in name:
+        return "AED"
+    return None
+
+
+def _is_plausible_rate(region: str, currency_code: str, buy: Decimal, sell: Decimal) -> bool:
+    if buy <= 0 or sell <= 0 or buy > sell * Decimal("1.15"):
+        return False
+    bounds = {
+        ("sanaa", "USD"): (Decimal("200"), Decimal("1500")),
+        ("sanaa", "SAR"): (Decimal("50"), Decimal("500")),
+        ("sanaa", "AED"): (Decimal("50"), Decimal("500")),
+        ("aden", "USD"): (Decimal("500"), Decimal("10000")),
+        ("aden", "SAR"): (Decimal("100"), Decimal("3000")),
+        ("aden", "AED"): (Decimal("100"), Decimal("3000")),
+    }
+    low, high = bounds.get((region, currency_code), (Decimal("1"), Decimal("100000")))
+    return low <= buy <= high and low <= sell <= high
+
+
+def fetch_exchange_rates_from_kuraimi(timeout: float = 10.0) -> list[dict]:
     """
-    Scans recent approved economic posts for exchange rate numbers in Sana'a & Aden
-    and updates CurrencyRate records when valid ranges are found.
+    Fetches live Sana'a & Aden currency exchange rates directly from
+    Al-Kuraimi Islamic Microfinance Bank's public home API.
+    """
+    headers = {
+        "Accept": "application/json",
+        "User-Agent": "Mozilla/5.0 (compatible; YemenPortalBot/1.0; +https://yemenportal.net)",
+    }
+    resp = requests.get(KURAIMI_HOME_API_URL, headers=headers, timeout=timeout)
+    resp.raise_for_status()
+    payload = resp.json()
+    data = payload.get("data", payload) if isinstance(payload, dict) else {}
+    regions = data.get("exchange_rates", []) if isinstance(data, dict) else []
+
+    parsed = []
+    for region_entry in regions:
+        if not isinstance(region_entry, dict):
+            continue
+        region = _parse_kuraimi_region(region_entry)
+        if not region:
+            continue
+        for rate_item in region_entry.get("exchange_rate", []) or []:
+            if not isinstance(rate_item, dict):
+                continue
+            currency_code = _parse_kuraimi_currency(rate_item)
+            if not currency_code:
+                continue
+            try:
+                buy = Decimal(str(rate_item.get("buy", "")).strip())
+                sell = Decimal(str(rate_item.get("sale", "")).strip())
+            except (InvalidOperation, ValueError):
+                continue
+            if not _is_plausible_rate(region, currency_code, buy, sell):
+                logger.warning(
+                    "Skipping implausible Kuraimi rate for %s/%s: buy=%s sell=%s",
+                    region, currency_code, buy, sell,
+                )
+                continue
+            parsed.append({
+                "region": region,
+                "currency_code": currency_code,
+                "buy_price": buy,
+                "sell_price": sell,
+            })
+    return parsed
+
+
+def update_exchange_rates_from_kuraimi(timeout: float = 10.0) -> int:
+    """
+    Updates CurrencyRate rows for Sana'a and Aden from Kuraimi Bank.
+    Returns number of updated rows; preserves existing DB rows if remote fetch fails.
     """
     ensure_exchange_rates_seeded()
-    recent_posts = Post.objects.filter(
-        state=Post.State.APPROVED,
-        title__contains="صرف",
-    ).order_by("-published_at")[:15]
+    try:
+        items = fetch_exchange_rates_from_kuraimi(timeout=timeout)
+    except Exception as exc:
+        logger.warning("Failed to fetch exchange rates from Kuraimi Bank: %s", exc)
+        return 0
+
+    if not items:
+        logger.warning("Kuraimi Bank API returned no valid Sana'a/Aden exchange rates.")
+        return 0
 
     updated_count = 0
-    for post in recent_posts:
-        text = f"{post.title} {post.description or ''}"
-        aden_usd = re.search(r"عدن.*?الدولار.*?(\d{4})\s*(?:ريال|[-/]|بيع|شراء)?\s*(\d{4})?", text, re.DOTALL)
-        if aden_usd:
-            buy = Decimal(aden_usd.group(1))
-            sell = Decimal(aden_usd.group(2)) if aden_usd.group(2) else buy + Decimal("12")
-            if 1400 <= buy <= 3500 and 1400 <= sell <= 3500:
-                CurrencyRate.objects.update_or_create(
-                    region="aden",
-                    currency_code="USD",
-                    defaults={"buy_price": min(buy, sell), "sell_price": max(buy, sell)},
-                )
-                updated_count += 1
-                break
+    for item in items:
+        CurrencyRate.objects.update_or_create(
+            region=item["region"],
+            currency_code=item["currency_code"],
+            defaults={
+                "buy_price": item["buy_price"],
+                "sell_price": item["sell_price"],
+            },
+        )
+        updated_count += 1
 
     cache.delete("portal_exchange_rates")
     return updated_count
+
+
+def update_exchange_rates_from_recent_posts() -> int:
+    """
+    Backwards-compatible entry point that now updates exchange rates from
+    Kuraimi Bank instead of scraping noisy news headlines.
+    """
+    return update_exchange_rates_from_kuraimi()
 
 
 def get_exchange_rates() -> dict:

@@ -198,10 +198,10 @@
         {% for rate in exchange_rates.aden %}
         <div class="grid grid-cols-3 items-center bg-gray-50 dark:bg-slate-700/40 px-3 py-2 rounded-xl text-xs">
             <span class="font-bold text-gray-800 dark:text-slate-100">
-                {% if rate.currency_code == 'USD' %}🇺🇸 دولار أمريكي{% elif rate.currency_code == 'SAR' %}🇸🇦 ريال سعودي{% else %}{{ rate.get_currency_code_display }}{% endif %}
+                {% if rate.currency_code == 'USD' %}🇺🇸 دولار أمريكي{% elif rate.currency_code == 'SAR' %}🇸🇦 ريال سعودي{% elif rate.currency_code == 'AED' %}🇦🇪 درهم إماراتي{% else %}{{ rate.get_currency_code_display }}{% endif %}
             </span>
-            <span class="text-center font-extrabold text-emerald-600 dark:text-emerald-400">{{ rate.buy_price|floatformat:0 }}</span>
-            <span class="text-left font-extrabold text-rose-600 dark:text-rose-400">{{ rate.sell_price|floatformat:0 }}</span>
+            <span class="text-center font-extrabold text-emerald-600 dark:text-emerald-400">{{ rate.buy_price|floatformat:"-1" }}</span>
+            <span class="text-left font-extrabold text-rose-600 dark:text-rose-400">{{ rate.sell_price|floatformat:"-1" }}</span>
         </div>
         {% endfor %}
     </div>
@@ -216,13 +216,16 @@
         {% for rate in exchange_rates.sanaa %}
         <div class="grid grid-cols-3 items-center bg-gray-50 dark:bg-slate-700/40 px-3 py-2 rounded-xl text-xs">
             <span class="font-bold text-gray-800 dark:text-slate-100">
-                {% if rate.currency_code == 'USD' %}🇺🇸 دولار أمريكي{% elif rate.currency_code == 'SAR' %}🇸🇦 ريال سعودي{% else %}{{ rate.get_currency_code_display }}{% endif %}
+                {% if rate.currency_code == 'USD' %}🇺🇸 دولار أمريكي{% elif rate.currency_code == 'SAR' %}🇸🇦 ريال سعودي{% elif rate.currency_code == 'AED' %}🇦🇪 درهم إماراتي{% else %}{{ rate.get_currency_code_display }}{% endif %}
             </span>
-            <span class="text-center font-extrabold text-emerald-600 dark:text-emerald-400">{{ rate.buy_price|floatformat:1 }}</span>
-            <span class="text-left font-extrabold text-rose-600 dark:text-rose-400">{{ rate.sell_price|floatformat:1 }}</span>
+            <span class="text-center font-extrabold text-emerald-600 dark:text-emerald-400">{{ rate.buy_price|floatformat:"-1" }}</span>
+            <span class="text-left font-extrabold text-rose-600 dark:text-rose-400">{{ rate.sell_price|floatformat:"-1" }}</span>
         </div>
         {% endfor %}
     </div>
+    <p class="mt-3 pt-2 border-t border-gray-100 dark:border-slate-700 text-[11px] text-gray-400 text-center">
+        المصدر: <a href="https://kuraimibank.com/ar" target="_blank" rel="noopener noreferrer" class="hover:text-primary font-semibold">بنك الكريمي</a>
+    </p>
 </div>
 {% endif %}
 

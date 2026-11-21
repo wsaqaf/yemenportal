@@ -74,6 +74,12 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
         if already_published:
             return {'status': 'skipped', 'reason': 'already published today'}
 
+    from apps.posts.services.portal_services import update_exchange_rates_from_kuraimi
+    try:
+        update_exchange_rates_from_kuraimi()
+    except Exception:
+        pass
+
     rates_data = get_exchange_rates()
     sanaa_list = rates_data.get('sanaa', [])
     aden_list = rates_data.get('aden', [])
@@ -84,8 +90,13 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
                 return r
         return None
 
+    def fmt_price(val):
+        text = f"{val:,.1f}"
+        return text[:-2] if text.endswith('.0') else text
+
     sanaa_usd = get_rate(sanaa_list, 'USD')
     sanaa_sar = get_rate(sanaa_list, 'SAR')
+    sanaa_aed = get_rate(sanaa_list, 'AED')
     aden_usd = get_rate(aden_list, 'USD')
     aden_sar = get_rate(aden_list, 'SAR')
 
@@ -100,9 +111,9 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
     ]
 
     if aden_usd:
-        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {aden_usd.buy_price:,.0f} | بيع: {aden_usd.sell_price:,.0f} ريال")
+        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {fmt_price(aden_usd.buy_price)} | بيع: {fmt_price(aden_usd.sell_price)} ريال")
     if aden_sar:
-        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {aden_sar.buy_price:,.0f} | بيع: {aden_sar.sell_price:,.0f} ريال")
+        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {fmt_price(aden_sar.buy_price)} | بيع: {fmt_price(aden_sar.sell_price)} ريال")
 
     msg_lines.extend([
         "",
@@ -111,12 +122,15 @@ def publish_morning_exchange_rates(force: bool = False) -> dict:
     ])
 
     if sanaa_usd:
-        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {sanaa_usd.buy_price:,.0f} | بيع: {sanaa_usd.sell_price:,.0f} ريال")
+        msg_lines.append(f"🇺🇸 <b>الدولار الأمريكي:</b> شراء: {fmt_price(sanaa_usd.buy_price)} | بيع: {fmt_price(sanaa_usd.sell_price)} ريال")
     if sanaa_sar:
-        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {sanaa_sar.buy_price:,.1f} | بيع: {sanaa_sar.sell_price:,.1f} ريال")
+        msg_lines.append(f"🇸🇦 <b>الريال السعودي:</b> شراء: {fmt_price(sanaa_sar.buy_price)} | بيع: {fmt_price(sanaa_sar.sell_price)} ريال")
+    if sanaa_aed:
+        msg_lines.append(f"🇦🇪 <b>الدرهم الإماراتي:</b> شراء: {fmt_price(sanaa_aed.buy_price)} | بيع: {fmt_price(sanaa_aed.sell_price)} ريال")
 
     msg_lines.extend([
         "",
+        "🏦 <i>المصدر: بنك الكريمي للتمويل الأصغر الإسلامي</i>",
         "━━━━━━━━━━━━━━━━━━━━",
         "🔗 <a href=\"https://yemenportal.net/posts/currency/?utm_source=telegram&utm_medium=channel&utm_campaign=morning_rates\">تابع التحديث اللحظي لأسعار الصرف والذهب على الموقع</a>",
     ])

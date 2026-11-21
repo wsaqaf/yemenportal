@@ -69,8 +69,9 @@ class TelegramGrowthTests(TestCase):
         results_again = publish_next_hot_cluster(min_sources=3, max_per_run=1)
         self.assertEqual(len(results_again), 0)
 
+    @patch('apps.posts.services.portal_services.update_exchange_rates_from_kuraimi', return_value=0)
     @patch('apps.growth.services.telegram_service.send_telegram_message')
-    def test_publish_morning_exchange_rates(self, mock_send):
+    def test_publish_morning_exchange_rates(self, mock_send, mock_kuraimi):
         mock_send.return_value = {'ok': True, 'result': {'message_id': 124}}
 
         res = publish_morning_exchange_rates(force=True)
@@ -83,6 +84,7 @@ class TelegramGrowthTests(TestCase):
         self.assertIn("أسعار الصرف في اليمن", pub.message_text)
         self.assertIn("صنعاء", pub.message_text)
         self.assertIn("عدن", pub.message_text)
+        self.assertIn("بنك الكريمي", pub.message_text)
 
 
 class BotProtectionAndPerformanceTests(TestCase):

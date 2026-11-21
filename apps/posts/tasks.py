@@ -35,14 +35,14 @@ def refresh_portal_services_cache():
     """Refreshes Yemen weather, exchange rates, and homepage portal widgets in Redis."""
     from apps.posts.services.portal_services import (
         refresh_yemen_weather,
-        update_exchange_rates_from_recent_posts,
+        update_exchange_rates_from_kuraimi,
         get_exchange_rates,
         get_homepage_portal_widgets,
         get_economic_posts,
         HOMEPAGE_WIDGETS_CACHE_KEY,
     )
     refresh_yemen_weather()
-    update_exchange_rates_from_recent_posts()
+    update_exchange_rates_from_kuraimi()
     get_exchange_rates()
     cache.delete(HOMEPAGE_WIDGETS_CACHE_KEY)
     cache.delete("portal_homepage_widgets_v6")
