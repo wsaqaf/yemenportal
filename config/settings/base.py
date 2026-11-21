@@ -207,6 +207,10 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 300,  # Every 5 minutes (checks for newly formed breaking clusters)
         'kwargs': {'min_sources': 3, 'max_per_run': 1},
     },
+    'refresh-exchange-rates-daily': {
+        'task': 'apps.posts.tasks.refresh_exchange_rates_daily',
+        'schedule': 86400,  # Once daily Kuraimi Bank exchange rates check
+    },
     'broadcast-telegram-morning-exchange-rates-daily': {
         'task': 'apps.growth.tasks.broadcast_telegram_morning_exchange_rates',
         'schedule': 86400,  # Daily morning exchange rates
