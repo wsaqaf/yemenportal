@@ -9,14 +9,22 @@ logger = logging.getLogger(__name__)
 # List of aggressive AI scrapers, SEO bots, and commercial crawlers
 # that aggressively scrape without editorial or search traffic value to YemenPortal.
 BLOCKED_BOT_REGEX = re.compile(
-    r'(Baiduspider|DotBot|Amazonbot|ClaudeBot|SemrushBot|SERankingBacklinksBot|'
+    r'(Baiduspider|DotBot|Amazonbot|Amzn-SearchBot|ClaudeBot|SemrushBot|SERankingBacklinksBot|'
     r'Bytespider|KeenableBot|Reflectionbot|PetalBot|MJ12bot|AhrefsBot|'
-    r'DataForSeoBot|BLEXBot|Seekport|ZoominfoBot|CensysInspect|Barkrowler)',
+    r'DataForSeoBot|BLEXBot|Seekport|ZoominfoBot|CensysInspect|Barkrowler|'
+    r'meta-externalagent|LinkupBot|NewsHuntBot|Mediatoolkitbot|Buck/\d|Go-http-client)',
+    re.IGNORECASE
+)
+
+# Spoofed/archaic browser User-Agents heavily used by headless scraper farms
+# (e.g. Chrome 48/72 from 2016-2019, Firefox 33, or truncated AppleWebKit/537.36 strings)
+SPOOFED_SCRAPER_UA_REGEX = re.compile(
+    r'(Chrome/[1-7]\d\.\d|Firefox/[1-5]\d\.\d|AppleWebKit/537\.36\s*$)',
     re.IGNORECASE
 )
 
 # General crawler signature for impression fraud prevention
-ANY_BOT_REGEX = re.compile(r'(bot|spider|crawl|scraper|headless|archiver|phantom)', re.IGNORECASE)
+ANY_BOT_REGEX = re.compile(r'(bot|spider|crawl|scraper|headless|archiver|phantom|meta-externalagent)', re.IGNORECASE)
 
 
 class BotThrottlingMiddleware:
@@ -40,8 +48,8 @@ class BotThrottlingMiddleware:
         if path.startswith(('/static/', '/media/', '/favicon.ico', '/manifest', '/sw.js')):
             return self.get_response(request)
 
-        # 1. Block aggressive non-search scrapers
-        if user_agent and BLOCKED_BOT_REGEX.search(user_agent):
+        # 1. Block aggressive non-search scrapers and spoofed ancient-browser bot farms
+        if user_agent and (BLOCKED_BOT_REGEX.search(user_agent) or SPOOFED_SCRAPER_UA_REGEX.search(user_agent)):
             return HttpResponseForbidden("Access restricted for automated scrapers.")
 
         # 2. Block fake impression recording from all bots & crawlers

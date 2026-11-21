@@ -71,13 +71,21 @@
     </style>
 
     {% block extra_head %}{% endblock %}
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DC6EV81706"></script>
+    <!-- Google tag (gtag.js) - guarded against headless/automated scrapers -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-DC6EV81706');
+      (function() {
+        var ua = navigator.userAgent || '';
+        var isBot = navigator.webdriver || /HeadlessChrome|PhantomJS|bot|spider|crawl|meta-externalagent|Chrome\/[1-7]\d\./i.test(ua);
+        if (isBot || window.location.pathname.indexOf('/accounts/') === 0) return;
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-DC6EV81706';
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function(){dataLayer.push(arguments);};
+        gtag('js', new Date());
+        gtag('config', 'G-DC6EV81706');
+      })();
     </script>
 </head>
 <body class="flex flex-col min-h-screen" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>

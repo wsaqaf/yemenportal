@@ -106,6 +106,18 @@ class BotProtectionAndPerformanceTests(TestCase):
         resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (compatible; Amazonbot/0.1)')
         self.assertEqual(resp.status_code, 403)
 
+        # Meta AI external agent blocked
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36 (compatible; meta-externalagent/1.1)')
+        self.assertEqual(resp.status_code, 403)
+
+        # Archaic spoofed Chrome/48 Chinese scraper farm blocked
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36')
+        self.assertEqual(resp.status_code, 403)
+
+        # Truncated fake UA blocked
+        resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+        self.assertEqual(resp.status_code, 403)
+
         # Normal browser allowed
         resp = self.client.get('/', HTTP_USER_AGENT='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36')
         self.assertEqual(resp.status_code, 200)
