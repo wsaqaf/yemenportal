@@ -3,7 +3,7 @@
  * PWA Offline support, smart caching, and background sync.
  */
 
-const CACHE_VERSION = 'yp-pwa-v1.0.1';
+const CACHE_VERSION = 'yp-pwa-v1.0.2';
 const STATIC_CACHE = `yp-static-${CACHE_VERSION}`;
 const PAGES_CACHE = `yp-pages-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline/';
@@ -61,22 +61,50 @@ function isNavigationRequest(request) {
            (request.method === 'GET' && request.headers.get('accept')?.includes('text/html'));
 }
 
-// Helper: Check if request is for admin, moderation, or auth
-function isBypassUrl(url) {
-    const pathname = new URL(url).pathname;
-    return pathname.startsWith('/admin/') || 
+// Helper: Check if request is for admin, staff management, moderation, or auth
+function isBypassPathname(pathname) {
+    return pathname.startsWith('/admin/') ||
            pathname.startsWith('/accounts/') ||
            pathname.startsWith('/moderation/') ||
+           pathname.startsWith('/sources/manage/') ||
+           pathname.startsWith('/users/manage/') ||
+           pathname.startsWith('/api/') ||
            pathname.startsWith('/__debug__/');
+}
+
+// Helper: Safely store only same-origin HTTP(S) 200 responses
+function safeCachePut(cacheName, request, response) {
+    if (!response || !response.ok || response.status !== 200 || response.type !== 'basic') {
+        return;
+    }
+    const copy = response.clone();
+    caches.open(cacheName)
+        .then((cache) => cache.put(request, copy))
+        .catch(() => {});
 }
 
 // 3. Fetch Event: Smart Routing
 self.addEventListener('fetch', (event) => {
     const request = event.request;
-    const url = request.url;
 
-    // Only handle GET requests and avoid admin/auth routes
-    if (request.method !== 'GET' || isBypassUrl(url)) {
+    // Only handle GET requests
+    if (request.method !== 'GET') {
+        return;
+    }
+
+    // Parse URL and ignore non-HTTP(S) schemes (e.g. chrome-extension://) and cross-origin requests
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(request.url);
+    } catch (_) {
+        return;
+    }
+
+    if (
+        (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') ||
+        parsedUrl.origin !== self.location.origin ||
+        isBypassPathname(parsedUrl.pathname)
+    ) {
         return;
     }
 
@@ -86,10 +114,7 @@ self.addEventListener('fetch', (event) => {
         event.respondWith(
             fetch(request)
                 .then((networkResponse) => {
-                    if (networkResponse && networkResponse.status === 200) {
-                        const copy = networkResponse.clone();
-                        caches.open(PAGES_CACHE).then((cache) => cache.put(request, copy));
-                    }
+                    safeCachePut(PAGES_CACHE, request, networkResponse);
                     return networkResponse;
                 })
                 .catch(async () => {
@@ -114,25 +139,22 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // B. Static Assets (CSS, JS, Fonts, Images): Stale-While-Revalidate
+    // B. Same-Origin Static Assets (CSS, JS, Fonts, Images): Stale-While-Revalidate
     if (
         request.destination === 'style' ||
         request.destination === 'script' ||
         request.destination === 'image' ||
         request.destination === 'font' ||
-        url.includes('/static/')
+        parsedUrl.pathname.startsWith('/static/')
     ) {
         event.respondWith(
             caches.match(request).then((cachedResponse) => {
                 const fetchPromise = fetch(request)
                     .then((networkResponse) => {
-                        if (networkResponse && networkResponse.status === 200) {
-                            const copy = networkResponse.clone();
-                            caches.open(STATIC_CACHE).then((cache) => cache.put(request, copy));
-                        }
+                        safeCachePut(STATIC_CACHE, request, networkResponse);
                         return networkResponse;
                     })
-                    .catch(() => cachedResponse);
+                    .catch(() => cachedResponse || Response.error());
 
                 return cachedResponse || fetchPromise;
             })
@@ -140,8 +162,11 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // C. Default: Network with Cache Fallback
+    // C. Default (same-origin): Network with Cache Fallback, always returning a valid Response
     event.respondWith(
-        fetch(request).catch(() => caches.match(request))
+        fetch(request).catch(async () => {
+            const cachedResponse = await caches.match(request);
+            return cachedResponse || Response.error();
+        })
     );
 });

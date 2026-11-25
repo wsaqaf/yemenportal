@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 from django.db import models
 from django.contrib import messages
+from django.core.cache import cache
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
 from datetime import timedelta
@@ -10,12 +11,46 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
+import logging
+import threading
 import feedparser
 import requests
 
 from .models import Source, SourceLog
 from .forms import SourceForm, SourceSuggestionForm
 from apps.posts.models import Post
+
+logger = logging.getLogger(__name__)
+
+SOURCE_STATS_CACHE_PREFIX = 'sources:manage_stats:v1:'
+SOURCE_STATS_CACHE_TTL = 300  # 5 minutes
+
+
+def _send_mail_async(subject, plain_message, recipient_list, html_message=None):
+    """Send notification email without blocking the HTTP moderation response."""
+    def _worker():
+        try:
+            send_mail(
+                subject,
+                plain_message,
+                settings.DEFAULT_FROM_EMAIL,
+                recipient_list,
+                html_message=html_message,
+                fail_silently=True,
+            )
+        except Exception:
+            logger.exception("Failed to send source notification email")
+
+    if getattr(settings, 'EMAIL_BACKEND', '').endswith(('locmem.EmailBackend', 'dummy.EmailBackend')):
+        _worker()
+    else:
+        threading.Thread(target=_worker, daemon=True).start()
+
+
+def _invalidate_source_caches(source_id=None):
+    cache.delete('global_approved_sources_list')
+    if source_id is not None:
+        cache.delete(f'{SOURCE_STATS_CACHE_PREFIX}{source_id}')
 
 # Public Source List View
 class SourceListView(ListView):
@@ -51,9 +86,8 @@ class SourceManageListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
     paginate_by = 15  # Set pagination to 15 as requested
 
     def get_queryset(self):
-        queryset = Source.objects.all().annotate(
-            total_posts=models.Count('posts')
-        ).order_by('-created_at')
+        # Keep queryset lean so pagination count and slicing never scan the 4.5M+ posts table.
+        queryset = Source.objects.all().order_by('-created_at')
 
         # Advanced Filters
         state_filter = self.request.GET.get('state')
@@ -68,37 +102,90 @@ class SourceManageListView(LoginRequiredMixin, StaffRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        
-        # 1. Fetch latest crawler log for each source
+        page_sources = list(context['sources'])
+        page_ids = [source.id for source in page_sources]
+
         latest_logs = {}
-        log_ids = SourceLog.objects.values('source_id').annotate(max_id=models.Max('id')).values('max_id')
-        for log in SourceLog.objects.filter(id__in=log_ids):
-            latest_logs[log.source_id] = log
-        context['latest_logs'] = latest_logs
-
-        # 2. Calculate advanced metrics per source in the queryset
-        now = timezone.now()
-        one_day_ago = now - timedelta(days=1)
-        one_week_ago = now - timedelta(days=7)
-        one_month_ago = now - timedelta(days=30)
-
         source_metrics = {}
-        for source in context['sources']:
-            # Post frequencies
-            daily_count = source.posts.filter(created_at__gte=one_day_ago).count()
-            weekly_count = source.posts.filter(created_at__gte=one_week_ago).count()
 
-            # Average Votes per article (weekly & monthly)
-            weekly_votes = source.posts.filter(published_at__gte=one_week_ago).aggregate(avg_val=models.Avg('voting_result'))['avg_val'] or 0.0
-            monthly_votes = source.posts.filter(published_at__gte=one_month_ago).aggregate(avg_val=models.Avg('voting_result'))['avg_val'] or 0.0
+        if page_ids:
+            # 1. Fetch latest crawler log ONLY for the sources on the current page
+            max_log_ids = list(
+                SourceLog.objects.filter(source_id__in=page_ids)
+                .values('source_id')
+                .annotate(max_id=models.Max('id'))
+                .values_list('max_id', flat=True)
+            )
+            if max_log_ids:
+                for log in SourceLog.objects.filter(id__in=max_log_ids):
+                    latest_logs[log.source_id] = log
 
-            source_metrics[source.id] = {
-                'daily_frequency': daily_count,
-                'weekly_frequency': weekly_count,
-                'weekly_avg_votes': round(weekly_votes, 1),
-                'monthly_avg_votes': round(monthly_votes, 1),
-            }
+            # 2. Fetch per-source post counts & metrics from Redis cache, computing only misses
+            #    in two indexed aggregate queries scoped strictly to the current page.
+            cache_keys = {sid: f'{SOURCE_STATS_CACHE_PREFIX}{sid}' for sid in page_ids}
+            cached_stats = cache.get_many(cache_keys.values())
+            missing_ids = [sid for sid, key in cache_keys.items() if key not in cached_stats]
 
+            if missing_ids:
+                now = timezone.now()
+                one_day_ago = now - timedelta(days=1)
+                one_week_ago = now - timedelta(days=7)
+                one_month_ago = now - timedelta(days=30)
+
+                # Hits partial index idx_posts_approved_source_pub (source_id, published_at DESC)
+                totals_map = dict(
+                    Post.objects.filter(
+                        source_id__in=missing_ids,
+                        state=Post.State.APPROVED,
+                    )
+                    .values('source_id')
+                    .annotate(total=models.Count('id'))
+                    .values_list('source_id', 'total')
+                )
+
+                recent_rows = (
+                    Post.objects.filter(
+                        source_id__in=missing_ids,
+                        state=Post.State.APPROVED,
+                        published_at__gte=one_month_ago,
+                    )
+                    .values('source_id')
+                    .annotate(
+                        daily_frequency=models.Count('id', filter=models.Q(published_at__gte=one_day_ago)),
+                        weekly_frequency=models.Count('id', filter=models.Q(published_at__gte=one_week_ago)),
+                        weekly_avg_votes=models.Avg('voting_result', filter=models.Q(published_at__gte=one_week_ago)),
+                        monthly_avg_votes=models.Avg('voting_result'),
+                    )
+                )
+                recent_map = {row['source_id']: row for row in recent_rows}
+
+                to_cache = {}
+                for sid in missing_ids:
+                    row = recent_map.get(sid, {})
+                    entry = {
+                        'total_posts': totals_map.get(sid, 0),
+                        'daily_frequency': row.get('daily_frequency') or 0,
+                        'weekly_frequency': row.get('weekly_frequency') or 0,
+                        'weekly_avg_votes': round(row.get('weekly_avg_votes') or 0.0, 1),
+                        'monthly_avg_votes': round(row.get('monthly_avg_votes') or 0.0, 1),
+                    }
+                    to_cache[cache_keys[sid]] = entry
+                    cached_stats[cache_keys[sid]] = entry
+
+                cache.set_many(to_cache, timeout=SOURCE_STATS_CACHE_TTL)
+
+            for source in page_sources:
+                entry = cached_stats.get(cache_keys[source.id], {})
+                source.total_posts = entry.get('total_posts', 0)
+                source_metrics[source.id] = {
+                    'daily_frequency': entry.get('daily_frequency', 0),
+                    'weekly_frequency': entry.get('weekly_frequency', 0),
+                    'weekly_avg_votes': entry.get('weekly_avg_votes', 0.0),
+                    'monthly_avg_votes': entry.get('monthly_avg_votes', 0.0),
+                }
+
+        context['sources'] = page_sources
+        context['latest_logs'] = latest_logs
         context['source_metrics'] = source_metrics
         context['current_state'] = self.request.GET.get('state', '')
         context['current_approve_state'] = self.request.GET.get('approve_state', '')
@@ -113,8 +200,10 @@ class SourceCreateView(LoginRequiredMixin, StaffRequiredMixin, CreateView):
     success_url = reverse_lazy('sources:manage_list')
 
     def form_valid(self, form):
+        response = super().form_valid(form)
+        _invalidate_source_caches(self.object.id)
         messages.success(self.request, f"تمت إضافة المصدر '{form.cleaned_data['name']}' بنجاح.")
-        return super().form_valid(form)
+        return response
 
 
 # Edit Source (Admin only)
@@ -125,8 +214,10 @@ class SourceUpdateView(LoginRequiredMixin, StaffRequiredMixin, UpdateView):
     success_url = reverse_lazy('sources:manage_list')
 
     def form_valid(self, form):
+        response = super().form_valid(form)
+        _invalidate_source_caches(self.object.id)
         messages.success(self.request, f"تم تعديل المصدر '{form.cleaned_data['name']}' بنجاح.")
-        return super().form_valid(form)
+        return response
 
 
 # Delete Source (Admin only)
@@ -135,10 +226,14 @@ class SourceDeleteView(LoginRequiredMixin, StaffRequiredMixin, DeleteView):
     template_name = 'sources/manage_confirm_delete.html'
     success_url = reverse_lazy('sources:manage_list')
 
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         source = self.get_object()
-        messages.warning(request, f"تم حذف المصدر '{source.name}' بنجاح.")
-        return super().delete(request, *args, **kwargs)
+        source_id = source.id
+        source_name = source.name
+        response = super().form_valid(form)
+        _invalidate_source_caches(source_id)
+        messages.warning(self.request, f"تم حذف المصدر '{source_name}' بنجاح.")
+        return response
 
 
 # Member Suggest Source View with RSS Verification
@@ -246,42 +341,38 @@ class SourceModerateView(LoginRequiredMixin, StaffRequiredMixin, DetailView):
     def post(self, request, *args, **kwargs):
         source = self.get_object()
         action = request.POST.get('action')
+        previous_state = source.approve_state
 
         if action == 'approve':
             source.approve_state = Source.ApproveState.APPROVED
-            source.save()
-            messages.success(request, f"تمت الموافقة وتفعيل المصدر '{source.name}' بنجاح.")
-            
-            # Send approval email to suggesting user
-            if source.user and source.user.email:
-                subject = f"تم قبول المصدر الإخباري المقترح: {source.name}"
-                html_msg = render_to_string('sources/emails/suggest_approved_user.html', {'source': source})
-                plain_msg = strip_tags(html_msg)
-                send_mail(
-                    subject,
-                    plain_msg,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [source.user.email],
-                    html_message=html_msg,
-                    fail_silently=True
-                )
+            source.state = Source.State.VALID
+            source.save(update_fields=['approve_state', 'state', 'updated_at'])
+            _invalidate_source_caches(source.id)
+
+            if previous_state == Source.ApproveState.APPROVED:
+                messages.info(request, f"المصدر '{source.name}' مقبول ومفعل مسبقاً.")
+            else:
+                messages.success(request, f"تمت الموافقة وتفعيل المصدر '{source.name}' بنجاح.")
+                # Send approval email to suggesting user asynchronously
+                if source.user and source.user.email:
+                    subject = f"تم قبول المصدر الإخباري المقترح: {source.name}"
+                    html_msg = render_to_string('sources/emails/suggest_approved_user.html', {'source': source})
+                    plain_msg = strip_tags(html_msg)
+                    _send_mail_async(subject, plain_msg, [source.user.email], html_message=html_msg)
         elif action == 'reject':
             source.approve_state = Source.ApproveState.REJECTED
-            source.save()
-            messages.warning(request, f"تم رفض المصدر المقترح '{source.name}'.")
+            source.save(update_fields=['approve_state', 'updated_at'])
+            _invalidate_source_caches(source.id)
 
-            # Send rejection email to suggesting user
-            if source.user and source.user.email:
-                subject = f"بخصوص المصدر الإخباري المقترح: {source.name}"
-                html_msg = render_to_string('sources/emails/suggest_rejected_user.html', {'source': source})
-                plain_msg = strip_tags(html_msg)
-                send_mail(
-                    subject,
-                    plain_msg,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [source.user.email],
-                    html_message=html_msg,
-                    fail_silently=True
-                )
+            if previous_state == Source.ApproveState.REJECTED:
+                messages.info(request, f"المصدر '{source.name}' مرفوض مسبقاً.")
+            else:
+                messages.warning(request, f"تم رفض المصدر المقترح '{source.name}'.")
+                # Send rejection email to suggesting user asynchronously
+                if source.user and source.user.email:
+                    subject = f"بخصوص المصدر الإخباري المقترح: {source.name}"
+                    html_msg = render_to_string('sources/emails/suggest_rejected_user.html', {'source': source})
+                    plain_msg = strip_tags(html_msg)
+                    _send_mail_async(subject, plain_msg, [source.user.email], html_message=html_msg)
 
         return redirect('sources:manage_list')
