@@ -202,10 +202,18 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': 86400,  # Once every 24 hours
         'kwargs': {'recipient': 'admin@yemenportal.net', 'hours': 24},
     },
-    'broadcast-telegram-hot-clusters-every-5m': {
+    'broadcast-telegram-hot-clusters-every-15m': {
         'task': 'apps.growth.tasks.broadcast_telegram_hot_clusters',
-        'schedule': 300,  # Every 5 minutes (checks for newly formed breaking clusters)
-        'kwargs': {'min_sources': 3, 'max_per_run': 1},
+        'schedule': 900,  # Every 15 minutes (aligned with cluster_recent_posts)
+        'kwargs': {
+            'min_sources': 8,
+            'urgent_min_sources': 5,
+            'max_per_run': 1,
+            'hours': 12,
+            'cooldown_minutes': 90,
+            'urgent_cooldown_minutes': 20,
+            'max_daily_posts': 12,
+        },
     },
     'refresh-exchange-rates-daily': {
         'task': 'apps.posts.tasks.refresh_exchange_rates_daily',

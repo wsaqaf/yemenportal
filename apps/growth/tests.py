@@ -13,61 +13,131 @@ from apps.growth.services.telegram_service import (
 
 class TelegramGrowthTests(TestCase):
     def setUp(self):
-        self.source1 = Source.objects.create(name="المصدر الأول", website="https://s1.ye", link="https://s1.ye/rss")
-        self.source2 = Source.objects.create(name="المصدر الثاني", website="https://s2.ye", link="https://s2.ye/rss")
-        self.source3 = Source.objects.create(name="المصدر الثالث", website="https://s3.ye", link="https://s3.ye/rss")
+        self.sources = [
+            Source.objects.create(
+                name=f"المصدر اليمني {i}",
+                website=f"https://s{i}.ye",
+                link=f"https://s{i}.ye/rss",
+            )
+            for i in range(1, 10)
+        ]
 
-        self.post1 = Post.objects.create(
-            title="خبر عاجل ومهم حول التطورات في اليمن وصنعاء",
-            link="https://s1.ye/news/1",
-            published_at=timezone.now(),
-            source=self.source1,
-            state=Post.State.APPROVED,
-        )
-        self.post2 = Post.objects.create(
-            title="تطورات عاجلة في نفس الحدث باليمن",
-            link="https://s2.ye/news/2",
-            published_at=timezone.now(),
-            source=self.source2,
-            state=Post.State.APPROVED,
-        )
-        self.post3 = Post.objects.create(
-            title="تغطية موسعة لنفس الحدث في عدن",
-            link="https://s3.ye/news/3",
-            published_at=timezone.now(),
-            source=self.source3,
-            state=Post.State.APPROVED,
-        )
-
-        self.topic = Topic.objects.create(main_post=self.post1, topic_size=3)
-        self.post1.topic = self.topic
-        self.post1.save()
-        self.post2.topic = self.topic
-        self.post2.save()
-        self.post3.topic = self.topic
-        self.post3.save()
+    def _create_cluster(self, title, num_sources, slug="news", repeat_first_source=0):
+        posts = []
+        for idx in range(num_sources):
+            src = self.sources[idx]
+            posts.append(
+                Post.objects.create(
+                    title=title if idx == 0 else f"تغطية {idx} - {title}",
+                    link=f"https://s{idx+1}.ye/{slug}/{idx}",
+                    published_at=timezone.now(),
+                    source=src,
+                    state=Post.State.APPROVED,
+                )
+            )
+        for extra in range(repeat_first_source):
+            posts.append(
+                Post.objects.create(
+                    title=f"مكرر {extra} - {title}",
+                    link=f"https://s1.ye/{slug}/extra-{extra}",
+                    published_at=timezone.now(),
+                    source=self.sources[0],
+                    state=Post.State.APPROVED,
+                )
+            )
+        topic = Topic.objects.create(main_post=posts[0], topic_size=len(posts))
+        Post.objects.filter(id__in=[p.id for p in posts]).update(topic=topic)
+        return topic
 
     @patch('apps.growth.services.telegram_service.send_telegram_message')
-    def test_publish_hot_cluster_success(self, mock_send):
-        mock_send.return_value = {'ok': True, 'result': {'message_id': 123}}
+    def test_small_non_urgent_cluster_is_skipped(self, mock_send):
+        mock_send.return_value = {'ok': True, 'result': {'message_id': 100}}
+        # 4 distinct sources, non-urgent headline -> below major threshold (8) and not urgent
+        self._create_cluster("اجتماع رسمي لمناقشة خطة الخدمات في عدن", num_sources=4, slug="small")
+        results = publish_next_hot_cluster()
+        self.assertEqual(results, [])
+        mock_send.assert_not_called()
 
-        results = publish_next_hot_cluster(min_sources=3, max_per_run=1)
+    @patch('apps.growth.services.telegram_service.send_telegram_message')
+    def test_duplicate_posts_from_few_sources_do_not_bypass_distinct_threshold(self, mock_send):
+        mock_send.return_value = {'ok': True, 'result': {'message_id': 101}}
+        # topic_size=8, but only 3 distinct sources -> must be skipped
+        self._create_cluster("عاجل: قصف في تعز", num_sources=3, slug="dups", repeat_first_source=5)
+        results = publish_next_hot_cluster()
+        self.assertEqual(results, [])
+        mock_send.assert_not_called()
+
+    @patch('apps.growth.services.telegram_service.send_telegram_message')
+    def test_urgent_cluster_publishes_at_5_distinct_sources(self, mock_send):
+        mock_send.return_value = {'ok': True, 'result': {'message_id': 123}}
+        topic = self._create_cluster(
+            "عاجل: غارات جوية تستهدف مواقع عسكرية في الحديدة وصنعاء",
+            num_sources=5,
+            slug="urgent5",
+        )
+
+        results = publish_next_hot_cluster()
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['status'], 'published')
-        self.assertEqual(results[0]['topic_id'], self.topic.id)
+        self.assertEqual(results[0]['topic_id'], topic.id)
+        self.assertTrue(results[0]['urgent'])
 
-        # Check PublishedChannelPost record created
-        pub = PublishedChannelPost.objects.get(topic=self.topic)
+        pub = PublishedChannelPost.objects.get(topic=topic)
         self.assertEqual(pub.channel, PublishedChannelPost.Channel.TELEGRAM)
-        self.assertEqual(pub.post_type, PublishedChannelPost.PostType.HOT_CLUSTER)
+        self.assertEqual(pub.post_type, PublishedChannelPost.PostType.BREAKING)
         self.assertIn("utm_source=telegram", pub.message_text)
-        self.assertIn("المصادر (3)", pub.message_text)
-        self.assertIn(f"<a href=\"https://yemenportal.net/posts/topic/{self.topic.id}/", pub.message_text)
-        self.assertIn(self.topic.main_post.title, pub.message_text)
+        self.assertIn("المصادر (5)", pub.message_text)
+        self.assertIn(f"<a href=\"https://yemenportal.net/posts/topic/{topic.id}/", pub.message_text)
 
         # Should not publish the same topic again
-        results_again = publish_next_hot_cluster(min_sources=3, max_per_run=1)
+        results_again = publish_next_hot_cluster(respect_limits=False)
         self.assertEqual(len(results_again), 0)
+
+    @patch('apps.growth.services.telegram_service.send_telegram_message')
+    def test_major_cluster_publishes_at_8_distinct_sources_and_respects_cooldown(self, mock_send):
+        mock_send.return_value = {'ok': True, 'result': {'message_id': 125}}
+        topic1 = self._create_cluster(
+            "البنك المركزي في عدن يعلن إجراءات جديدة لضبط سوق الصرافة في اليمن",
+            num_sources=8,
+            slug="major1",
+        )
+        topic2 = self._create_cluster(
+            "مجلس القيادة الرئاسي اليمني يعقد اجتماعاً موسعاً لمناقشة الملف الاقتصادي",
+            num_sources=8,
+            slug="major2",
+        )
+
+        # First major cluster publishes
+        res1 = publish_next_hot_cluster(max_per_run=1)
+        self.assertEqual(len(res1), 1)
+        self.assertEqual(res1[0]['topic_id'], topic1.id)
+
+        # Second major cluster immediately blocked by cooldown
+        res2 = publish_next_hot_cluster(max_per_run=1)
+        self.assertEqual(res2, [])
+
+        # Simulate 30 minutes passing: non-urgent still blocked (<90m), urgent allowed (>=20m)
+        PublishedChannelPost.objects.filter(topic=topic1).update(
+            created_at=timezone.now() - timedelta(minutes=30)
+        )
+        self.assertEqual(publish_next_hot_cluster(max_per_run=1), [])
+
+        urgent_topic = self._create_cluster(
+            "عاجل: اعتراض صاروخ باليستي حوثي فوق مأرب",
+            num_sources=5,
+            slug="urgent_after_30m",
+        )
+        res3 = publish_next_hot_cluster(max_per_run=1)
+        self.assertEqual(len(res3), 1)
+        self.assertEqual(res3[0]['topic_id'], urgent_topic.id)
+
+        # Simulate daily cap reached
+        PublishedChannelPost.objects.filter(topic=urgent_topic).update(
+            created_at=timezone.now() - timedelta(minutes=120)
+        )
+        res_capped = publish_next_hot_cluster(max_per_run=1, max_daily_posts=2)
+        self.assertEqual(res_capped, [])
+        self.assertEqual(topic2.channel_publications.count(), 0)
 
     @patch('apps.posts.services.portal_services.update_exchange_rates_from_kuraimi', return_value=0)
     @patch('apps.growth.services.telegram_service.send_telegram_message')

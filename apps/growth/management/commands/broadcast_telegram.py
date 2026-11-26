@@ -24,8 +24,14 @@ class Command(BaseCommand):
         parser.add_argument(
             '--min-sources',
             type=int,
-            default=3,
-            help='Minimum number of sources in cluster (default: 3)'
+            default=8,
+            help='Minimum distinct sources for major clusters (default: 8)'
+        )
+        parser.add_argument(
+            '--urgent-min-sources',
+            type=int,
+            default=5,
+            help='Minimum distinct sources for urgent/breaking clusters (default: 5)'
         )
         parser.add_argument(
             '--limit',
@@ -36,14 +42,15 @@ class Command(BaseCommand):
         parser.add_argument(
             '--hours',
             type=int,
-            default=72,
-            help='Lookback window in hours for clusters (default: 72)'
+            default=12,
+            help='Lookback window in hours for clusters (default: 12)'
         )
 
     def handle(self, *args, **options):
         b_type = options['type']
         force = options['force']
         min_sources = options['min_sources']
+        urgent_min_sources = options['urgent_min_sources']
         hours = options['hours']
         limit = options['limit']
 
@@ -53,8 +60,17 @@ class Command(BaseCommand):
             self.stdout.write(f"Exchange Rates result: {res}")
 
         if b_type in ['clusters', 'all']:
-            self.stdout.write(f"Publishing up to {limit} hot clusters (min {min_sources} sources)...")
-            res = publish_next_hot_cluster(min_sources=min_sources, max_per_run=limit, hours=hours)
+            self.stdout.write(
+                f"Publishing up to {limit} high-priority clusters "
+                f"(major>={min_sources}, urgent>={urgent_min_sources} distinct sources)..."
+            )
+            res = publish_next_hot_cluster(
+                min_sources=min_sources,
+                urgent_min_sources=urgent_min_sources,
+                max_per_run=limit,
+                hours=hours,
+                respect_limits=not force,
+            )
             self.stdout.write(f"Clusters result: {res}")
 
         self.stdout.write(self.style.SUCCESS("Broadcast operation completed."))

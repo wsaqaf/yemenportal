@@ -9,14 +9,31 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task(name="apps.growth.tasks.broadcast_telegram_hot_clusters")
-def broadcast_telegram_hot_clusters(min_sources=3, max_per_run=1):
+def broadcast_telegram_hot_clusters(
+    min_sources=8,
+    urgent_min_sources=5,
+    max_per_run=1,
+    hours=12,
+    cooldown_minutes=90,
+    urgent_cooldown_minutes=20,
+    max_daily_posts=12,
+):
     """
-    Celery task that checks for newly formed or trending news clusters
-    covered by at least `min_sources` news outlets and broadcasts them to Telegram.
+    Celery task that checks for urgent or highly important news clusters
+    covered by enough distinct news outlets and broadcasts them to Telegram
+    with cooldown and daily cap protections against notification fatigue.
     """
     try:
-        results = publish_next_hot_cluster(min_sources=min_sources, max_per_run=max_per_run)
-        logger.info(f"Broadcasted {len(results)} hot clusters to Telegram.")
+        results = publish_next_hot_cluster(
+            min_sources=min_sources,
+            urgent_min_sources=urgent_min_sources,
+            max_per_run=max_per_run,
+            hours=hours,
+            cooldown_minutes=cooldown_minutes,
+            urgent_cooldown_minutes=urgent_cooldown_minutes,
+            max_daily_posts=max_daily_posts,
+        )
+        logger.info(f"Broadcasted {len(results)} high-priority clusters to Telegram.")
         return results
     except Exception as e:
         logger.error(f"Error in broadcast_telegram_hot_clusters: {e}")
