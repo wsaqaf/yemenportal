@@ -10,13 +10,13 @@ logger = logging.getLogger(__name__)
 
 @shared_task(name="apps.growth.tasks.broadcast_telegram_hot_clusters")
 def broadcast_telegram_hot_clusters(
-    min_sources=8,
-    urgent_min_sources=5,
+    min_sources=6,
+    urgent_min_sources=4,
     max_per_run=1,
     hours=12,
-    cooldown_minutes=90,
-    urgent_cooldown_minutes=20,
-    max_daily_posts=12,
+    cooldown_minutes=45,
+    urgent_cooldown_minutes=15,
+    max_daily_posts=20,
 ):
     """
     Celery task that checks for urgent or highly important news clusters

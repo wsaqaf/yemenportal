@@ -18,14 +18,15 @@ from apps.growth.models import PublishedChannelPost
 
 logger = logging.getLogger(__name__)
 
-# High-signal Telegram broadcast defaults: urgent & major clusters only
-DEFAULT_MAJOR_MIN_SOURCES = 8
-DEFAULT_URGENT_MIN_SOURCES = 5
-DEFAULT_INTL_MIN_SOURCES = 10
+# Balanced high-signal Telegram defaults: urgent & important clusters (~12-20/day vs ~94/day previously)
+DEFAULT_MAJOR_MIN_SOURCES = 6
+DEFAULT_URGENT_MIN_SOURCES = 4
+DEFAULT_INTL_MIN_SOURCES = 8
+DEFAULT_URGENT_CAP_BYPASS_SOURCES = 6
 DEFAULT_LOOKBACK_HOURS = 12
-DEFAULT_COOLDOWN_MINUTES = 90
-DEFAULT_URGENT_COOLDOWN_MINUTES = 20
-DEFAULT_MAX_DAILY_CLUSTERS = 12
+DEFAULT_COOLDOWN_MINUTES = 45
+DEFAULT_URGENT_COOLDOWN_MINUTES = 15
+DEFAULT_MAX_DAILY_CLUSTERS = 20
 
 # Yemen time (UTC+3) quiet hours for non-urgent notifications (23:00 - 07:00)
 QUIET_HOURS_YEMEN_START = 23
@@ -51,6 +52,14 @@ def is_urgent_cluster(title: str) -> bool:
     if not title:
         return False
     return any(kw in title for kw in TELEGRAM_URGENT_KEYWORDS)
+
+
+def _yemen_day_start(now=None):
+    """Returns UTC datetime corresponding to 00:00 today in Yemen time (UTC+3)."""
+    now = now or timezone.now()
+    yemen_now = now + timedelta(hours=3)
+    yemen_midnight = yemen_now.replace(hour=0, minute=0, second=0, microsecond=0)
+    return yemen_midnight - timedelta(hours=3)
 
 
 def _is_yemen_quiet_hours(now=None) -> bool:
@@ -250,18 +259,33 @@ def publish_next_hot_cluster(
     ]
 
     only_urgent = False
+    daily_cap_reached = False
     if respect_limits:
-        recent_24h_qs = PublishedChannelPost.objects.filter(
+        day_start = _yemen_day_start(now)
+        today_qs = PublishedChannelPost.objects.filter(
             channel=PublishedChannelPost.Channel.TELEGRAM,
             post_type__in=cluster_post_types,
             status=PublishedChannelPost.Status.PUBLISHED,
-            created_at__gte=now - timedelta(hours=24),
+            created_at__gte=day_start,
         )
-        if max_daily_posts and recent_24h_qs.count() >= max_daily_posts:
-            logger.info("Telegram daily cluster cap (%s/24h) reached; skipping broadcast.", max_daily_posts)
-            return []
+        if max_daily_posts and today_qs.count() >= max_daily_posts:
+            daily_cap_reached = True
+            only_urgent = True
+            logger.info(
+                "Telegram daily cluster cap (%s/day) reached; only major breaking alerts (>= %s sources) allowed.",
+                max_daily_posts,
+                DEFAULT_URGENT_CAP_BYPASS_SOURCES,
+            )
 
-        last_published = recent_24h_qs.order_by('-created_at').first()
+        last_published = (
+            PublishedChannelPost.objects.filter(
+                channel=PublishedChannelPost.Channel.TELEGRAM,
+                post_type__in=cluster_post_types,
+                status=PublishedChannelPost.Status.PUBLISHED,
+            )
+            .order_by('-created_at')
+            .first()
+        )
         if last_published:
             elapsed_minutes = (now - last_published.created_at).total_seconds() / 60.0
             if elapsed_minutes < urgent_cooldown_minutes:
@@ -316,6 +340,9 @@ def publish_next_hot_cluster(
         is_yemen = has_genuine_yemen_focus(lead_post)
 
         if only_urgent and not urgent:
+            continue
+
+        if daily_cap_reached and distinct_sources < DEFAULT_URGENT_CAP_BYPASS_SOURCES:
             continue
 
         if is_yemen:

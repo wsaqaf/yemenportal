@@ -52,7 +52,7 @@ class TelegramGrowthTests(TestCase):
     @patch('apps.growth.services.telegram_service.send_telegram_message')
     def test_small_non_urgent_cluster_is_skipped(self, mock_send):
         mock_send.return_value = {'ok': True, 'result': {'message_id': 100}}
-        # 4 distinct sources, non-urgent headline -> below major threshold (8) and not urgent
+        # 4 distinct sources, non-urgent headline -> below major threshold (6) and not urgent
         self._create_cluster("اجتماع رسمي لمناقشة خطة الخدمات في عدن", num_sources=4, slug="small")
         results = publish_next_hot_cluster()
         self.assertEqual(results, [])
@@ -61,19 +61,19 @@ class TelegramGrowthTests(TestCase):
     @patch('apps.growth.services.telegram_service.send_telegram_message')
     def test_duplicate_posts_from_few_sources_do_not_bypass_distinct_threshold(self, mock_send):
         mock_send.return_value = {'ok': True, 'result': {'message_id': 101}}
-        # topic_size=8, but only 3 distinct sources -> must be skipped
+        # topic_size=8, but only 3 distinct sources -> must be skipped (urgent requires >= 4 distinct)
         self._create_cluster("عاجل: قصف في تعز", num_sources=3, slug="dups", repeat_first_source=5)
         results = publish_next_hot_cluster()
         self.assertEqual(results, [])
         mock_send.assert_not_called()
 
     @patch('apps.growth.services.telegram_service.send_telegram_message')
-    def test_urgent_cluster_publishes_at_5_distinct_sources(self, mock_send):
+    def test_urgent_cluster_publishes_at_4_distinct_sources(self, mock_send):
         mock_send.return_value = {'ok': True, 'result': {'message_id': 123}}
         topic = self._create_cluster(
             "عاجل: غارات جوية تستهدف مواقع عسكرية في الحديدة وصنعاء",
-            num_sources=5,
-            slug="urgent5",
+            num_sources=4,
+            slug="urgent4",
         )
 
         results = publish_next_hot_cluster()
@@ -86,7 +86,7 @@ class TelegramGrowthTests(TestCase):
         self.assertEqual(pub.channel, PublishedChannelPost.Channel.TELEGRAM)
         self.assertEqual(pub.post_type, PublishedChannelPost.PostType.BREAKING)
         self.assertIn("utm_source=telegram", pub.message_text)
-        self.assertIn("المصادر (5)", pub.message_text)
+        self.assertIn("المصادر (4)", pub.message_text)
         self.assertIn(f"<a href=\"https://yemenportal.net/posts/topic/{topic.id}/", pub.message_text)
 
         # Should not publish the same topic again
@@ -94,16 +94,16 @@ class TelegramGrowthTests(TestCase):
         self.assertEqual(len(results_again), 0)
 
     @patch('apps.growth.services.telegram_service.send_telegram_message')
-    def test_major_cluster_publishes_at_8_distinct_sources_and_respects_cooldown(self, mock_send):
+    def test_major_cluster_publishes_at_6_distinct_sources_and_respects_cooldown(self, mock_send):
         mock_send.return_value = {'ok': True, 'result': {'message_id': 125}}
         topic1 = self._create_cluster(
             "البنك المركزي في عدن يعلن إجراءات جديدة لضبط سوق الصرافة في اليمن",
-            num_sources=8,
+            num_sources=6,
             slug="major1",
         )
         topic2 = self._create_cluster(
             "مجلس القيادة الرئاسي اليمني يعقد اجتماعاً موسعاً لمناقشة الملف الاقتصادي",
-            num_sources=8,
+            num_sources=6,
             slug="major2",
         )
 
@@ -116,28 +116,38 @@ class TelegramGrowthTests(TestCase):
         res2 = publish_next_hot_cluster(max_per_run=1)
         self.assertEqual(res2, [])
 
-        # Simulate 30 minutes passing: non-urgent still blocked (<90m), urgent allowed (>=20m)
+        # Simulate 20 minutes passing: non-urgent still blocked (<45m), urgent allowed (>=15m)
         PublishedChannelPost.objects.filter(topic=topic1).update(
-            created_at=timezone.now() - timedelta(minutes=30)
+            created_at=timezone.now() - timedelta(minutes=20)
         )
         self.assertEqual(publish_next_hot_cluster(max_per_run=1), [])
 
         urgent_topic = self._create_cluster(
             "عاجل: اعتراض صاروخ باليستي حوثي فوق مأرب",
-            num_sources=5,
-            slug="urgent_after_30m",
+            num_sources=4,
+            slug="urgent_after_20m",
         )
         res3 = publish_next_hot_cluster(max_per_run=1)
         self.assertEqual(len(res3), 1)
         self.assertEqual(res3[0]['topic_id'], urgent_topic.id)
 
-        # Simulate daily cap reached
+        # Simulate daily cap reached: non-urgent major cluster stays blocked
         PublishedChannelPost.objects.filter(topic=urgent_topic).update(
-            created_at=timezone.now() - timedelta(minutes=120)
+            created_at=timezone.now() - timedelta(minutes=60)
         )
         res_capped = publish_next_hot_cluster(max_per_run=1, max_daily_posts=2)
         self.assertEqual(res_capped, [])
         self.assertEqual(topic2.channel_publications.count(), 0)
+
+        # Major breaking urgent story (>= 6 distinct sources) still breaks through the daily cap
+        breaking_major = self._create_cluster(
+            "عاجل: غارات جوية مكثفة تستهدف مواقع عسكرية في صنعاء",
+            num_sources=6,
+            slug="breaking_major_bypass",
+        )
+        res_bypass = publish_next_hot_cluster(max_per_run=1, max_daily_posts=2)
+        self.assertEqual(len(res_bypass), 1)
+        self.assertEqual(res_bypass[0]['topic_id'], breaking_major.id)
 
     @patch('apps.posts.services.portal_services.update_exchange_rates_from_kuraimi', return_value=0)
     @patch('apps.growth.services.telegram_service.send_telegram_message')

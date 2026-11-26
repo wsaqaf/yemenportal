@@ -24,14 +24,14 @@ class Command(BaseCommand):
         parser.add_argument(
             '--min-sources',
             type=int,
-            default=8,
-            help='Minimum distinct sources for major clusters (default: 8)'
+            default=6,
+            help='Minimum distinct sources for major clusters (default: 6)'
         )
         parser.add_argument(
             '--urgent-min-sources',
             type=int,
-            default=5,
-            help='Minimum distinct sources for urgent/breaking clusters (default: 5)'
+            default=4,
+            help='Minimum distinct sources for urgent/breaking clusters (default: 4)'
         )
         parser.add_argument(
             '--limit',

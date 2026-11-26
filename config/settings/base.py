@@ -206,13 +206,13 @@ CELERY_BEAT_SCHEDULE = {
         'task': 'apps.growth.tasks.broadcast_telegram_hot_clusters',
         'schedule': 900,  # Every 15 minutes (aligned with cluster_recent_posts)
         'kwargs': {
-            'min_sources': 8,
-            'urgent_min_sources': 5,
+            'min_sources': 6,
+            'urgent_min_sources': 4,
             'max_per_run': 1,
             'hours': 12,
-            'cooldown_minutes': 90,
-            'urgent_cooldown_minutes': 20,
-            'max_daily_posts': 12,
+            'cooldown_minutes': 45,
+            'urgent_cooldown_minutes': 15,
+            'max_daily_posts': 20,
         },
     },
     'refresh-exchange-rates-daily': {
